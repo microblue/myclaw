@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": ["esnext"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "#i18n/*": ["../../packages/i18n/src/*"],
+            "#shared/*": ["../../packages/shared/src/*"]
+        },
+        "jsx": "react-jsx",
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    },
+    "include": ["src", "scripts"],
+    "exclude": ["node_modules", "src/**/*.test.ts"]
+}

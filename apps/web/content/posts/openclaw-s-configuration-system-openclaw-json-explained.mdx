@@ -1,0 +1,311 @@
+---
+title: OpenClaw's Configuration System - openclaw.json Explained
+slug: openclaw-s-configuration-system-openclaw-json-explained
+description: Master the openclaw.json file. Learn every configuration option and how to optimize your setup for your specific needs.
+author: ClawHost
+publishedAt: '2026-02-26'
+tags:
+    - openclaw
+    - tutorial
+    - automation
+coverImage: /blogs/openclaw-s-configuration-system-openclaw-json-explained.webp
+---
+
+## Mastering openclaw.json: The Complete Configuration Guide
+
+Every OpenClaw installation starts with a single, powerful configuration file: `openclaw.json`. This file defines how your agents behave, what resources they can access, how they communicate, and what boundaries they operate within. Understanding this file is essential for anyone deploying OpenClaw beyond the defaults.
+
+## The Anatomy of openclaw.json
+
+The configuration file has several major sections, each controlling a different aspect of OpenClaw's behavior:
+
+```json
+{
+    "version": "1.0",
+    "agents": {},
+    "gateway": {},
+    "tools": {},
+    "logging": {},
+    "security": {}
+}
+```
+
+Let's explore each section in detail.
+
+## The Agents Section
+
+The `agents` object defines your running agents and their individual configurations.
+
+### Agent Definition
+
+Each agent in the `agents` section has a unique identifier and configuration:
+
+```json
+"agents": {
+  "content-generator": {
+    "model": "claude-3-5-sonnet",
+    "temperature": 0.7,
+    "max_tokens": 4000,
+    "system_prompt": "You are a helpful content creation assistant...",
+    "tools": ["web-search", "file-writer", "screenshot"],
+    "timeout": 300,
+    "memory": "persistent"
+  }
+}
+```
+
+**Key agent settings:**
+
+- **model**: Which AI model to use (Claude, GPT-4, local models)
+- **temperature**: Creativity level (0.0 = deterministic, 1.0 = creative)
+- **max_tokens**: Maximum response length
+- **system_prompt**: Agent personality and instructions
+- **tools**: Which tools the agent can access
+- **timeout**: Maximum execution time in seconds
+- **memory**: Whether to persist agent state between sessions
+
+## The Gateway Section
+
+The Gateway is OpenClaw's central orchestrator. This section controls how it operates:
+
+```json
+"gateway": {
+  "port": 3000,
+  "host": "localhost",
+  "log_level": "info",
+  "cors_enabled": true,
+  "rate_limit": 100,
+  "session_timeout": 3600,
+  "database": {
+    "type": "sqlite",
+    "path": "./openclaw.db"
+  }
+}
+```
+
+**Important gateway settings:**
+
+- **port**: Which port the Gateway listens on
+- **host**: Hostname or IP to bind to (localhost for local-only, 0.0.0.0 for public)
+- **log_level**: Verbosity (debug, info, warn, error)
+- **rate_limit**: Requests per minute to prevent abuse
+- **session_timeout**: How long sessions persist (in seconds)
+- **database**: Where to store session data and logs
+
+## The Tools Section
+
+Tools define what actions agents can perform. Each tool is a command or API that agents can invoke:
+
+```json
+"tools": {
+  "web-search": {
+    "enabled": true,
+    "provider": "brave",
+    "api_key": "${BRAVE_API_KEY}",
+    "max_results": 10
+  },
+  "file-writer": {
+    "enabled": true,
+    "allowed_paths": ["/home/user/documents"],
+    "max_file_size": 10485760
+  },
+  "email": {
+    "enabled": true,
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "username": "${EMAIL_USERNAME}",
+    "password": "${EMAIL_PASSWORD}"
+  }
+}
+```
+
+**Security considerations:**
+
+- Use environment variables (${VAR_NAME}) for sensitive data, never hardcode
+- Whitelist allowed paths to prevent unauthorized file access
+- Disable tools you don't need
+- Set rate limits on expensive operations like API calls
+
+## The Logging Section
+
+Control how extensively OpenClaw logs its operations:
+
+```json
+"logging": {
+  "level": "info",
+  "format": "json",
+  "output": "file",
+  "file_path": "./logs/openclaw.log",
+  "max_file_size": 104857600,
+  "retention_days": 30,
+  "include_sensitive_data": false
+}
+```
+
+**Logging best practices:**
+
+- Set `include_sensitive_data` to false in production
+- Rotate logs regularly to avoid disk space issues
+- Use structured JSON format for easier parsing
+- Monitor log files for errors and anomalies
+
+## The Security Section
+
+This section defines authentication, authorization, and security policies:
+
+```json
+"security": {
+  "authentication": {
+    "enabled": true,
+    "type": "oauth2",
+    "providers": ["github", "google"]
+  },
+  "api_key_required": true,
+  "encryption": {
+    "enabled": true,
+    "algorithm": "AES-256"
+  },
+  "allowed_origins": ["https://app.example.com"],
+  "https_only": true
+}
+```
+
+**Security settings to understand:**
+
+- **authentication**: Require users to authenticate before accessing agents
+- **api_key_required**: Require API keys for programmatic access
+- **encryption**: Encrypt sensitive data at rest
+- **allowed_origins**: CORS whitelist for web requests
+- **https_only**: Force HTTPS in production
+
+## Environment Variables and Secrets
+
+Never hardcode API keys, passwords, or tokens in openclaw.json. Instead, use environment variables:
+
+```json
+{
+    "tools": {
+        "api-service": {
+            "api_key": "${API_KEY}"
+        }
+    }
+}
+```
+
+Then provide the variable when running OpenClaw:
+
+```bash
+export API_KEY="your-secret-key"
+export EMAIL_PASSWORD="your-password"
+openclaw start
+```
+
+Or in a .env file (which should never be committed):
+
+```
+API_KEY=your-secret-key
+EMAIL_PASSWORD=your-password
+OPENAI_API_KEY=your-openai-key
+```
+
+## Common Configurations
+
+### Development Setup
+
+```json
+{
+    "gateway": {
+        "log_level": "debug",
+        "rate_limit": 1000
+    },
+    "agents": {
+        "dev-agent": {
+            "model": "claude-3-5-sonnet",
+            "temperature": 0.8
+        }
+    }
+}
+```
+
+### Production Setup
+
+```json
+{
+    "gateway": {
+        "log_level": "warn",
+        "rate_limit": 10,
+        "https_only": true
+    },
+    "security": {
+        "authentication": {
+            "enabled": true
+        },
+        "encryption": {
+            "enabled": true
+        }
+    }
+}
+```
+
+### High-Volume Automation
+
+```json
+{
+    "gateway": {
+        "max_concurrent_sessions": 100,
+        "database": {
+            "type": "postgresql",
+            "connection_pool": 50
+        }
+    },
+    "agents": {
+        "auto-responder": {
+            "max_tokens": 2000,
+            "temperature": 0.3
+        }
+    }
+}
+```
+
+## Validation and Testing
+
+Before deploying a new configuration:
+
+1. **Validate JSON syntax**: Use a JSON validator to catch syntax errors
+2. **Test locally**: Start OpenClaw with the config in development mode
+3. **Check logs**: Look for warnings or errors during startup
+4. **Test a single agent**: Verify one agent works before enabling all
+5. **Monitor performance**: Watch CPU, memory, and API usage
+6. **Gradual rollout**: Deploy to production incrementally, not all at once
+
+## Best Practices
+
+**1. Version control your configuration**
+Keep openclaw.json in Git (but never commit secrets).
+
+**2. Use separate configs for different environments**
+development.json, staging.json, production.json
+
+**3. Document your choices**
+Why did you set temperature to 0.5? Why those tools? Document it.
+
+**4. Rotate sensitive data regularly**
+Change API keys, passwords, and tokens periodically.
+
+**5. Monitor configuration changes**
+Log when and what configuration changes are made.
+
+**6. Use minimal required permissions**
+Give agents only the tools and data they actually need.
+
+## The Power of Configuration
+
+The beauty of openclaw.json is that it makes OpenClaw flexible without requiring code changes. You can:
+
+- Swap AI models without touching code
+- Add or remove tools instantly
+- Adjust agent behavior by tweaking parameters
+- Enable/disable features for different environments
+- Scale from a single agent to hundreds
+
+Mastering this configuration file is how you unlock OpenClaw's full potential.

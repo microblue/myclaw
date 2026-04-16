@@ -1,0 +1,24 @@
+node_modules/
+.turbo/
+dist/
+.env
+.env.production
+*.log
+.DS_Store
+apps/clawhostgo/.vite/
+
+# Agent workspace files (not code)
+AGENTS.md
+SOUL.md
+USER.md
+MEMORY.md
+HEARTBEAT.md
+IDENTITY.md
+BOOTSTRAP.md
+TOOLS.md
+SHARED_TOOLS.md
+CLAWHOST_DEPLOY.md
+PROJECT_BOOTSTRAP.md
+memory/
+.openclaw/
+apps/api/.env.bak

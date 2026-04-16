@@ -1,0 +1,439 @@
+---
+title: Cron Jobs and Scheduled Tasks — Your Agent Works While You Sleep
+slug: cron-jobs-and-scheduled-tasks-your-agent-works-while-you-sleep
+description:
+    "Automate repetitive tasks with OpenClaw's cron scheduler. Set it and
+    forget it: email digests, health checks, reports—running 24/7."
+author: ClawHost
+publishedAt: '2026-02-26'
+tags:
+    - openclaw
+    - cron
+    - automation
+    - scheduling
+    - tasks
+coverImage: /blogs/cron-jobs-and-scheduled-tasks-your-agent-works-while-you-sleep.webp
+---
+
+## Cron Jobs: Making Your Agent Work on a Schedule
+
+One of OpenClaw's superpowers is scheduling agents to run automatically. Define what, when, and how — the agent handles execution 24/7, without human intervention. This transforms how organizations handle repetitive work, turning time-consuming manual processes into background automation that delivers value while your team sleeps.
+
+The ability to run agents on schedules is the difference between having an AI assistant for interactive tasks and having an automated system that compounds value over time. A daily email digest that your team forgets to generate manually happens automatically. A weekly report that would take hours to compile generates with zero friction.
+
+## The Fundamental Value Proposition
+
+Here's what makes scheduled automation different from one-off tasks:
+
+**One-off task**: "Extract this data from a website today"
+**Scheduled task**: "Extract this data from 50 websites every day at 9 AM, compile results, send to the team"
+
+The second one is multiplied value. Over a year, that's 50 × 365 = 18,250 data extractions happening automatically. That's not a productivity gain—that's organizational leverage.
+
+## Understanding OpenClaw's Scheduling System
+
+OpenClaw's cron implementation works at the Gateway level, meaning:
+
+- **Reliable execution**: If your agent crashes, the Gateway restarts it and retries
+- **Flexible scheduling**: Precise timing (9:15 AM every Tuesday) or relative timing (every 6 hours)
+- **Error handling**: Failed tasks trigger alerts; successful tasks can dispatch notifications
+- **Scalability**: Hundreds of scheduled tasks running simultaneously across agents
+
+The system is built on standard cron syntax but with AI-aware extensions:
+
+```bash
+# Traditional cron (minute, hour, day of month, month, day of week)
+0 9 * * 1 /path/to/script.sh
+
+# OpenClaw cron with agent context
+0 9 * * 1 openclaw-task: "Generate weekly sales report and email to team@company.com"
+```
+
+The difference: OpenClaw tasks understand context, adapt to failures, and use AI reasoning—not just script execution.
+
+## Real-World Use Cases
+
+### Daily Digest and Summary Reports
+
+**The problem**: Your team needs daily summaries—customer feedback from support tickets, sales pipeline changes, development metrics—but compiling these manually takes 45 minutes.
+
+**The solution**: An OpenClaw agent scheduled to run at 6 AM daily:
+
+```javascript
+const task = {
+    schedule: '0 6 * * *', // 6 AM daily
+    steps: [
+        'Extract new support tickets from Zendesk',
+        'Summarize customer sentiment and top issues',
+        'Pull sales pipeline changes from Salesforce',
+        'Compare to 30-day trend',
+        'Extract deployment metrics from GitHub Actions',
+        'Compile into single report',
+        'Send to team Slack channel'
+    ]
+}
+
+openclaw.schedule(task)
+```
+
+**Result**: Every morning at 6 AM, before your team arrives, they have context on what happened overnight and what needs attention.
+
+**Real impact**:
+
+- Saves 45 minutes daily per person = 3.75 hours per 5-person team per week
+- Team starts day informed instead of playing catch-up
+- Trends visible (is support volume rising? Are deployments getting faster?)
+- Anomalies flagged automatically (unexpected spike in ticket volume)
+
+### Nightly Data Backups and Synchronization
+
+**The problem**: You need to ensure critical data is backed up and synchronized across systems, but doing this manually is tedious and error-prone.
+
+**The solution**: A scheduled agent that:
+
+```javascript
+const backup = {
+    schedule: '0 2 * * *', // 2 AM daily
+    steps: [
+        'Connect to primary database',
+        'Export customer data, transactions, configs',
+        'Compress backup',
+        'Upload to S3 with redundancy',
+        'Verify backup integrity',
+        'Sync data to read replicas',
+        'Run integrity checks',
+        'Log results and alert on failure'
+    ],
+    onSuccess: 'Send confirmation email to ops@company.com',
+    onFailure: 'Trigger PagerDuty alert immediately'
+}
+
+openclaw.schedule(backup)
+```
+
+**Result**: Every night at 2 AM, your data is backed up, verified, and synchronized.
+
+**Real impact**:
+
+- Never miss a backup window
+- Off-peak processing (2 AM) means zero impact on daytime performance
+- Automated verification catches issues immediately
+- Recovery RPO (Recovery Point Objective) is predictable and minimal
+
+### Weekly Competitive Intelligence Reports
+
+**The problem**: You want to track competitors weekly but manually visiting 30 sites takes 3-4 hours.
+
+**The solution**: Scheduled browser automation:
+
+```javascript
+const competitive_intel = {
+    schedule: '0 8 * * 5', // 8 AM Friday
+    task: 'Monitor competitor sites',
+    steps: [
+        "Visit top 10 competitors' websites",
+        'Extract: new product announcements, pricing changes, hiring posts',
+        "Compare to last week's data",
+        'Highlight changes >5%',
+        'Research announcements via Google News and press releases',
+        'Compile into report with analysis',
+        'Send to product and sales teams'
+    ]
+}
+```
+
+**Result**: Every Friday morning, your team has fresh competitive intelligence without lifting a finger.
+
+**Real impact**:
+
+- Consistent intelligence (same time, same rigor every week)
+- Early warning on competitor moves (new features, price cuts)
+- Better strategic decisions based on trends, not surprises
+- 3-4 hours freed up weekly per analyst
+
+### Hourly Content Publishing Pipeline
+
+**The problem**: You have 86 blog articles to publish, but publishing manually is tedious and error-prone.
+
+**The solution**: Scheduled publishing with verification:
+
+```javascript
+const publish_articles = {
+    schedule: '0 * * * *', // Every hour
+    steps: [
+        'Check article queue (articles with published: false)',
+        'Pick next article',
+        'Generate cover image',
+        'Convert to MDX format',
+        'Validate frontmatter and links',
+        'Build HTML from markdown',
+        'Deploy to CDN',
+        'Update registry (published: true)',
+        'Post to social media',
+        'Verify live on website'
+    ],
+    onFailure: 'Log issue, move to failed queue, continue with next'
+}
+
+openclaw.schedule(publish_articles)
+```
+
+**Result**: One article publishes automatically every hour. 86 articles = 86 hours = 3.5 days to clear the queue.
+
+**Real impact**:
+
+- Consistent publishing cadence
+- No manual work per article
+- Errors caught automatically (invalid frontmatter, broken links)
+- Audit trail of what published when
+- Social promotion happens automatically
+
+### Monthly Billing and Subscription Management
+
+**The problem**: Processing monthly billings, renewals, and churn analysis requires manual reconciliation.
+
+**The solution**: Scheduled billing automation:
+
+```javascript
+const monthly_billing = {
+    schedule: '0 0 1 * *', // 1st of month at midnight
+    steps: [
+        'Query database for active subscriptions',
+        'Generate invoices for each customer',
+        'Process payments via Stripe',
+        'Handle failures (retry failed charges, notify customers)',
+        'Generate revenue reports by tier, region, cohort',
+        'Identify churning customers for retention campaigns',
+        'Email invoices to customers',
+        'Update accounting system with transactions',
+        'Generate financial statements for leadership'
+    ]
+}
+```
+
+**Result**: First of the month, billing is processed, reports are generated, and accounting is updated automatically.
+
+**Real impact**:
+
+- Zero manual billing work
+- Consistent invoice timing
+- Automatic retry for failed charges
+- Immediate churn detection
+- Financial reporting automation
+
+## Advanced Scheduling Patterns
+
+### Cascading Tasks
+
+Sometimes you want one task to trigger another:
+
+```javascript
+const workflow = {
+    task1: {
+        schedule: '0 9 * * 1', // Monday 9 AM
+        action: 'Generate weekly report'
+    },
+    task2: {
+        trigger: 'task1_completes',
+        action: 'Email report to stakeholders'
+    },
+    task3: {
+        trigger: 'task2_completes',
+        action: 'Post key metrics to Slack'
+    }
+}
+```
+
+This ensures tasks run in sequence, with each waiting for the previous to complete.
+
+### Conditional Scheduling
+
+Run tasks based on conditions:
+
+```javascript
+const conditional_task = {
+    schedule: '0 6 * * *', // Daily at 6 AM
+    condition: 'IF (unread_emails > 100) OR (high_priority_tickets > 5)',
+    action: 'Send urgent summary to team lead'
+}
+```
+
+Only run if conditions are met. Useful for alerts that should only trigger in specific situations.
+
+### Error Handling and Retries
+
+```javascript
+const reliable_task = {
+    schedule: '0 3 * * *',
+    action: 'Backup database',
+    retry: {
+        attempts: 3,
+        delaySeconds: 300 // 5 minutes between retries
+    },
+    onFailure: {
+        notify: ['ops@company.com'],
+        escalate: 'after 3 failed attempts',
+        channel: 'pagerduty'
+    }
+}
+```
+
+If a task fails, retry automatically. After all retries fail, escalate to on-call team.
+
+## Choosing the Right Schedule
+
+Different tasks need different cadences:
+
+| Task                     | Frequency          | Rationale                            |
+| ------------------------ | ------------------ | ------------------------------------ |
+| Email digest             | Daily (6-9 AM)     | Team reviews once per day            |
+| Database backup          | Nightly (2-3 AM)   | Off-peak, predictable recovery point |
+| Competitive intelligence | Weekly (Friday AM) | Strategic reviews happen Friday      |
+| Support ticket summary   | Every 2 hours      | High-volume, need frequent updates   |
+| Monthly reports          | Monthly (1st)      | Financial/accounting cycles          |
+| Health checks            | Every 5 minutes    | Monitoring requires frequent checks  |
+
+**Key principle**: Schedule based on when the task adds value, not just "whenever it's convenient."
+
+## Performance and Cost Implications
+
+Scheduling affects both performance and cost:
+
+**Optimal approach**:
+
+- Batch tasks together (one large task every hour is better than many small tasks every minute)
+- Off-peak scheduling (2-4 AM for heavy processing)
+- Stagger tasks (don't run 10 tasks simultaneously if you can spread them)
+- Monitor resource usage (CPU, memory, API calls)
+
+**Cost optimization**:
+
+```javascript
+// ❌ Bad: Monitoring every 5 minutes, small task
+schedule: "*/5 * * * *", // Runs 288 times per day
+
+// ✅ Good: Monitoring every 30 minutes, batch processing
+schedule: "*/30 * * * *", // Runs 48 times per day, 6x less expensive
+```
+
+Many tasks don't need high frequency. A competitive intelligence check that runs weekly is cheaper and sufficient compared to hourly checks.
+
+## Monitoring and Alerting
+
+Scheduled tasks need visibility:
+
+```javascript
+const monitored_task = {
+    schedule: '0 9 * * *',
+    action: 'Generate report',
+    monitors: {
+        execution_time: { alert_if: 'exceeds 5 minutes' },
+        success_rate: { alert_if: 'below 95% this month' },
+        data_quality: { alert_if: 'rows processed < expected' }
+    },
+    dashboard: true // Visible on OpenClaw dashboard
+}
+```
+
+**What to monitor**:
+
+- Execution time (is the task getting slower?)
+- Success rate (how often does it fail?)
+- Data quality (are results what we expect?)
+- Cost (API calls, compute time)
+- Drift (have upstream systems changed?)
+
+## Debugging Failed Tasks
+
+When a scheduled task fails, you need to understand why:
+
+```javascript
+// View task execution history
+openclaw.task.history('weekly-report')
+
+// See last 5 executions
+// {
+//   execution_id: "exec_12345",
+//   scheduled_time: "2026-02-24T09:00:00Z",
+//   actual_start: "2026-02-24T09:00:15Z",
+//   duration: "47 seconds",
+//   status: "failed",
+//   error: "API rate limit exceeded",
+//   logs: [...],
+//   retry_count: 2
+// }
+
+// Re-run a failed task manually
+openclaw.task.retry('weekly-report', 'exec_12345')
+```
+
+## Best Practices for Scheduled Tasks
+
+**Do:**
+
+- Start with manual execution first, then schedule (test thoroughly)
+- Log everything (you'll need logs when debugging)
+- Use off-peak hours for heavy processing
+- Build in error handling and retries
+- Monitor execution and performance
+- Version your task definitions (like code)
+- Document the schedule clearly (why does this run at 2 AM?)
+
+**Don't:**
+
+- Schedule critical tasks at unpredictable times (stick to UTC)
+- Ignore failures (set up alerts)
+- Pack too many tasks into one time slot
+- Schedule without understanding resource impact
+- Leave outdated tasks running (clean up old schedules)
+
+## Migrating From Manual to Scheduled
+
+If you currently do something manually:
+
+1. **Document the process**: Write down every step
+2. **Automate the steps**: Create an agent task for it
+3. **Test manually**: Run the task manually multiple times
+4. **Add schedule**: Set it to run automatically
+5. **Monitor first week**: Watch for issues
+6. **Tune and optimize**: Adjust schedule, error handling, notifications
+
+## Common Gotchas
+
+**Gotcha 1: Timezone issues**
+All times should be UTC internally. Display in user's timezone in UI.
+
+**Gotcha 2: Overlapping tasks**
+If a task runs daily at 9 AM and takes 30 minutes, the 9 AM slot fills from 9:00-9:30. Don't schedule another task at 9:15.
+
+**Gotcha 3: External system downtime**
+If your task depends on an external API and that API is down, your task fails. Build in retries and fallbacks.
+
+**Gotcha 4: Data mutations**
+Scheduled tasks that modify data need safeguards. Use transactions, backups, and validation.
+
+## The ROI of Scheduling
+
+Let's quantify the value:
+
+**Scenario**: Sales team spends 2 hours daily compiling opportunity pipeline.
+
+- Annual time: 2 hours × 250 working days = 500 hours per person
+- Team of 4: 2000 hours annually
+- Burdened cost at $100/hour: $200,000 per year
+
+**With scheduled automation**: 5 minutes daily (mostly checking for issues, not building reports).
+
+- Annual time: 5 minutes × 250 days = 20.8 hours per person
+- Team of 4: 83 hours annually
+- Savings: $200,000 - $8,300 = **$191,700 per year**
+
+**ROI**: Deploying a scheduled agent costs maybe $500 setup + $200/month hosting. That pays for itself in weeks.
+
+## Conclusion
+
+Scheduled automation is where OpenClaw stops being a tool you use and becomes infrastructure you deploy. Once a task is scheduled, it compounds value over time—every single day, without human intervention.
+
+The difference between working on important problems and spending time on routine tasks is often scheduling. By moving repetitive work to scheduled agents, your team stays focused on strategy, creativity, and high-value work.
+
+In modern organizations, the competitive advantage isn't doing things faster. It's automating the things that don't need human judgment, so your team can focus on things that do.

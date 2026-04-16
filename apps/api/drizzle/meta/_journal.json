@@ -1,0 +1,195 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1769909817777,
+      "tag": "0000_cute_tyger_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769931977508,
+      "tag": "0001_illegal_lady_bullseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769933176390,
+      "tag": "0002_clean_hemingway",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1769934327830,
+      "tag": "0003_fat_tarantula",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769943028395,
+      "tag": "0004_flat_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1769968229273,
+      "tag": "0005_woozy_caretaker",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1769972000000,
+      "tag": "0006_rename_instances_to_claws",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1769980000000,
+      "tag": "0007_add_gateway_token",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1770350400000,
+      "tag": "0008_add_polar_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770436800000,
+      "tag": "0009_add_deletion_scheduled_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770523200000,
+      "tag": "0010_add_model_column",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1770609600000,
+      "tag": "0011_add_api_token_column",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1770696000000,
+      "tag": "0012_add_rate_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1770782400000,
+      "tag": "0013_rename_provider_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1770868800000,
+      "tag": "0014_add_user_roles",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1770955200000,
+      "tag": "0015_noop",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1771041600000,
+      "tag": "0016_add_otp_codes",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1771128000000,
+      "tag": "0017_add_claw_exports",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1771214400000,
+      "tag": "0018_add_auth_methods",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1770300800000,
+      "tag": "0019_add_last_reinstalled_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1773696000000,
+      "tag": "0020_add_billing_interval",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1773782400000,
+      "tag": "0021_add_waitlist",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1774828800000,
+      "tag": "0022_add_affiliate",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1775082863931,
+      "tag": "0023_old_puff_adder",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1775260800000,
+      "tag": "0024_referral_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1775865600000,
+      "tag": "0025_cascade_claw_exports",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1775865700000,
+      "tag": "0026_drop_provider_columns",
+      "breakpoints": true
+    }
+  ]
+}

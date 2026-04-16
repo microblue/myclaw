@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Deploy OpenClaw. One click. Done. - MyClaw</title>
+        <meta
+            name="description"
+            content="Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing."
+        />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MyClaw" />
+        <meta
+            property="og:title"
+            content="Deploy OpenClaw. One click. Done. - MyClaw"
+        />
+        <meta
+            property="og:description"
+            content="Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing."
+        />
+        <meta
+            property="og:image"
+            content="https://myclaw.one/og-image.webp"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:url" content="https://myclaw.one" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@claw_host" />
+        <meta
+            name="twitter:title"
+            content="Deploy OpenClaw. One click. Done. - MyClaw"
+        />
+        <meta
+            name="twitter:description"
+            content="Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing."
+        />
+        <meta
+            name="twitter:image"
+            content="https://myclaw.one/og-image.webp"
+        />
+
+        <script>
+            ;(function () {
+                var loaded = false
+                function loadAnalytics() {
+                    if (loaded) return
+                    loaded = true
+                    window.removeEventListener('scroll', loadAnalytics)
+                    window.removeEventListener('click', loadAnalytics)
+                    window.removeEventListener('touchstart', loadAnalytics)
+
+                    window.dataLayer = window.dataLayer || []
+                    function gtag() {
+                        dataLayer.push(arguments)
+                    }
+                    window.gtag = gtag
+                    gtag('js', new Date())
+                    gtag('config', 'G-27CKWLCQBH')
+                    var gs = document.createElement('script')
+                    gs.async = true
+                    gs.src =
+                        'https://www.googletagmanager.com/gtag/js?id=G-27CKWLCQBH'
+                    document.head.appendChild(gs)
+
+                    var ds = document.createElement('script')
+                    ds.defer = true
+                    ds.setAttribute(
+                        'data-website-id',
+                        'dfid_MHJ6T1k2YVJ6aVD2sTys2'
+                    )
+                    ds.setAttribute('data-domain', 'myclaw.one')
+                    ds.src = 'https://datafa.st/js/script.js'
+                    document.head.appendChild(ds)
+                }
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(function () {
+                        setTimeout(loadAnalytics, 3000)
+                    })
+                } else {
+                    setTimeout(loadAnalytics, 4000)
+                }
+                window.addEventListener('scroll', loadAnalytics, {
+                    once: true,
+                    passive: true
+                })
+                window.addEventListener('click', loadAnalytics, { once: true })
+                window.addEventListener('touchstart', loadAnalytics, {
+                    once: true,
+                    passive: true
+                })
+            })()
+        </script>
+
+        <script>
+            ;(function () {
+                try {
+                    var p = JSON.parse(localStorage.getItem('ch-preferences'))
+                    var t = p && p.state && p.state.theme
+                    if (t === 'light')
+                        document.documentElement.classList.remove('dark')
+                    else if (
+                        t === 'system' &&
+                        !window.matchMedia('(prefers-color-scheme: dark)')
+                            .matches
+                    )
+                        document.documentElement.classList.remove('dark')
+                } catch (e) {}
+            })()
+        </script>
+
+        <meta name="theme-color" content="#09090b" />
+
+        <meta http-equiv="x-dns-prefetch-control" content="on" />
+
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="preconnect" href="https://cdn.myclaw.one" crossorigin />
+        <link rel="preconnect" href="https://api.myclaw.one" crossorigin />
+        <link rel="dns-prefetch" href="https://apis.google.com" />
+
+        <link
+            rel="preload"
+            href="/fonts/satoshi-400.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/satoshi-500.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/satoshi-700.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/clash-display-700.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
+    </body>
+</html>

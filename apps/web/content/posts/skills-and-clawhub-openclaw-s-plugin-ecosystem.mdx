@@ -1,0 +1,704 @@
+---
+title: Skills and ClawHub — OpenClaw's Plugin Ecosystem
+slug: skills-and-clawhub-openclaw-s-plugin-ecosystem
+description:
+    'Discover ClawHub: the marketplace for OpenClaw skills. Learn how to
+    install, create, and publish extensions that supercharge your AI agent.'
+author: ClawHost
+publishedAt: '2026-02-26'
+tags:
+    - openclaw
+    - clawhub
+    - skills
+    - plugins
+    - ecosystem
+    - extensions
+coverImage: /blogs/skills-and-clawhub-openclaw-s-plugin-ecosystem.webp
+---
+
+## Skills and ClawHub: Building OpenClaw's Plugin Ecosystem
+
+One of OpenClaw's core design decisions: **extensibility through skills.**
+
+A skill is a reusable module that gives agents new capabilities. ClawHub is the marketplace where developers discover, install, and publish skills.
+
+This architecture means OpenClaw's power grows with community contribution. You're not limited to what the core team builds. You and other developers extend OpenClaw with custom capabilities.
+
+## What Are Skills?
+
+Skills are capabilities packaged for reuse:
+
+### Core Skills (Built-in)
+
+Every OpenClaw agent comes with these skills:
+
+```javascript
+// Browser Automation
+;-browse(url) -
+    click(selector) -
+    fill_form(fields) -
+    extract_data(selector) -
+    screenshot() -
+    // File Operations
+    read_file(path) -
+    write_file(path, content) -
+    create_directory(path) -
+    delete_file(path) -
+    list_files(directory) -
+    // Code Execution
+    execute_code(language, code) -
+    run_script(path) -
+    compile_and_run(code) -
+    // Data Processing
+    parse_csv(file) -
+    parse_json(text) -
+    convert_format(input, from, to) -
+    // System
+    get_system_time() -
+    execute_command(command) -
+    get_environment_variable(name)
+```
+
+These are lightweight, always available.
+
+### Premium Skills (ClawHub)
+
+The real power is in ClawHub skills:
+
+```
+Email Management
+- Gmail integration
+- Outlook integration
+- Thunderbird integration
+- Email filtering and organization
+- Smart reply generation
+
+Calendar Management
+- Google Calendar integration
+- Outlook Calendar integration
+- Scheduling optimization
+- Meeting conflict detection
+- Availability checking
+
+CRM Integration
+- Salesforce connector
+- HubSpot connector
+- Pipedrive connector
+- Customer data retrieval
+- Opportunity tracking
+
+Project Management
+- Jira integration
+- Asana integration
+- Linear integration
+- GitHub Projects integration
+- Task automation
+
+Analytics
+- Google Analytics integration
+- Mixpanel integration
+- Amplitude integration
+- Custom dashboard creation
+- Report generation
+
+Communication
+- Slack integration
+- Discord integration
+- Telegram integration
+- WhatsApp integration
+- Email sending
+
+Database
+- PostgreSQL connector
+- MySQL connector
+- MongoDB connector
+- Redis connector
+- DynamoDB connector
+
+DevOps
+- AWS integration
+- Google Cloud integration
+- Azure integration
+- Docker management
+- Kubernetes integration
+
+Social Media
+- Twitter automation
+- LinkedIn automation
+- Instagram integration
+- TikTok integration
+- YouTube automation
+
+eCommerce
+- Shopify integration
+- WooCommerce integration
+- Stripe integration
+- Payment processing
+
+Custom Skills
+- Anything you can program
+```
+
+## Installing Skills
+
+Installing a skill is simple:
+
+### From the CLI
+
+```bash
+# Search for skills
+npm run skills:search email
+
+# Install a skill
+npm run skills:install gmail-integration
+
+# List installed skills
+npm run skills:list
+
+# Remove a skill
+npm run skills:remove gmail-integration
+```
+
+### From the Dashboard (ClawHost)
+
+1. Log into ClawHost
+2. Go to Skills → Browse
+3. Search for what you want
+4. Click "Install"
+5. Configure (API keys, permissions, etc.)
+6. Done
+
+### Using Installed Skills
+
+Once installed, your agent automatically has access:
+
+```bash
+npm run task "Check my email inbox and summarize new messages"
+
+# Agent automatically uses the gmail-integration skill
+# No configuration needed, it works
+```
+
+## Popular Skills (Real Examples)
+
+### Gmail Integration
+
+```javascript
+skill: {
+  name: "gmail-integration",
+  version: "1.2.1",
+  author: "OpenClaw Team",
+
+  functions: {
+    get_inbox: {
+      description: "Fetch emails from inbox",
+      params: { limit: 10, unread_only: false }
+    },
+
+    send_email: {
+      description: "Send an email",
+      params: { to: string, subject: string, body: string }
+    },
+
+    search_emails: {
+      description: "Search emails",
+      params: { query: string }
+    },
+
+    get_attachments: {
+      description: "Get attachments from email",
+      params: { email_id: string }
+    }
+  },
+
+  permissions: ["gmail.readonly", "gmail.send"],
+
+  installation: {
+    requires_oauth: true,
+    oauth_scope: "https://www.googleapis.com/auth/gmail.modify"
+  },
+
+  rating: 4.8,
+  downloads: 24000
+}
+```
+
+### Slack Integration
+
+```javascript
+skill: {
+  name: "slack-integration",
+  version: "2.0.3",
+  author: "Community Developer",
+
+  functions: {
+    send_message: {
+      description: "Send message to Slack channel",
+      params: { channel: string, message: string }
+    },
+
+    create_channel: {
+      description: "Create new Slack channel",
+      params: { name: string, is_private: boolean }
+    },
+
+    list_channels: {
+      description: "List all Slack channels"
+    },
+
+    upload_file: {
+      description: "Upload file to Slack",
+      params: { channel: string, file_path: string }
+    },
+
+    search_messages: {
+      description: "Search messages",
+      params: { query: string }
+    }
+  },
+
+  permissions: ["chat:write", "files:write", "channels:read"],
+
+  rating: 4.9,
+  downloads: 31000
+}
+```
+
+### Salesforce Integration
+
+```javascript
+skill: {
+  name: "salesforce-integration",
+  version: "1.8.0",
+  author: "Enterprise Developer",
+
+  functions: {
+    get_leads: {
+      description: "Fetch leads from Salesforce",
+      params: { limit: 50, status: string }
+    },
+
+    create_opportunity: {
+      description: "Create new opportunity",
+      params: { account_id: string, amount: number, stage: string }
+    },
+
+    update_contact: {
+      description: "Update contact information",
+      params: { contact_id: string, fields: object }
+    },
+
+    get_activities: {
+      description: "Get contact activities",
+      params: { contact_id: string }
+    }
+  },
+
+  permissions: ["api.read", "api.write"],
+
+  rating: 4.6,
+  downloads: 8700
+}
+```
+
+## Creating Your Own Skill
+
+If you need custom functionality, build a skill:
+
+### Step 1: Create Skill File Structure
+
+```
+my-custom-skill/
+├── package.json
+├── README.md
+├── index.js
+├── skill.manifest.json
+└── tests/
+    └── skill.test.js
+```
+
+### Step 2: Define the Skill (skill.manifest.json)
+
+```json
+{
+    "name": "weather-api-skill",
+    "version": "1.0.0",
+    "description": "Get weather data from multiple weather APIs",
+    "author": "Your Name",
+
+    "functions": {
+        "get_current_weather": {
+            "description": "Get current weather for a location",
+            "params": {
+                "location": {
+                    "type": "string",
+                    "description": "City name or coordinates"
+                },
+                "units": {
+                    "type": "string",
+                    "enum": ["celsius", "fahrenheit"],
+                    "default": "celsius"
+                }
+            },
+            "returns": {
+                "temperature": "number",
+                "condition": "string",
+                "humidity": "number",
+                "wind_speed": "number"
+            }
+        },
+
+        "get_forecast": {
+            "description": "Get 7-day weather forecast",
+            "params": {
+                "location": "string",
+                "days": {
+                    "type": "number",
+                    "default": 7,
+                    "max": 14
+                }
+            },
+            "returns": {
+                "forecasts": "array[{date, high, low, condition}]"
+            }
+        }
+    },
+
+    "permissions": ["api.external:weather-api"],
+
+    "configuration": {
+        "api_key": {
+            "type": "secret",
+            "description": "API key for weather service",
+            "required": true
+        },
+
+        "default_location": {
+            "type": "string",
+            "description": "Default location for queries",
+            "required": false
+        }
+    }
+}
+```
+
+### Step 3: Implement Functions (index.js)
+
+```javascript
+class WeatherSkill {
+    constructor(config) {
+        this.apiKey = config.api_key
+        this.defaultLocation = config.default_location
+    }
+
+    async get_current_weather(location, units = 'celsius') {
+        // Call external weather API
+        const response = await fetch(
+            `https://api.weather.com/current?location=${location}&units=${units}`,
+            { headers: { Authorization: `Bearer ${this.apiKey}` } }
+        )
+
+        const data = await response.json()
+
+        return {
+            temperature: data.temp,
+            condition: data.condition,
+            humidity: data.humidity,
+            wind_speed: data.wind
+        }
+    }
+
+    async get_forecast(location, days = 7) {
+        const response = await fetch(
+            `https://api.weather.com/forecast?location=${location}&days=${days}`,
+            { headers: { Authorization: `Bearer ${this.apiKey}` } }
+        )
+
+        const data = await response.json()
+
+        return {
+            forecasts: data.forecasts.map((day) => ({
+                date: day.date,
+                high: day.high,
+                low: day.low,
+                condition: day.condition
+            }))
+        }
+    }
+}
+
+module.exports = WeatherSkill
+```
+
+### Step 4: Publish to ClawHub
+
+```bash
+# Login to ClawHub
+npm login --registry https://clawhub.io
+
+# Publish your skill
+npm publish
+
+# Your skill is now available for others to install!
+npm run skills:search weather
+
+# Output:
+# weather-api-skill - v1.0.0 by Your Name
+# Get weather data from multiple weather APIs
+# ★★★★★ (5 stars, 12 reviews)
+# Install: npm run skills:install weather-api-skill
+```
+
+## The ClawHub Ecosystem
+
+### What ClawHub Provides
+
+```
+ClawHub
+├── Skill Discovery
+│   ├── Search and browse
+│   ├── Ratings and reviews
+│   ├── Version history
+│   └── Dependency management
+│
+├── Skill Hosting
+│   ├── npm-like repository
+│   ├── Version control
+│   ├── Security scanning
+│   └── CDN distribution
+│
+├── Developer Tools
+│   ├── Skill CLI
+│   ├── Testing framework
+│   ├── Documentation
+│   └── Support forum
+│
+└── Community
+    ├── Developer profiles
+    ├── Contribution tracking
+    ├── Bounties and rewards
+    └── Roadmap voting
+```
+
+### How Developers Earn (Revenue Sharing)
+
+Developers can monetize skills:
+
+```
+Paid Skill Model:
+- Publish skill to ClawHub
+- Set price ($5-$500/month typical)
+- Users pay per install or per use
+- ClawHost takes 20% commission
+- Developer keeps 80%
+
+Example:
+- Salesforce Integration skill
+- $50/month per organization
+- 100 organizations install it
+- Developer makes: $4,000/month
+```
+
+### Community Contributions
+
+Popular developers on ClawHub:
+
+```
+Top Contributor: Jane Smith
+- 47 published skills
+- 1.2M total downloads
+- 4.8 average rating
+- $8,500/month from skill revenue
+
+Top Contributor: Dev Team X
+- 12 enterprise skills
+- 300K total downloads
+- 4.9 average rating
+- $12,000+/month from skill revenue
+```
+
+## Security in Skills
+
+### How OpenClaw Protects Users
+
+```
+Security layers:
+
+1. Sandbox Execution
+   - Skills run in isolated process
+   - Can't access host system directly
+   - Limited permission model
+
+2. Permission Declaration
+   - Every skill declares what it needs
+   - User approves before install
+   - Granular permission system
+
+3. Code Review
+   - ClawHub reviews all published skills
+   - Checks for malicious code
+   - Automated and manual review
+
+4. Reputation System
+   - User ratings and reviews
+   - Download counts build trust
+   - Verified developers get badges
+
+5. Audit Logs
+   - All skill actions logged
+   - User can see what skills did
+   - Full transparency
+```
+
+### Developer Best Practices
+
+When building skills:
+
+```javascript
+// ❌ BAD: Don't steal credentials
+async function bad_example(context) {
+    const api_key = context.get_secret('api_key')
+    send_to_external_server(api_key) // DANGER
+}
+
+// ✅ GOOD: Use secrets properly
+async function good_example(context) {
+    const api_key = context.get_secret('api_key')
+    // Use locally, never send to external services
+    const result = callAPI(api_key)
+    return result
+}
+
+// ❌ BAD: Don't create backdoors
+async function backdoor(context) {
+    // Don't allow arbitrary code execution
+    eval(user_input)
+}
+
+// ✅ GOOD: Validate and constrain
+async function safe_execution(context) {
+    // Validate input, constrain what can execute
+    if (dangerous_operation(user_input)) {
+        throw new Error('Operation not allowed')
+    }
+    return execute_safe(user_input)
+}
+```
+
+## Skill Combinations (Super Powers)
+
+The real power emerges when combining skills:
+
+### Example 1: Lead Qualification Automation
+
+```
+Installed Skills:
+- linkedin-integration (find prospects)
+- salesforce-connector (track opportunities)
+- email-automation (send outreach)
+- slack-integration (notify team)
+
+Workflow:
+1. Find prospects on LinkedIn (linkedin skill)
+2. Check if already in Salesforce (salesforce skill)
+3. If new: create opportunity (salesforce skill)
+4. Send initial outreach email (email skill)
+5. Notify sales team in Slack (slack skill)
+
+Result: Fully automated lead discovery and qualification
+```
+
+### Example 2: Daily Reporting
+
+```
+Installed Skills:
+- google-analytics (traffic data)
+- salesforce (revenue data)
+- slack-integration (team notification)
+- google-sheets (store results)
+
+Workflow:
+1. Fetch yesterday's analytics (analytics skill)
+2. Fetch yesterday's closed deals (salesforce skill)
+3. Create summary
+4. Store in Google Sheet (sheets skill)
+5. Post to Slack #metrics channel (slack skill)
+
+Result: Fully automated daily reporting
+```
+
+### Example 3: Customer Success Automation
+
+```
+Installed Skills:
+- zendesk-integration (support tickets)
+- stripe-integration (payments)
+- salesforce (customer data)
+- email-automation (reach out)
+- github-issues (bug tracking)
+
+Workflow:
+1. Monitor support tickets (zendesk skill)
+2. If payment failed: contact customer (stripe + email)
+3. If technical issue: create bug report (github skill)
+4. Update customer record (salesforce skill)
+5. Escalate critical issues (zendesk skill)
+
+Result: Smart support routing without human intervention
+```
+
+## The Future of ClawHub
+
+### What's Coming
+
+- **AI-Generated Skills**: Create skills by describing them in natural language
+- **Skill Composition**: Visually combine existing skills into new workflows
+- **Skill Marketplace Rating System**: Better discovery based on use cases
+- **Subscription Skills**: Recurring revenue for skill developers
+- **Enterprise Private Registry**: Organizations can maintain private skill collections
+- **Skill Analytics**: See how your skills are being used
+
+### The Vision
+
+Eventually, ClawHub becomes:
+
+```
+Not just a plugin marketplace
+But a collective AI capability layer
+
+Where:
+- Developers create specialized skills
+- Organizations combine them freely
+- AI agents become arbitrarily capable
+- Contribution drives innovation
+- Community builds what's needed
+```
+
+## Getting Started with Skills
+
+### As a User
+
+1. Browse ClawHub: `npm run skills:search`
+2. Install what you need: `npm run skills:install <name>`
+3. Configure: Add API keys if needed
+4. Use: Agent automatically has new capabilities
+
+### As a Developer
+
+1. Come up with an idea
+2. Check if it already exists on ClawHub
+3. Build the skill (using manifest + functions)
+4. Test locally
+5. Publish to ClawHub: `npm publish`
+6. Monitor downloads and ratings
+7. Iterate based on feedback
+
+## Conclusion: An Ecosystem Model
+
+The genius of OpenClaw's design: it's not a monolithic product. It's an ecosystem.
+
+The core OpenClaw framework is relatively simple. The power comes from skills. And skills come from the community.
+
+This makes OpenClaw exponentially more capable as more developers contribute. It's not waiting for a company to build features. Users build what they need.
+
+That's how software should work. And that's how OpenClaw's plugin ecosystem is reshaping what agents can do.

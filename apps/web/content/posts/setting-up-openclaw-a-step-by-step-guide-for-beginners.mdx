@@ -1,0 +1,562 @@
+---
+title: Setting Up OpenClaw — A Step-by-Step Guide for Beginners
+slug: setting-up-openclaw-a-step-by-step-guide-for-beginners
+description:
+    Your complete guide to installing and configuring OpenClaw. From download
+    to first message, everything a beginner needs to know.
+author: ClawHost
+publishedAt: '2026-02-26'
+tags:
+    - openclaw
+    - tutorial
+    - automation
+coverImage: /blogs/setting-up-openclaw-a-step-by-step-guide-for-beginners.webp
+---
+
+## Setting Up OpenClaw: A Beginner's Guide to Your First Agent
+
+You've decided OpenClaw is for you. Now what? This guide walks you through everything from zero to your first working agent in about 30 minutes.
+
+No deep technical knowledge required. If you can use a terminal and copy-paste commands, you can set up OpenClaw.
+
+## Two Ways to Get Started
+
+### Option 1: ClawHost (Easiest, 5 minutes)
+
+Use ClawHost, the managed hosting platform:
+
+**Pros**:
+
+- One-click deployment
+- No server management
+- Automatic backups
+- Professional support
+- Updates handled for you
+
+**Cons**:
+
+- Monthly cost ($20-200 depending on plan)
+- Data on ClawHost's servers (though encrypted)
+
+**Best for**: Non-technical users, businesses, first-time experimenters
+
+### Option 2: Self-Hosted (More control, 30-60 minutes)
+
+Install OpenClaw on your own server or laptop:
+
+**Pros**:
+
+- Free (after initial setup)
+- Complete data privacy
+- Full customization
+- No dependencies on external services
+
+**Cons**:
+
+- Requires technical setup
+- You manage servers and updates
+- Requires some upkeep
+
+**Best for**: Technical users, privacy-sensitive applications, long-term users
+
+This guide covers both. Choose one.
+
+## Path 1: ClawHost Setup (5 Minutes)
+
+### Step 1: Create Account
+
+Visit [clawhost.io](https://clawhost.io) and click "Sign Up":
+
+```
+Email: your-email@example.com
+Password: strong-password-here
+Name: Your Name
+```
+
+### Step 2: Choose a Plan
+
+Plans available:
+
+| Plan         | Cost      | Agents    | Compute |
+| ------------ | --------- | --------- | ------- |
+| Starter      | $20/month | 1         | Small   |
+| Professional | $60/month | 5         | Medium  |
+| Enterprise   | Custom    | Unlimited | Large   |
+
+For starting: choose **Starter**.
+
+### Step 3: Deploy Your First Agent
+
+Click "Create Agent". You'll see:
+
+```
+Agent Name: "My First Agent"
+Type: "General Purpose"
+Capabilities: (checkboxes for email, browser, etc.)
+```
+
+Select these capabilities:
+
+- ✅ Browser Automation
+- ✅ File Operations
+- ✅ Code Execution
+- ❌ Email (optional, set up later if needed)
+
+Click "Deploy".
+
+### Step 4: Get Your API Key
+
+In Settings → API Keys, copy your key. You'll use this to talk to your agent from other tools.
+
+### Step 5: Test Your Agent
+
+Click "Chat" and try:
+
+```
+You: "What time is it right now?"
+
+Agent: "The current time is [timestamp]"
+```
+
+**Congratulations! Your agent is running.**
+
+That's it for ClawHost. You're done.
+
+## Path 2: Self-Hosted Setup (30-60 Minutes)
+
+### Prerequisites
+
+Before starting, make sure you have:
+
+- **A laptop or desktop**: Any modern computer (Windows, Mac, Linux)
+- **Terminal access**: Comes built-in (Terminal on Mac/Linux, PowerShell on Windows)
+- **Git**: Download from [git-scm.com](https://git-scm.com)
+- **Node.js**: Download v18+ from [nodejs.org](https://nodejs.org)
+
+**Total setup time for these: ~10 minutes**
+
+### Step 1: Open Terminal
+
+**Mac/Linux**:
+Open Terminal app
+
+**Windows**:
+Open PowerShell (right-click → "Run as Administrator")
+
+### Step 2: Clone OpenClaw
+
+Copy-paste this:
+
+```bash
+git clone https://github.com/bfzli/openclaw.git
+cd openclaw
+```
+
+This downloads OpenClaw code to your computer.
+
+### Step 3: Install Dependencies
+
+Copy-paste this:
+
+```bash
+npm install
+```
+
+This installs all the packages OpenClaw needs. Takes 2-3 minutes.
+
+### Step 4: Configure Environment
+
+Copy-paste this:
+
+```bash
+cp .env.example .env
+```
+
+This creates a configuration file. Open it in your text editor (Notepad, VS Code, etc.):
+
+```bash
+# On Mac/Linux:
+nano .env
+
+# Or open in your editor:
+code .env
+```
+
+Find these lines and update them:
+
+```
+# LLM Configuration - Choose one:
+
+# Option A: Use Claude (requires Anthropic API key from https://console.anthropic.com)
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-xxxxx
+
+# Option B: Use ChatGPT (requires OpenAI API key from https://platform.openai.com/api-keys)
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-proj-xxxxx
+
+# Option C: Use Gemini (requires Google API key from https://aistudio.google.com/apikey)
+LLM_PROVIDER=google
+GOOGLE_API_KEY=xxxxx
+
+# If you want to use local models (no API key needed), keep this:
+# LLM_PROVIDER=ollama
+# OLLAMA_HOST=localhost:11434
+```
+
+**Getting an API Key**:
+
+The easiest option is Claude (Anthropic):
+
+1. Go to [https://console.anthropic.com](https://console.anthropic.com)
+2. Sign up for a free account
+3. Go to "API Keys"
+4. Click "Create Key"
+5. Copy the key
+6. Paste into `.env` as `ANTHROPIC_API_KEY=sk-ant-xxxxx`
+
+You'll need to add a payment method and purchase credits to use the API. Start small — even a few dollars of credits is plenty to experiment.
+
+Save the file.
+
+### Step 5: Start OpenClaw
+
+Copy-paste this:
+
+```bash
+npm run gateway
+```
+
+You should see:
+
+```
+Gateway starting on port 3000...
+✓ Database initialized
+✓ Skills loaded
+✓ Memory system ready
+✓ Gateway listening on http://localhost:3000
+```
+
+**Leave this terminal window open.**
+
+### Step 6: Open Another Terminal
+
+You need a second terminal window to interact with OpenClaw.
+
+**Mac/Linux**:
+Cmd+Tab to another Terminal window
+
+**Windows**:
+Open another PowerShell window
+
+Navigate to the OpenClaw folder:
+
+```bash
+cd openclaw
+```
+
+### Step 7: Test Your Agent
+
+Copy-paste this:
+
+```bash
+npm run task "What's the weather like right now?"
+```
+
+The agent will think for a moment, then respond:
+
+```
+Agent: "I don't have access to real-time weather data,
+but I can help you search for it online if you'd like."
+```
+
+**Congratulations! Your agent works.**
+
+## Your First Real Task
+
+Now try something more useful:
+
+### Task: Get Information About a Topic
+
+```bash
+npm run task "Research the top 5 AI agents being developed in 2026.
+Focus on capabilities and who's funding them."
+```
+
+The agent will:
+
+1. Understand the request
+2. Browse the web for information
+3. Compile findings
+4. Return a summary
+
+Takes 30-60 seconds.
+
+### Task: Create a File
+
+```bash
+npm run task "Create a file called 'shopping-list.txt' with these items:
+- Milk
+- Eggs
+- Bread
+- Coffee"
+```
+
+The agent creates the file. Check your project folder.
+
+### Task: Write Code
+
+```bash
+npm run task "Write a Python script that generates 10 random numbers
+between 1 and 100 and calculates their average."
+```
+
+The agent writes code, saves it, runs it, and shows the output.
+
+## Configuring Your Agent
+
+You probably want to customize your agent. Create a file called `my-agent.config.json`:
+
+```json
+{
+    "name": "My Personal Assistant",
+    "type": "general",
+
+    "capabilities": {
+        "browser": true,
+        "code_execution": true,
+        "file_operations": true,
+        "email": true,
+        "calendar": true
+    },
+
+    "preferences": {
+        "response_style": "professional",
+        "verbosity": "concise",
+        "language": "English"
+    },
+
+    "limits": {
+        "max_api_calls_per_task": 10,
+        "max_file_size_mb": 100,
+        "timeout_seconds": 300
+    }
+}
+```
+
+Then load it:
+
+```bash
+npm run task:with-config my-agent.config.json "Your task here"
+```
+
+## Adding Email (Optional)
+
+To let your agent access email:
+
+**Gmail**:
+
+1. Go to [myaccount.google.com/security](https://myaccount.google.com/security)
+2. Enable "2-Step Verification"
+3. Create an "App Password" (not your regular password)
+4. Copy the 16-character password
+5. In `.env`, add:
+
+```
+EMAIL_PROVIDER=gmail
+GMAIL_EMAIL=your-email@gmail.com
+GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
+```
+
+**Restart OpenClaw**:
+
+```bash
+# Stop the currently running gateway (Ctrl+C in that terminal)
+# Then:
+npm run gateway
+```
+
+Now try:
+
+```bash
+npm run task "What's in my email inbox?"
+```
+
+## Stopping OpenClaw
+
+When you're done, stop the Gateway:
+
+In the terminal where it's running, press:
+
+```
+Ctrl+C
+```
+
+## Next Steps
+
+### 1. Read the Documentation
+
+Visit [openclaw.io/docs](https://openclaw.io/docs) for detailed docs.
+
+### 2. Explore Skills
+
+OpenClaw has "skills" (modules for specific capabilities). See available skills:
+
+```bash
+npm run skills:list
+```
+
+Install one:
+
+```bash
+npm run skills:install email-advanced
+```
+
+### 3. Create Scheduled Tasks
+
+Schedule tasks to run automatically:
+
+```bash
+npm run schedule "Every morning at 9 AM, send me a summary of yesterday's emails"
+```
+
+### 4. Set Up Integrations
+
+Connect OpenClaw to:
+
+- Slack (message your agent from Slack)
+- Telegram (message your agent from Telegram)
+- Discord (use agent in Discord servers)
+
+See [integration docs](https://openclaw.io/docs/integrations).
+
+### 5. Deploy to a Server
+
+When you're ready to leave this running 24/7, deploy to a VPS:
+
+[Self-Hosting OpenClaw Guide](./self-hosting-openclaw-running-your-own-ai-agent-on-a-vps.mdx)
+
+## Troubleshooting
+
+### "API key not valid"
+
+```
+Problem: You're getting authentication errors
+Solution:
+1. Copy your API key again carefully (no extra spaces)
+2. Paste it in .env
+3. Save the file
+4. Restart OpenClaw (Ctrl+C, then npm run gateway)
+```
+
+### "npm: command not found"
+
+```
+Problem: Terminal doesn't recognize npm
+Solution:
+1. Restart terminal
+2. Reinstall Node.js from nodejs.org
+3. Restart computer if still failing
+```
+
+### "Port 3000 already in use"
+
+```
+Problem: Something else is using port 3000
+Solution 1: Quit other apps using that port
+Solution 2: Use a different port:
+  GATEWAY_PORT=3001 npm run gateway
+```
+
+### "Agent not responding"
+
+```
+Problem: You run a task and it hangs
+Solution:
+1. Wait up to 2 minutes (first run downloads models)
+2. If still nothing, stop (Ctrl+C) and restart
+3. Check API key is correct
+4. Check internet connection works
+```
+
+### "File not found"
+
+```
+Problem: Agent can't find files it created
+Solution:
+1. Check file is in the right folder
+2. Use absolute paths in requests
+3. Check file permissions
+```
+
+## Common First-Time Mistakes
+
+❌ **Don't**: Put API key in version control
+
+✅ **Do**: Keep API key in `.env` which is in `.gitignore`
+
+❌ **Don't**: Run multiple gateways at once
+
+✅ **Do**: Use one gateway and multiple agents connected to it
+
+❌ **Don't**: Give agent access to everything
+
+✅ **Do**: Start with minimal capabilities, add as needed
+
+❌ **Don't**: Test with real data
+
+✅ **Do**: Test with sample/dummy data first
+
+❌ **Don't**: Max out API calls immediately
+
+✅ **Do**: Use free tier, understand costs, scale gradually
+
+## Cost Expectations
+
+### Free Tier
+
+Claude API: Pay-as-you-go (start with a small credit purchase)
+OpenAI API: Pay-as-you-go
+Google Gemini: Free tier available
+Local models via Ollama: Completely free
+
+**Cost**: Near $0 to start with free tiers and local models
+
+### Low Usage (<100M tokens/month)
+
+OpenClaw tasks: ~$10/month in API costs
+
+**Total**: $10-15/month
+
+### Medium Usage (1B tokens/month)
+
+OpenClaw tasks: ~$100/month in API costs OR $70/month self-hosted
+
+**Total**: $70-100/month
+
+### Heavy Usage (10B+ tokens/month)
+
+Self-hosted is cheaper (breaks even)
+
+**Total**: $150-500/month depending on infrastructure
+
+## What to Do Now
+
+1. **Choose**: ClawHost or self-hosted?
+2. **Set up**: Follow the right guide above
+3. **Test**: Run a few test tasks
+4. **Integrate**: Connect to your systems (Slack, email, etc.)
+5. **Automate**: Schedule recurring tasks
+6. **Expand**: Add more capabilities as needed
+
+You now have a personal AI agent working for you. That's powerful.
+
+## Conclusion: You're Ready
+
+Setting up OpenClaw isn't complicated. Whether you choose ClawHost for simplicity or self-hosted for control, you can have your first agent running in under an hour.
+
+From there, the possibilities expand. Your agent learns your patterns, integrates with your systems, and works autonomously.
+
+The future of work isn't distant. It's on your computer right now.
+
+Welcome to autonomous AI.

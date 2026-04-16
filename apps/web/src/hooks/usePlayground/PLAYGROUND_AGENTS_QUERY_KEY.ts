@@ -1,0 +1,3 @@
+const PLAYGROUND_AGENTS_QUERY_KEY = 'claw-agents'
+
+export default PLAYGROUND_AGENTS_QUERY_KEY

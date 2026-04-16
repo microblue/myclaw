@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /claws
+Disallow: /ssh-keys
+Disallow: /account
+Disallow: /billing
+Disallow: /login
+Sitemap: https://clawhost.cloud/sitemap.xml

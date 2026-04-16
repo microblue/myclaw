@@ -1,0 +1,13 @@
+{
+  "name": "myclaw-www",
+  "pages_build_output_dir": "dist",
+  "vars": {
+    "VITE_API_URL": "https://myclaw.one/api",
+    "VITE_FIREBASE_API_KEY": "AIzaSyCJ4XGUKUXRmzcyftqKwEcc4X0gnZaOfcU",
+    "VITE_FIREBASE_PROJECT_ID": "myclaw-754d1",
+    "VITE_FIREBASE_STORAGE_BUCKET": "myclaw-754d1.firebasestorage.app",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "243283889136",
+    "VITE_FIREBASE_APP_ID": "1:243283889136:web:5b4ccfa182330b699eab35",
+    "VITE_FIREBASE_MEASUREMENT_ID": "G-S06MT6CNXS"
+  }
+}

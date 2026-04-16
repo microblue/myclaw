@@ -1,0 +1,455 @@
+---
+title: Running OpenClaw on a Raspberry Pi — The Budget-Friendly Approach
+slug: running-openclaw-on-a-raspberry-pi-the-budget-friendly-approach
+description:
+    Yes, OpenClaw runs on Raspberry Pi. Learn how to set up a $35 AI agent
+    server and what to expect in terms of performance.
+author: ClawHost
+publishedAt: '2026-02-26'
+tags:
+    - openclaw
+    - tutorial
+    - automation
+coverImage: /blogs/running-openclaw-on-a-raspberry-pi-the-budget-friendly-approach.webp
+---
+
+## Running OpenClaw on a Raspberry Pi: The Budget-Friendly Approach
+
+You don't need a powerful server to run OpenClaw. A Raspberry Pi works just fine for lightweight agent tasks.
+
+This opens up a whole new use case: personal AI agents that cost almost nothing to run.
+
+## Why Raspberry Pi?
+
+Raspberry Pi is revolutionary because it's:
+
+```
+Price: $35-100
+Power: Enough for OpenClaw
+Form factor: Tiny (credit card size)
+Reliability: Designed for 24/7 operation
+Cost per year: ~$5 in electricity
+```
+
+Compare to a VPS:
+
+```
+Cloud VPS: $50-200/month = $600-2400/year
+Raspberry Pi: $35 one-time + $5/year = $40/year
+```
+
+For cost-conscious users, Pi is the obvious choice.
+
+## What You Need
+
+### Hardware
+
+- Raspberry Pi 4 (8GB recommended for agent work)
+- USB-C power adapter (sold separately)
+- microSD card (64GB minimum)
+- Ethernet cable or WiFi
+- (Optional) Case to protect it
+
+Total cost: ~$75-100
+
+### Software (Free)
+
+- Raspberry Pi OS (Linux-based)
+- Node.js
+- OpenClaw
+
+## Installation
+
+### Step 1: Install Raspberry Pi OS
+
+1. Buy Pi
+2. Download Pi Imager
+3. Burn OS to microSD card
+4. Insert into Pi
+5. Boot up
+
+Takes 10 minutes.
+
+### Step 2: Set Up Networking
+
+SSH into your Pi:
+
+```bash
+ssh pi@raspberrypi.local
+```
+
+(Default password: raspberry)
+
+### Step 3: Install Dependencies
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash
+sudo apt install -y nodejs npm
+
+# Verify
+node --version  # Should be v20+
+npm --version
+```
+
+### Step 4: Install OpenClaw
+
+```bash
+cd ~
+git clone https://github.com/bfzli/openclaw.git
+cd openclaw
+
+npm install
+```
+
+Takes ~5 minutes.
+
+### Step 5: Configure
+
+Copy environment file:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Edit to use your preferred model:
+
+```
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Or use local model (no API key):
+
+```
+LLM_PROVIDER=ollama
+OLLAMA_HOST=http://localhost:11434
+```
+
+### Step 6: Start OpenClaw
+
+```bash
+npm run gateway
+```
+
+You should see:
+
+```
+✓ Gateway listening on http://localhost:3000
+```
+
+### Step 7: Access From Other Devices
+
+From another computer:
+
+```bash
+# Find Pi's IP
+ping raspberrypi.local
+
+# Use it to access OpenClaw
+curl http://[PI_IP]:3000/health
+```
+
+## Performance Expectations
+
+Raspberry Pi 4 (8GB):
+
+```
+Task complexity    | Time   | Quality
+Simple question    | 2-5s   | ⭐⭐⭐⭐⭐
+Code generation    | 10-20s | ⭐⭐⭐⭐
+Research task      | 30-60s | ⭐⭐⭐⭐
+Complex analysis   | 60-120s| ⭐⭐⭐⭐
+```
+
+Slower than a VPS, but still usable.
+
+For most household tasks: plenty fast enough.
+
+## Use Cases
+
+### 1. Home Automation Hub
+
+```bash
+Deploy agent with:
+- Smart home control
+- Schedule management
+- Weather monitoring
+- Alert system
+
+Agent runs 24/7 on Pi
+Cost: $35 + electricity
+```
+
+### 2. Personal Assistant
+
+```bash
+Agent tracks:
+- Email summary (check daily)
+- Calendar (remind of meetings)
+- Tasks (manage todos)
+- Research requests
+
+Always running on your Pi
+```
+
+### 3. Home Surveillance/Monitoring
+
+```bash
+Agent monitors:
+- Security cameras
+- Temperature sensors
+- Door/window sensors
+- Water/gas levels
+
+Alerts you of issues
+```
+
+### 4. Backup & Archive System
+
+```bash
+Agent:
+- Backs up your data hourly
+- Archives old files
+- Verifies backups
+- Notifies of issues
+```
+
+### 5. Personal Search Engine
+
+```bash
+Agent:
+- Indexes your documents
+- Searches across files
+- Finds what you need
+- Explains findings
+```
+
+## Storage Considerations
+
+Raspberry Pi storage:
+
+```
+microSD card: 64GB typical
+Available for agents: ~40GB
+
+Can store:
+- Agent data + memories: 1-2GB
+- Document archives: 10-20GB
+- Backup copies: 10-20GB
+- Operating system: 3-4GB
+```
+
+For more storage, add external USB drive:
+
+```bash
+# Connect USB drive
+sudo blkid  # Find device name
+sudo mkdir /mnt/storage
+sudo mount /dev/sda1 /mnt/storage
+
+# Now you have 1-2TB extra
+```
+
+## Power & Electricity
+
+Raspberry Pi power usage:
+
+```
+Idle: 2-3 watts
+Running agent tasks: 5-7 watts
+Average: ~4 watts
+24/7 for one year: ~35 kWh
+
+Cost (at $0.12/kWh): ~$4/year
+```
+
+Practically free to run.
+
+Compare:
+
+```
+Laptop running 24/7: ~$30-50/year
+Cloud VPS: $600-2400/year
+Pi: ~$1/year
+```
+
+## Reliability
+
+Raspberry Pi reliability:
+
+```
+In practice: Many Pis run reliably for years
+The SD card is typically the weakest link — use a quality card
+```
+
+It's designed for long-term, always-on operation.
+
+## Networking Setup
+
+### Local Network Only
+
+```
+Pi: 192.168.1.100
+Access from home network: http://192.168.1.100:3000
+```
+
+### Remote Access
+
+To access from outside your home:
+
+Option 1: Ngrok tunnel
+
+```bash
+ngrok http 3000
+# Gives you a public URL
+```
+
+Option 2: SSH tunnel
+
+```bash
+ssh -L 3000:localhost:3000 pi@[your_ip]
+# Access via localhost:3000
+```
+
+Option 3: Self-hosted DNS + firewall port forward
+
+```
+1. Register domain
+2. Point to your home IP
+3. Port forward 3000 on router
+4. Use domain to access Pi
+```
+
+## Cooling
+
+Raspberry Pi gets warm under load:
+
+```
+Idle: 40°C
+Running tasks: 50-60°C
+Thermal throttling: 85°C (slows down)
+```
+
+**Solution:** Small heatsink + case
+
+```bash
+# Buy: Pi heatsink kit (~$10)
+# Install: 5 minutes
+# Keeps Pi cool under load
+```
+
+## Backup Strategy
+
+Since Pi is running 24/7, backup its data:
+
+```bash
+# Backup Pi to external drive
+rsync -av ~/openclaw-data /mnt/backup/
+
+# Schedule nightly
+0 2 * * * rsync -av ~/openclaw-data /mnt/backup/
+```
+
+If Pi fails, you have backups.
+
+## Troubleshooting
+
+### Pi too slow
+
+```
+Problem: Agent tasks taking too long
+Solution:
+- Use cheaper model (Mistral)
+- Add external SSD
+- Upgrade to Pi 5 (faster CPU)
+```
+
+### Out of storage
+
+```
+Problem: microSD card full
+Solution:
+- Add USB drive
+- Archive old agent memory
+- Use cloud storage for backups
+```
+
+### Can't access from network
+
+```
+Problem: Can't reach http://[PI_IP]:3000
+Solution:
+- Ping pi to check network
+- Check firewall (sudo ufw status)
+- Restart OpenClaw (npm run gateway)
+```
+
+## Real Examples
+
+### Home Automation on Pi
+
+```
+Cost: $75 (Pi) + $10 (sensors) = $85
+
+Your agent:
+- Connects to Home Assistant for home control
+- Learns your routine
+- Automates lights, temperature via smart home APIs
+- Alerts on unusual activity
+```
+
+### Personal Knowledge Management
+
+```
+Cost: $75 (Pi) + $20 (storage) = $95
+Replaces: Expensive cloud services
+
+Your agent:
+- Indexes all your documents
+- Remembers what you ask
+- Gives you instant answers
+```
+
+### Self-Hosted Media Assistant
+
+```
+Cost: $75 (Pi) + $50 (external drive) = $125
+
+Your agent:
+- Helps organize your media library
+- Searches and finds content across your files
+- Recommends based on your preferences
+```
+
+## When Pi Is Enough
+
+**Use Pi when:**
+
+- Running locally only
+- Low-latency not critical
+- Don't need 24/7 reliability
+- Budget is tight
+- Home/personal projects
+
+**Use Cloud VPS when:**
+
+- Need 99.9% uptime
+- Multiple concurrent users
+- Need auto-scaling
+- Running production systems
+- Large workloads
+
+## Conclusion: The $35 AI Agent
+
+Most people think AI infrastructure must be expensive.
+
+Raspberry Pi proves otherwise.
+
+For $35 + electricity, you get a 24/7 AI agent. Running locally. Completely private.
+
+That's democratizing AI in the truest sense.

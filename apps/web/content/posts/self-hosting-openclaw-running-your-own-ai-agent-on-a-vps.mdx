@@ -1,0 +1,603 @@
+---
+title: Self-Hosting OpenClaw — Running Your Own AI Agent on a VPS
+slug: self-hosting-openclaw-running-your-own-ai-agent-on-a-vps
+description:
+    Complete control over your AI. Learn how to self-host OpenClaw on a VPS,
+    maintain your data, and avoid dependency on third parties.
+author: ClawHost
+publishedAt: '2026-02-26'
+tags:
+    - openclaw
+    - self-hosting
+    - vps
+    - deployment
+    - privacy
+coverImage: /blogs/self-hosting-openclaw-running-your-own-ai-agent-on-a-vps.webp
+---
+
+## Self-Hosting OpenClaw: Your Own AI Infrastructure
+
+One of OpenClaw's key advantages: run it entirely on your own servers. No cloud dependency, no external service, complete control.
+
+This is fundamentally different from cloud-first AI. Your data stays on your infrastructure. You control the entire stack. You're not dependent on anyone else's service uptime.
+
+## Why Self-Host?
+
+### Data Privacy (The Biggest Reason)
+
+When you use cloud services, your data goes through someone else's servers:
+
+```
+ChatGPT or Claude API:
+Your message → OpenAI's servers → Model → Response
+(Your data is temporarily on their infrastructure)
+
+OpenClaw Self-Hosted:
+Your message → Your server → Model → Response
+(Your data never leaves your infrastructure)
+```
+
+For regulated industries (healthcare, finance, law, government), this difference is crucial:
+
+- **Healthcare**: HIPAA requires data stay on your infrastructure
+- **Finance**: Compliance regulations forbid external data storage
+- **Law**: Attorney-client privilege requires privacy
+- **Government**: Classified data can't go to cloud services
+
+Self-hosted OpenClaw satisfies these requirements.
+
+### Cost Efficiency at Scale
+
+After a certain scale, self-hosting is cheaper than API calls:
+
+```
+Cloud API model (e.g., Claude API):
+- Cost varies by model and usage
+- Heavy usage (1B tokens/month) can cost thousands
+- Annual costs add up quickly at scale
+
+Self-hosted model:
+- VPS cost: $50-200/month
+- Model storage/compute: $200-500/month
+- Annual: $3,000-8,400
+
+Breakeven: ~500M tokens/month
+Above breakeven: Self-hosting wins financially
+```
+
+Organizations with heavy agent usage break even quickly.
+
+### Customization and Control
+
+Self-hosted means you control everything:
+
+```
+You can:
+- Modify the agent framework
+- Add custom skills
+- Implement proprietary integrations
+- Tune performance for your use case
+- Control exactly how data flows
+- Audit every line of code
+```
+
+Cloud services lock you into their constraints.
+
+### Reliability and Uptime
+
+Cloud services have outages:
+
+```
+Cloud APIs occasionally experience outages
+(Even major providers have hours of downtime per year)
+
+Self-hosted:
+- You control uptime
+- You can have redundancy
+- You control rollback if problems happen
+- You're not dependent on external SLAs
+```
+
+For mission-critical systems, self-hosting gives you control.
+
+### Compliance and Governance
+
+Many organizations have policies requiring:
+
+- Data to stay within certain jurisdictions
+- All infrastructure to be managed internally
+- Full audit trails of all operations
+- No external data flow
+
+Self-hosting satisfies these requirements.
+
+## The Self-Hosting Trade-Offs
+
+Self-hosting isn't free of costs:
+
+| Aspect                    | Self-Hosted | Cloud (ClawHost)      |
+| ------------------------- | ----------- | --------------------- |
+| **Setup effort**          | High        | Low                   |
+| **Maintenance burden**    | High        | None                  |
+| **Uptime responsibility** | Yours       | ClawHost's            |
+| **Scaling complexity**    | Complex     | Simple                |
+| **Upfront cost**          | Low-medium  | Medium                |
+| **Ongoing cost**          | Medium-high | Monthly/pay-as-you-go |
+| **Data privacy**          | Complete    | ClawHost-managed      |
+| **Customization**         | Unlimited   | Limited               |
+
+Self-hosting is best if you have:
+
+- Technical expertise
+- Significant usage
+- Privacy/compliance requirements
+- Desire for customization
+
+## Complete Self-Hosting Guide
+
+### Step 1: Choose Your VPS Provider
+
+| Provider    | Cost        | Specs               | Notes                         |
+| ----------- | ----------- | ------------------- | ----------------------------- |
+| **Hetzner** | €4-50/month | 1-8 CPU, 2-32GB RAM | Very affordable, Europe-based |
+
+**Minimum specs**:
+
+- 2 CPU cores
+- 4GB RAM minimum (8GB recommended)
+- 50GB SSD storage
+- 1Gbps network (most VPS have this)
+
+### Step 2: Set Up Your VPS
+
+Once you've rented a VPS, SSH in and prepare it:
+
+```bash
+# Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js (v18 or later)
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs npm
+
+# Install Docker (for running models locally)
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# Add your user to docker group
+sudo usermod -aG docker $USER
+
+# Install Git
+sudo apt install -y git
+
+# Install PostgreSQL (for agent data storage)
+sudo apt install -y postgresql postgresql-contrib
+
+# Start PostgreSQL
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+### Step 3: Install OpenClaw
+
+```bash
+# Clone the repository
+git clone https://github.com/bfzli/openclaw.git
+cd openclaw
+
+# Install dependencies
+npm install
+
+# Copy example environment file
+cp .env.example .env
+
+# Configure your environment
+nano .env
+```
+
+In `.env`, set:
+
+```bash
+# Database connection
+DATABASE_URL=postgres://user:password@localhost:5432/openclaw
+
+# Model configuration
+LLM_PROVIDER=openai  # or anthropic, gemini, ollama for local
+LLM_API_KEY=your-api-key-here
+
+# Gateway configuration
+GATEWAY_HOST=0.0.0.0
+GATEWAY_PORT=3000
+
+# Security
+JWT_SECRET=generate-a-long-random-string-here
+```
+
+### Step 4: Set Up the Database
+
+```bash
+# Create PostgreSQL user and database
+sudo -u postgres psql
+```
+
+In the PostgreSQL prompt:
+
+```sql
+CREATE USER openclaw WITH PASSWORD 'secure-password-here';
+CREATE DATABASE openclaw OWNER openclaw;
+GRANT ALL PRIVILEGES ON DATABASE openclaw TO openclaw;
+\q
+```
+
+Then run migrations:
+
+```bash
+npm run migrate
+```
+
+### Step 5: Configure Your First Agent
+
+Create a configuration file `agents/my-agent.yml`:
+
+```yaml
+name: 'My First Agent'
+type: 'general'
+
+capabilities:
+    - email
+    - browser
+    - file_operations
+    - code_execution
+
+permissions:
+    email:
+        read: true
+        send: true
+        folders: ['inbox', 'sent']
+
+    browser:
+        enabled: true
+        max_requests: 100_per_day
+
+    file_operations:
+        enabled: true
+        allowed_paths:
+            - '/home/openclaw/data'
+            - '/home/openclaw/documents'
+
+model:
+    provider: 'openai'
+    model: 'gpt-4'
+    temperature: 0.7
+
+memory:
+    type: 'file_based'
+    path: '/home/openclaw/memory'
+    retention_days: 365
+```
+
+### Step 6: Start the Gateway
+
+```bash
+# Start the Gateway (main control point)
+npm run gateway
+
+# You should see:
+# Gateway listening on 0.0.0.0:3000
+```
+
+### Step 7: Create and Run Your Agent
+
+```bash
+# In another terminal
+npm run agent:create agents/my-agent.yml
+
+# Run a task
+npm run agent:task my-agent "What's my email inbox status?"
+
+# You should see the agent execute the task and report back
+```
+
+### Step 8: Set Up a Reverse Proxy (Nginx)
+
+If you want to access your agent from outside, set up Nginx:
+
+```bash
+sudo apt install -y nginx
+```
+
+Create `/etc/nginx/sites-available/openclaw`:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+
+    ssl_certificate /etc/ssl/certs/your-cert.crt;
+    ssl_certificate_key /etc/ssl/private/your-key.key;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Enable it:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### Step 9: Run With Systemd (Auto-Start on Reboot)
+
+Create `/etc/systemd/system/openclaw.service`:
+
+```ini
+[Unit]
+Description=OpenClaw Agent Gateway
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=openclaw
+WorkingDirectory=/home/openclaw/openclaw
+ExecStart=/usr/bin/npm run gateway
+Restart=on-failure
+RestartSec=10
+
+Environment="NODE_ENV=production"
+Environment="DATABASE_URL=postgres://openclaw:password@localhost:5432/openclaw"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable it:
+
+```bash
+sudo systemctl enable openclaw
+sudo systemctl start openclaw
+sudo systemctl status openclaw
+```
+
+## Local Model Option: Running LLMs Locally
+
+For complete privacy, run the LLM locally using Ollama:
+
+```bash
+# Install Ollama
+curl https://ollama.com/install.sh | sh
+
+# Download a model (Llama 3, Mistral, etc.)
+ollama pull mistral
+
+# Run Ollama server (runs on localhost:11434)
+ollama serve
+
+# In another terminal, configure OpenClaw to use Ollama
+# Set in .env:
+LLM_PROVIDER=ollama
+OLLAMA_HOST=localhost:11434
+LLM_MODEL=mistral
+```
+
+Trade-off: Local models are slower and less capable, but 100% private.
+
+## Monitoring and Maintenance
+
+### Health Checks
+
+```bash
+# Monitor Gateway status
+curl http://localhost:3000/health
+
+# Check agent status
+npm run agent:status my-agent
+
+# View logs
+sudo journalctl -u openclaw -f
+```
+
+### Backups
+
+Back up your critical data:
+
+```bash
+# Backup database
+pg_dump openclaw > /backup/openclaw-$(date +%Y%m%d).sql
+
+# Backup agent memory
+tar -czf /backup/agent-memory-$(date +%Y%m%d).tar.gz /home/openclaw/memory
+
+# Automate with cron
+@daily pg_dump openclaw > /backup/openclaw-$(date +\%Y\%m\%d).sql
+```
+
+### Updates
+
+Update OpenClaw periodically:
+
+```bash
+cd /home/openclaw/openclaw
+git fetch origin
+git checkout Production
+npm install
+npm run migrate
+sudo systemctl restart openclaw
+```
+
+### Performance Tuning
+
+For high-load scenarios:
+
+```javascript
+// In config file
+database: {
+  max_connections: 20,
+  connection_timeout: 30000
+},
+
+cache: {
+  enabled: true,
+  ttl: 3600  // 1 hour
+},
+
+rate_limiting: {
+  per_minute: 60,
+  per_hour: 1000
+}
+```
+
+## Security Best Practices
+
+### 1. Use Firewall Rules
+
+```bash
+# Allow only necessary ports
+sudo ufw enable
+sudo ufw default deny incoming
+sudo ufw allow ssh
+sudo ufw allow 80/tcp   # HTTP
+sudo ufw allow 443/tcp  # HTTPS
+sudo ufw allow 3000/tcp # Only from your IP if possible
+```
+
+### 2. Use Strong Passwords
+
+```bash
+# Generate strong password
+openssl rand -base64 32
+
+# Store securely
+echo 'JWT_SECRET=generatedstring' > /etc/openclaw/secrets
+chmod 600 /etc/openclaw/secrets
+```
+
+### 3. Use SSL/TLS
+
+Get free certificates from Let's Encrypt:
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot certonly -d your-domain.com
+# Certificate stored in /etc/letsencrypt/live/your-domain.com/
+```
+
+### 4. Regular Security Updates
+
+```bash
+# Set automatic updates
+sudo apt install -y unattended-upgrades
+sudo systemctl enable unattended-upgrades
+```
+
+## Troubleshooting Common Issues
+
+### Issue: "Connection refused" to Gateway
+
+```bash
+# Check if Gateway is running
+ps aux | grep gateway
+
+# Check logs
+sudo journalctl -u openclaw -n 50
+
+# Check port is listening
+sudo netstat -tlnp | grep 3000
+```
+
+### Issue: Database connection failures
+
+```bash
+# Test PostgreSQL
+psql -U openclaw -d openclaw
+
+# Check connection string in .env
+# Restart PostgreSQL
+sudo systemctl restart postgresql
+```
+
+### Issue: Agent tasks timing out
+
+```bash
+# Increase timeout in .env
+AGENT_TASK_TIMEOUT=60000  # 60 seconds
+
+# Check system resources
+free -h
+df -h
+```
+
+## Monitoring Costs
+
+Self-hosted cost breakdown:
+
+```
+Monthly costs:
+- VPS (2 CPU, 8GB RAM): $40-60
+- Domain name: $10-15
+- SSL certificate: $0 (Let's Encrypt)
+- Backups/storage: $10-20
+- Optional: Email service for alerts: $10-20
+
+Total: $70-115/month
+
+vs. ClawHost: $20-500/month depending on features and usage
+vs. Cloud APIs: Variable, depends on model and usage volume
+```
+
+For heavy usage, self-hosting breaks even or saves money.
+
+## When Self-Hosting Makes Sense
+
+**Good fit for**:
+
+- Organizations with heavy agent usage (>500M tokens/month)
+- Regulated industries (healthcare, finance, government)
+- Privacy-sensitive data
+- Organizations with technical teams
+- Long-term commitment (3+ years)
+
+**Not a good fit for**:
+
+- Small projects or experiments
+- Organizations without technical staff
+- Applications requiring 99.99% uptime
+- Rapidly changing requirements
+- Budget-conscious (small teams)
+
+## The Future of Self-Hosting
+
+As OpenClaw matures:
+
+- Kubernetes deployment options
+- Automated scaling
+- Federation (multiple self-hosted nodes)
+- Better observability tools
+- Simplified setup (one-command deployment)
+
+## Conclusion: You're In Control
+
+Self-hosting OpenClaw means complete control. Your data stays yours. Your infrastructure is yours. Your agent works on your terms.
+
+It's more work than cloud hosting. But for organizations that need privacy, compliance, or scale, it's the right choice.
+
+And OpenClaw makes it possible without requiring cutting-edge DevOps expertise.
+
+Set it and forget it. Your agent runs on your infrastructure, continuously improving.
