@@ -85,7 +85,7 @@ const MacosDesktopPreview: FC<MacosDesktopPreviewProps> = ({
                     </div>
 
                     <div className='flex flex-1 flex-col items-center px-6 pb-16 pt-4 md:px-10 md:pb-20 md:pt-6'>
-                        <div className='flex h-[70vh] w-full flex-col overflow-hidden rounded-xl border border-white/20 shadow-2xl'>
+                        <div className='flex h-[35vh] w-full flex-col overflow-hidden rounded-xl border border-white/20 shadow-2xl'>
                             <div className='flex items-center gap-2 bg-[#2a2a2a]/95 px-4 py-2 backdrop-blur-sm'>
                                 <div className='flex items-center gap-1.5'>
                                     <div className='h-3 w-3 rounded-full bg-[#ff5f57]' />
