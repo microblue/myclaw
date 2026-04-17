@@ -26,7 +26,7 @@ const Blog: FC = (): ReactNode => {
                 data={{
                     '@context': 'https://schema.org',
                     '@type': 'Blog',
-                    name: 'MyClaw Blog',
+                    name: 'MyClaw.One Blog',
                     description: t('blog.description'),
                     url: `https://${getBaseDomain()}/${PATHS.BLOG}`
                 }}

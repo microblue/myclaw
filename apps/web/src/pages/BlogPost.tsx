@@ -88,7 +88,7 @@ const BlogPost: FC = (): ReactNode => {
                     url: postUrl,
                     publisher: {
                         '@type': 'Organization',
-                        name: 'MyClaw',
+                        name: 'MyClaw.One',
                         logo: {
                             '@type': 'ImageObject',
                             url: 'https://cdn.myclaw.one/assets/myclaw-logo-light.png'

@@ -25,7 +25,7 @@ const de: Translations = {
         pageNotFound: 'Seite nicht gefunden',
         closeNotification: 'Benachrichtigung schließen',
         beta: 'Beta',
-        brandName: 'MyClaw',
+        brandName: 'MyClaw.One',
         brandNameGo: 'MyClaw Go',
         brandNameGoVersion: 'MyClaw Go {{version}}',
         menuFile: 'Ablage',
@@ -88,7 +88,7 @@ const de: Translations = {
         cloud: 'Cloud',
         cloudSubtitle: 'Technisch',
         go: 'Go',
-        desktop: 'Go',
+        desktop: 'Desktop',
         goSubtitle: 'Nicht-technisch'
     },
     go: {
@@ -240,7 +240,7 @@ const de: Translations = {
     },
     footer: {
         website: 'Webseite',
-        copyrightName: 'MyClaw',
+        copyrightName: 'MyClaw.One',
         copyrightRights: 'Alle Rechte vorbehalten.',
         termsOfService: 'Nutzungsbedingungen',
         privacyPolicy: 'Datenschutzerklärung',
@@ -261,7 +261,7 @@ const de: Translations = {
         affiliateProgram: 'Partnerprogramm',
         documentation: 'Dokumentation',
         productDescription:
-            'OpenClaw-Agenten in der Cloud oder lokal mit einem Klick bereitstellen – erstelle, verbinde und skaliere deine KI-Agenten schneller mit MyClaw.',
+            'OpenClaw-Agenten in der Cloud oder lokal mit einem Klick bereitstellen – erstelle, verbinde und skaliere deine KI-Agenten schneller mit MyClaw.One.',
         downloadAndroid: 'Jetzt bei Google Play',
         downloadIos: 'Laden im App Store',
         ariaGithub: 'GitHub',
@@ -606,13 +606,13 @@ const de: Translations = {
         failedToGetAdminEmails: 'Failed to fetch emails!'
     },
     emails: {
-        otpSubject: 'Dein MyClaw-Anmeldecode',
-        otpPreview: 'Dein MyClaw-Anmeldecode: {{code}}',
+        otpSubject: 'Dein MyClaw.One-Anmeldecode',
+        otpPreview: 'Dein MyClaw.One-Anmeldecode: {{code}}',
         otpHeading: 'Dein Anmeldecode lautet:',
         otpExpiry:
             'Der Code läuft in 10 Minuten ab. Falls du das nicht warst, ignoriere diese E-Mail.',
         featureFooter:
-            'Du erhältst diese E-Mail, weil du ein MyClaw-Konto hast.',
+            'Du erhältst diese E-Mail, weil du ein MyClaw.One-Konto hast.',
         features: {
             terminal: {
                 subject: 'Du hast ein Web-Terminal',
@@ -714,7 +714,7 @@ const de: Translations = {
                 cta: 'Diagnose Starten'
             },
             sshKeys: {
-                subject: 'SSH-Schlüssel von MyClaw verwalten',
+                subject: 'SSH-Schlüssel von MyClaw.One verwalten',
                 preview: 'Schlüsselpaare einfach generieren und verwalten',
                 tag: 'SSH-Schlüssel',
                 heading: 'SSH-Schlüssel, vereinfacht',
@@ -732,12 +732,12 @@ const de: Translations = {
                 cta: 'Config Exportieren'
             },
             multiLanguage: {
-                subject: 'MyClaw spricht 14 Sprachen',
+                subject: 'MyClaw.One spricht 14 Sprachen',
                 preview: 'Dashboard-Sprache wechseln',
                 tag: 'Mehrsprachig',
                 heading: '14 Sprachen, vollständig übersetzt',
                 description:
-                    'Wechsle MyClaw zu Deutsch, Englisch, Französisch, Spanisch und 10 weitere. Jeder Button, jede Nachricht.',
+                    'Wechsle MyClaw.One zu Deutsch, Englisch, Französisch, Spanisch und 10 weitere. Jeder Button, jede Nachricht.',
                 cta: 'Sprache Ändern'
             },
             subdomain: {
@@ -781,7 +781,7 @@ const de: Translations = {
     auth: {
         signIn: 'Anmelden',
         signInDescription:
-            'Melde dich bei deinem MyClaw-Konto an, um deine OpenClaw-Instanzen zu verwalten.',
+            'Melde dich bei deinem MyClaw.One-Konto an, um deine OpenClaw-Instanzen zu verwalten.',
         signingIn: 'Anmeldung...',
         verifyCode: 'Code bestätigen',
         checkYourEmail: 'Prüfe deine E-Mail',
@@ -813,7 +813,7 @@ const de: Translations = {
     account: {
         title: 'Konto',
         description:
-            'Verwalte deine MyClaw-Kontoeinstellungen und Profilinformationen.',
+            'Verwalte deine MyClaw.One-Kontoeinstellungen und Profilinformationen.',
         accountSettings: 'Konto',
         manageYourAccount: 'Verwalte dein Profil und deine Kontoeinstellungen.',
         profileInformation: 'Profilinformationen',
@@ -1248,11 +1248,11 @@ clawName: 'Name',
             'Stelle OpenClaw mit einem Klick auf deinem eigenen VPS bereit. Selbst-hostbares Cloud-Hosting mit vollem Root-Zugriff, globalen Standorten und transparenten Preisen.',
         badge: 'OpenClaw vereinfacht',
         tutorialBadge: 'Anschauen. Deployen.',
-        tutorialVideoThumbnail: 'MyClaw Tutorial-Video Vorschaubild',
+        tutorialVideoThumbnail: 'MyClaw.One Tutorial-Video Vorschaubild',
         heroTitle1: 'OpenClaw bereitstellen.',
         heroTitle2: 'Ein Klick. Fertig.',
         heroDescription:
-            'OpenClaw-Agenten in der Cloud oder lokal mit einem Klick bereitstellen – erstelle, verbinde und skaliere deine KI-Agenten schneller mit MyClaw.',
+            'OpenClaw-Agenten in der Cloud oder lokal mit einem Klick bereitstellen – erstelle, verbinde und skaliere deine KI-Agenten schneller mit MyClaw.One.',
         goToClaws: 'Zu Claws',
         selfHost: 'Open Source',
         startingPrice: 'Ab',
@@ -1310,8 +1310,8 @@ clawName: 'Name',
             'Wechsle mit einem Klick zu jeder OpenClaw-Version. Bleib immer aktuell oder geh bei Bedarf zurück.',
         openclawControl: 'OpenClaw-Steuerung',
         openclawControlDescription:
-            'Greife direkt von MyClaw auf das native OpenClaw-Panel zu. Voller Bearbeitungszugriff auf alles, was OpenClaw bietet.',
-        clawHostControl: 'MyClaw-Steuerung',
+            'Greife direkt von MyClaw.One auf das native OpenClaw-Panel zu. Voller Bearbeitungszugriff auf alles, was OpenClaw bietet.',
+        clawHostControl: 'MyClaw.One-Steuerung',
         clawHostControlDescription:
             'Verwalte Dateien, Updates, Kanäle, Variablen, Skills und weitere Konfigurationsoptionen direkt von der Plattform aus.',
         skillsMarketplace: '5.000+ Skills',
@@ -1401,16 +1401,16 @@ clawName: 'Name',
         faqTitle: 'Fragen',
         frequentlyAskedQuestions: 'Häufige Fragen',
         faqDescription: 'Jede häufig gestellte Frage, beantwortet.',
-        faq1Question: 'Was ist MyClaw?',
+        faq1Question: 'Was ist MyClaw.One?',
         faq1Answer:
-            'MyClaw ist eine Plattform, die OpenClaw für jeden zugänglich macht. Sie ermöglicht es sowohl nicht-technischen Benutzern als auch Entwicklern, OpenClaw ohne Infrastrukturverwaltung zu betreiben. Wir kümmern uns um Server, Verfügbarkeit, Sicherheit und Wartung – du nutzt einfach OpenClaw.',
+            'MyClaw.One ist eine Plattform, die OpenClaw für jeden zugänglich macht. Sie ermöglicht es sowohl nicht-technischen Benutzern als auch Entwicklern, OpenClaw ohne Infrastrukturverwaltung zu betreiben. Wir kümmern uns um Server, Verfügbarkeit, Sicherheit und Wartung – du nutzt einfach OpenClaw.',
         faq2Question: 'Was ist OpenClaw?',
         faq2Answer:
             'OpenClaw ist eine selbst-gehostete sichere Zugriffsschicht für deine KI-Werkzeuge und -Dienste. Es ist vorkonfiguriert für Sicherheit und Leistung, sodass du es bereitstellen und sofort verbinden kannst.',
         faq3Question:
             'Wie unterscheidet sich das von anderen KI-Werkzeugen oder gehosteten Plattformen?',
         faq3Answer:
-            'Anders als gehostete KI-Werkzeuge gibt dir MyClaw einen echten Server mit installiertem OpenClaw. Du besitzt die Infrastruktur, kontrollierst alles und bist nicht durch eine geteilte Plattform oder ein Modell eingeschränkt.',
+            'Anders als gehostete KI-Werkzeuge gibt dir MyClaw.One einen echten Server mit installiertem OpenClaw. Du besitzt die Infrastruktur, kontrollierst alles und bist nicht durch eine geteilte Plattform oder ein Modell eingeschränkt.',
         faq4Question: 'Brauche ich technisches Wissen?',
         faq4Answer:
             'Nein. Wir kümmern uns um die gesamte Infrastruktur, Einrichtung und Wartung. Du kannst OpenClaw über die Benutzeroberfläche konfigurieren und verwalten, Kanäle verbinden und die Nutzung anpassen – ohne Server oder Infrastruktur anfassen zu müssen.',
@@ -1495,9 +1495,9 @@ clawName: 'Name',
     changelog: {
         title: 'Änderungsprotokoll',
         description:
-            'Verfolge Updates, neue Funktionen und Verbesserungen an MyClaw.',
+            'Verfolge Updates, neue Funktionen und Verbesserungen an MyClaw.One.',
         subtitle:
-            'Alle Updates, neue Funktionen und Verbesserungen an MyClaw.',
+            'Alle Updates, neue Funktionen und Verbesserungen an MyClaw.One.',
         upcomingRelease: 'In Bearbeitung',
         upcomingReleaseTitle: 'Mobile App & Mehr',
         upcomingReleaseDescription:
@@ -1518,11 +1518,11 @@ clawName: 'Name',
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
         upcomingReleaseFeature9:
-            'Sprachmodus zur Interaktion mit den auf MyClaw gehosteten OpenClaw-Agenten (Beta)',
+            'Sprachmodus zur Interaktion mit den auf MyClaw.One gehosteten OpenClaw-Agenten (Beta)',
         upcomingReleaseFeature10:
             'OpenClaw auf Ihrer Instanz neu installieren, um von vorne zu beginnen, einmal pro Tag verfügbar',
         upcomingReleaseFeature11:
-            'Landingpage für MyClaw Go, lokales Hosting mit MyClaw',
+            'Landingpage für MyClaw Go, lokales Hosting mit MyClaw.One',
         upcomingReleaseFeature12:
             'Desktop-App für macOS und Windows, um OpenClaw lokal mit einem Klick bereitzustellen',
         release14Date: '1. April 2026',
@@ -1542,11 +1542,11 @@ clawName: 'Name',
         release12Description:
             'Jahresabonnements mit 2 Monaten gratis, Sprachmodus, Instanz-Neuinstallation und eine erste Landingpage für MyClaw Go.',
         release12Feature1:
-            'Landingpage für MyClaw Go, lokales Hosting mit MyClaw',
+            'Landingpage für MyClaw Go, lokales Hosting mit MyClaw.One',
         release12Feature2:
             'Jahresabonnement-Support mit 2 Monaten gratis bei jährlicher Buchung',
         release12Feature3:
-            'Sprachmodus zur Interaktion mit den auf MyClaw gehosteten OpenClaw-Agenten',
+            'Sprachmodus zur Interaktion mit den auf MyClaw.One gehosteten OpenClaw-Agenten',
         release12Feature4:
             'OpenClaw auf Ihrer Instanz neu installieren, um von vorne zu beginnen, einmal pro Tag verfügbar',
         release11Date: '28. Februar 2026',
@@ -1626,7 +1626,7 @@ clawName: 'Name',
         release1Date: '8. Februar 2026',
         release1Title: 'Erstveröffentlichung',
         release1Description:
-            'Die erste offizielle Veröffentlichung von MyClaw. Stelle OpenClaw mit einem Klick auf deinem eigenen VPS bereit.',
+            'Die erste offizielle Veröffentlichung von MyClaw.One. Stelle OpenClaw mit einem Klick auf deinem eigenen VPS bereit.',
         release1Feature1: 'Ein-Klick-OpenClaw-Bereitstellung',
         release1Feature2:
             'Dashboard zur Verwaltung von Claws – Instanzen starten, stoppen, neustarten und löschen',
@@ -1647,7 +1647,7 @@ clawName: 'Name',
         release2Date: '8. Februar 2026',
         release2Title: 'Changelog & mehr',
         release2Description:
-            'Eine neue Möglichkeit, über alles rund um MyClaw informiert zu bleiben.',
+            'Eine neue Möglichkeit, über alles rund um MyClaw.One informiert zu bleiben.',
         release2Feature1:
             'Änderungsprotokoll-Seite zur Verfolgung aller Plattform-Updates und -Veröffentlichungen',
         release3Date: '10. Februar 2026',
@@ -1708,7 +1708,7 @@ clawName: 'Name',
             'Wusstest du, dass du mehrere Agenten in einem OpenClaw betreiben kannst?',
         loadingTip2: 'Wusstest du, dass OpenClaw Open Source ist?',
         loadingTip3:
-            'MyClaw ist das erste Projekt überhaupt, das Ein-Klick-OpenClaw-Hosting ermöglicht.',
+            'MyClaw.One ist das erste Projekt überhaupt, das Ein-Klick-OpenClaw-Hosting ermöglicht.',
         tabChat: 'Chat',
         tabConfiguration: 'Konfiguration',
         tabSettings: 'Einstellungen',
@@ -2054,14 +2054,14 @@ clawName: 'Name',
     privacy: {
         title: 'Datenschutzerklärung',
         description:
-            'Erfahre, wie MyClaw deine personenbezogenen Daten erhebt, verwendet und schützt.',
+            'Erfahre, wie MyClaw.One deine personenbezogenen Daten erhebt, verwendet und schützt.',
         lastUpdated: 'Zuletzt aktualisiert: 14. März 2026',
         introTitle: '1. Einleitung',
         introText:
-            'MyClaw („wir", „unser" oder „uns") ist dem Schutz deiner Privatsphäre verpflichtet. Diese Datenschutzerklärung erläutert, wie wir deine Daten erheben, verwenden, offenlegen und schützen, wenn du unseren Dienst nutzt.',
+            'MyClaw.One („wir", „unser" oder „uns") ist dem Schutz deiner Privatsphäre verpflichtet. Diese Datenschutzerklärung erläutert, wie wir deine Daten erheben, verwenden, offenlegen und schützen, wenn du unseren Dienst nutzt.',
         authTitle: '2. Authentifizierung',
         authText:
-            'MyClaw verwendet Google Firebase Authentication zur Verwaltung von Benutzerkonten. Du kannst dich mit E-Mail, Google oder GitHub anmelden. Durch die Nutzung dieser Anmeldemethoden stimmst du den jeweiligen Nutzungsbedingungen und Datenschutzerklärungen zu. Diese Anbieter können grundlegende Daten wie deine E-Mail-Adresse, deinen Namen und Geräteinformationen erheben. Wir speichern nur deine E-Mail-Adresse und deinen Anzeigenamen.',
+            'MyClaw.One verwendet Google Firebase Authentication zur Verwaltung von Benutzerkonten. Du kannst dich mit E-Mail, Google oder GitHub anmelden. Durch die Nutzung dieser Anmeldemethoden stimmst du den jeweiligen Nutzungsbedingungen und Datenschutzerklärungen zu. Diese Anbieter können grundlegende Daten wie deine E-Mail-Adresse, deinen Namen und Geräteinformationen erheben. Wir speichern nur deine E-Mail-Adresse und deinen Anzeigenamen.',
         collectTitle: '3. Von uns erhobene Daten',
         collectText: 'Wir erheben Daten auf folgende Weise:',
         personalInfoTitle: 'Personenbezogene Daten',
@@ -2115,7 +2115,7 @@ clawName: 'Name',
             'Deine Daten können in andere Länder als dein eigenes übermittelt und dort verarbeitet werden. Wir stellen sicher, dass angemessene Schutzmaßnahmen zum Schutz deiner Daten gemäß dieser Datenschutzerklärung vorhanden sind.',
         eligibilityTitle: '11. Berechtigung',
         eligibilityText:
-            'Unser Dienst steht jedem zur Verfügung. Es gibt keine Altersbeschränkungen für die Nutzung von MyClaw.',
+            'Unser Dienst steht jedem zur Verfügung. Es gibt keine Altersbeschränkungen für die Nutzung von MyClaw.One.',
         changesTitle: '12. Änderungen dieser Richtlinie',
         changesText:
             'Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren. Wir werden dich über Änderungen informieren, indem wir die neue Datenschutzerklärung auf dieser Seite veröffentlichen und das Datum „Zuletzt aktualisiert" anpassen.',
@@ -2126,17 +2126,17 @@ clawName: 'Name',
     terms: {
         title: 'Nutzungsbedingungen',
         description:
-            'Lies die Geschäftsbedingungen für die Nutzung der MyClaw-Dienste.',
+            'Lies die Geschäftsbedingungen für die Nutzung der MyClaw.One-Dienste.',
         lastUpdated: 'Zuletzt aktualisiert: 14. März 2026',
         acceptanceTitle: '1. Annahme der Bedingungen',
         acceptanceText:
-            'Durch den Zugriff auf und die Nutzung von MyClaw („Dienst") akzeptierst du die Bedingungen und Bestimmungen dieser Vereinbarung und erklärst dich damit einverstanden, daran gebunden zu sein. Wenn du diesen Bedingungen nicht zustimmst, nutze bitte unseren Dienst nicht.',
+            'Durch den Zugriff auf und die Nutzung von MyClaw.One („Dienst") akzeptierst du die Bedingungen und Bestimmungen dieser Vereinbarung und erklärst dich damit einverstanden, daran gebunden zu sein. Wenn du diesen Bedingungen nicht zustimmst, nutze bitte unseren Dienst nicht.',
         serviceTitle: '2. Beschreibung des Dienstes',
         serviceText:
-            'MyClaw bietet Ein-Klick-OpenClaw-Bereitstellung auf dedizierten Servern. Wir ermöglichen es Benutzern, vorkonfigurierte OpenClaw-Instanzen mit vollem Root-Zugriff und dedizierten Ressourcen bereitzustellen, zu verwalten und darauf zuzugreifen.',
+            'MyClaw.One bietet Ein-Klick-OpenClaw-Bereitstellung auf dedizierten Servern. Wir ermöglichen es Benutzern, vorkonfigurierte OpenClaw-Instanzen mit vollem Root-Zugriff und dedizierten Ressourcen bereitzustellen, zu verwalten und darauf zuzugreifen.',
         authTitle: '3. Authentifizierung',
         authText:
-            'MyClaw verwendet Google Firebase Authentication zur Anmeldungsverwaltung. Du kannst dich mit E-Mail, Google oder GitHub authentifizieren. Durch die Nutzung dieser Methoden stimmst du den jeweiligen Nutzungsbedingungen und Datenschutzerklärungen von Google und GitHub zu. Diese Anbieter können grundlegende Daten wie deine E-Mail-Adresse, deinen Namen und Gerätedaten erheben.',
+            'MyClaw.One verwendet Google Firebase Authentication zur Anmeldungsverwaltung. Du kannst dich mit E-Mail, Google oder GitHub authentifizieren. Durch die Nutzung dieser Methoden stimmst du den jeweiligen Nutzungsbedingungen und Datenschutzerklärungen von Google und GitHub zu. Diese Anbieter können grundlegende Daten wie deine E-Mail-Adresse, deinen Namen und Gerätedaten erheben.',
         responsibilitiesTitle: '4. Benutzerpflichten',
         responsibilitiesText: 'Du stimmst zu:',
         responsibilitiesAccurate:
@@ -2170,19 +2170,19 @@ clawName: 'Name',
             'Wir bemühen uns um hohe Verfügbarkeit, garantieren jedoch keinen ununterbrochenen Zugang zum Dienst. Wir behalten uns das Recht vor, Teile des Dienstes jederzeit mit oder ohne Vorankündigung zu ändern, auszusetzen oder einzustellen.',
         liabilityTitle: '8. Haftungsbeschränkung',
         liabilityText:
-            'Im größtmöglichen gesetzlich zulässigen Umfang haftet MyClaw nicht für indirekte, zufällige, besondere, Folge- oder Strafschäden oder für entgangene Gewinne oder Einnahmen, unabhängig davon, ob sie direkt oder indirekt entstanden sind.',
+            'Im größtmöglichen gesetzlich zulässigen Umfang haftet MyClaw.One nicht für indirekte, zufällige, besondere, Folge- oder Strafschäden oder für entgangene Gewinne oder Einnahmen, unabhängig davon, ob sie direkt oder indirekt entstanden sind.',
         terminationTitle: '9. Kündigung',
         terminationText:
             'Wir können dein Konto und den Zugang zum Dienst sofort und ohne vorherige Ankündigung sperren oder kündigen, wenn wir der Ansicht sind, dass dein Verhalten gegen diese Bedingungen verstößt oder anderen Nutzern, uns oder Dritten schadet, oder aus jedem anderen Grund.',
         affiliateTitle: '10. Affiliate Program',
         affiliateText:
-            'MyClaw offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
+            'MyClaw.One offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
         affiliateCodeUnique:
             'Each user receives a unique referral code upon registration, which can be customized once.',
         affiliateCodeOneChange:
             'The referral code can only be changed one time. Choose your custom code carefully.',
         affiliateReferralWindow:
-            'A referral is valid for 6 months from when the referred user first visits MyClaw with your referral link. After 6 months, the referral expires.',
+            'A referral is valid for 6 months from when the referred user first visits MyClaw.One with your referral link. After 6 months, the referral expires.',
         affiliateNoSelfReferral:
             'Self-referrals are not permitted. You may not refer your own accounts.',
         affiliateAbuse:
@@ -2246,12 +2246,12 @@ clawName: 'Name',
     compare: {
         title: 'Vollständiger Vergleich',
         description:
-            'Erfahre, wie sich MyClaw von anderen OpenClaw-Hosting-Plattformen unterscheidet.',
+            'Erfahre, wie sich MyClaw.One von anderen OpenClaw-Hosting-Plattformen unterscheidet.',
         badge: 'Vergleich',
         feature: 'Plattform',
         compareWith: 'Vergleichen mit',
         lastUpdated: 'Zuletzt aktualisiert: März 2026',
-        competitorMyClaw: 'MyClaw',
+        competitorMyClaw: 'MyClaw.One',
         competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
@@ -2503,7 +2503,7 @@ clawName: 'Name',
     affiliate: {
         title: 'Partner',
         description:
-            'Verdiene Belohnungen, indem du Freunde zu MyClaw einlädst.',
+            'Verdiene Belohnungen, indem du Freunde zu MyClaw.One einlädst.',
         subtitle: 'Teile deinen Empfehlungslink und verdiene Belohnungen.',
         learnMore: 'Mehr über das Partnerprogramm erfahren',
         referralCode: 'Empfehlungscode',
@@ -2536,19 +2536,19 @@ clawName: 'Name',
     affiliateProgram: {
         title: 'Partnerprogramm',
         description:
-            'Erfahre, wie das MyClaw-Partnerprogramm funktioniert, wie viel du verdienen kannst und welche Regeln für die Teilnahme gelten.',
+            'Erfahre, wie das MyClaw.One-Partnerprogramm funktioniert, wie viel du verdienen kannst und welche Regeln für die Teilnahme gelten.',
         lastUpdated: 'Zuletzt aktualisiert: 1. April 2026',
         overviewTitle: '1. Übersicht',
         overviewText:
-            'Das MyClaw-Partnerprogramm ermöglicht es dir, Belohnungen zu verdienen, indem du neue Benutzer an MyClaw empfiehlst. Wenn jemand einen Kauf tätigt, nachdem er MyClaw über deinen Empfehlungslink besucht hat, erhältst du eine Provision auf seine Zahlungen. Das Programm ist kostenlos und steht allen registrierten MyClaw-Benutzern zur Verfügung.',
+            'Das MyClaw.One-Partnerprogramm ermöglicht es dir, Belohnungen zu verdienen, indem du neue Benutzer an MyClaw.One empfiehlst. Wenn jemand einen Kauf tätigt, nachdem er MyClaw.One über deinen Empfehlungslink besucht hat, erhältst du eine Provision auf seine Zahlungen. Das Programm ist kostenlos und steht allen registrierten MyClaw.One-Benutzern zur Verfügung.',
         howItWorksTitle: '2. So funktioniert es',
         howItWorksText: 'Der Einstieg in das Partnerprogramm ist einfach:',
         howItWorksStep1:
-            'Erstelle ein MyClaw-Konto. Ein einzigartiger Empfehlungscode wird automatisch für dich generiert.',
+            'Erstelle ein MyClaw.One-Konto. Ein einzigartiger Empfehlungscode wird automatisch für dich generiert.',
         howItWorksStep2:
             'Teile deinen Empfehlungslink mit Freunden, Kollegen oder deinem Publikum. Dein Link hat das Format: myclaw.cloud?ref=YOUR_CODE.',
         howItWorksStep3:
-            'Wenn jemand einen Kauf tätigt, nachdem er MyClaw über deinen Link besucht hat, wird dies als deine Empfehlung erfasst.',
+            'Wenn jemand einen Kauf tätigt, nachdem er MyClaw.One über deinen Link besucht hat, wird dies als deine Empfehlung erfasst.',
         howItWorksStep4:
             'Du verdienst eine Provision jedes Mal, wenn dein empfohlener Benutzer einen qualifizierenden Kauf tätigt.',
         earningsTitle: '3. Verdienste und Auszahlungen',
@@ -2576,11 +2576,11 @@ clawName: 'Name',
             'Empfehlungscodes dürfen nur Buchstaben, Zahlen, Bindestriche und Unterstriche enthalten.',
         referralWindowTitle: '5. Empfehlungs-Zuordnungsfenster',
         referralWindowText:
-            'Eine Empfehlung wird dir für 3 Monate ab dem Moment zugeordnet, in dem der empfohlene Benutzer MyClaw zum ersten Mal über deinen Link besucht. Wenn der empfohlene Benutzer innerhalb dieses 3-monatigen Fensters keinen Kauf tätigt, verfällt die Empfehlung und es wird keine Provision verdient. Wenn der Benutzer über einen anderen Empfehlungslink besucht, ersetzt die neue Empfehlung die vorherige.',
+            'Eine Empfehlung wird dir für 3 Monate ab dem Moment zugeordnet, in dem der empfohlene Benutzer MyClaw.One zum ersten Mal über deinen Link besucht. Wenn der empfohlene Benutzer innerhalb dieses 3-monatigen Fensters keinen Kauf tätigt, verfällt die Empfehlung und es wird keine Provision verdient. Wenn der Benutzer über einen anderen Empfehlungslink besucht, ersetzt die neue Empfehlung die vorherige.',
         eligibilityTitle: '6. Teilnahmeberechtigung',
         eligibilityText:
             'Um am Partnerprogramm teilzunehmen, musst du die folgenden Voraussetzungen erfüllen:',
-        eligibilityAccount: 'Du musst ein registriertes MyClaw-Konto haben.',
+        eligibilityAccount: 'Du musst ein registriertes MyClaw.One-Konto haben.',
         eligibilityStanding:
             'Dein Konto muss in gutem Zustand sein, ohne Verstöße gegen die Richtlinien.',
         eligibilityAge:
@@ -2595,30 +2595,30 @@ clawName: 'Name',
         rulesNoSpam:
             'Das Versenden unerwünschter Massennachrichten (Spam) zur Bewerbung deines Empfehlungslinks ist nicht gestattet.',
         rulesNoMisrepresentation:
-            'Du darfst MyClaw, seine Dienste oder das Partnerprogramm in keiner Weise falsch darstellen.',
+            'Du darfst MyClaw.One, seine Dienste oder das Partnerprogramm in keiner Weise falsch darstellen.',
         rulesNoIncentivized:
             'Das Anbieten direkter finanzieller Anreize (z. B. Benutzer dafür zu bezahlen, sich über deinen Link anzumelden) ist nicht gestattet.',
         terminationTitle: '8. Verstoß und Kündigung',
         terminationText:
-            'Jeder Verstoß gegen diese Regeln führt zum sofortigen Verlust aller ausstehenden und verdienten Belohnungen. MyClaw behält sich das Recht vor, dein Konto vom Partnerprogramm zu sperren oder dauerhaft auszuschließen. In schweren Fällen kann auch dein MyClaw-Konto gekündigt werden. Alle Entscheidungen bezüglich Verstößen sind endgültig.',
+            'Jeder Verstoß gegen diese Regeln führt zum sofortigen Verlust aller ausstehenden und verdienten Belohnungen. MyClaw.One behält sich das Recht vor, dein Konto vom Partnerprogramm zu sperren oder dauerhaft auszuschließen. In schweren Fällen kann auch dein MyClaw.One-Konto gekündigt werden. Alle Entscheidungen bezüglich Verstößen sind endgültig.',
         marketingTitle: '9. Wie man wirbt',
         marketingText:
             'Es gibt viele kreative und legitime Möglichkeiten, deinen Empfehlungslink zu teilen und deine Einnahmen zu steigern:',
         marketingSocial:
-            'Teile deinen Link auf Social-Media-Plattformen wie X, LinkedIn, Reddit und Facebook. Schreibe über deine Erfahrung mit MyClaw und füge deinen Empfehlungslink ein.',
+            'Teile deinen Link auf Social-Media-Plattformen wie X, LinkedIn, Reddit und Facebook. Schreibe über deine Erfahrung mit MyClaw.One und füge deinen Empfehlungslink ein.',
         marketingBlog:
-            'Schreibe Blogbeiträge, Tutorials oder Bewertungen über MyClaw. Füge deinen Empfehlungslink natürlich in den Inhalt ein.',
+            'Schreibe Blogbeiträge, Tutorials oder Bewertungen über MyClaw.One. Füge deinen Empfehlungslink natürlich in den Inhalt ein.',
         marketingVideo:
-            'Erstelle Videoinhalte auf YouTube oder TikTok, die zeigen, wie du MyClaw zum Bereitstellen und Verwalten von KI-Agenten verwendest.',
+            'Erstelle Videoinhalte auf YouTube oder TikTok, die zeigen, wie du MyClaw.One zum Bereitstellen und Verwalten von KI-Agenten verwendest.',
         marketingCommunity:
-            'Nimm an Entwicklergemeinschaften, Foren und Discord-Servern teil. Wenn jemand nach Cloud-Hosting oder KI-Agenten-Bereitstellung fragt, empfehle MyClaw mit deinem Link.',
+            'Nimm an Entwicklergemeinschaften, Foren und Discord-Servern teil. Wenn jemand nach Cloud-Hosting oder KI-Agenten-Bereitstellung fragt, empfehle MyClaw.One mit deinem Link.',
         marketingNewsletter:
-            'Wenn du einen Newsletter oder eine E-Mail-Liste betreibst, erwähne MyClaw in einer relevanten Ausgabe mit deinem Empfehlungslink.',
+            'Wenn du einen Newsletter oder eine E-Mail-Liste betreibst, erwähne MyClaw.One in einer relevanten Ausgabe mit deinem Empfehlungslink.',
         marketingComparison:
-            'Schreibe ehrliche Vergleichsartikel oder Leitfäden, die hervorheben, was MyClaw von anderen Plattformen unterscheidet.',
+            'Schreibe ehrliche Vergleichsartikel oder Leitfäden, die hervorheben, was MyClaw.One von anderen Plattformen unterscheidet.',
         changesToProgramTitle: '10. Änderungen am Programm',
         changesToProgramText:
-            'MyClaw behält sich das Recht vor, das Partnerprogramm jederzeit ohne vorherige Ankündigung zu ändern, auszusetzen oder einzustellen. Dies umfasst Änderungen an Provisionssätzen, Empfehlungsfenstern, Auszahlungsschwellen und Programmregeln. Die fortgesetzte Teilnahme nach Änderungen gilt als Akzeptanz der aktualisierten Bedingungen.',
+            'MyClaw.One behält sich das Recht vor, das Partnerprogramm jederzeit ohne vorherige Ankündigung zu ändern, auszusetzen oder einzustellen. Dies umfasst Änderungen an Provisionssätzen, Empfehlungsfenstern, Auszahlungsschwellen und Programmregeln. Die fortgesetzte Teilnahme nach Änderungen gilt als Akzeptanz der aktualisierten Bedingungen.',
         getStartedTitle: '11. Loslegen',
         getStartedText:
             'Bereit zu verdienen? Gehe zu deinem Partner-Dashboard, um deinen Empfehlungslink zu erhalten und beginne, ihn mit deinem Netzwerk zu teilen.',

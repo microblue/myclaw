@@ -169,7 +169,7 @@ const Landing: FC = (): ReactNode => {
                 data={{
                     '@context': 'https://schema.org',
                     '@type': 'Organization',
-                    name: 'MyClaw',
+                    name: 'MyClaw.One',
                     url: `https://${getBaseDomain()}`,
                     logo: 'https://cdn.myclaw.one/assets/myclaw-logo-light.png',
                     sameAs: [
@@ -186,7 +186,7 @@ const Landing: FC = (): ReactNode => {
                 data={{
                     '@context': 'https://schema.org',
                     '@type': 'WebSite',
-                    name: 'MyClaw',
+                    name: 'MyClaw.One',
                     url: `https://${getBaseDomain()}`
                 }}
             />

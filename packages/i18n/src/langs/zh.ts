@@ -25,7 +25,7 @@ const zh: Translations = {
         pageNotFound: '页面未找到',
         closeNotification: '关闭通知',
         beta: '测试版',
-        brandName: 'MyClaw',
+        brandName: 'MyClaw.One',
         brandNameGo: 'MyClaw Go',
         brandNameGoVersion: 'MyClaw Go {{version}}',
         menuFile: '文件',
@@ -88,12 +88,12 @@ const zh: Translations = {
         cloud: '云端',
         cloudSubtitle: '技术型',
         go: 'Go',
-        desktop: 'Go',
+        desktop: '桌面版',
         goSubtitle: '非技术型'
     },
     go: {
         pageTitle: 'MyClaw Go',
-        heroTitle1: 'MyClaw 桌面版.',
+        heroTitle1: 'MyClaw.One 桌面版.',
         heroTitle2: '正式发布.',
         badge: 'v1.4.0 正式发布',
         comingSoon: '即将推出',
@@ -186,7 +186,7 @@ const zh: Translations = {
         statsPlatformWindows: 'Windows',
         statsLinux: 'Linux',
         statsPlatformLinux: '5 个安装包',
-        ctaTitle: '下载 MyClaw 桌面版',
+        ctaTitle: '下载 MyClaw.One 桌面版',
         ctaDescription:
             '免费下载。在您自己的设备上运行 OpenClaw — 支持 Windows 和 Linux。您的数据，您做主.',
         ctaButton: '获取 MyClaw Go',
@@ -229,7 +229,7 @@ const zh: Translations = {
     },
     footer: {
         website: '网站',
-        copyrightName: 'MyClaw',
+        copyrightName: 'MyClaw.One',
         copyrightRights: '保留所有权利.',
         termsOfService: '服务条款',
         privacyPolicy: '隐私政策',
@@ -250,7 +250,7 @@ const zh: Translations = {
         affiliateProgram: '联盟计划',
         documentation: '文档',
         productDescription:
-            '一键在云端或本地部署 OpenClaw 代理 — 使用 MyClaw 更快地构建、连接和扩展您的 AI 代理.',
+            '一键在云端或本地部署 OpenClaw 代理 — 使用 MyClaw.One 更快地构建、连接和扩展您的 AI 代理.',
         downloadAndroid: '在 Google Play 上获取',
         downloadIos: '在 App Store 上下载',
         ariaGithub: 'GitHub',
@@ -550,12 +550,12 @@ const zh: Translations = {
         failedToGetAdminEmails: 'Failed to fetch emails!'
     },
     emails: {
-        otpSubject: '您的 MyClaw 登录验证码',
-        otpPreview: '您的 MyClaw 登录验证码：{{code}}',
+        otpSubject: '您的 MyClaw.One 登录验证码',
+        otpPreview: '您的 MyClaw.One 登录验证码：{{code}}',
         otpHeading: '您的登录验证码是：',
         otpExpiry:
             '验证码将在 10 分钟后过期。如果这不是您本人的操作，请忽略此邮件。',
-        featureFooter: '您收到此邮件是因为您拥有 MyClaw 账户。',
+        featureFooter: '您收到此邮件是因为您拥有 MyClaw.One 账户。',
         features: {
             terminal: {
                 subject: '您知道吗？您拥有一个网页终端',
@@ -563,7 +563,7 @@ const zh: Translations = {
                 tag: '网页终端',
                 heading: '您的服务器只需一次点击',
                 description:
-                    '使用我们内置的终端直接从浏览器访问您的服务器。无需 SSH 客户端——只需打开 MyClaw 即可开始输入命令。',
+                    '使用我们内置的终端直接从浏览器访问您的服务器。无需 SSH 客户端——只需打开 MyClaw.One 即可开始输入命令。',
                 cta: '打开终端'
             },
             logs: {
@@ -572,7 +572,7 @@ const zh: Translations = {
                 tag: '实时日志',
                 heading: '查看服务器正在做什么',
                 description:
-                    '从 MyClaw 仪表板实时监控服务器日志。无需离开浏览器即可诊断问题、跟踪部署和调试应用程序。',
+                    '从 MyClaw.One 仪表板实时监控服务器日志。无需离开浏览器即可诊断问题、跟踪部署和调试应用程序。',
                 cta: '查看日志'
             },
             channels: {
@@ -581,7 +581,7 @@ const zh: Translations = {
                 tag: '频道',
                 heading: '您的代理，无处不在',
                 description:
-                    '将您的 AI 代理连接到 Discord、Slack、WhatsApp 等。配置频道并将其绑定到代理——全部在 MyClaw 仪表板中完成。',
+                    '将您的 AI 代理连接到 Discord、Slack、WhatsApp 等。配置频道并将其绑定到代理——全部在 MyClaw.One 仪表板中完成。',
                 cta: '设置频道'
             },
             fileExplorer: {
@@ -590,7 +590,7 @@ const zh: Translations = {
                 tag: '文件浏览器',
                 heading: '文件触手可及',
                 description:
-                    '直接从 MyClaw 仪表板浏览、读取和编辑服务器上的文件。语法高亮、搜索和即时保存——无需 SSH。',
+                    '直接从 MyClaw.One 仪表板浏览、读取和编辑服务器上的文件。语法高亮、搜索和即时保存——无需 SSH。',
                 cta: '打开文件浏览器'
             },
             playground: {
@@ -608,7 +608,7 @@ const zh: Translations = {
                 tag: '代理聊天',
                 heading: '与您的代理对话',
                 description:
-                    '直接从 MyClaw 仪表板与您的 AI 代理聊天。发送消息、附加图片并查看对话历史——一切尽在一处。',
+                    '直接从 MyClaw.One 仪表板与您的 AI 代理聊天。发送消息、附加图片并查看对话历史——一切尽在一处。',
                 cta: '开始聊天'
             },
             voiceMode: {
@@ -644,7 +644,7 @@ const zh: Translations = {
                 tag: '环境变量',
                 heading: '无需 SSH 即可配置',
                 description:
-                    '直接从 MyClaw 仪表板添加、编辑和删除环境变量。设置 API 密钥、密钥和配置——无需终端。',
+                    '直接从 MyClaw.One 仪表板添加、编辑和删除环境变量。设置 API 密钥、密钥和配置——无需终端。',
                 cta: '管理变量'
             },
             diagnostics: {
@@ -657,12 +657,12 @@ const zh: Translations = {
                 cta: '运行诊断'
             },
             sshKeys: {
-                subject: '您知道吗？可以从 MyClaw 管理 SSH 密钥',
+                subject: '您知道吗？可以从 MyClaw.One 管理 SSH 密钥',
                 preview: '在仪表板中生成和管理 SSH 密钥对',
                 tag: 'SSH 密钥',
                 heading: 'SSH 密钥，简化管理',
                 description:
-                    '生成 SSH 密钥对、复制公钥和下载私钥——全部在 MyClaw 仪表板中完成。将密钥分配给 Claws 以实现安全访问。',
+                    '生成 SSH 密钥对、复制公钥和下载私钥——全部在 MyClaw.One 仪表板中完成。将密钥分配给 Claws 以实现安全访问。',
                 cta: '管理 SSH 密钥'
             },
             exportConfig: {
@@ -675,12 +675,12 @@ const zh: Translations = {
                 cta: '导出配置'
             },
             multiLanguage: {
-                subject: '您知道吗？MyClaw 支持您的语言',
-                preview: '使用 14 种语言操作 MyClaw',
+                subject: '您知道吗？MyClaw.One 支持您的语言',
+                preview: '使用 14 种语言操作 MyClaw.One',
                 tag: '多语言',
-                heading: '用您的语言使用 MyClaw',
+                heading: '用您的语言使用 MyClaw.One',
                 description:
-                    '将整个 MyClaw 仪表板切换为 14 种语言中的任何一种。从按钮到错误消息——全面翻译。',
+                    '将整个 MyClaw.One 仪表板切换为 14 种语言中的任何一种。从按钮到错误消息——全面翻译。',
                 cta: '更改语言'
             },
             subdomain: {
@@ -693,12 +693,12 @@ const zh: Translations = {
                 cta: '查看您的子域名'
             },
             darkMode: {
-                subject: '您知道吗？MyClaw 支持深色模式',
+                subject: '您知道吗？MyClaw.One 支持深色模式',
                 preview: '在浅色和深色主题之间切换',
                 tag: '深色模式',
                 heading: '护眼体验',
                 description:
-                    '在 MyClaw 仪表板中切换浅色和深色主题。您的偏好会自动保存并在每次访问时应用。',
+                    '在 MyClaw.One 仪表板中切换浅色和深色主题。您的偏好会自动保存并在每次访问时应用。',
                 cta: '试试深色模式'
             },
             reinstall: {
@@ -723,7 +723,7 @@ const zh: Translations = {
     },
     auth: {
         signIn: '登录',
-        signInDescription: '登录您的 MyClaw 账户以管理您的 OpenClaw 实例。',
+        signInDescription: '登录您的 MyClaw.One 账户以管理您的 OpenClaw 实例。',
         signingIn: '正在登录...',
         verifyCode: '验证代码',
         checkYourEmail: '检查您的邮箱',
@@ -751,7 +751,7 @@ const zh: Translations = {
     },
     account: {
         title: '账户',
-        description: '管理您的 MyClaw 账户设置和个人资料信息。',
+        description: '管理您的 MyClaw.One 账户设置和个人资料信息。',
         accountSettings: '账户',
         manageYourAccount: '管理您的个人资料和账户设置。',
         profileInformation: '个人资料',
@@ -1148,11 +1148,11 @@ const zh: Translations = {
             '一键在您自己的 VPS 上部署 OpenClaw。自托管云托管，拥有完整 root 访问权限、全球位置和透明定价。',
         badge: 'OpenClaw 简化版',
         tutorialBadge: '观看。部署。',
-        tutorialVideoThumbnail: 'MyClaw 教程视频缩略图',
+        tutorialVideoThumbnail: 'MyClaw.One 教程视频缩略图',
         heroTitle1: '部署 OpenClaw。',
         heroTitle2: '一键完成。',
         heroDescription:
-            '一键在云端或本地部署 OpenClaw 代理——使用 MyClaw 更快地构建、连接和扩展您的 AI 代理。',
+            '一键在云端或本地部署 OpenClaw 代理——使用 MyClaw.One 更快地构建、连接和扩展您的 AI 代理。',
         goToClaws: '前往 Claws',
         selfHost: '开源',
         startingPrice: '起步价',
@@ -1207,8 +1207,8 @@ const zh: Translations = {
             '一键切换到任何 OpenClaw 版本。始终保持最新或在需要时回滚。',
         openclawControl: 'OpenClaw 控制',
         openclawControlDescription:
-            '直接从 MyClaw 访问原生 OpenClaw 面板。完全编辑 OpenClaw 提供的所有内容。',
-        clawHostControl: 'MyClaw 控制',
+            '直接从 MyClaw.One 访问原生 OpenClaw 面板。完全编辑 OpenClaw 提供的所有内容。',
+        clawHostControl: 'MyClaw.One 控制',
         clawHostControlDescription:
             '直接从平台管理文件、更新、频道、变量、技能和更多配置选项。',
         skillsMarketplace: '5,000+ 技能',
@@ -1297,15 +1297,15 @@ const zh: Translations = {
         faqTitle: '常见问题',
         frequentlyAskedQuestions: '常见问题',
         faqDescription: '每一个常见问题，都有解答。',
-        faq1Question: '什么是 MyClaw？',
+        faq1Question: '什么是 MyClaw.One？',
         faq1Answer:
-            'MyClaw 是一个旨在让所有人都能使用 OpenClaw 的平台。它让非技术用户和开发者都能运行 OpenClaw 而无需管理基础设施。我们处理服务器、正常运行时间、安全性和维护——您只需使用 OpenClaw。',
+            'MyClaw.One 是一个旨在让所有人都能使用 OpenClaw 的平台。它让非技术用户和开发者都能运行 OpenClaw 而无需管理基础设施。我们处理服务器、正常运行时间、安全性和维护——您只需使用 OpenClaw。',
         faq2Question: '什么是 OpenClaw？',
         faq2Answer:
             'OpenClaw 是一个自托管的安全访问层，用于您的 AI 工具和服务。它已预配置安全性和性能，因此您可以部署后即刻连接。',
         faq3Question: '这与其他 AI 工具或托管平台有什么不同？',
         faq3Answer:
-            '与托管 AI 工具不同，MyClaw 为您提供一台安装了 OpenClaw 的真实服务器。您拥有基础设施，控制一切，不受共享平台或模型的限制。',
+            '与托管 AI 工具不同，MyClaw.One 为您提供一台安装了 OpenClaw 的真实服务器。您拥有基础设施，控制一切，不受共享平台或模型的限制。',
         faq4Question: '我需要技术知识吗？',
         faq4Answer:
             '不需要。我们处理所有基础设施、设置和维护。您可以通过其 UI 配置和管理 OpenClaw，连接到频道并自定义使用——无需触碰服务器或基础设施。',
@@ -1386,8 +1386,8 @@ const zh: Translations = {
     },
     changelog: {
         title: '更新日志',
-        description: '跟踪 MyClaw 的更新、新功能和改进。',
-        subtitle: 'MyClaw 的所有更新、新功能和改进。',
+        description: '跟踪 MyClaw.One 的更新、新功能和改进。',
+        subtitle: 'MyClaw.One 的所有更新、新功能和改进。',
         upcomingRelease: '进行中',
         upcomingReleaseTitle: '移动应用及更多',
         upcomingReleaseDescription:
@@ -1401,10 +1401,10 @@ const zh: Translations = {
         upcomingReleaseFeature7: '工作台功能结构重构和简化',
         upcomingReleaseFeature8: '由 OpenClaw 代理自动管理和发布的功能请求',
         upcomingReleaseFeature9:
-            '语音模式，与 MyClaw 上托管的 OpenClaw 代理交互（测试版）',
+            '语音模式，与 MyClaw.One 上托管的 OpenClaw 代理交互（测试版）',
         upcomingReleaseFeature10: '重新安装 OpenClaw 以全新开始，每天可用一次',
         upcomingReleaseFeature11:
-            'MyClaw Go 着陆页，使用 MyClaw 进行本地托管',
+            'MyClaw Go 着陆页，使用 MyClaw.One 进行本地托管',
         upcomingReleaseFeature12:
             '适用于 macOS 和 Windows 的桌面应用，一键本地部署 OpenClaw',
         upcomingReleaseFeature13:
@@ -1424,9 +1424,9 @@ const zh: Translations = {
         release12Title: '年付方案、语音模式及更多',
         release12Description:
             '年付订阅免费 2 个月、语音模式、实例重装以及 MyClaw Go 初始着陆页。',
-        release12Feature1: 'MyClaw Go 着陆页，使用 MyClaw 进行本地托管',
+        release12Feature1: 'MyClaw Go 着陆页，使用 MyClaw.One 进行本地托管',
         release12Feature2: '年付订阅支持，年付可享 2 个月免费',
-        release12Feature3: '语音模式，与 MyClaw 上托管的 OpenClaw 代理交互',
+        release12Feature3: '语音模式，与 MyClaw.One 上托管的 OpenClaw 代理交互',
         release12Feature4: '重新安装 OpenClaw 以全新开始，每天可用一次',
         release11Date: '2026年2月28日',
         release11Title: '文字转语音、终端、聊天标签和文件浏览器',
@@ -1485,7 +1485,7 @@ const zh: Translations = {
         release1Date: '2026年2月8日',
         release1Title: '首次发布',
         release1Description:
-            'MyClaw 的首个正式版本。一键在您自己的 VPS 上部署 OpenClaw.',
+            'MyClaw.One 的首个正式版本。一键在您自己的 VPS 上部署 OpenClaw.',
         release1Feature1: '一键部署 OpenClaw',
         release1Feature2: '仪表板管理 claws，启动、停止、重启和删除实例',
         release1Feature3: '18 种服务器方案，提供专用 vCPU、RAM 和存储选项',
@@ -1499,7 +1499,7 @@ const zh: Translations = {
         release1Feature11: '自动配置，OpenClaw 预装并已配置',
         release2Date: '2026年2月8日',
         release2Title: '更新日志及更多',
-        release2Description: '了解 MyClaw 最新动态的全新方式.',
+        release2Description: '了解 MyClaw.One 最新动态的全新方式.',
         release2Feature1: '更新日志页面，跟踪所有平台更新和发布',
         release3Date: '2026年2月10日',
         release3Title: '服务器洞察',
@@ -1547,7 +1547,7 @@ const zh: Translations = {
         tabDisabledAwaitingPayment: '付款处理完成后可用.',
         loadingTip1: '您知道吗？您可以在一个 OpenClaw 中运行多个代理.',
         loadingTip2: '您知道吗？OpenClaw 是开源的.',
-        loadingTip3: 'MyClaw 是首个支持一键 OpenClaw 托管的项目.',
+        loadingTip3: 'MyClaw.One 是首个支持一键 OpenClaw 托管的项目.',
         tabChat: '聊天',
         tabConfiguration: '配置',
         tabSettings: '设置',
@@ -1852,14 +1852,14 @@ const zh: Translations = {
     },
     privacy: {
         title: '隐私政策',
-        description: '了解 MyClaw 如何收集、使用和保护您的个人数据。',
+        description: '了解 MyClaw.One 如何收集、使用和保护您的个人数据。',
         lastUpdated: '最后更新：2026年3月14日',
         introTitle: '1. 简介',
         introText:
-            'MyClaw（"我们"）致力于保护您的隐私。本隐私政策说明了当您使用我们的服务时，我们如何收集、使用、披露和保护您的信息。',
+            'MyClaw.One（"我们"）致力于保护您的隐私。本隐私政策说明了当您使用我们的服务时，我们如何收集、使用、披露和保护您的信息。',
         authTitle: '2. 身份验证',
         authText:
-            'MyClaw 使用 Google Firebase Authentication 管理用户账户。您可以使用电子邮箱、Google 或 GitHub 登录。使用这些登录方式即表示您同意其各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备信息等基本数据。我们仅存储您的电子邮箱地址和显示名称。',
+            'MyClaw.One 使用 Google Firebase Authentication 管理用户账户。您可以使用电子邮箱、Google 或 GitHub 登录。使用这些登录方式即表示您同意其各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备信息等基本数据。我们仅存储您的电子邮箱地址和显示名称。',
         collectTitle: '3. 我们收集的信息',
         collectText: '我们通过以下方式收集信息：',
         personalInfoTitle: '个人信息',
@@ -1905,7 +1905,7 @@ const zh: Translations = {
         transfersText:
             '您的信息可能会被传输到您所在国家以外的国家并在那里处理。我们确保采取适当的保障措施，按照本隐私政策保护您的数据。',
         eligibilityTitle: '11. 资格',
-        eligibilityText: '我们的服务对所有人开放。使用 MyClaw 没有年龄限制。',
+        eligibilityText: '我们的服务对所有人开放。使用 MyClaw.One 没有年龄限制。',
         changesTitle: '12. 本政策的变更',
         changesText:
             '我们可能会不时更新本隐私政策。我们将通过在此页面发布新的隐私政策并更新"最后更新"日期来通知您任何变更。',
@@ -1915,17 +1915,17 @@ const zh: Translations = {
     },
     terms: {
         title: '服务条款',
-        description: '阅读使用 MyClaw 服务的条款和条件。',
+        description: '阅读使用 MyClaw.One 服务的条款和条件。',
         lastUpdated: '最后更新：2026年3月14日',
         acceptanceTitle: '1. 条款接受',
         acceptanceText:
-            '访问和使用 MyClaw（"服务"）即表示您接受并同意受本协议条款的约束。如果您不同意这些条款，请不要使用我们的服务。',
+            '访问和使用 MyClaw.One（"服务"）即表示您接受并同意受本协议条款的约束。如果您不同意这些条款，请不要使用我们的服务。',
         serviceTitle: '2. 服务描述',
         serviceText:
-            'MyClaw 提供在专用服务器上一键部署 OpenClaw 的服务。我们使用户能够部署、管理和访问预配置的 OpenClaw 实例，拥有完整的 root 访问权限和专用资源。',
+            'MyClaw.One 提供在专用服务器上一键部署 OpenClaw 的服务。我们使用户能够部署、管理和访问预配置的 OpenClaw 实例，拥有完整的 root 访问权限和专用资源。',
         authTitle: '3. 身份验证',
         authText:
-            'MyClaw 使用 Google Firebase Authentication 管理登录。您可以使用电子邮箱、Google 或 GitHub 进行身份验证。使用这些方法即表示您同意 Google 和 GitHub 各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备数据等基本信息。',
+            'MyClaw.One 使用 Google Firebase Authentication 管理登录。您可以使用电子邮箱、Google 或 GitHub 进行身份验证。使用这些方法即表示您同意 Google 和 GitHub 各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备数据等基本信息。',
         responsibilitiesTitle: '4. 用户责任',
         responsibilitiesText: '您同意：',
         responsibilitiesAccurate: '提供准确和完整的注册信息',
@@ -1950,19 +1950,19 @@ const zh: Translations = {
             '我们努力保持高可用性，但不保证对服务的不间断访问。我们保留随时修改、暂停或终止服务任何部分的权利，无论是否通知。',
         liabilityTitle: '8. 责任限制',
         liabilityText:
-            '在法律允许的最大范围内，MyClaw 不对任何间接、附带、特殊、后果性或惩罚性损害赔偿，或直接或间接产生的任何利润或收入损失承担责任。',
+            '在法律允许的最大范围内，MyClaw.One 不对任何间接、附带、特殊、后果性或惩罚性损害赔偿，或直接或间接产生的任何利润或收入损失承担责任。',
         terminationTitle: '9. 终止',
         terminationText:
             '对于我们认为违反本条款或对其他用户、我们或第三方有害的行为，或出于任何其他原因，我们可能会立即终止或暂停您的账户和对服务的访问，无需事先通知。',
         affiliateTitle: '10. Affiliate Program',
         affiliateText:
-            'MyClaw offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
+            'MyClaw.One offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
         affiliateCodeUnique:
             'Each user receives a unique referral code upon registration, which can be customized once.',
         affiliateCodeOneChange:
             'The referral code can only be changed one time. Choose your custom code carefully.',
         affiliateReferralWindow:
-            'A referral is valid for 6 months from when the referred user first visits MyClaw with your referral link. After 6 months, the referral expires.',
+            'A referral is valid for 6 months from when the referred user first visits MyClaw.One with your referral link. After 6 months, the referral expires.',
         affiliateNoSelfReferral:
             'Self-referrals are not permitted. You may not refer your own accounts.',
         affiliateAbuse:
@@ -2020,12 +2020,12 @@ const zh: Translations = {
     },
     compare: {
         title: '完整对比',
-        description: '了解 MyClaw 与其他 OpenClaw 托管平台的对比。',
+        description: '了解 MyClaw.One 与其他 OpenClaw 托管平台的对比。',
         badge: '对比',
         feature: '平台',
         compareWith: '对比',
         lastUpdated: '最后更新：2026年3月',
-        competitorMyClaw: 'MyClaw',
+        competitorMyClaw: 'MyClaw.One',
         competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
@@ -2272,7 +2272,7 @@ const zh: Translations = {
     },
     affiliate: {
         title: 'Affiliate',
-        description: 'Earn rewards by referring friends to MyClaw.',
+        description: 'Earn rewards by referring friends to MyClaw.One.',
         subtitle: 'Share your referral link and earn rewards.',
         learnMore: '了解更多关于联盟计划',
         referralCode: 'Referral Code',
@@ -2305,19 +2305,19 @@ const zh: Translations = {
     affiliateProgram: {
         title: '联盟计划',
         description:
-            '了解 MyClaw 联盟计划的运作方式、您可以赚取多少以及参与规则。',
+            '了解 MyClaw.One 联盟计划的运作方式、您可以赚取多少以及参与规则。',
         lastUpdated: '最后更新：2026 年 4 月 1 日',
         overviewTitle: '1. 概述',
         overviewText:
-            'MyClaw 联盟计划让您通过推荐新用户到 MyClaw 来赚取奖励。当有人通过您的推荐链接访问 MyClaw 后进行购买时，您将从其付款中获得佣金。该计划免费加入，面向所有注册的 MyClaw 用户开放。',
+            'MyClaw.One 联盟计划让您通过推荐新用户到 MyClaw.One 来赚取奖励。当有人通过您的推荐链接访问 MyClaw.One 后进行购买时，您将从其付款中获得佣金。该计划免费加入，面向所有注册的 MyClaw.One 用户开放。',
         howItWorksTitle: '2. 运作方式',
         howItWorksText: '开始使用联盟计划非常简单：',
         howItWorksStep1:
-            '注册一个 MyClaw 账户。系统会自动为您生成一个唯一的推荐码。',
+            '注册一个 MyClaw.One 账户。系统会自动为您生成一个唯一的推荐码。',
         howItWorksStep2:
             '与朋友、同事或您的受众分享您的推荐链接。您的链接格式为：myclaw.cloud?ref=YOUR_CODE。',
         howItWorksStep3:
-            '当有人通过您的链接访问 MyClaw 后进行购买时，这将被记录为您的推荐。',
+            '当有人通过您的链接访问 MyClaw.One 后进行购买时，这将被记录为您的推荐。',
         howItWorksStep4:
             '每当您推荐的用户进行符合条件的购买时，您都会获得佣金。',
         earningsTitle: '3. 收益与支付',
@@ -2341,10 +2341,10 @@ const zh: Translations = {
         referralCodeFormat: '推荐码只能包含字母、数字、连字符和下划线。',
         referralWindowTitle: '5. 推荐归因窗口',
         referralWindowText:
-            '从推荐用户首次通过您的链接访问 MyClaw 起，推荐归因于您 3 个月。如果推荐用户在此 3 个月窗口内未进行购买，推荐将过期且不会获得佣金。如果用户通过不同的推荐链接访问，新的推荐将取代之前的推荐。',
+            '从推荐用户首次通过您的链接访问 MyClaw.One 起，推荐归因于您 3 个月。如果推荐用户在此 3 个月窗口内未进行购买，推荐将过期且不会获得佣金。如果用户通过不同的推荐链接访问，新的推荐将取代之前的推荐。',
         eligibilityTitle: '6. 资格',
         eligibilityText: '要参与联盟计划，您必须满足以下要求：',
-        eligibilityAccount: '您必须拥有注册的 MyClaw 账户。',
+        eligibilityAccount: '您必须拥有注册的 MyClaw.One 账户。',
         eligibilityStanding: '您的账户必须状态良好，没有违反政策的记录。',
         eligibilityAge: '您必须年满 18 岁或达到您所在司法管辖区的成年年龄。',
         rulesTitle: '7. 计划规则',
@@ -2355,29 +2355,29 @@ const zh: Translations = {
         rulesNoSpam:
             '不允许发送未经请求的批量消息（垃圾邮件）来推广您的推荐链接。',
         rulesNoMisrepresentation:
-            '您不得以任何方式歪曲 MyClaw、其服务或联盟计划。',
+            '您不得以任何方式歪曲 MyClaw.One、其服务或联盟计划。',
         rulesNoIncentivized:
             '不允许提供直接的金钱激励（例如，付费让用户通过您的链接注册）。',
         terminationTitle: '8. 违规与终止',
         terminationText:
-            '任何违反这些规则的行为将导致立即没收所有待处理和已获得的奖励。MyClaw 保留暂停或永久禁止您的账户参与联盟计划的权利。在严重情况下，您的 MyClaw 账户也可能被终止。有关违规的所有决定均为最终决定。',
+            '任何违反这些规则的行为将导致立即没收所有待处理和已获得的奖励。MyClaw.One 保留暂停或永久禁止您的账户参与联盟计划的权利。在严重情况下，您的 MyClaw.One 账户也可能被终止。有关违规的所有决定均为最终决定。',
         marketingTitle: '9. 如何推广',
         marketingText: '有许多创造性和合法的方式来分享您的推荐链接并增加收入：',
         marketingSocial:
-            '在 X、LinkedIn、Reddit 和 Facebook 等社交媒体平台上分享您的链接。撰写您使用 MyClaw 的体验并附上推荐链接。',
+            '在 X、LinkedIn、Reddit 和 Facebook 等社交媒体平台上分享您的链接。撰写您使用 MyClaw.One 的体验并附上推荐链接。',
         marketingBlog:
-            '撰写关于 MyClaw 的博客文章、教程或评测。在内容中自然地加入您的推荐链接。',
+            '撰写关于 MyClaw.One 的博客文章、教程或评测。在内容中自然地加入您的推荐链接。',
         marketingVideo:
-            '在 YouTube 或 TikTok 上创建视频内容，展示您如何使用 MyClaw 部署和管理 AI 代理。',
+            '在 YouTube 或 TikTok 上创建视频内容，展示您如何使用 MyClaw.One 部署和管理 AI 代理。',
         marketingCommunity:
-            '参与开发者社区、论坛和 Discord 服务器。当有人询问云托管或 AI 代理部署时，用您的链接推荐 MyClaw。',
+            '参与开发者社区、论坛和 Discord 服务器。当有人询问云托管或 AI 代理部署时，用您的链接推荐 MyClaw.One。',
         marketingNewsletter:
-            '如果您运营新闻通讯或电子邮件列表，请在相关期刊中附上推荐链接提及 MyClaw。',
+            '如果您运营新闻通讯或电子邮件列表，请在相关期刊中附上推荐链接提及 MyClaw.One。',
         marketingComparison:
-            '撰写诚实的对比文章或指南，突出 MyClaw 与其他平台的不同之处。',
+            '撰写诚实的对比文章或指南，突出 MyClaw.One 与其他平台的不同之处。',
         changesToProgramTitle: '10. 计划变更',
         changesToProgramText:
-            'MyClaw 保留随时修改、暂停或终止联盟计划的权利，恕不另行通知。这包括佣金率、推荐窗口、支付门槛和计划规则的变更。变更后继续参与即表示接受更新的条款。',
+            'MyClaw.One 保留随时修改、暂停或终止联盟计划的权利，恕不另行通知。这包括佣金率、推荐窗口、支付门槛和计划规则的变更。变更后继续参与即表示接受更新的条款。',
         getStartedTitle: '11. 开始',
         getStartedText:
             '准备好开始赚钱了吗？前往您的联盟仪表板获取推荐链接，开始与您的网络分享。',

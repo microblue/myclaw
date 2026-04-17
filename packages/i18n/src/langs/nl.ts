@@ -25,7 +25,7 @@ const nl: Translations = {
         pageNotFound: 'Pagina niet gevonden',
         closeNotification: 'Melding sluiten',
         beta: 'Beta',
-        brandName: 'MyClaw',
+        brandName: 'MyClaw.One',
         brandNameGo: 'MyClaw Go',
         brandNameGoVersion: 'MyClaw Go {{version}}',
         menuFile: 'Archief',
@@ -88,7 +88,7 @@ const nl: Translations = {
         cloud: 'Cloud',
         cloudSubtitle: 'Technisch',
         go: 'Go',
-        desktop: 'Go',
+        desktop: 'Desktop',
         goSubtitle: 'Niet-technisch'
     },
     go: {
@@ -240,7 +240,7 @@ const nl: Translations = {
     },
     footer: {
         website: 'Website',
-        copyrightName: 'MyClaw',
+        copyrightName: 'MyClaw.One',
         copyrightRights: 'Alle rechten voorbehouden.',
         termsOfService: 'Servicevoorwaarden',
         privacyPolicy: 'Privacybeleid',
@@ -261,7 +261,7 @@ const nl: Translations = {
         affiliateProgram: 'Partnerprogramma',
         documentation: 'Documentatie',
         productDescription:
-            'Deploy OpenClaw-agents in de cloud of lokaal met één klik — bouw, verbind en schaal je AI-agents sneller met MyClaw.',
+            'Deploy OpenClaw-agents in de cloud of lokaal met één klik — bouw, verbind en schaal je AI-agents sneller met MyClaw.One.',
         downloadAndroid: 'Downloaden op Google Play',
         downloadIos: 'Downloaden in de App Store',
         ariaGithub: 'GitHub',
@@ -585,12 +585,12 @@ const nl: Translations = {
         failedToGetAdminEmails: 'Failed to fetch emails!'
     },
     emails: {
-        otpSubject: 'Je MyClaw-inlogcode',
-        otpPreview: 'Je MyClaw-inlogcode: {{code}}',
+        otpSubject: 'Je MyClaw.One-inlogcode',
+        otpPreview: 'Je MyClaw.One-inlogcode: {{code}}',
         otpHeading: 'Je inlogcode is:',
         otpExpiry:
             'Code verloopt over 10 minuten. Als jij dit niet was, negeer deze e-mail.',
-        featureFooter: 'Je ontvangt dit omdat je een MyClaw-account hebt.',
+        featureFooter: 'Je ontvangt dit omdat je een MyClaw.One-account hebt.',
         features: {
             terminal: {
                 subject: 'Wist je dat? Je hebt een webterminal',
@@ -598,7 +598,7 @@ const nl: Translations = {
                 tag: 'Webterminal',
                 heading: 'Je server is \u00e9\u00e9n klik verwijderd',
                 description:
-                    'Krijg direct toegang tot je server vanuit je browser met onze ingebouwde terminal. Geen SSH-client nodig \u2014 open gewoon MyClaw en begin met typen.',
+                    'Krijg direct toegang tot je server vanuit je browser met onze ingebouwde terminal. Geen SSH-client nodig \u2014 open gewoon MyClaw.One en begin met typen.',
                 cta: 'Terminal openen'
             },
             logs: {
@@ -607,7 +607,7 @@ const nl: Translations = {
                 tag: 'Live Logs',
                 heading: 'Bekijk wat je server doet',
                 description:
-                    'Monitor je serverlogs in realtime vanuit het MyClaw-dashboard. Diagnose problemen, volg deployments en debug je applicaties zonder de browser te verlaten.',
+                    'Monitor je serverlogs in realtime vanuit het MyClaw.One-dashboard. Diagnose problemen, volg deployments en debug je applicaties zonder de browser te verlaten.',
                 cta: 'Logs bekijken'
             },
             channels: {
@@ -617,7 +617,7 @@ const nl: Translations = {
                 tag: 'Kanalen',
                 heading: 'Je agents, overal',
                 description:
-                    'Verbind je AI-agents met Discord, Slack, WhatsApp en meer. Configureer kanalen en koppel ze aan agents \u2014 alles vanuit het MyClaw-dashboard.',
+                    'Verbind je AI-agents met Discord, Slack, WhatsApp en meer. Configureer kanalen en koppel ze aan agents \u2014 alles vanuit het MyClaw.One-dashboard.',
                 cta: 'Kanalen instellen'
             },
             fileExplorer: {
@@ -627,7 +627,7 @@ const nl: Translations = {
                 tag: 'Bestandsverkenner',
                 heading: 'Je bestanden, binnen handbereik',
                 description:
-                    'Blader, lees en bewerk bestanden op je server direct vanuit het MyClaw-dashboard. Syntaxmarkering, zoeken en direct opslaan \u2014 geen SSH nodig.',
+                    'Blader, lees en bewerk bestanden op je server direct vanuit het MyClaw.One-dashboard. Syntaxmarkering, zoeken en direct opslaan \u2014 geen SSH nodig.',
                 cta: 'Bestandsverkenner openen'
             },
             playground: {
@@ -645,7 +645,7 @@ const nl: Translations = {
                 tag: 'Agent Chat',
                 heading: 'Praat met je agents',
                 description:
-                    'Chat met je AI-agents direct vanuit het MyClaw-dashboard. Stuur berichten, voeg afbeeldingen toe en bekijk gespreksgeschiedenis \u2014 alles op \u00e9\u00e9n plek.',
+                    'Chat met je AI-agents direct vanuit het MyClaw.One-dashboard. Stuur berichten, voeg afbeeldingen toe en bekijk gespreksgeschiedenis \u2014 alles op \u00e9\u00e9n plek.',
                 cta: 'Begin met chatten'
             },
             voiceMode: {
@@ -683,7 +683,7 @@ const nl: Translations = {
                 tag: 'Omgevingsvariabelen',
                 heading: 'Configureren zonder SSH',
                 description:
-                    'Voeg omgevingsvariabelen toe, bewerk en verwijder ze direct vanuit het MyClaw-dashboard. Stel API-sleutels, geheimen en configuratie in \u2014 geen terminal nodig.',
+                    'Voeg omgevingsvariabelen toe, bewerk en verwijder ze direct vanuit het MyClaw.One-dashboard. Stel API-sleutels, geheimen en configuratie in \u2014 geen terminal nodig.',
                 cta: 'Variabelen beheren'
             },
             diagnostics: {
@@ -697,12 +697,12 @@ const nl: Translations = {
                 cta: 'Diagnostiek uitvoeren'
             },
             sshKeys: {
-                subject: 'Wist je dat? Beheer SSH-sleutels vanuit MyClaw',
+                subject: 'Wist je dat? Beheer SSH-sleutels vanuit MyClaw.One',
                 preview: 'Genereer en beheer SSH-sleutelparen in het dashboard',
                 tag: 'SSH-sleutels',
                 heading: 'SSH-sleutels, vereenvoudigd',
                 description:
-                    'Genereer SSH-sleutelparen, kopieer publieke sleutels en download priv\u00e9sleutels \u2014 alles vanuit het MyClaw-dashboard. Wijs sleutels toe aan claws voor veilige toegang.',
+                    'Genereer SSH-sleutelparen, kopieer publieke sleutels en download priv\u00e9sleutels \u2014 alles vanuit het MyClaw.One-dashboard. Wijs sleutels toe aan claws voor veilige toegang.',
                 cta: 'SSH-sleutels beheren'
             },
             exportConfig: {
@@ -716,12 +716,12 @@ const nl: Translations = {
                 cta: 'Configuratie exporteren'
             },
             multiLanguage: {
-                subject: 'Wist je dat? MyClaw spreekt jouw taal',
-                preview: 'Gebruik MyClaw in 14 talen',
+                subject: 'Wist je dat? MyClaw.One spreekt jouw taal',
+                preview: 'Gebruik MyClaw.One in 14 talen',
                 tag: 'Meertalig',
-                heading: 'MyClaw in jouw taal',
+                heading: 'MyClaw.One in jouw taal',
                 description:
-                    'Schakel het hele MyClaw-dashboard om naar een van de 14 talen. Van knoppen tot foutmeldingen \u2014 volledig vertaald.',
+                    'Schakel het hele MyClaw.One-dashboard om naar een van de 14 talen. Van knoppen tot foutmeldingen \u2014 volledig vertaald.',
                 cta: 'Taal wijzigen'
             },
             subdomain: {
@@ -735,12 +735,12 @@ const nl: Translations = {
                 cta: 'Je subdomein bekijken'
             },
             darkMode: {
-                subject: 'Wist je dat? MyClaw heeft een donkere modus',
+                subject: 'Wist je dat? MyClaw.One heeft een donkere modus',
                 preview: 'Schakel tussen licht en donker thema',
                 tag: 'Donkere Modus',
                 heading: 'Prettig voor de ogen',
                 description:
-                    'Schakel tussen licht en donker thema in het MyClaw-dashboard. Je voorkeur wordt opgeslagen en automatisch toegepast bij elk bezoek.',
+                    'Schakel tussen licht en donker thema in het MyClaw.One-dashboard. Je voorkeur wordt opgeslagen en automatisch toegepast bij elk bezoek.',
                 cta: 'Donkere modus proberen'
             },
             reinstall: {
@@ -769,7 +769,7 @@ const nl: Translations = {
     auth: {
         signIn: 'Inloggen',
         signInDescription:
-            'Log in op je MyClaw-account om je OpenClaw-instanties te beheren.',
+            'Log in op je MyClaw.One-account om je OpenClaw-instanties te beheren.',
         signingIn: 'Inloggen...',
         verifyCode: 'Code verifi\u00ebren',
         checkYourEmail: 'Controleer je e-mail',
@@ -801,7 +801,7 @@ const nl: Translations = {
     account: {
         title: 'Account',
         description:
-            'Beheer je MyClaw-accountinstellingen en profielinformatie.',
+            'Beheer je MyClaw.One-accountinstellingen en profielinformatie.',
         accountSettings: 'Account',
         manageYourAccount: 'Beheer je profiel- en accountinstellingen.',
         profileInformation: 'Profielinformatie',
@@ -1229,11 +1229,11 @@ clawName: 'Naam',
             'Deploy OpenClaw op je eigen VPS met \u00e9\u00e9n klik. Zelfhostbare cloudhosting met volledige root-toegang, wereldwijde locaties en transparante prijzen.',
         badge: 'OpenClaw vereenvoudigd',
         tutorialBadge: 'Bekijk. Deploy.',
-        tutorialVideoThumbnail: 'MyClaw handleiding videominiatuur',
+        tutorialVideoThumbnail: 'MyClaw.One handleiding videominiatuur',
         heroTitle1: 'Implementeer OpenClaw.',
         heroTitle2: 'E\u00e9n klik. Klaar.',
         heroDescription:
-            'Deploy OpenClaw-agents in de cloud of lokaal met \u00e9\u00e9n klik \u2014 bouw, verbind en schaal je AI-agents sneller met MyClaw.',
+            'Deploy OpenClaw-agents in de cloud of lokaal met \u00e9\u00e9n klik \u2014 bouw, verbind en schaal je AI-agents sneller met MyClaw.One.',
         goToClaws: 'Naar Claws',
         selfHost: 'Open Source',
         startingPrice: 'Vanaf',
@@ -1291,8 +1291,8 @@ clawName: 'Naam',
             'Schakel met \u00e9\u00e9n klik naar elke OpenClaw-versie. Blijf altijd up-to-date of rol terug wanneer nodig.',
         openclawControl: 'OpenClaw Control',
         openclawControlDescription:
-            'Krijg direct toegang tot het native OpenClaw-paneel vanuit MyClaw. Volledige bewerkingstoegang tot alles wat OpenClaw biedt.',
-        clawHostControl: 'MyClaw Control',
+            'Krijg direct toegang tot het native OpenClaw-paneel vanuit MyClaw.One. Volledige bewerkingstoegang tot alles wat OpenClaw biedt.',
+        clawHostControl: 'MyClaw.One Control',
         clawHostControlDescription:
             'Beheer bestanden, updates, kanalen, variabelen, skills en meer configuratieopties direct vanuit het platform.',
         skillsMarketplace: '5.000+ skills',
@@ -1382,16 +1382,16 @@ clawName: 'Naam',
         faqTitle: 'Vragen',
         frequentlyAskedQuestions: 'Veelgestelde vragen',
         faqDescription: 'Elke veelgestelde vraag, beantwoord.',
-        faq1Question: 'Wat is MyClaw?',
+        faq1Question: 'Wat is MyClaw.One?',
         faq1Answer:
-            'MyClaw is een platform gebouwd om OpenClaw toegankelijk te maken voor iedereen. Het laat zowel niet-technische gebruikers als ontwikkelaars OpenClaw draaien zonder infrastructuur te beheren. Wij regelen servers, uptime, beveiliging en onderhoud \u2014 jij gebruikt gewoon OpenClaw.',
+            'MyClaw.One is een platform gebouwd om OpenClaw toegankelijk te maken voor iedereen. Het laat zowel niet-technische gebruikers als ontwikkelaars OpenClaw draaien zonder infrastructuur te beheren. Wij regelen servers, uptime, beveiliging en onderhoud \u2014 jij gebruikt gewoon OpenClaw.',
         faq2Question: 'Wat is OpenClaw?',
         faq2Answer:
             'OpenClaw is een zelfgehoste beveiligde toegangslaag voor je AI-tools en -diensten. Het is voorgeconfigureerd voor beveiliging en prestaties, zodat je het kunt deployen en direct kunt verbinden.',
         faq3Question:
             'Hoe verschilt dit van andere AI-tools of gehoste platforms?',
         faq3Answer:
-            'In tegenstelling tot gehoste AI-tools geeft MyClaw je een echte server met OpenClaw ge\u00efnstalleerd. Je bezit de infrastructuur, hebt overal controle over en wordt niet beperkt door een gedeeld platform of model.',
+            'In tegenstelling tot gehoste AI-tools geeft MyClaw.One je een echte server met OpenClaw ge\u00efnstalleerd. Je bezit de infrastructuur, hebt overal controle over en wordt niet beperkt door een gedeeld platform of model.',
         faq4Question: 'Heb ik technische kennis nodig?',
         faq4Answer:
             'Nee. Wij regelen alle infrastructuur, installatie en onderhoud. Je kunt OpenClaw configureren en beheren via de UI, verbinden met kanalen en gebruik aanpassen \u2014 zonder servers of infrastructuur aan te raken.',
@@ -1476,9 +1476,9 @@ clawName: 'Naam',
     changelog: {
         title: 'Changelog',
         description:
-            'Volg updates, nieuwe functies en verbeteringen aan MyClaw.',
+            'Volg updates, nieuwe functies en verbeteringen aan MyClaw.One.',
         subtitle:
-            'Alle updates, nieuwe functies en verbeteringen aan MyClaw.',
+            'Alle updates, nieuwe functies en verbeteringen aan MyClaw.One.',
         upcomingRelease: 'In ontwikkeling',
         upcomingReleaseTitle: 'Mobiele app & meer',
         upcomingReleaseDescription:
@@ -1499,11 +1499,11 @@ clawName: 'Naam',
         upcomingReleaseFeature8:
             'Functieverzoeken automatisch beheerd en gepubliceerd door OpenClaw-agents',
         upcomingReleaseFeature9:
-            'Spraakmodus om te communiceren met de OpenClaw-agents gehost op MyClaw (Beta)',
+            'Spraakmodus om te communiceren met de OpenClaw-agents gehost op MyClaw.One (Beta)',
         upcomingReleaseFeature10:
             'Herinstalleer OpenClaw op je instantie voor een nieuwe start, eenmaal per dag beschikbaar',
         upcomingReleaseFeature11:
-            'Landingspagina voor MyClaw Go, lokale hosting met MyClaw',
+            'Landingspagina voor MyClaw Go, lokale hosting met MyClaw.One',
         upcomingReleaseFeature12:
             'Desktop-app voor macOS en Windows om OpenClaw lokaal te deployen met \u00e9\u00e9n klik',
         release14Date: '1 april 2026',
@@ -1523,11 +1523,11 @@ clawName: 'Naam',
         release12Description:
             'Jaarabonnementen met 2 maanden gratis, spraakmodus, instantie herinstallatie en een eerste landingspagina voor MyClaw Go.',
         release12Feature1:
-            'Landingspagina voor MyClaw Go, lokale hosting met MyClaw',
+            'Landingspagina voor MyClaw Go, lokale hosting met MyClaw.One',
         release12Feature2:
             'Jaarabonnement met 2 maanden gratis bij jaarlijks abonneren',
         release12Feature3:
-            'Spraakmodus om te communiceren met de OpenClaw-agents gehost op MyClaw',
+            'Spraakmodus om te communiceren met de OpenClaw-agents gehost op MyClaw.One',
         release12Feature4:
             'Herinstalleer OpenClaw op je instantie voor een nieuwe start, eenmaal per dag beschikbaar',
         release11Date: '28 februari 2026',
@@ -1607,7 +1607,7 @@ clawName: 'Naam',
         release1Date: '8 februari 2026',
         release1Title: 'Eerste release',
         release1Description:
-            'De eerste offici\u00eble release van MyClaw. Deploy OpenClaw op je eigen VPS met \u00e9\u00e9n klik.',
+            'De eerste offici\u00eble release van MyClaw.One. Deploy OpenClaw op je eigen VPS met \u00e9\u00e9n klik.',
         release1Feature1: 'OpenClaw-deployment met \u00e9\u00e9n klik',
         release1Feature2:
             'Dashboard om claws te beheren, instanties starten, stoppen, herstarten en verwijderen',
@@ -1627,7 +1627,7 @@ clawName: 'Naam',
         release2Date: '8 februari 2026',
         release2Title: 'Changelog & meer',
         release2Description:
-            'Een nieuwe manier om op de hoogte te blijven van alles rondom MyClaw.',
+            'Een nieuwe manier om op de hoogte te blijven van alles rondom MyClaw.One.',
         release2Feature1:
             'Changelogpagina om alle platformupdates en releases te volgen',
         release3Date: '10 februari 2026',
@@ -1688,7 +1688,7 @@ clawName: 'Naam',
             'Wist je dat je meerdere agents kunt draaien binnen \u00e9\u00e9n OpenClaw?',
         loadingTip2: 'Wist je dat OpenClaw open-source is?',
         loadingTip3:
-            'MyClaw is het allereerste project dat OpenClaw-hosting met \u00e9\u00e9n klik mogelijk maakt.',
+            'MyClaw.One is het allereerste project dat OpenClaw-hosting met \u00e9\u00e9n klik mogelijk maakt.',
         tabChat: 'Chat',
         tabConfiguration: 'Configuratie',
         tabSettings: 'Instellingen',
@@ -2029,14 +2029,14 @@ clawName: 'Naam',
     privacy: {
         title: 'Privacybeleid',
         description:
-            'Lees hoe MyClaw je persoonlijke gegevens verzamelt, gebruikt en beschermt.',
+            'Lees hoe MyClaw.One je persoonlijke gegevens verzamelt, gebruikt en beschermt.',
         lastUpdated: 'Laatst bijgewerkt: 14 maart 2026',
         introTitle: '1. Inleiding',
         introText:
-            'MyClaw ("wij", "ons" of "onze") zet zich in voor de bescherming van je privacy. Dit Privacybeleid legt uit hoe wij je informatie verzamelen, gebruiken, openbaar maken en beschermen wanneer je onze Service gebruikt.',
+            'MyClaw.One ("wij", "ons" of "onze") zet zich in voor de bescherming van je privacy. Dit Privacybeleid legt uit hoe wij je informatie verzamelen, gebruiken, openbaar maken en beschermen wanneer je onze Service gebruikt.',
         authTitle: '2. Authenticatie',
         authText:
-            'MyClaw gebruikt Google Firebase Authentication om gebruikersaccounts te beheren. Je kunt inloggen met e-mail, Google of GitHub. Door deze inlogmethoden te gebruiken, ga je akkoord met hun respectieve voorwaarden en privacybeleid. Deze providers kunnen basisgegevens verzamelen zoals je e-mailadres, naam en apparaatinformatie. Wij slaan alleen je e-mailadres en weergavenaam op.',
+            'MyClaw.One gebruikt Google Firebase Authentication om gebruikersaccounts te beheren. Je kunt inloggen met e-mail, Google of GitHub. Door deze inlogmethoden te gebruiken, ga je akkoord met hun respectieve voorwaarden en privacybeleid. Deze providers kunnen basisgegevens verzamelen zoals je e-mailadres, naam en apparaatinformatie. Wij slaan alleen je e-mailadres en weergavenaam op.',
         collectTitle: '3. Informatie die wij verzamelen',
         collectText: 'Wij verzamelen informatie op de volgende manieren:',
         personalInfoTitle: 'Persoonlijke informatie',
@@ -2089,7 +2089,7 @@ clawName: 'Naam',
             'Je informatie kan worden overgedragen naar en verwerkt in landen anders dan je eigen land. Wij zorgen ervoor dat passende waarborgen aanwezig zijn om je gegevens te beschermen in overeenstemming met dit Privacybeleid.',
         eligibilityTitle: '11. Geschiktheid',
         eligibilityText:
-            'Onze Service is beschikbaar voor iedereen. Er zijn geen leeftijdsbeperkingen voor het gebruik van MyClaw.',
+            'Onze Service is beschikbaar voor iedereen. Er zijn geen leeftijdsbeperkingen voor het gebruik van MyClaw.One.',
         changesTitle: '12. Wijzigingen in dit beleid',
         changesText:
             'Wij kunnen dit Privacybeleid van tijd tot tijd bijwerken. Wij zullen je op de hoogte stellen van wijzigingen door het nieuwe Privacybeleid op deze pagina te plaatsen en de datum "Laatst bijgewerkt" bij te werken.',
@@ -2100,17 +2100,17 @@ clawName: 'Naam',
     terms: {
         title: 'Servicevoorwaarden',
         description:
-            'Lees de algemene voorwaarden voor het gebruik van MyClaw-diensten.',
+            'Lees de algemene voorwaarden voor het gebruik van MyClaw.One-diensten.',
         lastUpdated: 'Laatst bijgewerkt: 14 maart 2026',
         acceptanceTitle: '1. Acceptatie van voorwaarden',
         acceptanceText:
-            'Door MyClaw ("Service") te openen en te gebruiken, accepteer je en ga je akkoord met de voorwaarden en bepalingen van deze overeenkomst. Als je niet akkoord gaat met deze voorwaarden, gebruik onze Service dan niet.',
+            'Door MyClaw.One ("Service") te openen en te gebruiken, accepteer je en ga je akkoord met de voorwaarden en bepalingen van deze overeenkomst. Als je niet akkoord gaat met deze voorwaarden, gebruik onze Service dan niet.',
         serviceTitle: '2. Beschrijving van de Service',
         serviceText:
-            'MyClaw biedt OpenClaw-deployment met \u00e9\u00e9n klik op dedicated servers. Wij stellen gebruikers in staat om vooraf geconfigureerde OpenClaw-instanties te deployen, beheren en openen met volledige root-toegang en dedicated resources.',
+            'MyClaw.One biedt OpenClaw-deployment met \u00e9\u00e9n klik op dedicated servers. Wij stellen gebruikers in staat om vooraf geconfigureerde OpenClaw-instanties te deployen, beheren en openen met volledige root-toegang en dedicated resources.',
         authTitle: '3. Authenticatie',
         authText:
-            'MyClaw gebruikt Google Firebase Authentication om inloggen te beheren. Je kunt authenticeren met e-mail, Google of GitHub. Door deze methoden te gebruiken, ga je akkoord met de respectieve voorwaarden en het privacybeleid van Google en GitHub. Deze providers kunnen basisinformatie verzamelen zoals je e-mailadres, naam en apparaatgegevens.',
+            'MyClaw.One gebruikt Google Firebase Authentication om inloggen te beheren. Je kunt authenticeren met e-mail, Google of GitHub. Door deze methoden te gebruiken, ga je akkoord met de respectieve voorwaarden en het privacybeleid van Google en GitHub. Deze providers kunnen basisinformatie verzamelen zoals je e-mailadres, naam en apparaatgegevens.',
         responsibilitiesTitle: '4. Verantwoordelijkheden van de gebruiker',
         responsibilitiesText: 'Je gaat akkoord om:',
         responsibilitiesAccurate:
@@ -2144,19 +2144,19 @@ clawName: 'Naam',
             'Wij streven naar hoge beschikbaarheid maar garanderen geen ononderbroken toegang tot de Service. Wij behouden ons het recht voor om elk onderdeel van de Service op elk moment te wijzigen, op te schorten of stop te zetten, met of zonder voorafgaande kennisgeving.',
         liabilityTitle: '8. Beperking van aansprakelijkheid',
         liabilityText:
-            'Voor zover maximaal toegestaan door de wet, is MyClaw niet aansprakelijk voor indirecte, incidentele, speciale, gevolg- of punitieve schade, of enig verlies van winst of inkomsten, hetzij direct of indirect geleden.',
+            'Voor zover maximaal toegestaan door de wet, is MyClaw.One niet aansprakelijk voor indirecte, incidentele, speciale, gevolg- of punitieve schade, of enig verlies van winst of inkomsten, hetzij direct of indirect geleden.',
         terminationTitle: '9. Be\u00ebindiging',
         terminationText:
             'Wij kunnen je account en toegang tot de Service onmiddellijk be\u00ebindigen of opschorten, zonder voorafgaande kennisgeving, voor gedrag waarvan wij geloven dat het deze Voorwaarden schendt of schadelijk is voor andere gebruikers, ons of derden, of om welke andere reden dan ook.',
         affiliateTitle: '10. Affiliate Program',
         affiliateText:
-            'MyClaw offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
+            'MyClaw.One offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
         affiliateCodeUnique:
             'Each user receives a unique referral code upon registration, which can be customized once.',
         affiliateCodeOneChange:
             'The referral code can only be changed one time. Choose your custom code carefully.',
         affiliateReferralWindow:
-            'A referral is valid for 6 months from when the referred user first visits MyClaw with your referral link. After 6 months, the referral expires.',
+            'A referral is valid for 6 months from when the referred user first visits MyClaw.One with your referral link. After 6 months, the referral expires.',
         affiliateNoSelfReferral:
             'Self-referrals are not permitted. You may not refer your own accounts.',
         affiliateAbuse:
@@ -2218,12 +2218,12 @@ clawName: 'Naam',
     compare: {
         title: 'Volledige vergelijking',
         description:
-            'Bekijk hoe MyClaw zich verhoudt tot andere OpenClaw-hostingplatforms.',
+            'Bekijk hoe MyClaw.One zich verhoudt tot andere OpenClaw-hostingplatforms.',
         badge: 'Vergelijking',
         feature: 'Platform',
         compareWith: 'Vergelijk met',
         lastUpdated: 'Laatst bijgewerkt: maart 2026',
-        competitorMyClaw: 'MyClaw',
+        competitorMyClaw: 'MyClaw.One',
         competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
@@ -2472,7 +2472,7 @@ clawName: 'Naam',
     },
     affiliate: {
         title: 'Affiliate',
-        description: 'Earn rewards by referring friends to MyClaw.',
+        description: 'Earn rewards by referring friends to MyClaw.One.',
         subtitle: 'Share your referral link and earn rewards.',
         learnMore: 'Meer informatie over het partnerprogramma',
         referralCode: 'Referral Code',
@@ -2505,20 +2505,20 @@ clawName: 'Naam',
     affiliateProgram: {
         title: 'Partnerprogramma',
         description:
-            'Ontdek hoe het MyClaw-partnerprogramma werkt, hoeveel je kunt verdienen en de regels voor deelname.',
+            'Ontdek hoe het MyClaw.One-partnerprogramma werkt, hoeveel je kunt verdienen en de regels voor deelname.',
         lastUpdated: 'Laatst bijgewerkt: 1 april 2026',
         overviewTitle: '1. Overzicht',
         overviewText:
-            'Het MyClaw-partnerprogramma laat je beloningen verdienen door nieuwe gebruikers naar MyClaw te verwijzen. Wanneer iemand een aankoop doet na MyClaw te hebben bezocht via jouw verwijzingslink, verdien je een commissie op hun betalingen. Het programma is gratis en beschikbaar voor alle geregistreerde MyClaw-gebruikers.',
+            'Het MyClaw.One-partnerprogramma laat je beloningen verdienen door nieuwe gebruikers naar MyClaw.One te verwijzen. Wanneer iemand een aankoop doet na MyClaw.One te hebben bezocht via jouw verwijzingslink, verdien je een commissie op hun betalingen. Het programma is gratis en beschikbaar voor alle geregistreerde MyClaw.One-gebruikers.',
         howItWorksTitle: '2. Hoe het werkt',
         howItWorksText:
             'Aan de slag gaan met het partnerprogramma is eenvoudig:',
         howItWorksStep1:
-            'Maak een MyClaw-account aan. Er wordt automatisch een unieke verwijzingscode voor je gegenereerd.',
+            'Maak een MyClaw.One-account aan. Er wordt automatisch een unieke verwijzingscode voor je gegenereerd.',
         howItWorksStep2:
             "Deel je verwijzingslink met vrienden, collega's of je publiek. Je link volgt het formaat: myclaw.cloud?ref=YOUR_CODE.",
         howItWorksStep3:
-            'Wanneer iemand een aankoop doet na MyClaw te hebben bezocht via jouw link, wordt dit als jouw verwijzing geregistreerd.',
+            'Wanneer iemand een aankoop doet na MyClaw.One te hebben bezocht via jouw link, wordt dit als jouw verwijzing geregistreerd.',
         howItWorksStep4:
             'Je verdient een commissie telkens wanneer je verwezen gebruiker een in aanmerking komende aankoop doet.',
         earningsTitle: '3. Verdiensten en uitbetalingen',
@@ -2546,12 +2546,12 @@ clawName: 'Naam',
             'Verwijzingscodes mogen alleen letters, cijfers, streepjes en underscores bevatten.',
         referralWindowTitle: '5. Verwijzings-attributievenster',
         referralWindowText:
-            'Een verwijzing wordt aan jou toegeschreven voor 3 maanden vanaf het moment dat de verwezen gebruiker MyClaw voor het eerst via jouw link bezoekt. Als de verwezen gebruiker geen aankoop doet binnen dit venster van 3 maanden, vervalt de verwijzing en wordt er geen commissie verdiend. Als de gebruiker via een andere verwijzingslink bezoekt, vervangt de nieuwe verwijzing de vorige.',
+            'Een verwijzing wordt aan jou toegeschreven voor 3 maanden vanaf het moment dat de verwezen gebruiker MyClaw.One voor het eerst via jouw link bezoekt. Als de verwezen gebruiker geen aankoop doet binnen dit venster van 3 maanden, vervalt de verwijzing en wordt er geen commissie verdiend. Als de gebruiker via een andere verwijzingslink bezoekt, vervangt de nieuwe verwijzing de vorige.',
         eligibilityTitle: '6. Geschiktheid',
         eligibilityText:
             'Om deel te nemen aan het partnerprogramma moet je aan de volgende vereisten voldoen:',
         eligibilityAccount:
-            'Je moet een geregistreerd MyClaw-account hebben.',
+            'Je moet een geregistreerd MyClaw.One-account hebben.',
         eligibilityStanding:
             'Je account moet in goede staat zijn zonder geschiedenis van beleidsschendingen.',
         eligibilityAge:
@@ -2566,30 +2566,30 @@ clawName: 'Naam',
         rulesNoSpam:
             'Het versturen van ongevraagde bulkberichten (spam) om je verwijzingslink te promoten is niet toegestaan.',
         rulesNoMisrepresentation:
-            'Je mag MyClaw, zijn diensten of het partnerprogramma op geen enkele manier verkeerd voorstellen.',
+            'Je mag MyClaw.One, zijn diensten of het partnerprogramma op geen enkele manier verkeerd voorstellen.',
         rulesNoIncentivized:
             'Het aanbieden van directe financiële prikkels (bijv. gebruikers betalen om zich via jouw link aan te melden) is niet toegestaan.',
         terminationTitle: '8. Schending en beëindiging',
         terminationText:
-            'Elke schending van deze regels resulteert in het onmiddellijke verlies van alle openstaande en verdiende beloningen. MyClaw behoudt zich het recht voor om je account van het partnerprogramma op te schorten of permanent te verbannen. In ernstige gevallen kan ook je MyClaw-account worden beëindigd. Alle beslissingen met betrekking tot schendingen zijn definitief.',
+            'Elke schending van deze regels resulteert in het onmiddellijke verlies van alle openstaande en verdiende beloningen. MyClaw.One behoudt zich het recht voor om je account van het partnerprogramma op te schorten of permanent te verbannen. In ernstige gevallen kan ook je MyClaw.One-account worden beëindigd. Alle beslissingen met betrekking tot schendingen zijn definitief.',
         marketingTitle: '9. Hoe te promoten',
         marketingText:
             'Er zijn veel creatieve en legitieme manieren om je verwijzingslink te delen en je inkomsten te laten groeien:',
         marketingSocial:
-            'Deel je link op sociale mediaplatformen zoals X, LinkedIn, Reddit en Facebook. Schrijf over je ervaring met MyClaw en voeg je verwijzingslink toe.',
+            'Deel je link op sociale mediaplatformen zoals X, LinkedIn, Reddit en Facebook. Schrijf over je ervaring met MyClaw.One en voeg je verwijzingslink toe.',
         marketingBlog:
-            'Schrijf blogposts, tutorials of recensies over MyClaw. Verwerk je verwijzingslink op een natuurlijke manier in de content.',
+            'Schrijf blogposts, tutorials of recensies over MyClaw.One. Verwerk je verwijzingslink op een natuurlijke manier in de content.',
         marketingVideo:
-            'Maak videocontent op YouTube of TikTok waarin je laat zien hoe je MyClaw gebruikt om AI-agents te deployen en te beheren.',
+            'Maak videocontent op YouTube of TikTok waarin je laat zien hoe je MyClaw.One gebruikt om AI-agents te deployen en te beheren.',
         marketingCommunity:
-            'Neem deel aan ontwikkelaarscommunities, forums en Discord-servers. Wanneer iemand vraagt naar cloudhosting of het deployen van AI-agents, beveel MyClaw aan met je link.',
+            'Neem deel aan ontwikkelaarscommunities, forums en Discord-servers. Wanneer iemand vraagt naar cloudhosting of het deployen van AI-agents, beveel MyClaw.One aan met je link.',
         marketingNewsletter:
-            'Als je een nieuwsbrief of mailinglijst beheert, vermeld MyClaw dan in een relevant nummer met je verwijzingslink.',
+            'Als je een nieuwsbrief of mailinglijst beheert, vermeld MyClaw.One dan in een relevant nummer met je verwijzingslink.',
         marketingComparison:
-            'Schrijf eerlijke vergelijkingsartikelen of gidsen die benadrukken wat MyClaw onderscheidt van andere platformen.',
+            'Schrijf eerlijke vergelijkingsartikelen of gidsen die benadrukken wat MyClaw.One onderscheidt van andere platformen.',
         changesToProgramTitle: '10. Wijzigingen aan het programma',
         changesToProgramText:
-            'MyClaw behoudt zich het recht voor om het partnerprogramma op elk moment zonder voorafgaande kennisgeving te wijzigen, op te schorten of stop te zetten. Dit omvat wijzigingen in commissietarieven, verwijzingsvensters, uitbetalingsdrempels en programmaregels. Voortgezette deelname na wijzigingen houdt aanvaarding van de bijgewerkte voorwaarden in.',
+            'MyClaw.One behoudt zich het recht voor om het partnerprogramma op elk moment zonder voorafgaande kennisgeving te wijzigen, op te schorten of stop te zetten. Dit omvat wijzigingen in commissietarieven, verwijzingsvensters, uitbetalingsdrempels en programmaregels. Voortgezette deelname na wijzigingen houdt aanvaarding van de bijgewerkte voorwaarden in.',
         getStartedTitle: '11. Aan de slag',
         getStartedText:
             'Klaar om te gaan verdienen? Ga naar je partnerdashboard om je verwijzingslink op te halen en begin met delen met je netwerk.',

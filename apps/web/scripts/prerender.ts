@@ -28,7 +28,7 @@ function escapeHtml(str: string): string {
 }
 
 function injectMeta(html: string, meta: PrerenderMeta): string {
-    const fullTitle = `${meta.title} - MyClaw`
+    const fullTitle = `${meta.title} - MyClaw.One`
 
     html = html.replace(
         /<title>.*?<\/title>/,
@@ -125,7 +125,7 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
             jsonLd: {
                 '@context': 'https://schema.org',
                 '@type': 'WebSite',
-                name: 'MyClaw',
+                name: 'MyClaw.One',
                 url: SITE_URL
             }
         }
@@ -135,7 +135,7 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         meta: {
             title: 'Changelog',
             description:
-                'Track updates, new features, and improvements to MyClaw.',
+                'Track updates, new features, and improvements to MyClaw.One.',
             url: `${SITE_URL}/${PATHS.CHANGELOG}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -146,7 +146,7 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         meta: {
             title: 'Full Comparison',
             description:
-                'See how MyClaw compares to other OpenClaw hosting platforms.',
+                'See how MyClaw.One compares to other OpenClaw hosting platforms.',
             url: `${SITE_URL}/${PATHS.COMPARE}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -157,7 +157,7 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         meta: {
             title: 'Terms of Service',
             description:
-                'Read the terms and conditions for using MyClaw services.',
+                'Read the terms and conditions for using MyClaw.One services.',
             url: `${SITE_URL}/${PATHS.TERMS}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -168,7 +168,7 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         meta: {
             title: 'Privacy Policy',
             description:
-                'Learn how MyClaw collects, uses, and protects your personal data.',
+                'Learn how MyClaw.One collects, uses, and protects your personal data.',
             url: `${SITE_URL}/${PATHS.PRIVACY}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -191,13 +191,13 @@ const listingHtml = injectMeta(template, {
     jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'Blog',
-        name: 'MyClaw Blog',
+        name: 'MyClaw.One Blog',
         description:
             'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
         url: `${SITE_URL}/${PATHS.BLOG}`,
         publisher: {
             '@type': 'Organization',
-            name: 'MyClaw',
+            name: 'MyClaw.One',
             logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.ico` }
         }
     }
@@ -235,7 +235,7 @@ for (const post of posts) {
             url: `${SITE_URL}/${PATHS.BLOG}/${post.slug}`,
             publisher: {
                 '@type': 'Organization',
-                name: 'MyClaw',
+                name: 'MyClaw.One',
                 logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.ico` }
             },
             mainEntityOfPage: {

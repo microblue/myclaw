@@ -25,7 +25,7 @@ const tr: Translations = {
         pageNotFound: 'Sayfa Bulunamadı',
         closeNotification: 'Bildirimi kapat',
         beta: 'Beta',
-        brandName: 'MyClaw',
+        brandName: 'MyClaw.One',
         brandNameGo: 'MyClaw Go',
         brandNameGoVersion: 'MyClaw Go {{version}}',
         menuFile: 'Dosya',
@@ -88,7 +88,7 @@ const tr: Translations = {
         cloud: 'Cloud',
         cloudSubtitle: 'Teknik',
         go: 'Go',
-        desktop: 'Go',
+        desktop: 'Masaüstü',
         goSubtitle: 'Teknik olmayan'
     },
     go: {
@@ -236,7 +236,7 @@ const tr: Translations = {
     },
     footer: {
         website: 'Web Sitesi',
-        copyrightName: 'MyClaw',
+        copyrightName: 'MyClaw.One',
         copyrightRights: 'Tüm hakları saklıdır.',
         termsOfService: 'Hizmet Şartları',
         privacyPolicy: 'Gizlilik Politikası',
@@ -257,7 +257,7 @@ const tr: Translations = {
         affiliateProgram: 'Ortaklık Programı',
         documentation: 'Belgeler',
         productDescription:
-            'OpenClaw ajanlarını bulutta veya yerel olarak tek tıkla dağıtın — MyClaw ile yapay zeka ajanlarınızı daha hızlı oluşturun, bağlayın ve ölçeklendirin.',
+            'OpenClaw ajanlarını bulutta veya yerel olarak tek tıkla dağıtın — MyClaw.One ile yapay zeka ajanlarınızı daha hızlı oluşturun, bağlayın ve ölçeklendirin.',
         downloadAndroid: "Google Play'den İndirin",
         downloadIos: "App Store'dan İndirin",
         ariaGithub: 'GitHub',
@@ -571,13 +571,13 @@ const tr: Translations = {
         failedToGetAdminEmails: 'Failed to fetch emails!'
     },
     emails: {
-        otpSubject: 'MyClaw giriş kodunuz',
-        otpPreview: 'MyClaw giriş kodunuz: {{code}}',
+        otpSubject: 'MyClaw.One giriş kodunuz',
+        otpPreview: 'MyClaw.One giriş kodunuz: {{code}}',
         otpHeading: 'Giriş kodunuz:',
         otpExpiry:
             'Kodun süresi 10 dakika içinde dolar. Bu siz değilseniz, bu e-postayı görmezden gelin.',
         featureFooter:
-            'Bu e-postayı MyClaw hesabınız olduğu için alıyorsunuz.',
+            'Bu e-postayı MyClaw.One hesabınız olduğu için alıyorsunuz.',
         features: {
             terminal: {
                 subject: 'Biliyor muydunuz? Web terminaliniz var',
@@ -585,7 +585,7 @@ const tr: Translations = {
                 tag: 'Web Terminal',
                 heading: 'Sunucunuz bir tık uzağınızda',
                 description:
-                    "Yerleşik terminalimizle sunucunuza doğrudan tarayıcınızdan erişin. SSH istemcisi gerekmez — MyClaw'u açın ve komut yazmaya başlayın.",
+                    "Yerleşik terminalimizle sunucunuza doğrudan tarayıcınızdan erişin. SSH istemcisi gerekmez — MyClaw.One'u açın ve komut yazmaya başlayın.",
                 cta: 'Terminali Aç'
             },
             logs: {
@@ -595,7 +595,7 @@ const tr: Translations = {
                 tag: 'Canlı Günlükler',
                 heading: 'Sunucunuzun ne yaptığını görün',
                 description:
-                    'MyClaw panelinden sunucu günlüklerinizi gerçek zamanlı izleyin. Sorunları teşhis edin, dağıtımları takip edin ve uygulamalarınızı tarayıcıdan ayrılmadan hata ayıklayın.',
+                    'MyClaw.One panelinden sunucu günlüklerinizi gerçek zamanlı izleyin. Sorunları teşhis edin, dağıtımları takip edin ve uygulamalarınızı tarayıcıdan ayrılmadan hata ayıklayın.',
                 cta: 'Günlükleri Görüntüle'
             },
             channels: {
@@ -606,7 +606,7 @@ const tr: Translations = {
                 tag: 'Kanallar',
                 heading: 'Ajanlarınız, her yerde',
                 description:
-                    'Yapay zeka ajanlarınızı Discord, Slack, WhatsApp ve daha fazlasına bağlayın. Kanalları yapılandırın ve ajanlara bağlayın — hepsi MyClaw panelinden.',
+                    'Yapay zeka ajanlarınızı Discord, Slack, WhatsApp ve daha fazlasına bağlayın. Kanalları yapılandırın ve ajanlara bağlayın — hepsi MyClaw.One panelinden.',
                 cta: 'Kanalları Ayarla'
             },
             fileExplorer: {
@@ -616,7 +616,7 @@ const tr: Translations = {
                 tag: 'Dosya Gezgini',
                 heading: 'Dosyalarınız, parmaklarınızın ucunda',
                 description:
-                    'MyClaw panelinden sunucunuzdaki dosyaları doğrudan göz atın, okuyun ve düzenleyin. Sözdizimi vurgulama, arama ve anında kaydetme — SSH gerekmez.',
+                    'MyClaw.One panelinden sunucunuzdaki dosyaları doğrudan göz atın, okuyun ve düzenleyin. Sözdizimi vurgulama, arama ve anında kaydetme — SSH gerekmez.',
                 cta: 'Dosya Gezginini Aç'
             },
             playground: {
@@ -636,7 +636,7 @@ const tr: Translations = {
                 tag: 'Ajan Sohbeti',
                 heading: 'Ajanlarınızla konuşun',
                 description:
-                    'MyClaw panelinden yapay zeka ajanlarınızla doğrudan sohbet edin. Mesaj gönderin, resim ekleyin ve konuşma geçmişini görün — hepsi tek bir yerde.',
+                    'MyClaw.One panelinden yapay zeka ajanlarınızla doğrudan sohbet edin. Mesaj gönderin, resim ekleyin ve konuşma geçmişini görün — hepsi tek bir yerde.',
                 cta: 'Sohbete Başla'
             },
             voiceMode: {
@@ -677,7 +677,7 @@ const tr: Translations = {
                 tag: 'Ortam Değişkenleri',
                 heading: 'SSH olmadan yapılandırın',
                 description:
-                    'MyClaw panelinden ortam değişkenlerini doğrudan ekleyin, düzenleyin ve kaldırın. API anahtarları, gizli bilgiler ve yapılandırma ayarlayın — terminal gerekmez.',
+                    'MyClaw.One panelinden ortam değişkenlerini doğrudan ekleyin, düzenleyin ve kaldırın. API anahtarları, gizli bilgiler ve yapılandırma ayarlayın — terminal gerekmez.',
                 cta: 'Değişkenleri Yönet'
             },
             diagnostics: {
@@ -691,12 +691,12 @@ const tr: Translations = {
             },
             sshKeys: {
                 subject:
-                    "Biliyor muydunuz? MyClaw'tan SSH anahtarlarını yönetin",
+                    "Biliyor muydunuz? MyClaw.One'tan SSH anahtarlarını yönetin",
                 preview: 'Panelde SSH anahtar çiftleri oluşturun ve yönetin',
                 tag: 'SSH Anahtarları',
                 heading: 'SSH anahtarları, basitleştirilmiş',
                 description:
-                    "SSH anahtar çiftleri oluşturun, açık anahtarları kopyalayın ve özel anahtarları indirin — hepsi MyClaw panelinden. Güvenli erişim için anahtarları claw'lara atayın.",
+                    "SSH anahtar çiftleri oluşturun, açık anahtarları kopyalayın ve özel anahtarları indirin — hepsi MyClaw.One panelinden. Güvenli erişim için anahtarları claw'lara atayın.",
                 cta: 'SSH Anahtarlarını Yönet'
             },
             exportConfig: {
@@ -710,12 +710,12 @@ const tr: Translations = {
                 cta: 'Yapılandırmayı Dışa Aktar'
             },
             multiLanguage: {
-                subject: 'Biliyor muydunuz? MyClaw sizin dilinizi konuşuyor',
-                preview: "MyClaw'u 14 dilde kullanın",
+                subject: 'Biliyor muydunuz? MyClaw.One sizin dilinizi konuşuyor',
+                preview: "MyClaw.One'u 14 dilde kullanın",
                 tag: 'Çok Dil',
-                heading: 'Kendi dilinizde MyClaw',
+                heading: 'Kendi dilinizde MyClaw.One',
                 description:
-                    'Tüm MyClaw panelini 14 dilden herhangi birine geçirin. Düğmelerden hata mesajlarına kadar her şey — tamamen çevrilmiş.',
+                    'Tüm MyClaw.One panelini 14 dilden herhangi birine geçirin. Düğmelerden hata mesajlarına kadar her şey — tamamen çevrilmiş.',
                 cta: 'Dili Değiştir'
             },
             subdomain: {
@@ -728,12 +728,12 @@ const tr: Translations = {
                 cta: 'Alt Alan Adınızı Görüntüleyin'
             },
             darkMode: {
-                subject: "Biliyor muydunuz? MyClaw'un koyu modu var",
+                subject: "Biliyor muydunuz? MyClaw.One'un koyu modu var",
                 preview: 'Açık ve koyu temalar arasında geçiş yapın',
                 tag: 'Karanlık Mod',
                 heading: 'Göze hoş gelen',
                 description:
-                    'MyClaw panelinde açık ve koyu temalar arasında geçiş yapın. Tercihiniz kaydedilir ve her ziyarette otomatik olarak uygulanır.',
+                    'MyClaw.One panelinde açık ve koyu temalar arasında geçiş yapın. Tercihiniz kaydedilir ve her ziyarette otomatik olarak uygulanır.',
                 cta: 'Koyu Modu Deneyin'
             },
             reinstall: {
@@ -761,7 +761,7 @@ const tr: Translations = {
     auth: {
         signIn: 'Giriş Yap',
         signInDescription:
-            'OpenClaw örneklerinizi yönetmek için MyClaw hesabınıza giriş yapın.',
+            'OpenClaw örneklerinizi yönetmek için MyClaw.One hesabınıza giriş yapın.',
         signingIn: 'Giriş yapılıyor...',
         verifyCode: 'Kodu Doğrula',
         checkYourEmail: 'E-postanızı Kontrol Edin',
@@ -793,7 +793,7 @@ const tr: Translations = {
     account: {
         title: 'Hesap',
         description:
-            'MyClaw hesap ayarlarınızı ve profil bilgilerinizi yönetin.',
+            'MyClaw.One hesap ayarlarınızı ve profil bilgilerinizi yönetin.',
         accountSettings: 'Hesap',
         manageYourAccount: 'Profilinizi ve hesap ayarlarınızı yönetin.',
         profileInformation: 'Profil Bilgileri',
@@ -1215,11 +1215,11 @@ clawName: 'Ad',
             "OpenClaw'u tek tıkla kendi VPS'inize dağıtın. Tam root erişimi, küresel konumlar ve şeffaf fiyatlandırma ile kendi kendine barındırılabilir bulut barındırma.",
         badge: 'OpenClaw Basitleştirilmiş',
         tutorialBadge: 'İzle. Dağıt.',
-        tutorialVideoThumbnail: 'MyClaw eğitim videosu küçük resmi',
+        tutorialVideoThumbnail: 'MyClaw.One eğitim videosu küçük resmi',
         heroTitle1: 'OpenClaw Dağıt.',
         heroTitle2: 'Tek tık. Tamam.',
         heroDescription:
-            'OpenClaw ajanlarını bulutta veya yerel olarak tek tıkla dağıtın — MyClaw ile yapay zeka ajanlarınızı daha hızlı oluşturun, bağlayın ve ölçeklendirin.',
+            'OpenClaw ajanlarını bulutta veya yerel olarak tek tıkla dağıtın — MyClaw.One ile yapay zeka ajanlarınızı daha hızlı oluşturun, bağlayın ve ölçeklendirin.',
         goToClaws: "Claw'lara Git",
         selfHost: 'Açık Kaynak',
         startingPrice: 'Başlangıç',
@@ -1277,8 +1277,8 @@ clawName: 'Ad',
             'Tek tıkla herhangi bir OpenClaw sürümüne geçin. Her zaman güncel kalın veya gerektiğinde geri dönün.',
         openclawControl: 'OpenClaw Kontrolü',
         openclawControlDescription:
-            "Yerel OpenClaw paneline doğrudan MyClaw'tan erişin. OpenClaw'un sunduğu her şeye tam düzenleme erişimi.",
-        clawHostControl: 'MyClaw Kontrolü',
+            "Yerel OpenClaw paneline doğrudan MyClaw.One'tan erişin. OpenClaw'un sunduğu her şeye tam düzenleme erişimi.",
+        clawHostControl: 'MyClaw.One Kontrolü',
         clawHostControlDescription:
             'Dosyaları, güncellemeleri, kanalları, değişkenleri, yetenekleri ve daha fazla yapılandırma seçeneğini doğrudan platformdan yönetin.',
         skillsMarketplace: '5.000+ Yetenek',
@@ -1368,16 +1368,16 @@ clawName: 'Ad',
         faqTitle: 'Sorular',
         frequentlyAskedQuestions: 'Sık Sorulan Sorular',
         faqDescription: 'Her sık sorulan soru, cevaplanmış.',
-        faq1Question: 'MyClaw nedir?',
+        faq1Question: 'MyClaw.One nedir?',
         faq1Answer:
-            "MyClaw, OpenClaw'u herkes için erişilebilir kılmak amacıyla oluşturulmuş bir platformdur. Hem teknik olmayan kullanıcıların hem de geliştiricilerin altyapı yönetmeden OpenClaw çalıştırmasını sağlar. Sunucuları, çalışma süresini, güvenliği ve bakımı biz yönetiyoruz — siz sadece OpenClaw'u kullanın.",
+            "MyClaw.One, OpenClaw'u herkes için erişilebilir kılmak amacıyla oluşturulmuş bir platformdur. Hem teknik olmayan kullanıcıların hem de geliştiricilerin altyapı yönetmeden OpenClaw çalıştırmasını sağlar. Sunucuları, çalışma süresini, güvenliği ve bakımı biz yönetiyoruz — siz sadece OpenClaw'u kullanın.",
         faq2Question: 'OpenClaw nedir?',
         faq2Answer:
             'OpenClaw, yapay zeka araçlarınız ve hizmetleriniz için kendi kendine barındırılan güvenli bir erişim katmanıdır. Güvenlik ve performans için önceden yapılandırılmıştır, böylece dağıtabilir ve anında bağlanabilirsiniz.',
         faq3Question:
             'Bu, diğer yapay zeka araçlarından veya barındırılan platformlardan nasıl farklı?',
         faq3Answer:
-            'Barındırılan yapay zeka araçlarından farklı olarak, MyClaw size OpenClaw yüklü gerçek bir sunucu verir. Altyapının sahibi sizsiniz, her şeyi kontrol edersiniz ve paylaşımlı bir platform veya model tarafından sınırlanmazsınız.',
+            'Barındırılan yapay zeka araçlarından farklı olarak, MyClaw.One size OpenClaw yüklü gerçek bir sunucu verir. Altyapının sahibi sizsiniz, her şeyi kontrol edersiniz ve paylaşımlı bir platform veya model tarafından sınırlanmazsınız.',
         faq4Question: 'Teknik bilgiye ihtiyacım var mı?',
         faq4Answer:
             "Hayır. Tüm altyapı, kurulum ve bakımı biz yönetiyoruz. OpenClaw'u arayüzü üzerinden yapılandırabilir ve yönetebilir, kanallara bağlanabilir ve kullanımı özelleştirebilirsiniz — sunuculara veya altyapıya dokunmadan.",
@@ -1462,9 +1462,9 @@ clawName: 'Ad',
     changelog: {
         title: 'Değişiklik Günlüğü',
         description:
-            'MyClaw güncellemelerini, yeni özelliklerini ve iyileştirmelerini takip edin.',
+            'MyClaw.One güncellemelerini, yeni özelliklerini ve iyileştirmelerini takip edin.',
         subtitle:
-            "MyClaw'un tüm güncellemeleri, yeni özellikleri ve iyileştirmeleri.",
+            "MyClaw.One'un tüm güncellemeleri, yeni özellikleri ve iyileştirmeleri.",
         upcomingRelease: 'Süreçte',
         upcomingReleaseTitle: 'Mobil Uygulama ve Daha Fazlası',
         upcomingReleaseDescription:
@@ -1485,11 +1485,11 @@ clawName: 'Ad',
         upcomingReleaseFeature8:
             'OpenClaw ajanları tarafından otomatik olarak yönetilen ve yayınlanan özellik istekleri',
         upcomingReleaseFeature9:
-            "MyClaw'ta barındırılan OpenClaw ajanlarıyla etkileşim için Ses Modu (Beta)",
+            "MyClaw.One'ta barındırılan OpenClaw ajanlarıyla etkileşim için Ses Modu (Beta)",
         upcomingReleaseFeature10:
             "Temiz başlangıç için örneğinizde OpenClaw'u yeniden yükleyin, günde bir kez kullanılabilir",
         upcomingReleaseFeature11:
-            'MyClaw Go için açılış sayfası, MyClaw ile yerel barındırma',
+            'MyClaw Go için açılış sayfası, MyClaw.One ile yerel barındırma',
         upcomingReleaseFeature12:
             'macOS ve Windows için tek tıkla yerel OpenClaw dağıtımı için masaüstü uygulaması',
         release14Date: '1 Nisan 2026',
@@ -1509,11 +1509,11 @@ clawName: 'Ad',
         release12Description:
             '2 ay ücretsiz yıllık abonelikler, ses modu, örnek yeniden yükleme ve MyClaw Go için ilk açılış sayfası.',
         release12Feature1:
-            'MyClaw Go için açılış sayfası, MyClaw ile yerel barındırma',
+            'MyClaw Go için açılış sayfası, MyClaw.One ile yerel barındırma',
         release12Feature2:
             'Yıllık abone olduğunuzda 2 ay ücretsiz yıllık abonelik desteği',
         release12Feature3:
-            "MyClaw'ta barındırılan OpenClaw ajanlarıyla etkileşim için Ses Modu",
+            "MyClaw.One'ta barındırılan OpenClaw ajanlarıyla etkileşim için Ses Modu",
         release12Feature4:
             "Temiz başlangıç için örneğinizde OpenClaw'u yeniden yükleyin, günde bir kez kullanılabilir",
         release11Date: '28 Şubat 2026',
@@ -1594,7 +1594,7 @@ clawName: 'Ad',
         release1Date: '8 Şubat 2026',
         release1Title: 'İlk Sürüm',
         release1Description:
-            "MyClaw'un ilk resmi sürümü. OpenClaw'u tek tıkla kendi VPS'inize dağıtın.",
+            "MyClaw.One'un ilk resmi sürümü. OpenClaw'u tek tıkla kendi VPS'inize dağıtın.",
         release1Feature1: 'Tek tıkla OpenClaw dağıtımı',
         release1Feature2:
             "Claw'ları yönetmek, örnekleri başlatmak, durdurmak, yeniden başlatmak ve silmek için panel",
@@ -1613,7 +1613,7 @@ clawName: 'Ad',
             'OpenClaw önceden yüklü ve yapılandırılmış otomatik hazırlama',
         release2Date: '8 Şubat 2026',
         release2Title: 'Changelog ve Daha Fazlası',
-        release2Description: 'MyClaw hakkında güncel kalmanın yeni bir yolu.',
+        release2Description: 'MyClaw.One hakkında güncel kalmanın yeni bir yolu.',
         release2Feature1:
             'Tüm platform güncellemelerini ve sürümlerini takip etmek için değişiklik günlüğü sayfası',
         release3Date: '10 Şubat 2026',
@@ -1674,7 +1674,7 @@ clawName: 'Ad',
             'Tek bir OpenClaw içinde birden fazla ajan çalıştırabileceğinizi biliyor muydunuz?',
         loadingTip2: "OpenClaw'un açık kaynak olduğunu biliyor muydunuz?",
         loadingTip3:
-            'MyClaw, tek tıkla OpenClaw barındırmaya izin veren ilk projedir.',
+            'MyClaw.One, tek tıkla OpenClaw barındırmaya izin veren ilk projedir.',
         tabChat: 'Sohbet',
         tabConfiguration: 'Yapılandırma',
         tabSettings: 'Ayarlar',
@@ -2008,14 +2008,14 @@ clawName: 'Ad',
     privacy: {
         title: 'Gizlilik Politikası',
         description:
-            "MyClaw'un kişisel verilerinizi nasıl topladığını, kullandığını ve koruduğunu öğrenin.",
+            "MyClaw.One'un kişisel verilerinizi nasıl topladığını, kullandığını ve koruduğunu öğrenin.",
         lastUpdated: 'Son güncelleme: 14 Mart 2026',
         introTitle: '1. Giriş',
         introText:
-            'MyClaw ("biz", "bizim" veya "bizi") gizliliğinizi korumaya kararlıdır. Bu Gizlilik Politikası, Hizmetimizi kullanırken bilgilerinizi nasıl topladığımızı, kullandığımızı, ifşa ettiğimizi ve koruduğumuzu açıklar.',
+            'MyClaw.One ("biz", "bizim" veya "bizi") gizliliğinizi korumaya kararlıdır. Bu Gizlilik Politikası, Hizmetimizi kullanırken bilgilerinizi nasıl topladığımızı, kullandığımızı, ifşa ettiğimizi ve koruduğumuzu açıklar.',
         authTitle: '2. Kimlik Doğrulama',
         authText:
-            'MyClaw, kullanıcı hesaplarını yönetmek için Google Firebase Authentication kullanır. E-posta, Google veya GitHub ile giriş yapabilirsiniz. Bu giriş yöntemlerini kullanarak, ilgili şartlarını ve gizlilik politikalarını kabul edersiniz. Bu sağlayıcılar e-posta adresiniz, adınız ve cihaz bilgileriniz gibi temel veriler toplayabilir. Biz yalnızca e-posta adresinizi ve görünen adınızı saklarız.',
+            'MyClaw.One, kullanıcı hesaplarını yönetmek için Google Firebase Authentication kullanır. E-posta, Google veya GitHub ile giriş yapabilirsiniz. Bu giriş yöntemlerini kullanarak, ilgili şartlarını ve gizlilik politikalarını kabul edersiniz. Bu sağlayıcılar e-posta adresiniz, adınız ve cihaz bilgileriniz gibi temel veriler toplayabilir. Biz yalnızca e-posta adresinizi ve görünen adınızı saklarız.',
         collectTitle: '3. Topladığımız Bilgiler',
         collectText: 'Bilgileri aşağıdaki yollarla topluyoruz:',
         personalInfoTitle: 'Kişisel Bilgiler',
@@ -2069,7 +2069,7 @@ clawName: 'Ad',
             'Bilgileriniz kendi ülkeniz dışındaki ülkelere aktarılabilir ve buralarda işlenebilir. Bu Gizlilik Politikasına uygun olarak verilerinizi korumak için uygun güvencelerin mevcut olmasını sağlıyoruz.',
         eligibilityTitle: '11. Uygunluk',
         eligibilityText:
-            'Hizmetimiz herkes için kullanılabilir. MyClaw kullanımı için yaş kısıtlaması yoktur.',
+            'Hizmetimiz herkes için kullanılabilir. MyClaw.One kullanımı için yaş kısıtlaması yoktur.',
         changesTitle: '12. Bu Politikadaki Değişiklikler',
         changesText:
             'Bu Gizlilik Politikasını zaman zaman güncelleyebiliriz. Yeni Gizlilik Politikasını bu sayfada yayınlayarak ve "Son güncelleme" tarihini güncelleyerek herhangi bir değişikliği size bildireceğiz.',
@@ -2080,17 +2080,17 @@ clawName: 'Ad',
     terms: {
         title: 'Hizmet Şartları',
         description:
-            'MyClaw hizmetlerini kullanma şart ve koşullarını okuyun.',
+            'MyClaw.One hizmetlerini kullanma şart ve koşullarını okuyun.',
         lastUpdated: 'Son güncelleme: 14 Mart 2026',
         acceptanceTitle: '1. Şartların Kabulü',
         acceptanceText:
-            'MyClaw\'a ("Hizmet") erişerek ve kullanarak, bu sözleşmenin şart ve hükümlerine bağlı olmayı kabul edersiniz. Bu şartları kabul etmiyorsanız, lütfen Hizmetimizi kullanmayın.',
+            'MyClaw.One\'a ("Hizmet") erişerek ve kullanarak, bu sözleşmenin şart ve hükümlerine bağlı olmayı kabul edersiniz. Bu şartları kabul etmiyorsanız, lütfen Hizmetimizi kullanmayın.',
         serviceTitle: '2. Hizmet Açıklaması',
         serviceText:
-            'MyClaw, özel sunucularda tek tıkla OpenClaw dağıtımı sağlar. Kullanıcıların tam root erişimi ve özel kaynaklarla önceden yapılandırılmış OpenClaw örneklerini dağıtmasını, yönetmesini ve erişmesini sağlıyoruz.',
+            'MyClaw.One, özel sunucularda tek tıkla OpenClaw dağıtımı sağlar. Kullanıcıların tam root erişimi ve özel kaynaklarla önceden yapılandırılmış OpenClaw örneklerini dağıtmasını, yönetmesini ve erişmesini sağlıyoruz.',
         authTitle: '3. Kimlik Doğrulama',
         authText:
-            "MyClaw, giriş yönetimi için Google Firebase Authentication kullanır. E-posta, Google veya GitHub ile kimlik doğrulayabilirsiniz. Bu yöntemleri kullanarak, Google ve GitHub'ın ilgili şartlarını ve gizlilik politikalarını kabul edersiniz. Bu sağlayıcılar e-posta adresiniz, adınız ve cihaz verileriniz gibi temel bilgiler toplayabilir.",
+            "MyClaw.One, giriş yönetimi için Google Firebase Authentication kullanır. E-posta, Google veya GitHub ile kimlik doğrulayabilirsiniz. Bu yöntemleri kullanarak, Google ve GitHub'ın ilgili şartlarını ve gizlilik politikalarını kabul edersiniz. Bu sağlayıcılar e-posta adresiniz, adınız ve cihaz verileriniz gibi temel bilgiler toplayabilir.",
         responsibilitiesTitle: '4. Kullanıcı Sorumlulukları',
         responsibilitiesText: 'Şunları kabul edersiniz:',
         responsibilitiesAccurate: 'Doğru ve eksiksiz kayıt bilgileri sağlamak',
@@ -2122,19 +2122,19 @@ clawName: 'Ad',
             'Yüksek kullanılabilirlik sağlamaya çalışıyoruz ancak Hizmete kesintisiz erişimi garanti etmiyoruz. Hizmetin herhangi bir bölümünü, bildirimli veya bildirimsiz, istediğimiz zaman değiştirme, askıya alma veya sonlandırma hakkımızı saklı tutuyoruz.',
         liabilityTitle: '8. Sorumluluk Sınırlaması',
         liabilityText:
-            'Yasaların izin verdiği azami ölçüde, MyClaw doğrudan veya dolaylı olarak ortaya çıkan herhangi bir dolaylı, arızi, özel, sonuç niteliğinde veya cezai zarar veya kâr veya gelir kaybından sorumlu olmayacaktır.',
+            'Yasaların izin verdiği azami ölçüde, MyClaw.One doğrudan veya dolaylı olarak ortaya çıkan herhangi bir dolaylı, arızi, özel, sonuç niteliğinde veya cezai zarar veya kâr veya gelir kaybından sorumlu olmayacaktır.',
         terminationTitle: '9. Sonlandırma',
         terminationText:
             'Bu Şartları ihlal ettiğine veya diğer kullanıcılara, bize veya üçüncü taraflara zararlı olduğuna inandığımız davranışlar veya herhangi bir başka nedenle, önceden bildirimde bulunmaksızın hesabınızı ve Hizmete erişiminizi derhal sonlandırabilir veya askıya alabiliriz.',
         affiliateTitle: '10. Affiliate Program',
         affiliateText:
-            'MyClaw offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
+            'MyClaw.One offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
         affiliateCodeUnique:
             'Each user receives a unique referral code upon registration, which can be customized once.',
         affiliateCodeOneChange:
             'The referral code can only be changed one time. Choose your custom code carefully.',
         affiliateReferralWindow:
-            'A referral is valid for 6 months from when the referred user first visits MyClaw with your referral link. After 6 months, the referral expires.',
+            'A referral is valid for 6 months from when the referred user first visits MyClaw.One with your referral link. After 6 months, the referral expires.',
         affiliateNoSelfReferral:
             'Self-referrals are not permitted. You may not refer your own accounts.',
         affiliateAbuse:
@@ -2195,12 +2195,12 @@ clawName: 'Ad',
     compare: {
         title: 'Tam Karşılaştırma',
         description:
-            "MyClaw'un diğer OpenClaw barındırma platformlarıyla nasıl karşılaştırıldığını görün.",
+            "MyClaw.One'un diğer OpenClaw barındırma platformlarıyla nasıl karşılaştırıldığını görün.",
         badge: 'Karşılaştırma',
         feature: 'Platform',
         compareWith: 'Şununla karşılaştır:',
         lastUpdated: 'Son güncelleme: Mart 2026',
-        competitorMyClaw: 'MyClaw',
+        competitorMyClaw: 'MyClaw.One',
         competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
@@ -2449,7 +2449,7 @@ clawName: 'Ad',
     },
     affiliate: {
         title: 'Affiliate',
-        description: 'Earn rewards by referring friends to MyClaw.',
+        description: 'Earn rewards by referring friends to MyClaw.One.',
         subtitle: 'Share your referral link and earn rewards.',
         learnMore: 'Ortaklık programı hakkında daha fazla bilgi',
         referralCode: 'Referral Code',
@@ -2482,19 +2482,19 @@ clawName: 'Ad',
     affiliateProgram: {
         title: 'Ortaklık Programı',
         description:
-            'MyClaw ortaklık programının nasıl çalıştığını, ne kadar kazanabileceğinizi ve katılım kurallarını öğrenin.',
+            'MyClaw.One ortaklık programının nasıl çalıştığını, ne kadar kazanabileceğinizi ve katılım kurallarını öğrenin.',
         lastUpdated: 'Son güncelleme: 1 Nisan 2026',
         overviewTitle: '1. Genel Bakış',
         overviewText:
-            "MyClaw Ortaklık Programı, yeni kullanıcıları MyClaw'a yönlendirerek ödüller kazanmanızı sağlar. Birisi yönlendirme bağlantınız aracılığıyla MyClaw'u ziyaret ettikten sonra bir satın alma yaptığında, ödemelerinden komisyon kazanırsınız. Program ücretsizdir ve tüm kayıtlı MyClaw kullanıcılarına açıktır.",
+            "MyClaw.One Ortaklık Programı, yeni kullanıcıları MyClaw.One'a yönlendirerek ödüller kazanmanızı sağlar. Birisi yönlendirme bağlantınız aracılığıyla MyClaw.One'u ziyaret ettikten sonra bir satın alma yaptığında, ödemelerinden komisyon kazanırsınız. Program ücretsizdir ve tüm kayıtlı MyClaw.One kullanıcılarına açıktır.",
         howItWorksTitle: '2. Nasıl Çalışır',
         howItWorksText: 'Ortaklık programına başlamak basittir:',
         howItWorksStep1:
-            'Bir MyClaw hesabı oluşturun. Sizin için otomatik olarak benzersiz bir yönlendirme kodu oluşturulur.',
+            'Bir MyClaw.One hesabı oluşturun. Sizin için otomatik olarak benzersiz bir yönlendirme kodu oluşturulur.',
         howItWorksStep2:
             'Yönlendirme bağlantınızı arkadaşlarınız, meslektaşlarınız veya kitlenizle paylaşın. Bağlantınız şu formatı takip eder: myclaw.cloud?ref=YOUR_CODE.',
         howItWorksStep3:
-            "Birisi bağlantınız aracılığıyla MyClaw'u ziyaret ettikten sonra bir satın alma yaptığında, bu yönlendirmeniz olarak kaydedilir.",
+            "Birisi bağlantınız aracılığıyla MyClaw.One'u ziyaret ettikten sonra bir satın alma yaptığında, bu yönlendirmeniz olarak kaydedilir.",
         howItWorksStep4:
             'Yönlendirdiğiniz kullanıcı uygun bir satın alma yaptığında her seferinde komisyon kazanırsınız.',
         earningsTitle: '3. Kazançlar ve Ödemeler',
@@ -2522,11 +2522,11 @@ clawName: 'Ad',
             'Yönlendirme kodları yalnızca harfler, rakamlar, tireler ve alt çizgiler içerebilir.',
         referralWindowTitle: '5. Yönlendirme Atıf Penceresi',
         referralWindowText:
-            "Bir yönlendirme, yönlendirilen kullanıcının bağlantınız aracılığıyla MyClaw'u ilk ziyaret ettiği andan itibaren 3 ay boyunca size atfedilir. Yönlendirilen kullanıcı bu 3 aylık pencere içinde bir satın alma yapmazsa, yönlendirme sona erer ve komisyon kazanılmaz. Kullanıcı farklı bir yönlendirme bağlantısı aracılığıyla ziyaret ederse, yeni yönlendirme öncekinin yerini alır.",
+            "Bir yönlendirme, yönlendirilen kullanıcının bağlantınız aracılığıyla MyClaw.One'u ilk ziyaret ettiği andan itibaren 3 ay boyunca size atfedilir. Yönlendirilen kullanıcı bu 3 aylık pencere içinde bir satın alma yapmazsa, yönlendirme sona erer ve komisyon kazanılmaz. Kullanıcı farklı bir yönlendirme bağlantısı aracılığıyla ziyaret ederse, yeni yönlendirme öncekinin yerini alır.",
         eligibilityTitle: '6. Uygunluk',
         eligibilityText:
             'Ortaklık programına katılmak için aşağıdaki gereksinimleri karşılamanız gerekir:',
-        eligibilityAccount: 'Kayıtlı bir MyClaw hesabınız olmalıdır.',
+        eligibilityAccount: 'Kayıtlı bir MyClaw.One hesabınız olmalıdır.',
         eligibilityStanding:
             'Hesabınız iyi durumda olmalı ve politika ihlali geçmişi bulunmamalıdır.',
         eligibilityAge:
@@ -2541,30 +2541,30 @@ clawName: 'Ad',
         rulesNoSpam:
             'Yönlendirme bağlantınızı tanıtmak için istenmeyen toplu mesajlar (spam) göndermek yasaktır.',
         rulesNoMisrepresentation:
-            "MyClaw'u, hizmetlerini veya ortaklık programını hiçbir şekilde yanlış tanıtamazsınız.",
+            "MyClaw.One'u, hizmetlerini veya ortaklık programını hiçbir şekilde yanlış tanıtamazsınız.",
         rulesNoIncentivized:
             'Doğrudan parasal teşvikler sunmak (örneğin, bağlantınız aracılığıyla kaydolmaları için kullanıcılara ödeme yapmak) yasaktır.',
         terminationTitle: '8. İhlal ve Fesih',
         terminationText:
-            'Bu kuralların herhangi birinin ihlali, bekleyen ve kazanılan tüm ödüllerin derhal kaybedilmesiyle sonuçlanır. MyClaw, hesabınızı ortaklık programından askıya alma veya kalıcı olarak yasaklama hakkını saklı tutar. Ciddi durumlarda MyClaw hesabınız da feshedilebilir. İhlallerle ilgili tüm kararlar kesindir.',
+            'Bu kuralların herhangi birinin ihlali, bekleyen ve kazanılan tüm ödüllerin derhal kaybedilmesiyle sonuçlanır. MyClaw.One, hesabınızı ortaklık programından askıya alma veya kalıcı olarak yasaklama hakkını saklı tutar. Ciddi durumlarda MyClaw.One hesabınız da feshedilebilir. İhlallerle ilgili tüm kararlar kesindir.',
         marketingTitle: '9. Nasıl Tanıtılır',
         marketingText:
             'Yönlendirme bağlantınızı paylaşmanın ve kazançlarınızı artırmanın birçok yaratıcı ve meşru yolu vardır:',
         marketingSocial:
-            'Bağlantınızı X, LinkedIn, Reddit ve Facebook gibi sosyal medya platformlarında paylaşın. MyClaw ile deneyiminiz hakkında yazın ve yönlendirme bağlantınızı ekleyin.',
+            'Bağlantınızı X, LinkedIn, Reddit ve Facebook gibi sosyal medya platformlarında paylaşın. MyClaw.One ile deneyiminiz hakkında yazın ve yönlendirme bağlantınızı ekleyin.',
         marketingBlog:
-            'MyClaw hakkında blog yazıları, öğreticiler veya incelemeler yazın. Yönlendirme bağlantınızı içeriğe doğal bir şekilde dahil edin.',
+            'MyClaw.One hakkında blog yazıları, öğreticiler veya incelemeler yazın. Yönlendirme bağlantınızı içeriğe doğal bir şekilde dahil edin.',
         marketingVideo:
-            "YouTube veya TikTok'ta MyClaw'u AI ajanlarını dağıtmak ve yönetmek için nasıl kullandığınızı gösteren video içerikleri oluşturun.",
+            "YouTube veya TikTok'ta MyClaw.One'u AI ajanlarını dağıtmak ve yönetmek için nasıl kullandığınızı gösteren video içerikleri oluşturun.",
         marketingCommunity:
-            "Geliştirici topluluklarına, forumlara ve Discord sunucularına katılın. Birisi bulut barındırma veya AI ajanı dağıtımı hakkında sorduğunda, bağlantınızla MyClaw'u önerin.",
+            "Geliştirici topluluklarına, forumlara ve Discord sunucularına katılın. Birisi bulut barındırma veya AI ajanı dağıtımı hakkında sorduğunda, bağlantınızla MyClaw.One'u önerin.",
         marketingNewsletter:
-            "Bir bülten veya e-posta listesi yönetiyorsanız, ilgili bir sayıda yönlendirme bağlantınızla MyClaw'tan bahsedin.",
+            "Bir bülten veya e-posta listesi yönetiyorsanız, ilgili bir sayıda yönlendirme bağlantınızla MyClaw.One'tan bahsedin.",
         marketingComparison:
-            "MyClaw'u diğer platformlardan farklı kılan özellikleri vurgulayan dürüst karşılaştırma makaleleri veya rehberler yazın.",
+            "MyClaw.One'u diğer platformlardan farklı kılan özellikleri vurgulayan dürüst karşılaştırma makaleleri veya rehberler yazın.",
         changesToProgramTitle: '10. Programdaki Değişiklikler',
         changesToProgramText:
-            'MyClaw, ortaklık programını herhangi bir zamanda önceden bildirimde bulunmaksızın değiştirme, askıya alma veya sonlandırma hakkını saklı tutar. Bu, komisyon oranları, yönlendirme pencereleri, ödeme eşikleri ve program kurallarındaki değişiklikleri içerir. Değişikliklerden sonra katılımın devam etmesi, güncellenen koşulların kabul edildiği anlamına gelir.',
+            'MyClaw.One, ortaklık programını herhangi bir zamanda önceden bildirimde bulunmaksızın değiştirme, askıya alma veya sonlandırma hakkını saklı tutar. Bu, komisyon oranları, yönlendirme pencereleri, ödeme eşikleri ve program kurallarındaki değişiklikleri içerir. Değişikliklerden sonra katılımın devam etmesi, güncellenen koşulların kabul edildiği anlamına gelir.',
         getStartedTitle: '11. Başlayın',
         getStartedText:
             'Kazanmaya hazır mısınız? Yönlendirme bağlantınızı almak için ortaklık panelinize gidin ve ağınızla paylaşmaya başlayın.',

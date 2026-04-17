@@ -25,7 +25,7 @@ const ar: Translations = {
         pageNotFound: 'الصفحة غير موجودة',
         closeNotification: 'إغلاق الإشعار',
         beta: 'تجريبي',
-        brandName: 'MyClaw',
+        brandName: 'MyClaw.One',
         brandNameGo: 'MyClaw Go',
         brandNameGoVersion: 'MyClaw Go {{version}}',
         menuFile: 'ملف',
@@ -88,7 +88,7 @@ const ar: Translations = {
         cloud: 'Cloud',
         cloudSubtitle: 'تقني',
         go: 'Go',
-        desktop: 'Go',
+        desktop: 'سطح المكتب',
         goSubtitle: 'غير تقني'
     },
     go: {
@@ -234,7 +234,7 @@ const ar: Translations = {
     },
     footer: {
         website: 'الموقع',
-        copyrightName: 'MyClaw',
+        copyrightName: 'MyClaw.One',
         copyrightRights: 'جميع الحقوق محفوظة.',
         termsOfService: 'شروط الخدمة',
         privacyPolicy: 'سياسة الخصوصية',
@@ -255,7 +255,7 @@ const ar: Translations = {
         affiliateProgram: 'برنامج الإحالة',
         documentation: 'التوثيق',
         productDescription:
-            'انشر وكلاء OpenClaw في السحابة أو محلياً بنقرة واحدة — ابنِ واربط ووسّع وكلاء الذكاء الاصطناعي أسرع مع MyClaw.',
+            'انشر وكلاء OpenClaw في السحابة أو محلياً بنقرة واحدة — ابنِ واربط ووسّع وكلاء الذكاء الاصطناعي أسرع مع MyClaw.One.',
         downloadAndroid: 'احصل عليه من Google Play',
         downloadIos: 'حمّله من App Store',
         ariaGithub: 'GitHub',
@@ -565,12 +565,12 @@ const ar: Translations = {
         failedToGetAdminEmails: 'Failed to fetch emails!'
     },
     emails: {
-        otpSubject: 'رمز تسجيل الدخول إلى MyClaw',
-        otpPreview: 'رمز تسجيل الدخول إلى MyClaw: {{code}}',
+        otpSubject: 'رمز تسجيل الدخول إلى MyClaw.One',
+        otpPreview: 'رمز تسجيل الدخول إلى MyClaw.One: {{code}}',
         otpHeading: 'رمز تسجيل الدخول الخاص بك هو:',
         otpExpiry:
             'تنتهي صلاحية الرمز خلال 10 دقائق. إذا لم تكن أنت، تجاهل هذا البريد.',
-        featureFooter: 'تتلقى هذا البريد لأن لديك حساباً في MyClaw.',
+        featureFooter: 'تتلقى هذا البريد لأن لديك حساباً في MyClaw.One.',
         features: {
             terminal: {
                 subject: 'هل تعلم؟ لديك طرفية ويب',
@@ -578,7 +578,7 @@ const ar: Translations = {
                 tag: 'الطرفية الويب',
                 heading: 'خادمك على بعد نقرة واحدة',
                 description:
-                    'الوصول إلى خادمك مباشرة من متصفحك عبر الطرفية المدمجة. لا حاجة لعميل SSH — فقط افتح MyClaw وابدأ بكتابة الأوامر.',
+                    'الوصول إلى خادمك مباشرة من متصفحك عبر الطرفية المدمجة. لا حاجة لعميل SSH — فقط افتح MyClaw.One وابدأ بكتابة الأوامر.',
                 cta: 'فتح الطرفية'
             },
             logs: {
@@ -587,7 +587,7 @@ const ar: Translations = {
                 tag: 'السجلات المباشرة',
                 heading: 'شاهد ما يفعله خادمك',
                 description:
-                    'راقب سجلات خادمك في الوقت الفعلي من لوحة تحكم MyClaw. شخّص المشاكل وتتبّع عمليات النشر وأصلح تطبيقاتك دون مغادرة المتصفح.',
+                    'راقب سجلات خادمك في الوقت الفعلي من لوحة تحكم MyClaw.One. شخّص المشاكل وتتبّع عمليات النشر وأصلح تطبيقاتك دون مغادرة المتصفح.',
                 cta: 'عرض السجلات'
             },
             channels: {
@@ -596,7 +596,7 @@ const ar: Translations = {
                 tag: 'القنوات',
                 heading: 'وكلاؤك في كل مكان',
                 description:
-                    'اربط وكلاء الذكاء الاصطناعي بـ Discord وSlack وWhatsApp والمزيد. قم بتهيئة القنوات وربطها بالوكلاء — كل ذلك من لوحة تحكم MyClaw.',
+                    'اربط وكلاء الذكاء الاصطناعي بـ Discord وSlack وWhatsApp والمزيد. قم بتهيئة القنوات وربطها بالوكلاء — كل ذلك من لوحة تحكم MyClaw.One.',
                 cta: 'إعداد القنوات'
             },
             fileExplorer: {
@@ -605,7 +605,7 @@ const ar: Translations = {
                 tag: 'مستكشف الملفات',
                 heading: 'ملفاتك في متناول يدك',
                 description:
-                    'تصفّح واقرأ وحرّر الملفات على خادمك مباشرة من لوحة تحكم MyClaw. تلوين بناء الجمل والبحث والحفظ الفوري — بدون SSH.',
+                    'تصفّح واقرأ وحرّر الملفات على خادمك مباشرة من لوحة تحكم MyClaw.One. تلوين بناء الجمل والبحث والحفظ الفوري — بدون SSH.',
                 cta: 'فتح مستكشف الملفات'
             },
             playground: {
@@ -623,7 +623,7 @@ const ar: Translations = {
                 tag: 'محادثة الوكيل',
                 heading: 'تحدث مع وكلائك',
                 description:
-                    'تحدث مع وكلاء الذكاء الاصطناعي مباشرة من لوحة تحكم MyClaw. أرسل رسائل وأرفق صوراً واعرض سجل المحادثات — كل ذلك في مكان واحد.',
+                    'تحدث مع وكلاء الذكاء الاصطناعي مباشرة من لوحة تحكم MyClaw.One. أرسل رسائل وأرفق صوراً واعرض سجل المحادثات — كل ذلك في مكان واحد.',
                 cta: 'ابدأ المحادثة'
             },
             voiceMode: {
@@ -659,7 +659,7 @@ const ar: Translations = {
                 tag: 'متغيرات البيئة',
                 heading: 'اضبط الإعدادات بدون SSH',
                 description:
-                    'أضف وحرّر واحذف متغيرات البيئة مباشرة من لوحة تحكم MyClaw. اضبط مفاتيح API والأسرار والإعدادات — بدون الحاجة للطرفية.',
+                    'أضف وحرّر واحذف متغيرات البيئة مباشرة من لوحة تحكم MyClaw.One. اضبط مفاتيح API والأسرار والإعدادات — بدون الحاجة للطرفية.',
                 cta: 'إدارة المتغيرات'
             },
             diagnostics: {
@@ -672,12 +672,12 @@ const ar: Translations = {
                 cta: 'تشغيل التشخيصات'
             },
             sshKeys: {
-                subject: 'هل تعلم؟ إدارة مفاتيح SSH من MyClaw',
+                subject: 'هل تعلم؟ إدارة مفاتيح SSH من MyClaw.One',
                 preview: 'أنشئ وأدر أزواج مفاتيح SSH في لوحة التحكم',
                 tag: 'مفاتيح SSH',
                 heading: 'مفاتيح SSH مبسّطة',
                 description:
-                    'أنشئ أزواج مفاتيح SSH وانسخ المفاتيح العامة ونزّل المفاتيح الخاصة — كل ذلك من لوحة تحكم MyClaw. خصّص المفاتيح للمخالب للوصول الآمن.',
+                    'أنشئ أزواج مفاتيح SSH وانسخ المفاتيح العامة ونزّل المفاتيح الخاصة — كل ذلك من لوحة تحكم MyClaw.One. خصّص المفاتيح للمخالب للوصول الآمن.',
                 cta: 'إدارة مفاتيح SSH'
             },
             exportConfig: {
@@ -690,12 +690,12 @@ const ar: Translations = {
                 cta: 'تصدير الإعدادات'
             },
             multiLanguage: {
-                subject: 'هل تعلم؟ MyClaw يتحدث لغتك',
-                preview: 'استخدم MyClaw بـ 14 لغة',
+                subject: 'هل تعلم؟ MyClaw.One يتحدث لغتك',
+                preview: 'استخدم MyClaw.One بـ 14 لغة',
                 tag: 'متعدد اللغات',
-                heading: 'MyClaw بلغتك',
+                heading: 'MyClaw.One بلغتك',
                 description:
-                    'بدّل لوحة تحكم MyClaw بالكامل إلى أي من 14 لغة. كل شيء من الأزرار إلى رسائل الخطأ — مترجم بالكامل.',
+                    'بدّل لوحة تحكم MyClaw.One بالكامل إلى أي من 14 لغة. كل شيء من الأزرار إلى رسائل الخطأ — مترجم بالكامل.',
                 cta: 'تغيير اللغة'
             },
             subdomain: {
@@ -708,12 +708,12 @@ const ar: Translations = {
                 cta: 'عرض نطاقك الفرعي'
             },
             darkMode: {
-                subject: 'هل تعلم؟ MyClaw يدعم الوضع الداكن',
+                subject: 'هل تعلم؟ MyClaw.One يدعم الوضع الداكن',
                 preview: 'بدّل بين السمات الفاتحة والداكنة',
                 tag: 'الوضع الداكن',
                 heading: 'مريح للعيون',
                 description:
-                    'بدّل بين السمات الفاتحة والداكنة في لوحة تحكم MyClaw. يتم حفظ تفضيلك وتطبيقه تلقائياً في كل زيارة.',
+                    'بدّل بين السمات الفاتحة والداكنة في لوحة تحكم MyClaw.One. يتم حفظ تفضيلك وتطبيقه تلقائياً في كل زيارة.',
                 cta: 'جرّب الوضع الداكن'
             },
             reinstall: {
@@ -739,7 +739,7 @@ const ar: Translations = {
     auth: {
         signIn: 'تسجيل الدخول',
         signInDescription:
-            'سجّل الدخول إلى حساب MyClaw لإدارة نسخ OpenClaw الخاصة بك.',
+            'سجّل الدخول إلى حساب MyClaw.One لإدارة نسخ OpenClaw الخاصة بك.',
         signingIn: 'جارٍ تسجيل الدخول...',
         verifyCode: 'التحقق من الرمز',
         checkYourEmail: 'تحقق من بريدك الإلكتروني',
@@ -768,7 +768,7 @@ const ar: Translations = {
     },
     account: {
         title: 'الحساب',
-        description: 'إدارة إعدادات حساب MyClaw ومعلومات الملف الشخصي.',
+        description: 'إدارة إعدادات حساب MyClaw.One ومعلومات الملف الشخصي.',
         accountSettings: 'الحساب',
         manageYourAccount: 'إدارة ملفك الشخصي وإعدادات الحساب.',
         profileInformation: 'معلومات الملف الشخصي',
@@ -1176,11 +1176,11 @@ clawName: 'الاسم',
             'انشر OpenClaw على خادم VPS الخاص بك بنقرة واحدة. استضافة سحابية ذاتية مع وصول كامل للجذر ومواقع عالمية وأسعار شفافة.',
         badge: 'OpenClaw مبسّط',
         tutorialBadge: 'شاهد. انشر.',
-        tutorialVideoThumbnail: 'صورة مصغرة لفيديو شرح MyClaw',
+        tutorialVideoThumbnail: 'صورة مصغرة لفيديو شرح MyClaw.One',
         heroTitle1: 'انشر OpenClaw.',
         heroTitle2: 'بنقرة واحدة. انتهى.',
         heroDescription:
-            'انشر وكلاء OpenClaw في السحابة أو محلياً بنقرة واحدة — ابنِ واربط ووسّع وكلاء الذكاء الاصطناعي بشكل أسرع مع MyClaw.',
+            'انشر وكلاء OpenClaw في السحابة أو محلياً بنقرة واحدة — ابنِ واربط ووسّع وكلاء الذكاء الاصطناعي بشكل أسرع مع MyClaw.One.',
         goToClaws: 'انتقل إلى المخالب',
         selfHost: 'مفتوح المصدر',
         startingPrice: 'بدءاً من',
@@ -1237,8 +1237,8 @@ clawName: 'الاسم',
             'بدّل إلى أي إصدار من OpenClaw بنقرة واحدة. ابقَ محدّثاً دائماً أو ارجع عند الحاجة.',
         openclawControl: 'تحكم OpenClaw',
         openclawControlDescription:
-            'الوصول إلى لوحة OpenClaw الأصلية مباشرة من MyClaw. وصول كامل للتحرير لكل ما يقدمه OpenClaw.',
-        clawHostControl: 'تحكم MyClaw',
+            'الوصول إلى لوحة OpenClaw الأصلية مباشرة من MyClaw.One. وصول كامل للتحرير لكل ما يقدمه OpenClaw.',
+        clawHostControl: 'تحكم MyClaw.One',
         clawHostControlDescription:
             'إدارة الملفات والتحديثات والقنوات والمتغيرات والمهارات والمزيد من خيارات التهيئة مباشرة من المنصة.',
         skillsMarketplace: 'أكثر من 5,000 مهارة',
@@ -1327,16 +1327,16 @@ clawName: 'الاسم',
         faqTitle: 'أسئلة',
         frequentlyAskedQuestions: 'أسئلة شائعة',
         faqDescription: 'كل سؤال شائع، مُجاب عنه.',
-        faq1Question: 'ما هو MyClaw؟',
+        faq1Question: 'ما هو MyClaw.One؟',
         faq1Answer:
-            'MyClaw هو منصة مبنية لجعل OpenClaw متاحاً للجميع. يتيح للمستخدمين غير التقنيين والمطورين تشغيل OpenClaw بدون إدارة البنية التحتية. نحن نتولى الخوادم ووقت التشغيل والأمان والصيانة — أنت فقط تستخدم OpenClaw.',
+            'MyClaw.One هو منصة مبنية لجعل OpenClaw متاحاً للجميع. يتيح للمستخدمين غير التقنيين والمطورين تشغيل OpenClaw بدون إدارة البنية التحتية. نحن نتولى الخوادم ووقت التشغيل والأمان والصيانة — أنت فقط تستخدم OpenClaw.',
         faq2Question: 'ما هو OpenClaw؟',
         faq2Answer:
             'OpenClaw هو طبقة وصول آمنة ذاتية الاستضافة لأدوات وخدمات الذكاء الاصطناعي. مُهيأ مسبقاً للأمان والأداء، حتى تتمكن من نشره والاتصال فوراً.',
         faq3Question:
             'كيف يختلف هذا عن أدوات الذكاء الاصطناعي الأخرى أو المنصات المستضافة؟',
         faq3Answer:
-            'على عكس أدوات الذكاء الاصطناعي المستضافة، يمنحك MyClaw خادماً حقيقياً مع OpenClaw مثبت. أنت تملك البنية التحتية وتتحكم في كل شيء ولست مقيداً بمنصة أو نموذج مشترك.',
+            'على عكس أدوات الذكاء الاصطناعي المستضافة، يمنحك MyClaw.One خادماً حقيقياً مع OpenClaw مثبت. أنت تملك البنية التحتية وتتحكم في كل شيء ولست مقيداً بمنصة أو نموذج مشترك.',
         faq4Question: 'هل أحتاج معرفة تقنية؟',
         faq4Answer:
             'لا. نحن نتولى كل البنية التحتية والإعداد والصيانة. يمكنك تهيئة وإدارة OpenClaw عبر واجهته والاتصال بالقنوات وتخصيص الاستخدام — بدون لمس الخوادم أو البنية التحتية.',
@@ -1419,8 +1419,8 @@ clawName: 'الاسم',
     },
     changelog: {
         title: 'سجل التغييرات',
-        description: 'تتبع التحديثات والميزات الجديدة والتحسينات في MyClaw.',
-        subtitle: 'جميع التحديثات والميزات الجديدة والتحسينات في MyClaw.',
+        description: 'تتبع التحديثات والميزات الجديدة والتحسينات في MyClaw.One.',
+        subtitle: 'جميع التحديثات والميزات الجديدة والتحسينات في MyClaw.One.',
         upcomingRelease: 'قيد التنفيذ',
         upcomingReleaseTitle: 'تطبيق الهاتف والمزيد',
         upcomingReleaseDescription:
@@ -1438,11 +1438,11 @@ clawName: 'الاسم',
         upcomingReleaseFeature8:
             'طلبات الميزات تُدار وتُنشر تلقائياً بواسطة وكلاء OpenClaw',
         upcomingReleaseFeature9:
-            'وضع الصوت للتفاعل مع وكلاء OpenClaw المستضافين على MyClaw (بيتا)',
+            'وضع الصوت للتفاعل مع وكلاء OpenClaw المستضافين على MyClaw.One (بيتا)',
         upcomingReleaseFeature10:
             'إعادة تثبيت OpenClaw على نسختك للبدء من جديد، متاح مرة واحدة يومياً',
         upcomingReleaseFeature11:
-            'صفحة هبوط لـ MyClaw Go، الاستضافة المحلية مع MyClaw',
+            'صفحة هبوط لـ MyClaw Go، الاستضافة المحلية مع MyClaw.One',
         upcomingReleaseFeature12:
             'تطبيق سطح المكتب لـ macOS وWindows لنشر OpenClaw محلياً بنقرة واحدة',
         release14Date: '1 أبريل 2026',
@@ -1462,11 +1462,11 @@ clawName: 'الاسم',
         release12Description:
             'اشتراكات سنوية مع شهرين مجاناً ووضع الصوت وإعادة تثبيت النسخة وصفحة هبوط أولية لـ MyClaw Go.',
         release12Feature1:
-            'صفحة هبوط لـ MyClaw Go، الاستضافة المحلية مع MyClaw',
+            'صفحة هبوط لـ MyClaw Go، الاستضافة المحلية مع MyClaw.One',
         release12Feature2:
             'دعم الاشتراك السنوي مع شهرين مجاناً عند الاشتراك سنوياً',
         release12Feature3:
-            'وضع الصوت للتفاعل مع وكلاء OpenClaw المستضافين على MyClaw',
+            'وضع الصوت للتفاعل مع وكلاء OpenClaw المستضافين على MyClaw.One',
         release12Feature4:
             'إعادة تثبيت OpenClaw على نسختك للبدء من جديد، متاح مرة واحدة يومياً',
         release11Date: '28 فبراير 2026',
@@ -1539,7 +1539,7 @@ clawName: 'الاسم',
         release1Date: '8 فبراير 2026',
         release1Title: 'الإصدار الأول',
         release1Description:
-            'الإصدار الرسمي الأول من MyClaw. انشر OpenClaw على خادم VPS الخاص بك بنقرة واحدة.',
+            'الإصدار الرسمي الأول من MyClaw.One. انشر OpenClaw على خادم VPS الخاص بك بنقرة واحدة.',
         release1Feature1: 'نشر OpenClaw بنقرة واحدة',
         release1Feature2:
             'لوحة تحكم لإدارة المخالب وتشغيل وإيقاف وإعادة تشغيل وحذف النسخ',
@@ -1556,7 +1556,7 @@ clawName: 'الاسم',
         release2Date: '8 فبراير 2026',
         release2Title: 'سجل التغييرات والمزيد',
         release2Description:
-            'طريقة جديدة للبقاء على اطلاع بكل ما يتعلق بـ MyClaw.',
+            'طريقة جديدة للبقاء على اطلاع بكل ما يتعلق بـ MyClaw.One.',
         release2Feature1:
             'صفحة سجل التغييرات لتتبع جميع تحديثات وإصدارات المنصة',
         release3Date: '10 فبراير 2026',
@@ -1610,7 +1610,7 @@ clawName: 'الاسم',
         tabDisabledAwaitingPayment: 'متاح بمجرد معالجة الدفع.',
         loadingTip1: 'هل تعلم أنه يمكنك تشغيل وكلاء متعددين في OpenClaw واحد؟',
         loadingTip2: 'هل تعلم أن OpenClaw مفتوح المصدر؟',
-        loadingTip3: 'MyClaw هو أول مشروع يتيح استضافة OpenClaw بنقرة واحدة.',
+        loadingTip3: 'MyClaw.One هو أول مشروع يتيح استضافة OpenClaw بنقرة واحدة.',
         tabChat: 'المحادثة',
         tabConfiguration: 'التهيئة',
         tabSettings: 'الإعدادات',
@@ -1932,14 +1932,14 @@ clawName: 'الاسم',
     privacy: {
         title: 'سياسة الخصوصية',
         description:
-            'تعرف على كيفية جمع واستخدام وحماية MyClaw لبياناتك الشخصية.',
+            'تعرف على كيفية جمع واستخدام وحماية MyClaw.One لبياناتك الشخصية.',
         lastUpdated: 'آخر تحديث: 14 مارس 2026',
         introTitle: '1. المقدمة',
         introText:
-            'MyClaw ("نحن" أو "لنا") ملتزمة بحماية خصوصيتك. توضح سياسة الخصوصية هذه كيف نجمع ونستخدم ونكشف ونحمي معلوماتك عند استخدام خدمتنا.',
+            'MyClaw.One ("نحن" أو "لنا") ملتزمة بحماية خصوصيتك. توضح سياسة الخصوصية هذه كيف نجمع ونستخدم ونكشف ونحمي معلوماتك عند استخدام خدمتنا.',
         authTitle: '2. المصادقة',
         authText:
-            'يستخدم MyClaw مصادقة Google Firebase لإدارة حسابات المستخدمين. يمكنك تسجيل الدخول بالبريد الإلكتروني أو Google أو GitHub. باستخدام طرق تسجيل الدخول هذه، توافق على شروطها وسياسات خصوصيتها. قد يجمع هؤلاء المزودون بيانات أساسية مثل عنوان بريدك الإلكتروني واسمك ومعلومات الجهاز. نحن نخزن فقط عنوان بريدك الإلكتروني واسم العرض.',
+            'يستخدم MyClaw.One مصادقة Google Firebase لإدارة حسابات المستخدمين. يمكنك تسجيل الدخول بالبريد الإلكتروني أو Google أو GitHub. باستخدام طرق تسجيل الدخول هذه، توافق على شروطها وسياسات خصوصيتها. قد يجمع هؤلاء المزودون بيانات أساسية مثل عنوان بريدك الإلكتروني واسمك ومعلومات الجهاز. نحن نخزن فقط عنوان بريدك الإلكتروني واسم العرض.',
         collectTitle: '3. المعلومات التي نجمعها',
         collectText: 'نجمع المعلومات بالطرق التالية:',
         personalInfoTitle: 'المعلومات الشخصية',
@@ -1988,7 +1988,7 @@ clawName: 'الاسم',
             'قد يتم نقل معلوماتك ومعالجتها في دول غير دولتك. نضمن وجود ضمانات مناسبة لحماية بياناتك وفقاً لسياسة الخصوصية هذه.',
         eligibilityTitle: '11. الأهلية',
         eligibilityText:
-            'خدمتنا متاحة للجميع. لا توجد قيود عمرية لاستخدام MyClaw.',
+            'خدمتنا متاحة للجميع. لا توجد قيود عمرية لاستخدام MyClaw.One.',
         changesTitle: '12. التغييرات على هذه السياسة',
         changesText:
             'قد نحدّث سياسة الخصوصية هذه من وقت لآخر. سنخطرك بأي تغييرات عبر نشر سياسة الخصوصية الجديدة على هذه الصفحة وتحديث تاريخ "آخر تحديث".',
@@ -1998,17 +1998,17 @@ clawName: 'الاسم',
     },
     terms: {
         title: 'شروط الخدمة',
-        description: 'اقرأ الشروط والأحكام لاستخدام خدمات MyClaw.',
+        description: 'اقرأ الشروط والأحكام لاستخدام خدمات MyClaw.One.',
         lastUpdated: 'آخر تحديث: 14 مارس 2026',
         acceptanceTitle: '1. قبول الشروط',
         acceptanceText:
-            'بالوصول إلى واستخدام MyClaw ("الخدمة")، فإنك تقبل وتوافق على الالتزام بشروط وأحكام هذه الاتفاقية. إذا لم توافق على هذه الشروط، يرجى عدم استخدام خدمتنا.',
+            'بالوصول إلى واستخدام MyClaw.One ("الخدمة")، فإنك تقبل وتوافق على الالتزام بشروط وأحكام هذه الاتفاقية. إذا لم توافق على هذه الشروط، يرجى عدم استخدام خدمتنا.',
         serviceTitle: '2. وصف الخدمة',
         serviceText:
-            'يوفر MyClaw نشر OpenClaw بنقرة واحدة على خوادم مخصصة. نمكّن المستخدمين من نشر وإدارة والوصول إلى نسخ OpenClaw مهيأة مسبقاً مع وصول كامل للجذر وموارد مخصصة.',
+            'يوفر MyClaw.One نشر OpenClaw بنقرة واحدة على خوادم مخصصة. نمكّن المستخدمين من نشر وإدارة والوصول إلى نسخ OpenClaw مهيأة مسبقاً مع وصول كامل للجذر وموارد مخصصة.',
         authTitle: '3. المصادقة',
         authText:
-            'يستخدم MyClaw مصادقة Google Firebase لإدارة تسجيل الدخول. يمكنك المصادقة بالبريد الإلكتروني أو Google أو GitHub. باستخدام هذه الطرق، توافق على الشروط وسياسات الخصوصية الخاصة بـ Google وGitHub. قد يجمع هؤلاء المزودون معلومات أساسية مثل عنوان بريدك الإلكتروني واسمك وبيانات الجهاز.',
+            'يستخدم MyClaw.One مصادقة Google Firebase لإدارة تسجيل الدخول. يمكنك المصادقة بالبريد الإلكتروني أو Google أو GitHub. باستخدام هذه الطرق، توافق على الشروط وسياسات الخصوصية الخاصة بـ Google وGitHub. قد يجمع هؤلاء المزودون معلومات أساسية مثل عنوان بريدك الإلكتروني واسمك وبيانات الجهاز.',
         responsibilitiesTitle: '4. مسؤوليات المستخدم',
         responsibilitiesText: 'أنت توافق على:',
         responsibilitiesAccurate: 'تقديم معلومات تسجيل دقيقة وكاملة',
@@ -2038,19 +2038,19 @@ clawName: 'الاسم',
             'نسعى للحفاظ على توفر عالٍ لكن لا نضمن الوصول المتواصل إلى الخدمة. نحتفظ بالحق في تعديل أو تعليق أو إيقاف أي جزء من الخدمة في أي وقت مع أو بدون إشعار.',
         liabilityTitle: '8. تحديد المسؤولية',
         liabilityText:
-            'إلى أقصى حد يسمح به القانون، لن يكون MyClaw مسؤولاً عن أي أضرار غير مباشرة أو عرضية أو خاصة أو تبعية أو عقابية، أو أي خسارة في الأرباح أو الإيرادات، سواء تم تكبدها مباشرة أو غير مباشرة.',
+            'إلى أقصى حد يسمح به القانون، لن يكون MyClaw.One مسؤولاً عن أي أضرار غير مباشرة أو عرضية أو خاصة أو تبعية أو عقابية، أو أي خسارة في الأرباح أو الإيرادات، سواء تم تكبدها مباشرة أو غير مباشرة.',
         terminationTitle: '9. الإنهاء',
         terminationText:
             'قد ننهي أو نعلق حسابك ووصولك إلى الخدمة فوراً، بدون إشعار مسبق، لسلوك نعتقد أنه ينتهك هذه الشروط أو يضر بالمستخدمين الآخرين أو بنا أو بأطراف ثالثة، أو لأي سبب آخر.',
         affiliateTitle: '10. Affiliate Program',
         affiliateText:
-            'MyClaw offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
+            'MyClaw.One offers an affiliate program that allows users to earn rewards by referring new users. By participating in the affiliate program, you agree to the following:',
         affiliateCodeUnique:
             'Each user receives a unique referral code upon registration, which can be customized once.',
         affiliateCodeOneChange:
             'The referral code can only be changed one time. Choose your custom code carefully.',
         affiliateReferralWindow:
-            'A referral is valid for 6 months from when the referred user first visits MyClaw with your referral link. After 6 months, the referral expires.',
+            'A referral is valid for 6 months from when the referred user first visits MyClaw.One with your referral link. After 6 months, the referral expires.',
         affiliateNoSelfReferral:
             'Self-referrals are not permitted. You may not refer your own accounts.',
         affiliateAbuse:
@@ -2108,12 +2108,12 @@ clawName: 'الاسم',
     },
     compare: {
         title: 'المقارنة الكاملة',
-        description: 'شاهد كيف يقارن MyClaw بمنصات استضافة OpenClaw الأخرى.',
+        description: 'شاهد كيف يقارن MyClaw.One بمنصات استضافة OpenClaw الأخرى.',
         badge: 'مقارنة',
         feature: 'المنصة',
         compareWith: 'قارن مع',
         lastUpdated: 'آخر تحديث: مارس 2026',
-        competitorMyClaw: 'MyClaw',
+        competitorMyClaw: 'MyClaw.One',
         competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
@@ -2361,7 +2361,7 @@ clawName: 'الاسم',
     },
     affiliate: {
         title: 'Affiliate',
-        description: 'Earn rewards by referring friends to MyClaw.',
+        description: 'Earn rewards by referring friends to MyClaw.One.',
         subtitle: 'Share your referral link and earn rewards.',
         learnMore: 'تعرف على المزيد حول برنامج الإحالة',
         referralCode: 'Referral Code',
@@ -2394,19 +2394,19 @@ clawName: 'الاسم',
     affiliateProgram: {
         title: 'برنامج الشراكة',
         description:
-            'تعرّف على كيفية عمل برنامج شراكة MyClaw، وكم يمكنك أن تكسب، وقواعد المشاركة.',
+            'تعرّف على كيفية عمل برنامج شراكة MyClaw.One، وكم يمكنك أن تكسب، وقواعد المشاركة.',
         lastUpdated: 'آخر تحديث: 1 أبريل 2026',
         overviewTitle: '1. نظرة عامة',
         overviewText:
-            'يتيح لك برنامج شراكة MyClaw كسب مكافآت عن طريق إحالة مستخدمين جدد إلى MyClaw. عندما يقوم شخص ما بإجراء عملية شراء بعد زيارة MyClaw من خلال رابط الإحالة الخاص بك، تكسب عمولة على مدفوعاته. البرنامج مجاني للانضمام ومتاح لجميع مستخدمي MyClaw المسجلين.',
+            'يتيح لك برنامج شراكة MyClaw.One كسب مكافآت عن طريق إحالة مستخدمين جدد إلى MyClaw.One. عندما يقوم شخص ما بإجراء عملية شراء بعد زيارة MyClaw.One من خلال رابط الإحالة الخاص بك، تكسب عمولة على مدفوعاته. البرنامج مجاني للانضمام ومتاح لجميع مستخدمي MyClaw.One المسجلين.',
         howItWorksTitle: '2. كيف يعمل',
         howItWorksText: 'البدء في برنامج الشراكة بسيط:',
         howItWorksStep1:
-            'أنشئ حساب MyClaw. يتم إنشاء رمز إحالة فريد لك تلقائيًا.',
+            'أنشئ حساب MyClaw.One. يتم إنشاء رمز إحالة فريد لك تلقائيًا.',
         howItWorksStep2:
             'شارك رابط الإحالة الخاص بك مع الأصدقاء أو الزملاء أو جمهورك. رابطك يتبع التنسيق: myclaw.cloud?ref=YOUR_CODE.',
         howItWorksStep3:
-            'عندما يقوم شخص ما بإجراء عملية شراء بعد زيارة MyClaw من خلال رابطك، يتم تسجيل ذلك كإحالتك.',
+            'عندما يقوم شخص ما بإجراء عملية شراء بعد زيارة MyClaw.One من خلال رابطك، يتم تسجيل ذلك كإحالتك.',
         howItWorksStep4:
             'تكسب عمولة في كل مرة يقوم فيها المستخدم المُحال بعملية شراء مؤهلة.',
         earningsTitle: '3. الأرباح والمدفوعات',
@@ -2433,11 +2433,11 @@ clawName: 'الاسم',
             'يمكن أن تحتوي رموز الإحالة على أحرف وأرقام وشرطات وشرطات سفلية فقط.',
         referralWindowTitle: '5. نافذة إسناد الإحالة',
         referralWindowText:
-            'تُسند الإحالة إليك لمدة 3 أشهر من لحظة زيارة المستخدم المُحال لـ MyClaw لأول مرة من خلال رابطك. إذا لم يقم المستخدم المُحال بعملية شراء خلال نافذة الـ 3 أشهر هذه، تنتهي صلاحية الإحالة ولن يتم كسب أي عمولة. إذا زار المستخدم من خلال رابط إحالة مختلف، يحل الرابط الجديد محل السابق.',
+            'تُسند الإحالة إليك لمدة 3 أشهر من لحظة زيارة المستخدم المُحال لـ MyClaw.One لأول مرة من خلال رابطك. إذا لم يقم المستخدم المُحال بعملية شراء خلال نافذة الـ 3 أشهر هذه، تنتهي صلاحية الإحالة ولن يتم كسب أي عمولة. إذا زار المستخدم من خلال رابط إحالة مختلف، يحل الرابط الجديد محل السابق.',
         eligibilityTitle: '6. الأهلية',
         eligibilityText:
             'للمشاركة في برنامج الشراكة، يجب أن تستوفي المتطلبات التالية:',
-        eligibilityAccount: 'يجب أن يكون لديك حساب MyClaw مسجل.',
+        eligibilityAccount: 'يجب أن يكون لديك حساب MyClaw.One مسجل.',
         eligibilityStanding:
             'يجب أن يكون حسابك في حالة جيدة بدون تاريخ من انتهاكات السياسة.',
         eligibilityAge:
@@ -2451,30 +2451,30 @@ clawName: 'الاسم',
         rulesNoSpam:
             'إرسال رسائل جماعية غير مرغوب فيها (بريد عشوائي) للترويج لرابط الإحالة الخاص بك غير مسموح به.',
         rulesNoMisrepresentation:
-            'لا يجوز لك تحريف MyClaw أو خدماته أو برنامج الشراكة بأي شكل من الأشكال.',
+            'لا يجوز لك تحريف MyClaw.One أو خدماته أو برنامج الشراكة بأي شكل من الأشكال.',
         rulesNoIncentivized:
             'تقديم حوافز مالية مباشرة (مثل الدفع للمستخدمين للتسجيل عبر رابطك) غير مسموح به.',
         terminationTitle: '8. المخالفة والإنهاء',
         terminationText:
-            'أي انتهاك لهذه القواعد سيؤدي إلى مصادرة فورية لجميع المكافآت المعلقة والمكتسبة. يحتفظ MyClaw بالحق في تعليق أو حظر حسابك نهائيًا من برنامج الشراكة. في الحالات الخطيرة، قد يتم إنهاء حساب MyClaw الخاص بك أيضًا. جميع القرارات المتعلقة بالمخالفات نهائية.',
+            'أي انتهاك لهذه القواعد سيؤدي إلى مصادرة فورية لجميع المكافآت المعلقة والمكتسبة. يحتفظ MyClaw.One بالحق في تعليق أو حظر حسابك نهائيًا من برنامج الشراكة. في الحالات الخطيرة، قد يتم إنهاء حساب MyClaw.One الخاص بك أيضًا. جميع القرارات المتعلقة بالمخالفات نهائية.',
         marketingTitle: '9. كيفية الترويج',
         marketingText:
             'هناك العديد من الطرق الإبداعية والمشروعة لمشاركة رابط الإحالة الخاص بك وزيادة أرباحك:',
         marketingSocial:
-            'شارك رابطك على منصات التواصل الاجتماعي مثل X و LinkedIn و Reddit و Facebook. اكتب عن تجربتك مع MyClaw وأدرج رابط الإحالة الخاص بك.',
+            'شارك رابطك على منصات التواصل الاجتماعي مثل X و LinkedIn و Reddit و Facebook. اكتب عن تجربتك مع MyClaw.One وأدرج رابط الإحالة الخاص بك.',
         marketingBlog:
-            'اكتب مقالات مدونة أو دروسًا تعليمية أو مراجعات حول MyClaw. أدرج رابط الإحالة الخاص بك بشكل طبيعي ضمن المحتوى.',
+            'اكتب مقالات مدونة أو دروسًا تعليمية أو مراجعات حول MyClaw.One. أدرج رابط الإحالة الخاص بك بشكل طبيعي ضمن المحتوى.',
         marketingVideo:
-            'أنشئ محتوى فيديو على YouTube أو TikTok يعرض كيفية استخدامك لـ MyClaw لنشر وإدارة وكلاء الذكاء الاصطناعي.',
+            'أنشئ محتوى فيديو على YouTube أو TikTok يعرض كيفية استخدامك لـ MyClaw.One لنشر وإدارة وكلاء الذكاء الاصطناعي.',
         marketingCommunity:
-            'شارك في مجتمعات المطورين والمنتديات وخوادم Discord. عندما يسأل شخص ما عن استضافة السحابة أو نشر وكلاء الذكاء الاصطناعي، أوصِ بـ MyClaw مع رابطك.',
+            'شارك في مجتمعات المطورين والمنتديات وخوادم Discord. عندما يسأل شخص ما عن استضافة السحابة أو نشر وكلاء الذكاء الاصطناعي، أوصِ بـ MyClaw.One مع رابطك.',
         marketingNewsletter:
-            'إذا كنت تدير نشرة إخبارية أو قائمة بريد إلكتروني، اذكر MyClaw في عدد ذي صلة مع رابط الإحالة الخاص بك.',
+            'إذا كنت تدير نشرة إخبارية أو قائمة بريد إلكتروني، اذكر MyClaw.One في عدد ذي صلة مع رابط الإحالة الخاص بك.',
         marketingComparison:
-            'اكتب مقالات مقارنة صادقة أو أدلة تبرز ما يميز MyClaw عن المنصات الأخرى.',
+            'اكتب مقالات مقارنة صادقة أو أدلة تبرز ما يميز MyClaw.One عن المنصات الأخرى.',
         changesToProgramTitle: '10. التغييرات على البرنامج',
         changesToProgramText:
-            'يحتفظ MyClaw بالحق في تعديل أو تعليق أو إيقاف برنامج الشراكة في أي وقت دون إشعار مسبق. يشمل ذلك التغييرات في معدلات العمولة ونوافذ الإحالة وحدود الدفع وقواعد البرنامج. تشكل المشاركة المستمرة بعد التغييرات قبولًا للشروط المحدثة.',
+            'يحتفظ MyClaw.One بالحق في تعديل أو تعليق أو إيقاف برنامج الشراكة في أي وقت دون إشعار مسبق. يشمل ذلك التغييرات في معدلات العمولة ونوافذ الإحالة وحدود الدفع وقواعد البرنامج. تشكل المشاركة المستمرة بعد التغييرات قبولًا للشروط المحدثة.',
         getStartedTitle: '11. ابدأ الآن',
         getStartedText:
             'هل أنت مستعد للبدء في الكسب؟ توجه إلى لوحة تحكم الشراكة الخاصة بك للحصول على رابط الإحالة وابدأ في مشاركته مع شبكتك.',
