@@ -133,7 +133,7 @@ const en = {
         pricingFeature4: 'No usage limits',
         pricingFeature5: 'Priority support',
         pricingFeature6: 'Custom local domain',
-        pricingCta: 'Get MyClaw Go',
+        pricingCta: 'Get MyClaw Desktop',
         comparison: 'Comparison',
         comparisonTitle: 'Desktop vs Cloud',
         comparisonDescription:
@@ -152,25 +152,25 @@ const en = {
         comparisonAgentsOthers: 'Multiple agents',
         faqTitle: 'Questions',
         faqHeading: 'Common Questions',
-        faqDescription: 'Everything you need to know about MyClaw Go.',
-        faq1Question: 'What is MyClaw Go?',
+        faqDescription: 'Everything you need to know about MyClaw Desktop.',
+        faq1Question: 'What is MyClaw Desktop?',
         faq1Answer:
-            'MyClaw Go is a lightweight desktop application that lets you run OpenClaw locally on your own machine. No cloud servers needed — install, launch, and start using OpenClaw in seconds.',
-        faq2Question: 'How is Go different from MyClaw Cloud?',
+            'MyClaw Desktop is a lightweight desktop application that lets you run OpenClaw locally on your own machine. No cloud servers needed — install, launch, and start using OpenClaw in seconds.',
+        faq2Question: 'How is Desktop different from MyClaw Cloud?',
         faq2Answer:
-            'MyClaw Cloud deploys OpenClaw on dedicated remote servers with 24/7 uptime and global access. MyClaw Go runs everything locally on your device — great for privacy, offline use, and simple setups.',
+            'MyClaw Cloud deploys OpenClaw on dedicated remote servers with 24/7 uptime and global access. MyClaw Desktop runs everything locally on your device — great for privacy, offline use, and simple setups.',
         faq3Question: 'Do I need an internet connection?',
         faq3Answer:
-            'MyClaw Go works offline for local usage. An internet connection is only needed for initial setup, updates, and any features that require external API calls.',
+            'MyClaw Desktop works offline for local usage. An internet connection is only needed for initial setup, updates, and any features that require external API calls.',
         faq4Question: 'Is the license a one-time payment?',
         faq4Answer:
-            'Yes. You pay once and get lifetime access to MyClaw Go, including all future updates. No subscriptions, no recurring fees.',
+            'Yes. You pay once and get lifetime access to MyClaw Desktop, including all future updates. No subscriptions, no recurring fees.',
         faq5Question: 'What operating systems are supported?',
         faq5Answer:
-            'MyClaw Go supports Windows and macOS. Both platforms get the same features and receive updates simultaneously.',
-        faq6Question: 'Can I switch from Go to Cloud later?',
+            'MyClaw Desktop supports Windows and macOS. Both platforms get the same features and receive updates simultaneously.',
+        faq6Question: 'Can I switch from Desktop to Cloud later?',
         faq6Answer:
-            'Absolutely. You can export your OpenClaw configuration from Go and deploy it on MyClaw Cloud anytime. Both platforms are fully compatible.',
+            'Absolutely. You can export your OpenClaw configuration from Desktop and deploy it on MyClaw Cloud anytime. Both platforms are fully compatible.',
         statsPrice: '${{price}}',
         statsLifetime: 'Lifetime',
         statsOneTime: 'One-Time',
@@ -188,7 +188,7 @@ const en = {
         ctaTitle: 'Download MyClaw Desktop',
         ctaDescription:
             'Free to download. Run OpenClaw on your own machine — Windows and Linux supported. Your data, your rules.',
-        ctaButton: 'Get MyClaw Go',
+        ctaButton: 'Get MyClaw Desktop',
         joinWaitlist: 'Join Waitlist',
         joinedWaitlist: 'Joined Waitlist',
         waitlistJoinedToast: "You've joined the waitlist.",
@@ -207,7 +207,7 @@ const en = {
         subdomainAlreadyInUse: 'This subdomain is already in use!',
         clawDirectoryNotFound: 'Claw directory not found!',
         noVersionInstalled:
-            'No OpenClaw version installed. Go to the Versions tab and install one first!',
+            'No OpenClaw version installed. Desktop to the Versions tab and install one first!',
         failedToStartClaw: 'Failed to start claw!',
         noVersionAssigned: 'No OpenClaw version assigned to this claw!',
         invalidAgentName: 'Invalid agent name!',
@@ -870,8 +870,8 @@ const en = {
         description: 'Manage your OpenClaw license.',
         pageTitle: 'License',
         pageDescription:
-            'Purchase your license for self-hosting OpenClaw instances locally with our Go app.',
-        planName: 'MyClaw Go License',
+            'Purchase your license for self-hosting OpenClaw instances locally with our Desktop app.',
+        planName: 'MyClaw Desktop License',
         oneTimePurchase: 'One-time purchase',
         price: '${{price}}',
         priceNote: 'Pay once, own forever.',
@@ -893,7 +893,7 @@ const en = {
             'Licenses are permanent and non-revocable. Once purchased, you own it forever.',
         gateTitle: 'License Required',
         gateDescription:
-            'You need a MyClaw Go License to deploy and manage OpenClaw instances locally.'
+            'You need a MyClaw Desktop License to deploy and manage OpenClaw instances locally.'
     },
     network: {
         unstable: 'Unstable Connection',
@@ -1446,7 +1446,7 @@ const en = {
         upcomingReleaseFeature1:
             'Native mobile app to monitor and manage your OpenClaw instances on the go',
         upcomingReleaseFeature13:
-            'Beta release of MyClaw Go for macOS and Windows, deploy OpenClaw locally with one click',
+            'Beta release of MyClaw Desktop for macOS and Windows, deploy OpenClaw locally with one click',
         upcomingReleaseFeature3: 'Dark and light theme support',
         upcomingReleaseFeature4:
             'Performance, stability, and responsiveness enhancements',
@@ -1463,7 +1463,7 @@ const en = {
         upcomingReleaseFeature10:
             'Reinstall OpenClaw on your instance to start fresh, available once per day',
         upcomingReleaseFeature11:
-            'Landing page for MyClaw Go, local hosting with MyClaw.One',
+            'Landing page for MyClaw Desktop, local hosting with MyClaw.One',
         upcomingReleaseFeature12:
             'Desktop app for macOS and Windows to deploy OpenClaw locally with one click',
         release14Date: 'April 1, 2026',
@@ -1481,9 +1481,9 @@ const en = {
         release12Date: 'March 14, 2026',
         release12Title: 'Yearly Plans, Voice Mode & More',
         release12Description:
-            'Yearly subscriptions with 2 months free, voice mode, instance reinstall, and an initial landing page for MyClaw Go.',
+            'Yearly subscriptions with 2 months free, voice mode, instance reinstall, and an initial landing page for MyClaw Desktop.',
         release12Feature1:
-            'Landing page for MyClaw Go, local hosting with MyClaw.One',
+            'Landing page for MyClaw Desktop, local hosting with MyClaw.One',
         release12Feature2:
             'Yearly subscription support with 2 months free when you subscribe annually',
         release12Feature3:
@@ -1767,7 +1767,7 @@ const en = {
         chatReadOnlyGoAssistant:
             'Absolutely! I can set up a CI/CD pipeline for you. Want me to start with a GitHub Actions workflow that builds, tests, and deploys automatically?',
         chatReadOnlyGoReply:
-            'This is a preview! Get MyClaw Go and run OpenClaw locally — your machine, your data, no cloud needed.',
+            'This is a preview! Get MyClaw Desktop and run OpenClaw locally — your machine, your data, no cloud needed.',
         chatReadOnlyGoUser2:
             'Can you monitor my local services and alert me if something goes down?',
         chatReadOnlyGoAssistant2:
@@ -2465,7 +2465,7 @@ const en = {
         earningsTitle: '3. Earnings & Payouts',
         earningsText: 'Here is how affiliate earnings work:',
         earningsCommission:
-            'You earn a 15% commission on every qualifying purchase made by your referred users. Commissions apply to both MyClaw Cloud and MyClaw Go plans.',
+            'You earn a 15% commission on every qualifying purchase made by your referred users. Commissions apply to both MyClaw Cloud and MyClaw Desktop plans.',
         earningsMonthly:
             'For monthly subscriptions, you earn commissions for 1 year from the date of the referral.',
         earningsYearly:

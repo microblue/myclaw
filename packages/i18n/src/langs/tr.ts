@@ -26,8 +26,8 @@ const tr: Translations = {
         closeNotification: 'Bildirimi kapat',
         beta: 'Beta',
         brandName: 'MyClaw.One',
-        brandNameGo: 'MyClaw Go',
-        brandNameGoVersion: 'MyClaw Go {{version}}',
+        brandNameGo: 'MyClaw Desktop',
+        brandNameGoVersion: 'MyClaw Desktop {{version}}',
         menuFile: 'Dosya',
         menuEdit: 'Düzen',
         menuView: 'Görünüm',
@@ -39,7 +39,7 @@ const tr: Translations = {
         seconds: 'saniye'
     },
     setup: {
-        welcomeTitle: "MyClaw Go'ya Hoş Geldiniz",
+        welcomeTitle: "MyClaw Desktop'ya Hoş Geldiniz",
         welcomeDescription: 'Başlamak için profilinizi ayarlayın.',
         whatsYourName: 'Adınız nedir?',
         namePlaceholder: 'Adınızı girin',
@@ -92,7 +92,7 @@ const tr: Translations = {
         goSubtitle: 'Teknik olmayan'
     },
     go: {
-        pageTitle: 'MyClaw Go',
+        pageTitle: 'MyClaw Desktop',
         heroTitle1: 'OpenClaw Dağıt.',
         heroTitle2: 'Yerel. Anında.',
         badge: 'Yakında',
@@ -136,11 +136,11 @@ const tr: Translations = {
         pricingFeature4: 'Kullanım limiti yok',
         pricingFeature5: 'Öncelikli destek',
         pricingFeature6: 'Özel yerel alan adı',
-        pricingCta: "MyClaw Go'yu Edinin",
+        pricingCta: "MyClaw Desktop'yu Edinin",
         comparison: 'Karşılaştırma',
         comparisonTitle: 'Desktop ve Cloud',
         comparisonDescription:
-            'Size uygun olanı seçin. Go yerel çalışır, Cloud özel sunucularda çalışır.',
+            'Size uygun olanı seçin. Desktop yerel çalışır, Cloud özel sunucularda çalışır.',
         comparisonLocalUs: 'Tamamen cihazınızda çalışır',
         comparisonLocalOthers: 'Uzak sunucularda çalışır',
         comparisonPricingUs: 'Ücretsiz indirme',
@@ -155,25 +155,25 @@ const tr: Translations = {
         comparisonAgentsOthers: 'Birden fazla ajan',
         faqTitle: 'Sorular',
         faqHeading: 'Sık Sorulan Sorular',
-        faqDescription: 'MyClaw Go hakkında bilmeniz gereken her şey.',
-        faq1Question: 'MyClaw Go nedir?',
+        faqDescription: 'MyClaw Desktop hakkında bilmeniz gereken her şey.',
+        faq1Question: 'MyClaw Desktop nedir?',
         faq1Answer:
-            "MyClaw Go, OpenClaw'u kendi bilgisayarınızda yerel olarak çalıştırmanızı sağlayan hafif bir masaüstü uygulamasıdır. Bulut sunucusu gerekmez — kurun, başlatın ve OpenClaw'u saniyeler içinde kullanmaya başlayın.",
-        faq2Question: "Go, MyClaw Cloud'dan nasıl farklıdır?",
+            "MyClaw Desktop, OpenClaw'u kendi bilgisayarınızda yerel olarak çalıştırmanızı sağlayan hafif bir masaüstü uygulamasıdır. Bulut sunucusu gerekmez — kurun, başlatın ve OpenClaw'u saniyeler içinde kullanmaya başlayın.",
+        faq2Question: "Desktop, MyClaw Cloud'dan nasıl farklıdır?",
         faq2Answer:
-            "MyClaw Cloud, OpenClaw'u 7/24 çalışma süresi ve küresel erişimle özel uzak sunuculara dağıtır. MyClaw Go her şeyi cihazınızda yerel olarak çalıştırır — gizlilik, çevrimdışı kullanım ve basit kurulumlar için idealdir.",
+            "MyClaw Cloud, OpenClaw'u 7/24 çalışma süresi ve küresel erişimle özel uzak sunuculara dağıtır. MyClaw Desktop her şeyi cihazınızda yerel olarak çalıştırır — gizlilik, çevrimdışı kullanım ve basit kurulumlar için idealdir.",
         faq3Question: 'İnternet bağlantısına ihtiyacım var mı?',
         faq3Answer:
-            'MyClaw Go yerel kullanım için çevrimdışı çalışır. İnternet bağlantısı yalnızca ilk kurulum, güncellemeler ve harici API çağrıları gerektiren özellikler için gereklidir.',
+            'MyClaw Desktop yerel kullanım için çevrimdışı çalışır. İnternet bağlantısı yalnızca ilk kurulum, güncellemeler ve harici API çağrıları gerektiren özellikler için gereklidir.',
         faq4Question: 'Lisans tek seferlik bir ödeme mi?',
         faq4Answer:
-            "Evet. Bir kez ödersiniz ve tüm gelecek güncellemeler dahil MyClaw Go'ya ömür boyu erişim elde edersiniz. Abonelik yok, tekrarlayan ücret yok.",
+            "Evet. Bir kez ödersiniz ve tüm gelecek güncellemeler dahil MyClaw Desktop'ya ömür boyu erişim elde edersiniz. Abonelik yok, tekrarlayan ücret yok.",
         faq5Question: 'Hangi işletim sistemleri destekleniyor?',
         faq5Answer:
-            "MyClaw Go, Windows ve macOS'u destekler. Her iki platform da aynı özelliklere sahiptir ve güncellemeleri aynı anda alır.",
-        faq6Question: "Daha sonra Go'dan Cloud'a geçebilir miyim?",
+            "MyClaw Desktop, Windows ve macOS'u destekler. Her iki platform da aynı özelliklere sahiptir ve güncellemeleri aynı anda alır.",
+        faq6Question: "Daha sonra Desktop'dan Cloud'a geçebilir miyim?",
         faq6Answer:
-            "Kesinlikle. OpenClaw yapılandırmanızı Go'dan dışa aktarabilir ve istediğiniz zaman MyClaw Cloud'a dağıtabilirsiniz. Her iki platform tamamen uyumludur.",
+            "Kesinlikle. OpenClaw yapılandırmanızı Desktop'dan dışa aktarabilir ve istediğiniz zaman MyClaw Cloud'a dağıtabilirsiniz. Her iki platform tamamen uyumludur.",
         statsPrice: '${{price}}',
         statsLifetime: 'Ömür Boyu',
         statsOneTime: 'Tek Seferlik',
@@ -191,7 +191,7 @@ const tr: Translations = {
         ctaTitle: 'MyClaw Desktop İndir',
         ctaDescription:
             'Ücretsiz indirin. OpenClaw\'ı kendi makinenizde çalıştırın — Windows ve Linux desteklenir.',
-        ctaButton: "MyClaw Go'yu Edinin",
+        ctaButton: "MyClaw Desktop'yu Edinin",
         joinWaitlist: 'Bekleme Listesine Katıl',
         joinedWaitlist: 'Bekleme Listesine Katıldı',
         waitlistJoinedToast: 'Bekleme listesine katıldınız.',
@@ -888,8 +888,8 @@ const tr: Translations = {
         description: 'OpenClaw lisansınızı yönetin.',
         pageTitle: 'Lisans',
         pageDescription:
-            'Go uygulamamızla OpenClaw örneklerini yerel olarak barındırmak için lisansınızı satın alın.',
-        planName: 'MyClaw Go Lisansı',
+            'Desktop uygulamamızla OpenClaw örneklerini yerel olarak barındırmak için lisansınızı satın alın.',
+        planName: 'MyClaw Desktop Lisansı',
         oneTimePurchase: 'Tek seferlik satın alma',
         price: '${{price}}',
         priceNote: 'Bir kez ödeyin, sonsuza kadar sahip olun.',
@@ -911,7 +911,7 @@ const tr: Translations = {
             'Lisanslar kalıcıdır ve geri alınamaz. Satın aldıktan sonra sonsuza kadar sizindir.',
         gateTitle: 'Lisans Gerekli',
         gateDescription:
-            'OpenClaw örneklerini yerel olarak dağıtmak ve yönetmek için MyClaw Go Lisansına ihtiyacınız var.'
+            'OpenClaw örneklerini yerel olarak dağıtmak ve yönetmek için MyClaw Desktop Lisansına ihtiyacınız var.'
     },
     network: {
         unstable: 'Kararsız Bağlantı',
@@ -1472,7 +1472,7 @@ clawName: 'Ad',
         upcomingReleaseFeature1:
             'Hareket halindeyken OpenClaw örneklerinizi izlemek ve yönetmek için yerel mobil uygulama',
         upcomingReleaseFeature13:
-            'macOS ve Windows için MyClaw Go beta sürümü, tek tıkla OpenClaw yerel olarak dağıtın',
+            'macOS ve Windows için MyClaw Desktop beta sürümü, tek tıkla OpenClaw yerel olarak dağıtın',
         upcomingReleaseFeature3: 'Koyu ve açık tema desteği',
         upcomingReleaseFeature4:
             'Performans, kararlılık ve yanıt verme iyileştirmeleri',
@@ -1489,7 +1489,7 @@ clawName: 'Ad',
         upcomingReleaseFeature10:
             "Temiz başlangıç için örneğinizde OpenClaw'u yeniden yükleyin, günde bir kez kullanılabilir",
         upcomingReleaseFeature11:
-            'MyClaw Go için açılış sayfası, MyClaw.One ile yerel barındırma',
+            'MyClaw Desktop için açılış sayfası, MyClaw.One ile yerel barındırma',
         upcomingReleaseFeature12:
             'macOS ve Windows için tek tıkla yerel OpenClaw dağıtımı için masaüstü uygulaması',
         release14Date: '1 Nisan 2026',
@@ -1507,9 +1507,9 @@ clawName: 'Ad',
         release12Date: '14 Mart 2026',
         release12Title: 'Yıllık Planlar, Ses Modu ve Daha Fazlası',
         release12Description:
-            '2 ay ücretsiz yıllık abonelikler, ses modu, örnek yeniden yükleme ve MyClaw Go için ilk açılış sayfası.',
+            '2 ay ücretsiz yıllık abonelikler, ses modu, örnek yeniden yükleme ve MyClaw Desktop için ilk açılış sayfası.',
         release12Feature1:
-            'MyClaw Go için açılış sayfası, MyClaw.One ile yerel barındırma',
+            'MyClaw Desktop için açılış sayfası, MyClaw.One ile yerel barındırma',
         release12Feature2:
             'Yıllık abone olduğunuzda 2 ay ücretsiz yıllık abonelik desteği',
         release12Feature3:
@@ -1797,7 +1797,7 @@ clawName: 'Ad',
         chatReadOnlyGoAssistant:
             'Kesinlikle! Sizin için bir CI/CD hattı kurabilirim. Otomatik olarak derleyen, test eden ve dağıtan bir GitHub Actions iş akışıyla başlamamı ister misiniz?',
         chatReadOnlyGoReply:
-            "Bu bir önizleme! MyClaw Go edinin ve OpenClaw'u yerel olarak çalıştırın — sizin makineniz, sizin verileriniz, bulut gerekmez.",
+            "Bu bir önizleme! MyClaw Desktop edinin ve OpenClaw'u yerel olarak çalıştırın — sizin makineniz, sizin verileriniz, bulut gerekmez.",
         chatReadOnlyGoUser2:
             'Yerel servislerimi izleyebilir ve bir şey çökerse beni uyarabilir misin?',
         chatReadOnlyGoAssistant2:
@@ -2500,7 +2500,7 @@ clawName: 'Ad',
         earningsTitle: '3. Kazançlar ve Ödemeler',
         earningsText: 'Ortaklık kazançları şöyle çalışır:',
         earningsCommission:
-            'Yönlendirdiğiniz kullanıcıların yaptığı her uygun satın alma üzerinden 15% komisyon kazanırsınız. Komisyonlar hem MyClaw Cloud hem de MyClaw Go planları için geçerlidir.',
+            'Yönlendirdiğiniz kullanıcıların yaptığı her uygun satın alma üzerinden 15% komisyon kazanırsınız. Komisyonlar hem MyClaw Cloud hem de MyClaw Desktop planları için geçerlidir.',
         earningsMonthly:
             'Aylık abonelikler için, yönlendirme tarihinden itibaren 1 yıl boyunca komisyon kazanırsınız.',
         earningsYearly:

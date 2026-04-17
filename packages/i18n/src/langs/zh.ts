@@ -26,8 +26,8 @@ const zh: Translations = {
         closeNotification: '关闭通知',
         beta: '测试版',
         brandName: 'MyClaw.One',
-        brandNameGo: 'MyClaw Go',
-        brandNameGoVersion: 'MyClaw Go {{version}}',
+        brandNameGo: 'MyClaw Desktop',
+        brandNameGoVersion: 'MyClaw Desktop {{version}}',
         menuFile: '文件',
         menuEdit: '编辑',
         menuView: '显示',
@@ -39,7 +39,7 @@ const zh: Translations = {
         seconds: '秒'
     },
     setup: {
-        welcomeTitle: '欢迎使用 MyClaw Go',
+        welcomeTitle: '欢迎使用 MyClaw Desktop',
         welcomeDescription: '设置您的个人资料以开始使用.',
         whatsYourName: '您叫什么名字？',
         namePlaceholder: '输入您的姓名',
@@ -92,7 +92,7 @@ const zh: Translations = {
         goSubtitle: '非技术型'
     },
     go: {
-        pageTitle: 'MyClaw Go',
+        pageTitle: 'MyClaw Desktop',
         heroTitle1: 'MyClaw.One 桌面版.',
         heroTitle2: '正式发布.',
         badge: 'v1.4.0 正式发布',
@@ -134,7 +134,7 @@ const zh: Translations = {
         pricingFeature4: '无使用限制',
         pricingFeature5: '优先支持',
         pricingFeature6: '自定义本地域名',
-        pricingCta: '获取 MyClaw Go',
+        pricingCta: '获取 MyClaw Desktop',
         comparison: '对比',
         comparisonTitle: '桌面版 vs 云端',
         comparisonDescription:
@@ -153,25 +153,25 @@ const zh: Translations = {
         comparisonAgentsOthers: '多个代理',
         faqTitle: '问题',
         faqHeading: '常见问题',
-        faqDescription: '关于 MyClaw Go 您需要了解的一切.',
-        faq1Question: '什么是 MyClaw Go？',
+        faqDescription: '关于 MyClaw Desktop 您需要了解的一切.',
+        faq1Question: '什么是 MyClaw Desktop？',
         faq1Answer:
-            'MyClaw Go 是一款轻量级桌面应用程序，让您可以在自己的设备上本地运行 OpenClaw。无需云服务器 — 安装、启动，几秒内即可开始使用 OpenClaw.',
-        faq2Question: 'Go 与 MyClaw Cloud 有什么不同？',
+            'MyClaw Desktop 是一款轻量级桌面应用程序，让您可以在自己的设备上本地运行 OpenClaw。无需云服务器 — 安装、启动，几秒内即可开始使用 OpenClaw.',
+        faq2Question: 'Desktop 与 MyClaw Cloud 有什么不同？',
         faq2Answer:
-            'MyClaw Cloud 将 OpenClaw 部署在专用远程服务器上，提供 24/7 正常运行时间和全球访问。MyClaw Go 在您的设备上本地运行一切 — 非常适合隐私保护、离线使用和简单设置.',
+            'MyClaw Cloud 将 OpenClaw 部署在专用远程服务器上，提供 24/7 正常运行时间和全球访问。MyClaw Desktop 在您的设备上本地运行一切 — 非常适合隐私保护、离线使用和简单设置.',
         faq3Question: '我需要互联网连接吗？',
         faq3Answer:
-            'MyClaw Go 本地使用时可以离线工作。仅在初始设置、更新以及需要外部 API 调用的功能时才需要互联网连接.',
+            'MyClaw Desktop 本地使用时可以离线工作。仅在初始设置、更新以及需要外部 API 调用的功能时才需要互联网连接.',
         faq4Question: '许可证是一次性付款吗？',
         faq4Answer:
-            '是的。您只需支付一次，即可终身使用 MyClaw Go，包括所有未来更新。无订阅，无重复费用.',
+            '是的。您只需支付一次，即可终身使用 MyClaw Desktop，包括所有未来更新。无订阅，无重复费用.',
         faq5Question: '支持哪些操作系统？',
         faq5Answer:
-            'MyClaw Go 支持 Windows 和 macOS。两个平台拥有相同的功能并同时接收更新.',
-        faq6Question: '以后可以从 Go 切换到 Cloud 吗？',
+            'MyClaw Desktop 支持 Windows 和 macOS。两个平台拥有相同的功能并同时接收更新.',
+        faq6Question: '以后可以从 Desktop 切换到 Cloud 吗？',
         faq6Answer:
-            '当然可以。您可以随时从 Go 导出您的 OpenClaw 配置并部署到 MyClaw Cloud。两个平台完全兼容.',
+            '当然可以。您可以随时从 Desktop 导出您的 OpenClaw 配置并部署到 MyClaw Cloud。两个平台完全兼容.',
         statsPrice: '${{price}}',
         statsLifetime: '终身',
         statsOneTime: '一次性',
@@ -189,7 +189,7 @@ const zh: Translations = {
         ctaTitle: '下载 MyClaw.One 桌面版',
         ctaDescription:
             '免费下载。在您自己的设备上运行 OpenClaw — 支持 Windows 和 Linux。您的数据，您做主.',
-        ctaButton: '获取 MyClaw Go',
+        ctaButton: '获取 MyClaw Desktop',
         joinWaitlist: '加入等待列表',
         joinedWaitlist: '已加入等待列表',
         waitlistJoinedToast: '您已加入等待列表.',
@@ -842,8 +842,8 @@ const zh: Translations = {
         description: '管理您的 OpenClaw 许可证。',
         pageTitle: '许可证',
         pageDescription:
-            '购买许可证，使用我们的 Go 应用在本地自托管 OpenClaw 实例。',
-        planName: 'MyClaw Go 许可证',
+            '购买许可证，使用我们的 Desktop 应用在本地自托管 OpenClaw 实例。',
+        planName: 'MyClaw Desktop 许可证',
         oneTimePurchase: '一次性购买',
         price: '${{price}}',
         priceNote: '一次付款，永久拥有。',
@@ -863,7 +863,7 @@ const zh: Translations = {
         permanentNote: '许可证是永久且不可撤销的。一旦购买，您将永远拥有它。',
         gateTitle: '需要许可证',
         gateDescription:
-            '您需要 MyClaw Go 许可证才能在本地部署和管理 OpenClaw 实例。'
+            '您需要 MyClaw Desktop 许可证才能在本地部署和管理 OpenClaw 实例。'
     },
     network: {
         unstable: '连接不稳定',
@@ -1404,11 +1404,11 @@ const zh: Translations = {
             '语音模式，与 MyClaw.One 上托管的 OpenClaw 代理交互（测试版）',
         upcomingReleaseFeature10: '重新安装 OpenClaw 以全新开始，每天可用一次',
         upcomingReleaseFeature11:
-            'MyClaw Go 着陆页，使用 MyClaw.One 进行本地托管',
+            'MyClaw Desktop 着陆页，使用 MyClaw.One 进行本地托管',
         upcomingReleaseFeature12:
             '适用于 macOS 和 Windows 的桌面应用，一键本地部署 OpenClaw',
         upcomingReleaseFeature13:
-            'MyClaw Go macOS 和 Windows 测试版发布，一键本地部署 OpenClaw',
+            'MyClaw Desktop macOS 和 Windows 测试版发布，一键本地部署 OpenClaw',
         release14Date: '2026年4月1日',
         release14Title: 'Hetzner 迁移、联盟系统与新语言',
         release14Description:
@@ -1423,8 +1423,8 @@ const zh: Translations = {
         release12Date: '2026年3月14日',
         release12Title: '年付方案、语音模式及更多',
         release12Description:
-            '年付订阅免费 2 个月、语音模式、实例重装以及 MyClaw Go 初始着陆页。',
-        release12Feature1: 'MyClaw Go 着陆页，使用 MyClaw.One 进行本地托管',
+            '年付订阅免费 2 个月、语音模式、实例重装以及 MyClaw Desktop 初始着陆页。',
+        release12Feature1: 'MyClaw Desktop 着陆页，使用 MyClaw.One 进行本地托管',
         release12Feature2: '年付订阅支持，年付可享 2 个月免费',
         release12Feature3: '语音模式，与 MyClaw.One 上托管的 OpenClaw 代理交互',
         release12Feature4: '重新安装 OpenClaw 以全新开始，每天可用一次',
@@ -1663,7 +1663,7 @@ const zh: Translations = {
         chatReadOnlyGoAssistant:
             '当然可以！我可以为您设置 CI/CD 流水线。要我从一个自动构建、测试和部署的 GitHub Actions 工作流开始吗？',
         chatReadOnlyGoReply:
-            '这是预览！获取 MyClaw Go 并在本地运行 OpenClaw——您的机器、您的数据，无需云端。',
+            '这是预览！获取 MyClaw Desktop 并在本地运行 OpenClaw——您的机器、您的数据，无需云端。',
         chatReadOnlyGoUser2: '你能监控我的本地服务并在出问题时提醒我吗？',
         chatReadOnlyGoAssistant2:
             '没问题！我会为您所有的服务设置健康检查。目前监控 4 个端点——全部健康并正常响应。',
@@ -2323,7 +2323,7 @@ const zh: Translations = {
         earningsTitle: '3. 收益与支付',
         earningsText: '联盟收益的运作方式如下：',
         earningsCommission:
-            '您从推荐用户的每笔符合条件的购买中获得 15% 的佣金。佣金适用于 MyClaw Cloud 和 MyClaw Go 计划。',
+            '您从推荐用户的每笔符合条件的购买中获得 15% 的佣金。佣金适用于 MyClaw Cloud 和 MyClaw Desktop 计划。',
         earningsMonthly: '对于月度订阅，您从推荐之日起可获得 1 年的佣金。',
         earningsYearly: '对于年度订阅，您仅获得第一年的佣金。',
         earningsPayout:

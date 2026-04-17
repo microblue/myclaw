@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { HeaderProps, ElectronWindow } from '@/ts/Interfaces'
+import type { HeaderProps } from '@/ts/Interfaces'
 
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { useLocation, Link } from 'react-router-dom'
@@ -9,7 +9,6 @@ import { useAuth } from '@/lib/auth'
 import { useProfile, useRoutePrefetch } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
 import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
-import BetaBadge from '@/components/layout/BetaBadge'
 import Logo from '@/components/layout/Logo'
 import ProductHuntBanner from '@/components/layout/ProductHuntBanner'
 import ProductSwitcher from '@/components/layout/ProductSwitcher'
@@ -52,9 +51,6 @@ const Header: FC<HeaderProps> = ({
 
     const { prefetchRoute } = useRoutePrefetch()
 
-    const isDesktop = !!(window as unknown as ElectronWindow).electronAPI
-        ?.isDesktop
-
     const { data: profile } = useProfile({
         enabled: !!user
     })
@@ -85,9 +81,6 @@ const Header: FC<HeaderProps> = ({
                 <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
                     <div className='flex items-center gap-3'>
                         <Logo />
-                        {(isDesktop || location.pathname === ROUTES.GO) && (
-                            <BetaBadge />
-                        )}
                         <ProductSwitcher />
                     </div>
 

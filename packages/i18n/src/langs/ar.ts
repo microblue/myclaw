@@ -26,8 +26,8 @@ const ar: Translations = {
         closeNotification: 'إغلاق الإشعار',
         beta: 'تجريبي',
         brandName: 'MyClaw.One',
-        brandNameGo: 'MyClaw Go',
-        brandNameGoVersion: 'MyClaw Go {{version}}',
+        brandNameGo: 'MyClaw Desktop',
+        brandNameGoVersion: 'MyClaw Desktop {{version}}',
         menuFile: 'ملف',
         menuEdit: 'تحرير',
         menuView: 'عرض',
@@ -39,7 +39,7 @@ const ar: Translations = {
         seconds: 'ثوانٍ'
     },
     setup: {
-        welcomeTitle: 'مرحباً بك في MyClaw Go',
+        welcomeTitle: 'مرحباً بك في MyClaw Desktop',
         welcomeDescription: 'أعدّ ملفك الشخصي للبدء.',
         whatsYourName: 'ما اسمك؟',
         namePlaceholder: 'أدخل اسمك',
@@ -92,7 +92,7 @@ const ar: Translations = {
         goSubtitle: 'غير تقني'
     },
     go: {
-        pageTitle: 'MyClaw Go',
+        pageTitle: 'MyClaw Desktop',
         heroTitle1: 'MyClaw Desktop.',
         heroTitle2: 'متوفر الآن.',
         badge: 'v1.4.0 تم الإصدار',
@@ -135,11 +135,11 @@ const ar: Translations = {
         pricingFeature4: 'بدون حدود استخدام',
         pricingFeature5: 'دعم ذو أولوية',
         pricingFeature6: 'نطاق محلي مخصص',
-        pricingCta: 'احصل على MyClaw Go',
+        pricingCta: 'احصل على MyClaw Desktop',
         comparison: 'المقارنة',
         comparisonTitle: 'Desktop مقابل Cloud',
         comparisonDescription:
-            'اختر ما يناسبك. Go يعمل محلياً، Cloud يعمل على خوادم مخصصة.',
+            'اختر ما يناسبك. Desktop يعمل محلياً، Cloud يعمل على خوادم مخصصة.',
         comparisonLocalUs: 'يعمل بالكامل على جهازك',
         comparisonLocalOthers: 'يعمل على خوادم بعيدة',
         comparisonPricingUs: 'تنزيل مجاني',
@@ -154,25 +154,25 @@ const ar: Translations = {
         comparisonAgentsOthers: 'وكلاء متعددون',
         faqTitle: 'أسئلة',
         faqHeading: 'أسئلة شائعة',
-        faqDescription: 'كل ما تحتاج معرفته عن MyClaw Go.',
-        faq1Question: 'ما هو MyClaw Go؟',
+        faqDescription: 'كل ما تحتاج معرفته عن MyClaw Desktop.',
+        faq1Question: 'ما هو MyClaw Desktop؟',
         faq1Answer:
-            'MyClaw Go هو تطبيق سطح مكتب خفيف يتيح لك تشغيل OpenClaw محلياً على جهازك. لا حاجة لخوادم سحابية — ثبّت وشغّل وابدأ استخدام OpenClaw في ثوانٍ.',
-        faq2Question: 'كيف يختلف Go عن MyClaw Cloud؟',
+            'MyClaw Desktop هو تطبيق سطح مكتب خفيف يتيح لك تشغيل OpenClaw محلياً على جهازك. لا حاجة لخوادم سحابية — ثبّت وشغّل وابدأ استخدام OpenClaw في ثوانٍ.',
+        faq2Question: 'كيف يختلف Desktop عن MyClaw Cloud؟',
         faq2Answer:
-            'MyClaw Cloud ينشر OpenClaw على خوادم بعيدة مخصصة مع تشغيل على مدار الساعة ووصول عالمي. MyClaw Go يشغّل كل شيء محلياً على جهازك — مثالي للخصوصية والاستخدام دون اتصال والإعدادات البسيطة.',
+            'MyClaw Cloud ينشر OpenClaw على خوادم بعيدة مخصصة مع تشغيل على مدار الساعة ووصول عالمي. MyClaw Desktop يشغّل كل شيء محلياً على جهازك — مثالي للخصوصية والاستخدام دون اتصال والإعدادات البسيطة.',
         faq3Question: 'هل أحتاج إلى اتصال بالإنترنت؟',
         faq3Answer:
-            'MyClaw Go يعمل بدون اتصال للاستخدام المحلي. الاتصال بالإنترنت مطلوب فقط للإعداد الأولي والتحديثات وأي ميزات تتطلب استدعاءات API خارجية.',
+            'MyClaw Desktop يعمل بدون اتصال للاستخدام المحلي. الاتصال بالإنترنت مطلوب فقط للإعداد الأولي والتحديثات وأي ميزات تتطلب استدعاءات API خارجية.',
         faq4Question: 'هل الترخيص دفعة واحدة؟',
         faq4Answer:
-            'نعم. تدفع مرة واحدة وتحصل على وصول مدى الحياة إلى MyClaw Go، بما في ذلك جميع التحديثات المستقبلية. لا اشتراكات، لا رسوم متكررة.',
+            'نعم. تدفع مرة واحدة وتحصل على وصول مدى الحياة إلى MyClaw Desktop، بما في ذلك جميع التحديثات المستقبلية. لا اشتراكات، لا رسوم متكررة.',
         faq5Question: 'ما أنظمة التشغيل المدعومة؟',
         faq5Answer:
-            'MyClaw Go يدعم Windows وmacOS. كلا النظامين يحصلان على نفس الميزات ويتلقيان التحديثات في وقت واحد.',
-        faq6Question: 'هل يمكنني الانتقال من Go إلى Cloud لاحقاً؟',
+            'MyClaw Desktop يدعم Windows وmacOS. كلا النظامين يحصلان على نفس الميزات ويتلقيان التحديثات في وقت واحد.',
+        faq6Question: 'هل يمكنني الانتقال من Desktop إلى Cloud لاحقاً؟',
         faq6Answer:
-            'بالتأكيد. يمكنك تصدير إعدادات OpenClaw من Go ونشرها على MyClaw Cloud في أي وقت. كلا المنصتين متوافقتان بالكامل.',
+            'بالتأكيد. يمكنك تصدير إعدادات OpenClaw من Desktop ونشرها على MyClaw Cloud في أي وقت. كلا المنصتين متوافقتان بالكامل.',
         statsPrice: '${{price}}',
         statsLifetime: 'مدى الحياة',
         statsOneTime: 'دفعة واحدة',
@@ -190,7 +190,7 @@ const ar: Translations = {
         ctaTitle: 'تنزيل MyClaw Desktop',
         ctaDescription:
             'تنزيل مجاني. شغّل OpenClaw على جهازك — يدعم Windows وLinux. بياناتك، قواعدك.',
-        ctaButton: 'احصل على MyClaw Go',
+        ctaButton: 'احصل على MyClaw Desktop',
         joinWaitlist: 'انضم لقائمة الانتظار',
         joinedWaitlist: 'تم الانضمام لقائمة الانتظار',
         waitlistJoinedToast: 'لقد انضممت إلى قائمة الانتظار.',
@@ -861,8 +861,8 @@ const ar: Translations = {
         description: 'إدارة ترخيص OpenClaw الخاص بك.',
         pageTitle: 'الترخيص',
         pageDescription:
-            'اشترِ ترخيصك لاستضافة نسخ OpenClaw محلياً باستخدام تطبيق Go.',
-        planName: 'ترخيص MyClaw Go',
+            'اشترِ ترخيصك لاستضافة نسخ OpenClaw محلياً باستخدام تطبيق Desktop.',
+        planName: 'ترخيص MyClaw Desktop',
         oneTimePurchase: 'شراء لمرة واحدة',
         price: '${{price}}',
         priceNote: 'ادفع مرة واحدة وامتلكه للأبد.',
@@ -883,7 +883,7 @@ const ar: Translations = {
             'التراخيص دائمة وغير قابلة للإلغاء. بمجرد الشراء، تمتلكه للأبد.',
         gateTitle: 'مطلوب ترخيص',
         gateDescription:
-            'تحتاج ترخيص MyClaw Go لنشر وإدارة نسخ OpenClaw محلياً.'
+            'تحتاج ترخيص MyClaw Desktop لنشر وإدارة نسخ OpenClaw محلياً.'
     },
     network: {
         unstable: 'اتصال غير مستقر',
@@ -1428,7 +1428,7 @@ clawName: 'الاسم',
         upcomingReleaseFeature1:
             'تطبيق هاتف أصلي لمراقبة وإدارة نسخ OpenClaw أثناء التنقل',
         upcomingReleaseFeature13:
-            'إصدار تجريبي من MyClaw Go لنظامي macOS وWindows، انشر OpenClaw محلياً بنقرة واحدة',
+            'إصدار تجريبي من MyClaw Desktop لنظامي macOS وWindows، انشر OpenClaw محلياً بنقرة واحدة',
         upcomingReleaseFeature3: 'دعم السمات الداكنة والفاتحة',
         upcomingReleaseFeature4: 'تحسينات في الأداء والاستقرار والاستجابة',
         upcomingReleaseFeature5:
@@ -1442,7 +1442,7 @@ clawName: 'الاسم',
         upcomingReleaseFeature10:
             'إعادة تثبيت OpenClaw على نسختك للبدء من جديد، متاح مرة واحدة يومياً',
         upcomingReleaseFeature11:
-            'صفحة هبوط لـ MyClaw Go، الاستضافة المحلية مع MyClaw.One',
+            'صفحة هبوط لـ MyClaw Desktop، الاستضافة المحلية مع MyClaw.One',
         upcomingReleaseFeature12:
             'تطبيق سطح المكتب لـ macOS وWindows لنشر OpenClaw محلياً بنقرة واحدة',
         release14Date: '1 أبريل 2026',
@@ -1460,9 +1460,9 @@ clawName: 'الاسم',
         release12Date: '14 مارس 2026',
         release12Title: 'خطط سنوية ووضع الصوت والمزيد',
         release12Description:
-            'اشتراكات سنوية مع شهرين مجاناً ووضع الصوت وإعادة تثبيت النسخة وصفحة هبوط أولية لـ MyClaw Go.',
+            'اشتراكات سنوية مع شهرين مجاناً ووضع الصوت وإعادة تثبيت النسخة وصفحة هبوط أولية لـ MyClaw Desktop.',
         release12Feature1:
-            'صفحة هبوط لـ MyClaw Go، الاستضافة المحلية مع MyClaw.One',
+            'صفحة هبوط لـ MyClaw Desktop، الاستضافة المحلية مع MyClaw.One',
         release12Feature2:
             'دعم الاشتراك السنوي مع شهرين مجاناً عند الاشتراك سنوياً',
         release12Feature3:
@@ -1731,7 +1731,7 @@ clawName: 'الاسم',
         chatReadOnlyGoAssistant:
             'بالتأكيد! يمكنني إعداد خط أنابيب CI/CD لك. هل تريد أن أبدأ بسير عمل GitHub Actions يبني ويختبر وينشر تلقائياً؟',
         chatReadOnlyGoReply:
-            'هذه معاينة! احصل على MyClaw Go وشغّل OpenClaw محلياً — جهازك، بياناتك، بدون سحابة.',
+            'هذه معاينة! احصل على MyClaw Desktop وشغّل OpenClaw محلياً — جهازك، بياناتك، بدون سحابة.',
         chatReadOnlyGoUser2:
             'هل يمكنك مراقبة خدماتي المحلية وتنبيهي إذا توقف شيء؟',
         chatReadOnlyGoAssistant2:
@@ -2412,7 +2412,7 @@ clawName: 'الاسم',
         earningsTitle: '3. الأرباح والمدفوعات',
         earningsText: 'إليك كيفية عمل أرباح الشراكة:',
         earningsCommission:
-            'تكسب عمولة 15% على كل عملية شراء مؤهلة يقوم بها المستخدمون المُحالون. تنطبق العمولات على كل من خطط MyClaw Cloud وMyClaw Go.',
+            'تكسب عمولة 15% على كل عملية شراء مؤهلة يقوم بها المستخدمون المُحالون. تنطبق العمولات على كل من خطط MyClaw Cloud وMyClaw Desktop.',
         earningsMonthly:
             'بالنسبة للاشتراكات الشهرية، تكسب عمولات لمدة عام واحد من تاريخ الإحالة.',
         earningsYearly:

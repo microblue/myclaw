@@ -26,8 +26,8 @@ const pl: Translations = {
         closeNotification: 'Zamknij powiadomienie',
         beta: 'Beta',
         brandName: 'MyClaw.One',
-        brandNameGo: 'MyClaw Go',
-        brandNameGoVersion: 'MyClaw Go {{version}}',
+        brandNameGo: 'MyClaw Desktop',
+        brandNameGoVersion: 'MyClaw Desktop {{version}}',
         menuFile: 'Plik',
         menuEdit: 'Edycja',
         menuView: 'Widok',
@@ -39,7 +39,7 @@ const pl: Translations = {
         seconds: 'sekundy'
     },
     setup: {
-        welcomeTitle: 'Witaj w MyClaw Go',
+        welcomeTitle: 'Witaj w MyClaw Desktop',
         welcomeDescription: 'Skonfiguruj swój profil, aby rozpocząć.',
         whatsYourName: 'Jak masz na imię?',
         namePlaceholder: 'Wpisz swoje imię',
@@ -92,7 +92,7 @@ const pl: Translations = {
         goSubtitle: 'Nietechniczny'
     },
     go: {
-        pageTitle: 'MyClaw Go',
+        pageTitle: 'MyClaw Desktop',
         heroTitle1: 'Wdróż OpenClaw.',
         heroTitle2: 'Lokalnie. Natychmiast.',
         badge: 'Wkrótce',
@@ -136,11 +136,11 @@ const pl: Translations = {
         pricingFeature4: 'Bez limitów użytkowania',
         pricingFeature5: 'Priorytetowe wsparcie',
         pricingFeature6: 'Własna domena lokalna',
-        pricingCta: 'Pobierz MyClaw Go',
+        pricingCta: 'Pobierz MyClaw Desktop',
         comparison: 'Porównanie',
         comparisonTitle: 'Desktop vs Cloud',
         comparisonDescription:
-            'Wybierz to, co Ci odpowiada. Go działa lokalnie, Cloud działa na dedykowanych serwerach.',
+            'Wybierz to, co Ci odpowiada. Desktop działa lokalnie, Cloud działa na dedykowanych serwerach.',
         comparisonLocalUs: 'Działa w pełni na Twoim urządzeniu',
         comparisonLocalOthers: 'Działa na zdalnych serwerach',
         comparisonPricingUs: 'Bezpłatne pobieranie',
@@ -155,25 +155,25 @@ const pl: Translations = {
         comparisonAgentsOthers: 'Wielu agentów',
         faqTitle: 'Pytania',
         faqHeading: 'Często zadawane pytania',
-        faqDescription: 'Wszystko, co musisz wiedzieć o MyClaw Go.',
-        faq1Question: 'Czym jest MyClaw Go?',
+        faqDescription: 'Wszystko, co musisz wiedzieć o MyClaw Desktop.',
+        faq1Question: 'Czym jest MyClaw Desktop?',
         faq1Answer:
-            'MyClaw Go to lekka aplikacja desktopowa, która pozwala uruchamiać OpenClaw lokalnie na Twoim komputerze. Bez serwerów chmurowych — zainstaluj, uruchom i zacznij korzystać z OpenClaw w kilka sekund.',
-        faq2Question: 'Czym Go różni się od MyClaw Cloud?',
+            'MyClaw Desktop to lekka aplikacja desktopowa, która pozwala uruchamiać OpenClaw lokalnie na Twoim komputerze. Bez serwerów chmurowych — zainstaluj, uruchom i zacznij korzystać z OpenClaw w kilka sekund.',
+        faq2Question: 'Czym Desktop różni się od MyClaw Cloud?',
         faq2Answer:
-            'MyClaw Cloud wdraża OpenClaw na dedykowanych zdalnych serwerach z dostępnością 24/7 i globalnym dostępem. MyClaw Go uruchamia wszystko lokalnie na Twoim urządzeniu — idealne dla prywatności, użytku offline i prostych konfiguracji.',
+            'MyClaw Cloud wdraża OpenClaw na dedykowanych zdalnych serwerach z dostępnością 24/7 i globalnym dostępem. MyClaw Desktop uruchamia wszystko lokalnie na Twoim urządzeniu — idealne dla prywatności, użytku offline i prostych konfiguracji.',
         faq3Question: 'Czy potrzebuję połączenia z internetem?',
         faq3Answer:
-            'MyClaw Go działa offline do użytku lokalnego. Połączenie z internetem jest potrzebne tylko do początkowej konfiguracji, aktualizacji i funkcji wymagających zewnętrznych wywołań API.',
+            'MyClaw Desktop działa offline do użytku lokalnego. Połączenie z internetem jest potrzebne tylko do początkowej konfiguracji, aktualizacji i funkcji wymagających zewnętrznych wywołań API.',
         faq4Question: 'Czy licencja to jednorazowa płatność?',
         faq4Answer:
-            'Tak. Płacisz raz i otrzymujesz dożywotni dostęp do MyClaw Go, włącznie ze wszystkimi przyszłymi aktualizacjami. Bez subskrypcji, bez opłat cyklicznych.',
+            'Tak. Płacisz raz i otrzymujesz dożywotni dostęp do MyClaw Desktop, włącznie ze wszystkimi przyszłymi aktualizacjami. Bez subskrypcji, bez opłat cyklicznych.',
         faq5Question: 'Jakie systemy operacyjne są obsługiwane?',
         faq5Answer:
-            'MyClaw Go obsługuje Windows i macOS. Obie platformy mają te same funkcje i otrzymują aktualizacje jednocześnie.',
-        faq6Question: 'Czy mogę przejść z Go na Cloud później?',
+            'MyClaw Desktop obsługuje Windows i macOS. Obie platformy mają te same funkcje i otrzymują aktualizacje jednocześnie.',
+        faq6Question: 'Czy mogę przejść z Desktop na Cloud później?',
         faq6Answer:
-            'Oczywiście. Możesz wyeksportować konfigurację OpenClaw z Go i wdrożyć ją na MyClaw Cloud w dowolnym momencie. Obie platformy są w pełni kompatybilne.',
+            'Oczywiście. Możesz wyeksportować konfigurację OpenClaw z Desktop i wdrożyć ją na MyClaw Cloud w dowolnym momencie. Obie platformy są w pełni kompatybilne.',
         statsPrice: '${{price}}',
         statsLifetime: 'Dożywotnia',
         statsOneTime: 'Jednorazowa',
@@ -191,7 +191,7 @@ const pl: Translations = {
         ctaTitle: 'Pobierz MyClaw Desktop',
         ctaDescription:
             'Bezpłatne pobieranie. Uruchom OpenClaw na własnym komputerze — obsługuje Windows i Linux.',
-        ctaButton: 'Pobierz MyClaw Go',
+        ctaButton: 'Pobierz MyClaw Desktop',
         joinWaitlist: 'Dołącz do listy oczekujących',
         joinedWaitlist: 'Na liście oczekujących',
         waitlistJoinedToast: 'Dołączono do listy oczekujących.',
@@ -902,8 +902,8 @@ const pl: Translations = {
         description: 'Zarządzaj swoją licencją OpenClaw.',
         pageTitle: 'Licencja',
         pageDescription:
-            'Kup licencję na samodzielne hostowanie instancji OpenClaw lokalnie za pomocą naszej aplikacji Go.',
-        planName: 'Licencja MyClaw Go',
+            'Kup licencję na samodzielne hostowanie instancji OpenClaw lokalnie za pomocą naszej aplikacji Desktop.',
+        planName: 'Licencja MyClaw Desktop',
         oneTimePurchase: 'Jednorazowy zakup',
         price: '${{price}}',
         priceNote: 'Zapłać raz, posiadaj na zawsze.',
@@ -926,7 +926,7 @@ const pl: Translations = {
             'Licencje są trwałe i nieodwołalne. Po zakupie posiadasz ją na zawsze.',
         gateTitle: 'Wymagana licencja',
         gateDescription:
-            'Potrzebujesz licencji MyClaw Go, aby wdrażać i zarządzać instancjami OpenClaw lokalnie.'
+            'Potrzebujesz licencji MyClaw Desktop, aby wdrażać i zarządzać instancjami OpenClaw lokalnie.'
     },
     network: {
         unstable: 'Niestabilne połączenie',
@@ -1483,7 +1483,7 @@ clawName: 'Nazwa',
         upcomingReleaseFeature1:
             'Natywna aplikacja mobilna do monitorowania i zarządzania instancjami OpenClaw w podróży',
         upcomingReleaseFeature13:
-            'Wersja beta MyClaw Go dla macOS i Windows — wdrażaj OpenClaw lokalnie jednym kliknięciem',
+            'Wersja beta MyClaw Desktop dla macOS i Windows — wdrażaj OpenClaw lokalnie jednym kliknięciem',
         upcomingReleaseFeature3: 'Obsługa jasnego i ciemnego motywu',
         upcomingReleaseFeature4:
             'Ulepszenia wydajności, stabilności i responsywności',
@@ -1500,7 +1500,7 @@ clawName: 'Nazwa',
         upcomingReleaseFeature10:
             'Ponowna instalacja OpenClaw na instancji dla świeżego startu, dostępna raz dziennie',
         upcomingReleaseFeature11:
-            'Strona docelowa MyClaw Go, hosting lokalny z MyClaw.One',
+            'Strona docelowa MyClaw Desktop, hosting lokalny z MyClaw.One',
         upcomingReleaseFeature12:
             'Aplikacja desktopowa dla macOS i Windows do lokalnego wdrażania OpenClaw jednym kliknięciem',
         release14Date: '1 kwietnia 2026',
@@ -1518,9 +1518,9 @@ clawName: 'Nazwa',
         release12Date: '14 marca 2026',
         release12Title: 'Plany roczne, tryb głosowy i więcej',
         release12Description:
-            'Subskrypcje roczne z 2 miesiącami gratis, tryb głosowy, ponowna instalacja instancji i wstępna strona docelowa MyClaw Go.',
+            'Subskrypcje roczne z 2 miesiącami gratis, tryb głosowy, ponowna instalacja instancji i wstępna strona docelowa MyClaw Desktop.',
         release12Feature1:
-            'Strona docelowa MyClaw Go, hosting lokalny z MyClaw.One',
+            'Strona docelowa MyClaw Desktop, hosting lokalny z MyClaw.One',
         release12Feature2:
             'Obsługa subskrypcji rocznych z 2 miesiącami gratis przy rocznym rozliczeniu',
         release12Feature3:
@@ -1812,7 +1812,7 @@ clawName: 'Nazwa',
         chatReadOnlyGoAssistant:
             'Oczywiście! Mogę skonfigurować pipeline CI/CD. Chcesz, żebym zaczął od workflow GitHub Actions, który automatycznie buduje, testuje i wdraża?',
         chatReadOnlyGoReply:
-            'To jest podgląd! Pobierz MyClaw Go i uruchom OpenClaw lokalnie — Twój komputer, Twoje dane, bez chmury.',
+            'To jest podgląd! Pobierz MyClaw Desktop i uruchom OpenClaw lokalnie — Twój komputer, Twoje dane, bez chmury.',
         chatReadOnlyGoUser2:
             'Czy możesz monitorować moje lokalne usługi i ostrzec mnie, jeśli coś padnie?',
         chatReadOnlyGoAssistant2:
@@ -2516,7 +2516,7 @@ clawName: 'Nazwa',
         earningsTitle: '3. Zarobki i wypłaty',
         earningsText: 'Oto jak działają zarobki partnerskie:',
         earningsCommission:
-            'Zarabiasz prowizję 15% od każdego kwalifikującego się zakupu dokonanego przez poleconych użytkowników. Prowizje dotyczą zarówno planów MyClaw Cloud, jak i MyClaw Go.',
+            'Zarabiasz prowizję 15% od każdego kwalifikującego się zakupu dokonanego przez poleconych użytkowników. Prowizje dotyczą zarówno planów MyClaw Cloud, jak i MyClaw Desktop.',
         earningsMonthly:
             'W przypadku subskrypcji miesięcznych zarabiasz prowizje przez 1 rok od daty polecenia.',
         earningsYearly:

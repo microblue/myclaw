@@ -26,8 +26,8 @@ const nl: Translations = {
         closeNotification: 'Melding sluiten',
         beta: 'Beta',
         brandName: 'MyClaw.One',
-        brandNameGo: 'MyClaw Go',
-        brandNameGoVersion: 'MyClaw Go {{version}}',
+        brandNameGo: 'MyClaw Desktop',
+        brandNameGoVersion: 'MyClaw Desktop {{version}}',
         menuFile: 'Archief',
         menuEdit: 'Bewerk',
         menuView: 'Weergave',
@@ -39,7 +39,7 @@ const nl: Translations = {
         seconds: 'seconden'
     },
     setup: {
-        welcomeTitle: 'Welkom bij MyClaw Go',
+        welcomeTitle: 'Welkom bij MyClaw Desktop',
         welcomeDescription: 'Stel je profiel in om te beginnen.',
         whatsYourName: 'Wat is je naam?',
         namePlaceholder: 'Voer je naam in',
@@ -92,7 +92,7 @@ const nl: Translations = {
         goSubtitle: 'Niet-technisch'
     },
     go: {
-        pageTitle: 'MyClaw Go',
+        pageTitle: 'MyClaw Desktop',
         heroTitle1: 'Implementeer OpenClaw.',
         heroTitle2: 'Lokaal. Direct.',
         badge: 'Binnenkort beschikbaar',
@@ -136,11 +136,11 @@ const nl: Translations = {
         pricingFeature4: 'Geen gebruikslimieten',
         pricingFeature5: 'Prioriteitsondersteuning',
         pricingFeature6: 'Aangepast lokaal domein',
-        pricingCta: 'MyClaw Go ophalen',
+        pricingCta: 'MyClaw Desktop ophalen',
         comparison: 'Vergelijking',
         comparisonTitle: 'Desktop vs. Cloud',
         comparisonDescription:
-            'Kies wat voor jou werkt. Go draait lokaal, Cloud draait op dedicated servers.',
+            'Kies wat voor jou werkt. Desktop draait lokaal, Cloud draait op dedicated servers.',
         comparisonLocalUs: 'Draait volledig op je apparaat',
         comparisonLocalOthers: 'Draait op externe servers',
         comparisonPricingUs: 'Gratis downloaden',
@@ -155,25 +155,25 @@ const nl: Translations = {
         comparisonAgentsOthers: 'Meerdere agents',
         faqTitle: 'Vragen',
         faqHeading: 'Veelgestelde vragen',
-        faqDescription: 'Alles wat je moet weten over MyClaw Go.',
-        faq1Question: 'Wat is MyClaw Go?',
+        faqDescription: 'Alles wat je moet weten over MyClaw Desktop.',
+        faq1Question: 'Wat is MyClaw Desktop?',
         faq1Answer:
-            'MyClaw Go is een lichte desktopapplicatie waarmee je OpenClaw lokaal op je eigen computer kunt draaien. Geen cloudservers nodig — installeren, starten en binnen seconden OpenClaw gebruiken.',
-        faq2Question: 'Hoe verschilt Go van MyClaw Cloud?',
+            'MyClaw Desktop is een lichte desktopapplicatie waarmee je OpenClaw lokaal op je eigen computer kunt draaien. Geen cloudservers nodig — installeren, starten en binnen seconden OpenClaw gebruiken.',
+        faq2Question: 'Hoe verschilt Desktop van MyClaw Cloud?',
         faq2Answer:
-            'MyClaw Cloud deployt OpenClaw op dedicated externe servers met 24/7 uptime en wereldwijde toegang. MyClaw Go draait alles lokaal op je apparaat — ideaal voor privacy, offline gebruik en eenvoudige opstellingen.',
+            'MyClaw Cloud deployt OpenClaw op dedicated externe servers met 24/7 uptime en wereldwijde toegang. MyClaw Desktop draait alles lokaal op je apparaat — ideaal voor privacy, offline gebruik en eenvoudige opstellingen.',
         faq3Question: 'Heb ik een internetverbinding nodig?',
         faq3Answer:
-            'MyClaw Go werkt offline voor lokaal gebruik. Een internetverbinding is alleen nodig voor de eerste installatie, updates en functies die externe API-aanroepen vereisen.',
+            'MyClaw Desktop werkt offline voor lokaal gebruik. Een internetverbinding is alleen nodig voor de eerste installatie, updates en functies die externe API-aanroepen vereisen.',
         faq4Question: 'Is de licentie een eenmalige betaling?',
         faq4Answer:
-            'Ja. Je betaalt eenmalig en krijgt levenslange toegang tot MyClaw Go, inclusief alle toekomstige updates. Geen abonnementen, geen terugkerende kosten.',
+            'Ja. Je betaalt eenmalig en krijgt levenslange toegang tot MyClaw Desktop, inclusief alle toekomstige updates. Geen abonnementen, geen terugkerende kosten.',
         faq5Question: 'Welke besturingssystemen worden ondersteund?',
         faq5Answer:
-            'MyClaw Go ondersteunt Windows en macOS. Beide platformen krijgen dezelfde functies en ontvangen gelijktijdig updates.',
-        faq6Question: 'Kan ik later overstappen van Go naar Cloud?',
+            'MyClaw Desktop ondersteunt Windows en macOS. Beide platformen krijgen dezelfde functies en ontvangen gelijktijdig updates.',
+        faq6Question: 'Kan ik later overstappen van Desktop naar Cloud?',
         faq6Answer:
-            'Absoluut. Je kunt je OpenClaw-configuratie exporteren vanuit Go en op elk moment deployen op MyClaw Cloud. Beide platformen zijn volledig compatibel.',
+            'Absoluut. Je kunt je OpenClaw-configuratie exporteren vanuit Desktop en op elk moment deployen op MyClaw Cloud. Beide platformen zijn volledig compatibel.',
         statsPrice: '${{price}}',
         statsLifetime: 'Levenslang',
         statsOneTime: 'Eenmalig',
@@ -191,7 +191,7 @@ const nl: Translations = {
         ctaTitle: 'MyClaw Desktop downloaden',
         ctaDescription:
             'Gratis te downloaden. Voer OpenClaw uit op uw eigen machine — Windows en Linux ondersteund.',
-        ctaButton: 'MyClaw Go ophalen',
+        ctaButton: 'MyClaw Desktop ophalen',
         joinWaitlist: 'Wachtlijst',
         joinedWaitlist: 'Op de wachtlijst',
         waitlistJoinedToast: 'Je staat op de wachtlijst.',
@@ -898,8 +898,8 @@ const nl: Translations = {
         description: 'Beheer je OpenClaw-licentie.',
         pageTitle: 'Licentie',
         pageDescription:
-            'Koop je licentie voor het zelf hosten van OpenClaw-instanties lokaal met onze Go-app.',
-        planName: 'MyClaw Go Licentie',
+            'Koop je licentie voor het zelf hosten van OpenClaw-instanties lokaal met onze Desktop-app.',
+        planName: 'MyClaw Desktop Licentie',
         oneTimePurchase: 'Eenmalige aankoop',
         price: '${{price}}',
         priceNote: 'Betaal eenmalig, bezit voor altijd.',
@@ -920,7 +920,7 @@ const nl: Translations = {
             'Licenties zijn permanent en niet-herroepbaar. Eenmaal gekocht, bezit je het voor altijd.',
         gateTitle: 'Licentie vereist',
         gateDescription:
-            'Je hebt een MyClaw Go Licentie nodig om OpenClaw-instanties lokaal te deployen en te beheren.'
+            'Je hebt een MyClaw Desktop Licentie nodig om OpenClaw-instanties lokaal te deployen en te beheren.'
     },
     network: {
         unstable: 'Onstabiele verbinding',
@@ -1486,7 +1486,7 @@ clawName: 'Naam',
         upcomingReleaseFeature1:
             'Native mobiele app om je OpenClaw-instanties onderweg te monitoren en te beheren',
         upcomingReleaseFeature13:
-            'Bètarelease van MyClaw Go voor macOS en Windows, deploy OpenClaw lokaal met één klik',
+            'Bètarelease van MyClaw Desktop voor macOS en Windows, deploy OpenClaw lokaal met één klik',
         upcomingReleaseFeature3: 'Ondersteuning voor donker en licht thema',
         upcomingReleaseFeature4:
             'Verbeteringen in prestaties, stabiliteit en responsiviteit',
@@ -1503,7 +1503,7 @@ clawName: 'Naam',
         upcomingReleaseFeature10:
             'Herinstalleer OpenClaw op je instantie voor een nieuwe start, eenmaal per dag beschikbaar',
         upcomingReleaseFeature11:
-            'Landingspagina voor MyClaw Go, lokale hosting met MyClaw.One',
+            'Landingspagina voor MyClaw Desktop, lokale hosting met MyClaw.One',
         upcomingReleaseFeature12:
             'Desktop-app voor macOS en Windows om OpenClaw lokaal te deployen met \u00e9\u00e9n klik',
         release14Date: '1 april 2026',
@@ -1521,9 +1521,9 @@ clawName: 'Naam',
         release12Date: '14 maart 2026',
         release12Title: 'Jaarplannen, spraakmodus & meer',
         release12Description:
-            'Jaarabonnementen met 2 maanden gratis, spraakmodus, instantie herinstallatie en een eerste landingspagina voor MyClaw Go.',
+            'Jaarabonnementen met 2 maanden gratis, spraakmodus, instantie herinstallatie en een eerste landingspagina voor MyClaw Desktop.',
         release12Feature1:
-            'Landingspagina voor MyClaw Go, lokale hosting met MyClaw.One',
+            'Landingspagina voor MyClaw Desktop, lokale hosting met MyClaw.One',
         release12Feature2:
             'Jaarabonnement met 2 maanden gratis bij jaarlijks abonneren',
         release12Feature3:
@@ -1816,7 +1816,7 @@ clawName: 'Naam',
         chatReadOnlyGoAssistant:
             'Absoluut! Ik kan een CI/CD-pipeline voor je opzetten. Zal ik beginnen met een GitHub Actions-workflow die automatisch bouwt, test en deployt?',
         chatReadOnlyGoReply:
-            'Dit is een preview! Download MyClaw Go en draai OpenClaw lokaal \u2014 jouw machine, jouw data, geen cloud nodig.',
+            'Dit is een preview! Download MyClaw Desktop en draai OpenClaw lokaal \u2014 jouw machine, jouw data, geen cloud nodig.',
         chatReadOnlyGoUser2:
             'Kun je mijn lokale services monitoren en me waarschuwen als er iets uitvalt?',
         chatReadOnlyGoAssistant2:
@@ -2524,7 +2524,7 @@ clawName: 'Naam',
         earningsTitle: '3. Verdiensten en uitbetalingen',
         earningsText: 'Zo werken de partnerverdiensten:',
         earningsCommission:
-            'Je verdient een commissie van 15% op elke in aanmerking komende aankoop van je verwezen gebruikers. Commissies zijn van toepassing op zowel MyClaw Cloud- als MyClaw Go-abonnementen.',
+            'Je verdient een commissie van 15% op elke in aanmerking komende aankoop van je verwezen gebruikers. Commissies zijn van toepassing op zowel MyClaw Cloud- als MyClaw Desktop-abonnementen.',
         earningsMonthly:
             'Voor maandelijkse abonnementen verdien je commissies gedurende 1 jaar vanaf de datum van de verwijzing.',
         earningsYearly:

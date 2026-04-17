@@ -165,8 +165,8 @@ const MacosDesktopPreview: FC<MacosDesktopPreviewProps> = ({
                         </div>
                         <div className='mx-0.5 h-7 w-px shrink-0 bg-white/20' />
                         <img
-                            src='/myclaw-logo.webp'
-                            alt='MyClaw Go'
+                            src='/myclaw-logo.svg'
+                            alt='MyClaw.One'
                             loading='lazy'
                             className='h-9 w-9 shrink-0 rounded-xl'
                         />

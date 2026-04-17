@@ -26,8 +26,8 @@ const ja: Translations = {
         closeNotification: '通知を閉じる',
         beta: 'ベータ',
         brandName: 'MyClaw.One',
-        brandNameGo: 'MyClaw Go',
-        brandNameGoVersion: 'MyClaw Go {{version}}',
+        brandNameGo: 'MyClaw Desktop',
+        brandNameGoVersion: 'MyClaw Desktop {{version}}',
         menuFile: 'ファイル',
         menuEdit: '編集',
         menuView: '表示',
@@ -39,7 +39,7 @@ const ja: Translations = {
         seconds: '秒'
     },
     setup: {
-        welcomeTitle: 'MyClaw Goへようこそ',
+        welcomeTitle: 'MyClaw Desktopへようこそ',
         welcomeDescription: 'プロフィールを設定して始めましょう.',
         whatsYourName: 'お名前は？',
         namePlaceholder: '名前を入力',
@@ -92,7 +92,7 @@ const ja: Translations = {
         goSubtitle: '非技術者向け'
     },
     go: {
-        pageTitle: 'MyClaw Go',
+        pageTitle: 'MyClaw Desktop',
         heroTitle1: 'OpenClawをデプロイ.',
         heroTitle2: 'ローカルで. 即座に.',
         badge: '近日公開',
@@ -135,11 +135,11 @@ const ja: Translations = {
         pricingFeature4: '使用制限なし',
         pricingFeature5: '優先サポート',
         pricingFeature6: 'カスタムローカルドメイン',
-        pricingCta: 'MyClaw Goを入手',
+        pricingCta: 'MyClaw Desktopを入手',
         comparison: '比較',
         comparisonTitle: 'Desktop vs Cloud',
         comparisonDescription:
-            '自分に合うものを選択。Goはローカルで動作、Cloudは専用サーバーで動作.',
+            '自分に合うものを選択。Desktopはローカルで動作、Cloudは専用サーバーで動作.',
         comparisonLocalUs: 'お使いのデバイスで完全に動作',
         comparisonLocalOthers: 'リモートサーバーで動作',
         comparisonPricingUs: '無料ダウンロード',
@@ -154,25 +154,25 @@ const ja: Translations = {
         comparisonAgentsOthers: '複数エージェント',
         faqTitle: '質問',
         faqHeading: 'よくある質問',
-        faqDescription: 'MyClaw Goについて知っておくべきすべてのこと.',
-        faq1Question: 'MyClaw Goとは？',
+        faqDescription: 'MyClaw Desktopについて知っておくべきすべてのこと.',
+        faq1Question: 'MyClaw Desktopとは？',
         faq1Answer:
-            'MyClaw Goは、お手元のマシンでOpenClawをローカルに実行できる軽量デスクトップアプリケーションです。クラウドサーバーは不要 — インストールして起動するだけで、数秒でOpenClawを使い始められます.',
-        faq2Question: 'GoとMyClaw Cloudの違いは？',
+            'MyClaw Desktopは、お手元のマシンでOpenClawをローカルに実行できる軽量デスクトップアプリケーションです。クラウドサーバーは不要 — インストールして起動するだけで、数秒でOpenClawを使い始められます.',
+        faq2Question: 'DesktopとMyClaw Cloudの違いは？',
         faq2Answer:
-            'MyClaw CloudはOpenClawを24時間365日稼働のグローバルアクセス可能な専用リモートサーバーにデプロイします。MyClaw Goはすべてをお使いのデバイスでローカルに実行します — プライバシー、オフライン使用、シンプルなセットアップに最適です.',
+            'MyClaw CloudはOpenClawを24時間365日稼働のグローバルアクセス可能な専用リモートサーバーにデプロイします。MyClaw Desktopはすべてをお使いのデバイスでローカルに実行します — プライバシー、オフライン使用、シンプルなセットアップに最適です.',
         faq3Question: 'インターネット接続は必要ですか？',
         faq3Answer:
-            'MyClaw Goはローカル使用であればオフラインで動作します。インターネット接続は初期設定、アップデート、外部APIコールが必要な機能にのみ必要です.',
+            'MyClaw Desktopはローカル使用であればオフラインで動作します。インターネット接続は初期設定、アップデート、外部APIコールが必要な機能にのみ必要です.',
         faq4Question: 'ライセンスは一回払いですか？',
         faq4Answer:
-            'はい。一度支払えば、すべての将来のアップデートを含むMyClaw Goへの永久アクセスを取得できます。サブスクリプションなし、継続料金なし.',
+            'はい。一度支払えば、すべての将来のアップデートを含むMyClaw Desktopへの永久アクセスを取得できます。サブスクリプションなし、継続料金なし.',
         faq5Question: 'どのOSに対応していますか？',
         faq5Answer:
-            'MyClaw GoはWindowsとmacOSに対応しています。両プラットフォームとも同じ機能を備え、同時にアップデートを受け取れます.',
-        faq6Question: '後からGoからCloudに切り替えられますか？',
+            'MyClaw DesktopはWindowsとmacOSに対応しています。両プラットフォームとも同じ機能を備え、同時にアップデートを受け取れます.',
+        faq6Question: '後からDesktopからCloudに切り替えられますか？',
         faq6Answer:
-            'もちろんです。GoからOpenClawの設定をエクスポートし、いつでもMyClaw Cloudにデプロイできます。両プラットフォームは完全に互換性があります.',
+            'もちろんです。DesktopからOpenClawの設定をエクスポートし、いつでもMyClaw Cloudにデプロイできます。両プラットフォームは完全に互換性があります.',
         statsPrice: '${{price}}',
         statsLifetime: '永久',
         statsOneTime: '一回',
@@ -190,7 +190,7 @@ const ja: Translations = {
         ctaTitle: 'MyClaw Desktopをダウンロード',
         ctaDescription:
             '無料ダウンロード。自分のマシンでOpenClawを実行 — WindowsとLinuxをサポート。',
-        ctaButton: 'MyClaw Goを入手',
+        ctaButton: 'MyClaw Desktopを入手',
         joinWaitlist: 'ウェイトリストに参加',
         joinedWaitlist: 'ウェイトリスト参加済み',
         waitlistJoinedToast: 'ウェイトリストに参加しました.',
@@ -887,8 +887,8 @@ const ja: Translations = {
         description: 'OpenClawライセンスを管理。',
         pageTitle: 'ライセンス',
         pageDescription:
-            'Goアプリでローカルにセルフホストする場合にOpenClawインスタンスのライセンスを購入。',
-        planName: 'MyClaw Goライセンス',
+            'Desktopアプリでローカルにセルフホストする場合にOpenClawインスタンスのライセンスを購入。',
+        planName: 'MyClaw Desktopライセンス',
         oneTimePurchase: '一回限りの購入',
         price: '${{price}}',
         priceNote: '一度支払えば、永久に所有。',
@@ -910,7 +910,7 @@ const ja: Translations = {
             'ライセンスは永久で取消不可です。購入すれば永久に所有できます。',
         gateTitle: 'ライセンスが必要',
         gateDescription:
-            'ローカルでOpenClawインスタンスをデプロイ・管理するにはMyClaw Goライセンスが必要です。'
+            'ローカルでOpenClawインスタンスをデプロイ・管理するにはMyClaw Desktopライセンスが必要です。'
     },
     network: {
         unstable: '不安定な接続',
@@ -1463,7 +1463,7 @@ clawName: '名前',
         upcomingReleaseFeature1:
             '外出先でOpenClawインスタンスを監視・管理するネイティブモバイルアプリ',
         upcomingReleaseFeature13:
-            'macOSとWindows向けMyClaw Goベータ版リリース、ワンクリックでOpenClawをローカルデプロイ',
+            'macOSとWindows向けMyClaw Desktopベータ版リリース、ワンクリックでOpenClawをローカルデプロイ',
         upcomingReleaseFeature3: 'ダーク・ライトテーマ対応',
         upcomingReleaseFeature4: 'パフォーマンス、安定性、レスポンシブの向上',
         upcomingReleaseFeature5:
@@ -1477,7 +1477,7 @@ clawName: '名前',
         upcomingReleaseFeature10:
             'インスタンスにOpenClawを再インストールして新しく開始、1日1回利用可能',
         upcomingReleaseFeature11:
-            'MyClaw Goのランディングページ、MyClaw.Oneでローカルホスティング',
+            'MyClaw Desktopのランディングページ、MyClaw.Oneでローカルホスティング',
         upcomingReleaseFeature12:
             'macOSとWindows用デスクトップアプリでワンクリックでOpenClawをローカルデプロイ',
         release14Date: '2026年4月1日',
@@ -1495,9 +1495,9 @@ clawName: '名前',
         release12Date: '2026年3月14日',
         release12Title: '年間プラン、ボイスモード & その他',
         release12Description:
-            '2ヶ月無料の年間サブスクリプション、ボイスモード、インスタンス再インストール、MyClaw Goの初期ランディングページ。',
+            '2ヶ月無料の年間サブスクリプション、ボイスモード、インスタンス再インストール、MyClaw Desktopの初期ランディングページ。',
         release12Feature1:
-            'MyClaw Goのランディングページ、MyClaw.Oneでローカルホスティング',
+            'MyClaw Desktopのランディングページ、MyClaw.Oneでローカルホスティング',
         release12Feature2: '年間契約で2ヶ月無料の年間サブスクリプション対応',
         release12Feature3:
             'MyClaw.OneでホストされたOpenClawエージェントとのボイスモード',
@@ -1775,7 +1775,7 @@ clawName: '名前',
         chatReadOnlyGoAssistant:
             'もちろん！CI/CDパイプラインをセットアップできます。ビルド、テスト、自動デプロイを行うGitHub Actionsワークフローから始めましょうか？',
         chatReadOnlyGoReply:
-            'これはプレビューです！MyClaw Goを入手してOpenClawをローカルで実行 — あなたのマシン、あなたのデータ、クラウド不要。',
+            'これはプレビューです！MyClaw Desktopを入手してOpenClawをローカルで実行 — あなたのマシン、あなたのデータ、クラウド不要。',
         chatReadOnlyGoUser2:
             'ローカルサービスを監視して、何かダウンした場合にアラートを出せますか？',
         chatReadOnlyGoAssistant2:
@@ -2469,7 +2469,7 @@ clawName: '名前',
         earningsTitle: '3. 報酬と支払い',
         earningsText: 'アフィリエイト報酬の仕組みは以下の通りです：',
         earningsCommission:
-            '紹介したユーザーが行う対象購入ごとに 15% のコミッションを獲得します。コミッションは MyClaw Cloud と MyClaw Go の両方のプランに適用されます。',
+            '紹介したユーザーが行う対象購入ごとに 15% のコミッションを獲得します。コミッションは MyClaw Cloud と MyClaw Desktop の両方のプランに適用されます。',
         earningsMonthly:
             '月額サブスクリプションの場合、紹介日から1年間コミッションを獲得できます。',
         earningsYearly:
