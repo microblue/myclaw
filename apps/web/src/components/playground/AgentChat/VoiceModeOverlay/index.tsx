@@ -187,11 +187,11 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
 
                 <div className='bg-background border-border z-10 flex w-full items-center justify-between border-b px-5 py-2.5'>
                     <div className='flex items-center gap-2'>
-                        <WaveformIcon className='h-4 w-4 text-[#ef5350]' />
+                        <WaveformIcon className='h-4 w-4 text-[#6366f1]' />
                         <span className='text-sm font-semibold text-white'>
                             {t('playground.chatVoiceMode')}
                         </span>
-                        <span className='rounded-md bg-[#ef5350]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#ef5350]'>
+                        <span className='rounded-md bg-[#6366f1]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#6366f1]'>
                             {t('common.beta')}
                         </span>
                     </div>
@@ -246,12 +246,12 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                 </div>
 
                 {(hasNoInput || hasNoOutput) && (
-                    <div className='z-10 flex w-full items-center gap-2 bg-[#ef5350]/10 px-5 py-2'>
+                    <div className='z-10 flex w-full items-center gap-2 bg-[#6366f1]/10 px-5 py-2'>
                         <WarningIcon
-                            className='h-4 w-4 shrink-0 text-[#ef5350]'
+                            className='h-4 w-4 shrink-0 text-[#6366f1]'
                             weight='fill'
                         />
-                        <p className='text-xs text-[#ef5350]/80'>
+                        <p className='text-xs text-[#6366f1]/80'>
                             {hasNoInput
                                 ? t('playground.chatVoiceModeNoMicrophone')
                                 : t('playground.chatVoiceModeNoSpeaker')}

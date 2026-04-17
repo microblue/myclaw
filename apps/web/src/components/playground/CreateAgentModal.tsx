@@ -244,7 +244,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                             placeholder={t(
                                 'playground.addAgentNamePlaceholder'
                             )}
-                            className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
+                            className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#6366f1]/50 ${
                                 nameError
                                     ? 'border-red-500/50'
                                     : 'border-border'
@@ -334,7 +334,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                             createMutation.isPending ||
                             (needsClawPicker && !pickedClawId)
                         }
-                        className='flex items-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                        className='flex items-center gap-2 rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         {createMutation.isPending && (
                             <CircleNotchIcon className='h-4 w-4 animate-spin' />

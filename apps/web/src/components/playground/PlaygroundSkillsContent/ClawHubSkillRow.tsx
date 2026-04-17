@@ -26,7 +26,7 @@ const ClawHubSkillRow: FC<ClawHubSkillRowProps> = ({
             <div className='min-w-0 flex-1'>
                 <div className='flex items-center gap-2'>
                     <StorefrontIcon
-                        className='h-3 w-3 shrink-0 text-[#ef5350]/40'
+                        className='h-3 w-3 shrink-0 text-[#6366f1]/40'
                         weight='duotone'
                     />
                     <TruncateTooltip content={skill.name}>

@@ -139,7 +139,7 @@ const License: FC = (): ReactNode => {
                                         size='lg'
                                         disabled={isPurchasing}
                                         onClick={handlePurchase}
-                                        className='h-10 gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-sm text-white hover:opacity-90'
+                                        className='h-10 gap-2 border-0 bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-sm text-white hover:opacity-90'
                                     >
                                         {isPurchasing ? (
                                             <CircleNotchIcon className='h-5 w-5 animate-spin' />

@@ -53,7 +53,7 @@ const ProviderSelector: FC<ProviderSelectorProps> = ({
                                 key={provider.id}
                                 className={`flex cursor-pointer flex-col rounded-lg px-3 py-3 transition ${
                                     isSelected
-                                        ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                        ? 'border border-[#6366f1]/50 bg-[#6366f1]/20'
                                         : 'bg-muted hover:bg-muted/80 border border-transparent'
                                 }`}
                             >

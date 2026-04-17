@@ -180,7 +180,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={t('playground.clawHubSearch')}
-                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-8 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
+                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-8 text-xs outline-none transition-colors focus:border-[#6366f1]/50'
                     />
                     {isBrowseFetching && !isFirstLoad && (
                         <CircleNotchIcon className='text-muted-foreground absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin' />
@@ -236,7 +236,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                     key={skill.slug}
                                     className={`flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors ${
                                         isInstalled
-                                            ? 'border-[#ef5350]/20 bg-[#ef5350]/5'
+                                            ? 'border-[#6366f1]/20 bg-[#6366f1]/5'
                                             : 'border-border bg-foreground/[0.02]'
                                     }`}
                                 >
@@ -307,7 +307,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                                 ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400'
                                                 : isInstalled
                                                   ? 'bg-foreground/5 text-muted-foreground hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400'
-                                                  : 'bg-[#ef5350]/10 text-[#ef5350] hover:bg-[#ef5350]/20'
+                                                  : 'bg-[#6366f1]/10 text-[#6366f1] hover:bg-[#6366f1]/20'
                                         }`}
                                     >
                                         {isPending ? (

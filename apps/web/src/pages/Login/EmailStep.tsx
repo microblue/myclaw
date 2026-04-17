@@ -35,7 +35,7 @@ const EmailStep: FC<EmailStepProps> = ({
                         className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground h-11 ${
                             emailError
                                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                                : 'border-border focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
+                                : 'border-border focus:border-[#6366f1]/50 focus:ring-[#6366f1]/20'
                         }`}
                     />
                     {emailError && (
@@ -46,7 +46,7 @@ const EmailStep: FC<EmailStepProps> = ({
                 <Button
                     type='submit'
                     size='lg'
-                    className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
+                    className='w-full gap-2 border-0 bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white hover:opacity-90'
                     disabled={!!loadingMethod || cooldown > 0}
                 >
                     {loadingMethod === LOGIN_LOADING_METHOD.EMAIL && (

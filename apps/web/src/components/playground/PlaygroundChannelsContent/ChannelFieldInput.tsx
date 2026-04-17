@@ -70,7 +70,7 @@ const ChannelFieldInput: FC<ChannelFieldInputProps> = ({
                             )
                         }
                         placeholder={t(field.placeholder)}
-                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#6366f1]/50'
                     />
                 )}
             </div>
@@ -138,7 +138,7 @@ const ChannelFieldInput: FC<ChannelFieldInputProps> = ({
                     updateField(def.key, String(field.key), e.target.value)
                 }
                 placeholder={t(field.placeholder)}
-                className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#6366f1]/50'
             />
         </div>
     )

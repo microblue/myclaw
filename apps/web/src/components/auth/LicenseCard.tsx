@@ -75,7 +75,7 @@ const LicenseCard: FC<LicenseCardProps> = ({
                 <Button
                     disabled={isPurchasing}
                     onClick={onPurchase}
-                    className='h-9 shrink-0 gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-sm text-white hover:opacity-90'
+                    className='h-9 shrink-0 gap-2 border-0 bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-sm text-white hover:opacity-90'
                 >
                     {isPurchasing ? (
                         <CircleNotchIcon className='h-4 w-4 animate-spin' />

@@ -315,7 +315,7 @@ const Go: FC = (): ReactNode => {
                 >
                     <div className='mx-auto max-w-4xl'>
                         <div className='mb-16 text-center'>
-                            <div className='mb-4 inline-flex items-center gap-2 rounded-full border border-[#ef5350]/20 bg-[#ef5350]/10 px-3 py-1 text-sm text-[#ef5350]'>
+                            <div className='mb-4 inline-flex items-center gap-2 rounded-full border border-[#6366f1]/20 bg-[#6366f1]/10 px-3 py-1 text-sm text-[#6366f1]'>
                                 {t('go.pricing')}
                             </div>
                             <h2 className='font-clash mb-4 text-3xl font-bold md:text-4xl'>

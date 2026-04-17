@@ -26,7 +26,7 @@ const ChannelCard: FC<ChannelCardProps> = ({
         <div
             className={`rounded-lg border transition-colors ${
                 config.enabled
-                    ? 'border-[#ef5350]/30 bg-[#ef5350]/5'
+                    ? 'border-[#6366f1]/30 bg-[#6366f1]/5'
                     : 'border-border bg-foreground/[0.02]'
             }`}
         >
@@ -38,7 +38,7 @@ const ChannelCard: FC<ChannelCardProps> = ({
                 <div
                     className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
                         config.enabled
-                            ? 'border-[#ef5350] bg-[#ef5350]'
+                            ? 'border-[#6366f1] bg-[#6366f1]'
                             : 'border-border bg-foreground/5'
                     }`}
                 >

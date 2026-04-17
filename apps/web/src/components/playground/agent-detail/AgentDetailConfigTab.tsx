@@ -284,7 +284,7 @@ const AgentDetailConfigTab: FC<AgentDetailConfigTabProps> = ({
                         placeholder={t(
                             'playground.configurationNamePlaceholder'
                         )}
-                        className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
+                        className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#6366f1]/50 ${
                             nameError ? 'border-red-500/50' : 'border-border'
                         }`}
                     />
@@ -410,7 +410,7 @@ const AgentDetailConfigTab: FC<AgentDetailConfigTabProps> = ({
                             placeholder={t(
                                 'playground.configurationApiKeyPlaceholder'
                             )}
-                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#6366f1]/50'
                         />
                         <p className='text-muted-foreground mt-1.5 text-[11px]'>
                             <span className='text-muted-foreground font-mono'>
@@ -432,7 +432,7 @@ const AgentDetailConfigTab: FC<AgentDetailConfigTabProps> = ({
                         !hasChanges ||
                         !!nameError
                     }
-                    className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                    className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#6366f1] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-50'
                 >
                     {saveMutation.isPending && (
                         <CircleNotchIcon className='h-4 w-4 animate-spin' />

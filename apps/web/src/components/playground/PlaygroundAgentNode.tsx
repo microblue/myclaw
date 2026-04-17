@@ -67,7 +67,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
         <div
             className={`playground-node-enter bg-popover relative w-[240px] cursor-pointer rounded-lg border border-l-2 transition-all ${
                 isSelected
-                    ? 'border-b-[#ef5350]/50 border-l-[#ef5350] border-r-[#ef5350]/50 border-t-[#ef5350]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
+                    ? 'border-b-[#6366f1]/50 border-l-[#ef5350] border-r-[#6366f1]/50 border-t-[#6366f1]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
                     : 'border-b-border border-r-border border-t-border border-l-[#ef5350]'
             }`}
         >

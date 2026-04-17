@@ -66,7 +66,7 @@ const AccountProfileSection: FC<AccountProfileSectionProps> = ({
 
             <div className='mb-8 flex items-center gap-5'>
                 <Avatar className='h-16 w-16 shrink-0'>
-                    <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-3xl font-semibold text-white'>
+                    <AvatarFallback className='bg-gradient-to-br from-[#6366f1] to-[#4f46e5] text-3xl font-semibold text-white'>
                         {getInitials(displayName)}
                     </AvatarFallback>
                 </Avatar>

@@ -58,7 +58,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
             <div
                 className={`playground-node-enter bg-popover relative w-[280px] cursor-pointer rounded-xl border ${
                     isSelected
-                        ? 'border-[#ef5350]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
+                        ? 'border-[#6366f1]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
                         : !canShowAgents
                           ? 'border-border opacity-50'
                           : 'border-border'
@@ -188,12 +188,12 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     </span>
                                 </div>
                             ) : (
-                                <div className='flex items-center gap-1.5 rounded-md bg-[#ef5350]/10 px-2 py-1'>
+                                <div className='flex items-center gap-1.5 rounded-md bg-[#6366f1]/10 px-2 py-1'>
                                     <AndroidLogoIcon
-                                        className='h-3 w-3 text-[#ef5350]'
+                                        className='h-3 w-3 text-[#6366f1]'
                                         weight='fill'
                                     />
-                                    <span className='text-xs text-[#ef5350]'>
+                                    <span className='text-xs text-[#6366f1]'>
                                         {agentCount === 1
                                             ? t('playground.agentCount', {
                                                   count: String(agentCount)

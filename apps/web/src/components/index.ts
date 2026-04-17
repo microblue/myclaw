@@ -52,7 +52,7 @@ import {
 
 import { BlogCard, BlogCTA } from '@/components/blog'
 
-import { GoPricingCard, GoWaitlistCTA, GoWaitlistForm } from '@/components/go'
+import { GoDownloadButtons, GoPricingCard, GoWaitlistCTA, GoWaitlistForm } from '@/components/go'
 
 import { LicenseCard, LicenseRequired, ProtectedRoute } from '@/components/auth'
 
@@ -103,6 +103,7 @@ export {
     FaqSection,
     FeaturesGrid,
     Footer,
+    GoDownloadButtons,
     GoPricingCard,
     GoWaitlistCTA,
     GoWaitlistForm,

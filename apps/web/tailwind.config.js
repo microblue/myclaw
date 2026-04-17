@@ -9,10 +9,10 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Satoshi', 'system-ui', 'sans-serif'],
+                sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
                 mono: ['monospace'],
-                clash: ['"Clash Display"', 'system-ui', 'sans-serif'],
-                satoshi: ['Satoshi', 'system-ui', 'sans-serif']
+                clash: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                satoshi: ['Inter', 'system-ui', 'sans-serif']
             },
             borderRadius: {
                 lg: 'var(--radius)',

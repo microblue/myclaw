@@ -148,7 +148,7 @@ const AdvancedOptions: FC<AdvancedOptionsProps> = ({
                                 <label
                                     className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
                                         selectedSshKeyId === ''
-                                            ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                            ? 'border border-[#6366f1]/50 bg-[#6366f1]/20'
                                             : 'bg-muted hover:bg-muted/80 border border-transparent'
                                     }`}
                                 >
@@ -169,7 +169,7 @@ const AdvancedOptions: FC<AdvancedOptionsProps> = ({
                                         key={key.id}
                                         className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
                                             selectedSshKeyId === key.id
-                                                ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                                ? 'border border-[#6366f1]/50 bg-[#6366f1]/20'
                                                 : 'bg-muted hover:bg-muted/80 border border-transparent'
                                         }`}
                                     >

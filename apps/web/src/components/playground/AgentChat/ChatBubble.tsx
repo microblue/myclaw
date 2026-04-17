@@ -192,7 +192,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({
         return (
             <Fragment>
                 <div className='flex flex-col items-end gap-1'>
-                    <div className='group relative max-w-[85%] rounded-2xl rounded-br-md bg-[#ef5350]/15 px-3.5 py-2.5'>
+                    <div className='group relative max-w-[85%] rounded-2xl rounded-br-md bg-[#6366f1]/15 px-3.5 py-2.5'>
                         {!showAsFileCard && message.content && (
                             <button
                                 onClick={copyMessage}
@@ -313,8 +313,8 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                     )}
                     {message.status === CHAT_MESSAGE_STATUS.ABORTED && (
                         <div className='mt-2 flex items-center gap-1.5'>
-                            <StopCircleIcon className='h-3 w-3 text-[#ef5350]' />
-                            <span className='text-[11px] text-[#ef5350]'>
+                            <StopCircleIcon className='h-3 w-3 text-[#6366f1]' />
+                            <span className='text-[11px] text-[#6366f1]'>
                                 {t('playground.chatAbortedMessage')}
                             </span>
                         </div>

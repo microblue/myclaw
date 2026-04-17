@@ -28,7 +28,7 @@ const PlaygroundDetailTabBar: FC<PlaygroundDetailTabBarProps> = ({
                             disabled
                                 ? 'text-muted-foreground/40 cursor-not-allowed border-transparent'
                                 : activeTab === tab.id
-                                  ? 'text-foreground border-[#ef5350]'
+                                  ? 'text-foreground border-[#6366f1]'
                                   : 'text-muted-foreground hover:text-foreground/80 border-transparent'
                         }`}
                     >

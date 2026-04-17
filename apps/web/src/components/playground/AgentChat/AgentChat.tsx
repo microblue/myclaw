@@ -260,7 +260,7 @@ const AgentChat: FC<AgentChatProps> = ({
                             <div
                                 className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${
                                     msg.role === CHAT_MESSAGE_ROLE.USER
-                                        ? 'rounded-br-md bg-[#ef5350]/15'
+                                        ? 'rounded-br-md bg-[#6366f1]/15'
                                         : 'bg-foreground/5 rounded-bl-md'
                                 }`}
                             >
@@ -299,12 +299,12 @@ const AgentChat: FC<AgentChatProps> = ({
                             value={readOnlyInput}
                             onChange={(e) => setReadOnlyInput(e.target.value)}
                             placeholder={t('playground.chatInputPlaceholder')}
-                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50'
+                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#6366f1]/50'
                         />
                         <button
                             type='submit'
                             disabled={!readOnlyInput.trim() || readOnlyTyping}
-                            className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                            className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] text-white transition-colors hover:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-50'
                         >
                             <PaperPlaneRightIcon
                                 className='h-4 w-4'
@@ -391,7 +391,7 @@ const AgentChat: FC<AgentChatProps> = ({
             onDrop={handleDrop}
         >
             {isDragging && (
-                <div className='absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#ef5350]/40 bg-black/60'>
+                <div className='absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#6366f1]/40 bg-black/60'>
                     <p className='text-foreground/80 text-sm font-medium'>
                         {t('playground.chatDropFiles')}
                     </p>

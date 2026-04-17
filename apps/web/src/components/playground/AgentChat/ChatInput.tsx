@@ -260,7 +260,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                                 <button
                                     onClick={onVoiceMode}
                                     aria-label={t('playground.chatVoiceMode')}
-                                    className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white transition-opacity hover:opacity-90'
+                                    className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white transition-opacity hover:opacity-90'
                                 >
                                     <WaveformIcon
                                         className='h-4 w-4'
@@ -297,7 +297,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                     aria-label={t('playground.chatVoiceInput')}
                     className={`border-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                         isRecording
-                            ? 'animate-pulse bg-[#ef5350] text-white'
+                            ? 'animate-pulse bg-[#6366f1] text-white'
                             : isTranscribing
                               ? 'bg-foreground/10 text-foreground'
                               : 'bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground'
@@ -316,7 +316,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                     onKeyDown={handleKeyDown}
                     rows={1}
                     placeholder={t('playground.chatInputPlaceholder')}
-                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50'
+                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#6366f1]/50'
                 />
                 {isStreaming || isProcessing ? (
                     <Tooltip>
@@ -324,7 +324,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                             <button
                                 onClick={onAbort}
                                 aria-label={t('playground.chatStopProcess')}
-                                className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935]'
+                                className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] text-white transition-colors hover:bg-[#4f46e5]'
                             >
                                 <StopCircleIcon
                                     className='h-5 w-5'
@@ -344,7 +344,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                             (!input.trim() && attachments.length === 0)
                         }
                         aria-label={t('playground.chatSend')}
-                        className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                        className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] text-white transition-colors hover:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         <PaperPlaneRightIcon
                             className='h-4 w-4'

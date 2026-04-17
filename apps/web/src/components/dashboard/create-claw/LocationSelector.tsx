@@ -60,7 +60,7 @@ const LocationSelector: FC<LocationSelectorProps> = ({
                                         isDisabled
                                             ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-50'
                                             : isSelected
-                                              ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                              ? 'cursor-pointer border border-[#6366f1]/50 bg-[#6366f1]/20'
                                               : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
                                     }`}
                                 >

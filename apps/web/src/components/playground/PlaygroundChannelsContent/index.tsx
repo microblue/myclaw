@@ -215,7 +215,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                         !hasChanges ||
                         versionUnsupported
                     }
-                    className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                    className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#6366f1] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-50'
                 >
                     {saveMutation.isPending && (
                         <CircleNotchIcon className='h-4 w-4 animate-spin' />

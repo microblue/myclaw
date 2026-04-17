@@ -106,7 +106,7 @@ const EnvVarRow: FC<EnvVarRowProps> = ({
                 value={envVar.value}
                 onChange={(e) => onChange(index, 'value', e.target.value)}
                 placeholder={t('playground.configurationValuePlaceholder')}
-                className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-xs outline-none transition-colors focus:border-[#ef5350]/50 ${
+                className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-xs outline-none transition-colors focus:border-[#6366f1]/50 ${
                     valueError ? 'border-red-500/40' : 'border-border'
                 }`}
             />

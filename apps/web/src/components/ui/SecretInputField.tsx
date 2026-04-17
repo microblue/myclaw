@@ -107,7 +107,7 @@ const SecretInputField: FC<SecretInputFieldProps> = ({
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
                         placeholder={placeholder}
-                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#6366f1]/50'
                     />
                     {helperText && (
                         <p className='text-muted-foreground mt-1.5 font-mono text-[11px]'>

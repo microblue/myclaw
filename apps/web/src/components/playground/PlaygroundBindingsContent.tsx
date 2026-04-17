@@ -207,7 +207,7 @@ const PlaygroundBindingsContent: FC<PlaygroundBindingsContentProps> = ({
                                 onClick={() => toggleChannel(channel)}
                                 className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-left transition-colors ${
                                     isBoundToThis
-                                        ? 'border-[#ef5350]/30 bg-[#ef5350]/5'
+                                        ? 'border-[#6366f1]/30 bg-[#6366f1]/5'
                                         : 'border-border hover:bg-foreground/5'
                                 }`}
                             >
@@ -218,7 +218,7 @@ const PlaygroundBindingsContent: FC<PlaygroundBindingsContentProps> = ({
                                 <div
                                     className={`flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${
                                         isBoundToThis
-                                            ? 'bg-[#ef5350]'
+                                            ? 'bg-[#6366f1]'
                                             : 'bg-foreground/20'
                                     }`}
                                 >
@@ -241,7 +241,7 @@ const PlaygroundBindingsContent: FC<PlaygroundBindingsContentProps> = ({
                     <button
                         onClick={handleSave}
                         disabled={mutation.isPending || versionUnsupported}
-                        className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:opacity-50'
+                        className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#6366f1] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#4f46e5] disabled:opacity-50'
                     >
                         {mutation.isPending && (
                             <CircleNotchIcon className='h-4 w-4 animate-spin' />

@@ -13,7 +13,7 @@ const ProductHuntBanner: FC = (): ReactNode => {
     return (
         <div className='animate-banner-enter relative z-50 overflow-hidden'>
             <div className='relative border-b border-[#ff6154]/10 bg-white dark:bg-[#0a0a0f]'>
-                <div className='absolute inset-0 bg-gradient-to-r from-[#ef5350]/5 via-transparent to-[#ff6154]/5 dark:from-[#ef5350]/10 dark:to-[#ff6154]/10' />
+                <div className='absolute inset-0 bg-gradient-to-r from-[#6366f1]/5 via-transparent to-[#ff6154]/5 dark:from-[#6366f1]/10 dark:to-[#ff6154]/10' />
                 <div className='relative px-4 pb-2 pt-3 text-center text-sm leading-6'>
                     <p className='inline'>
                         <span className='mb-[3px] inline-flex items-center gap-2 align-middle'>

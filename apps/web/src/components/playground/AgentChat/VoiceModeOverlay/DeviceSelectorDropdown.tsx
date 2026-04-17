@@ -52,7 +52,7 @@ const DeviceSelectorDropdown: FC<DeviceSelectorDropdownProps> = ({
                 {devices.length === 0 && (
                     <div className='text-muted-foreground flex items-center gap-2 px-2.5 py-2 text-xs'>
                         <WarningIcon
-                            className='h-3.5 w-3.5 shrink-0 text-[#ef5350]'
+                            className='h-3.5 w-3.5 shrink-0 text-[#6366f1]'
                             weight='fill'
                         />
                         {emptyLabel}

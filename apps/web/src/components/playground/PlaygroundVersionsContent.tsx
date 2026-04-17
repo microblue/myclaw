@@ -119,7 +119,7 @@ const PlaygroundVersionsContent: FC<PlaygroundVersionsContentProps> = ({
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder={t('playground.versionsSearch')}
-                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-3 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
+                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-3 text-xs outline-none transition-colors focus:border-[#6366f1]/50'
                         />
                     </div>
                 </div>

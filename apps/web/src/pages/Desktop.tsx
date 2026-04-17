@@ -1,10 +1,9 @@
 import type { FC, ReactNode } from 'react'
 import type { FeatureItem, Faq } from '@/ts/Interfaces'
 
-import { useRef, useState, useEffect, useCallback, type FormEvent } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { goLicense } from '@openclaw/shared'
 import { SCROLL_SECTIONS } from '@/lib'
 import {
     PageTitle,
@@ -17,14 +16,11 @@ import {
     HeroTitle,
     StatsRow,
     MacosDesktopPreview,
-    GoPricingCard,
     LandingCTA,
-    GoWaitlistForm
+    GoDownloadButtons
 } from '@/components'
-import { usePreferencesStore, useUIStore } from '@/lib/store'
-import { PRODUCT, TOAST_TYPE } from '@/lib/constants'
-import { useAuth } from '@/lib/auth'
-import { api } from '@/lib'
+import { usePreferencesStore } from '@/lib/store'
+import { PRODUCT } from '@/lib/constants'
 import {
     ClockIcon,
     LockIcon,
@@ -133,65 +129,8 @@ const getGoFaqs = (): Faq[] => [
 const Go: FC = (): ReactNode => {
     const setProduct = usePreferencesStore((s) => s.setProduct)
     useEffect(() => setProduct(PRODUCT.GO), [setProduct])
-    const { user, loading: authLoading } = useAuth()
-    const showToast = useUIStore((s) => s.showToast)
     const [activeSection, setActiveSection] = useState('')
-    const [hasJoined, setHasJoined] = useState(false)
-    const [isJoining, setIsJoining] = useState(false)
-    const [isCheckingStatus, setIsCheckingStatus] = useState(false)
-    const [waitlistEmail, setWaitlistEmail] = useState('')
     const previewRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        setHasJoined(false)
-        setWaitlistEmail('')
-        setIsCheckingStatus(false)
-        if (authLoading || !user?.email) return
-        setIsCheckingStatus(true)
-        api.checkWaitlistStatus(user.email)
-            .then((res) => {
-                if (res.joined) setHasJoined(true)
-            })
-            .catch(() => {})
-            .finally(() => setIsCheckingStatus(false))
-    }, [user?.email, authLoading])
-
-    const handleJoinWaitlist = useCallback(
-        async (email: string) => {
-            if (!email || isJoining || hasJoined) return
-            setIsJoining(true)
-            try {
-                const res = await api.joinWaitlist(email)
-                setHasJoined(true)
-                if (res.alreadyJoined) {
-                    showToast(
-                        t('go.waitlistAlreadyJoinedToast'),
-                        TOAST_TYPE.INFO
-                    )
-                }
-            } catch (error) {
-                const message =
-                    error instanceof Error
-                        ? error.message
-                        : t('go.waitlistFailedToast')
-                showToast(message, TOAST_TYPE.ERROR)
-            } finally {
-                setIsJoining(false)
-            }
-        },
-        [isJoining, hasJoined, showToast]
-    )
-
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(waitlistEmail.trim())
-
-    const handleEmailSubmit = useCallback(
-        (e: FormEvent) => {
-            e.preventDefault()
-            if (!isValidEmail) return
-            handleJoinWaitlist(waitlistEmail.trim())
-        },
-        [waitlistEmail, isValidEmail, handleJoinWaitlist]
-    )
     const { scrollYProgress: previewProgress } = useScroll({
         target: previewRef,
         offset: ['start end', 'end start']
@@ -223,23 +162,10 @@ const Go: FC = (): ReactNode => {
 
     const navLinks = [
         { label: t('go.features'), href: '#features', id: 'features' },
-        { label: t('go.pricing'), href: '#pricing', id: 'pricing' },
         { label: t('go.comparison'), href: '#comparison', id: 'comparison' },
         { label: t('go.faqTitle'), href: '#faq', id: 'faq' }
     ]
 
-    const waitlistFormProps = {
-        user,
-        authLoading,
-        hasJoined,
-        isJoining,
-        isCheckingStatus,
-        waitlistEmail,
-        isValidEmail,
-        onWaitlistEmailChange: setWaitlistEmail,
-        onJoinWaitlist: handleJoinWaitlist,
-        onEmailSubmit: handleEmailSubmit
-    }
 
     return (
         <div className='font-satoshi bg-background text-foreground min-h-screen'>
@@ -267,25 +193,23 @@ const Go: FC = (): ReactNode => {
                                 description={t('go.description')}
                             />
 
-                            <div className='mb-16 flex flex-col gap-4 sm:flex-row'>
-                                <GoWaitlistForm {...waitlistFormProps} />
+                            <div className='mb-16 w-full max-w-2xl'>
+                                <GoDownloadButtons />
                             </div>
 
                             <StatsRow
                                 stats={[
                                     {
-                                        value: t('go.statsPrice', {
-                                            price: goLicense.PRICE
-                                        }),
-                                        label: t('go.statsLifetime')
+                                        value: t('go.statsVersion'),
+                                        label: t('go.statsLatest')
                                     },
                                     {
-                                        value: t('go.statsOneTime'),
-                                        label: t('go.statsPayment')
+                                        value: t('go.statsWindows'),
+                                        label: t('go.statsPlatformWindows')
                                     },
                                     {
-                                        value: t('go.statsLocal'),
-                                        label: t('go.statsLocally')
+                                        value: t('go.statsLinux'),
+                                        label: t('go.statsPlatformLinux')
                                     },
                                     {
                                         value: t('go.statsZero'),
@@ -309,50 +233,12 @@ const Go: FC = (): ReactNode => {
                     features={getGoFeatures()}
                 />
 
-                <section
-                    id='pricing'
-                    className='border-border border-t px-6 py-32'
-                >
-                    <div className='mx-auto max-w-4xl'>
-                        <div className='mb-16 text-center'>
-                            <div className='mb-4 inline-flex items-center gap-2 rounded-full border border-[#ef5350]/20 bg-[#ef5350]/10 px-3 py-1 text-sm text-[#ef5350]'>
-                                {t('go.pricing')}
-                            </div>
-                            <h2 className='font-clash mb-4 text-3xl font-bold md:text-4xl'>
-                                {t('go.pricingTitle')}
-                            </h2>
-                            <p className='text-muted-foreground mx-auto max-w-xl'>
-                                {t('go.pricingDescription')}
-                            </p>
-                        </div>
-
-                        <GoPricingCard
-                            price={t('go.pricingPrice', {
-                                price: goLicense.PRICE
-                            })}
-                            label={t('go.pricingLabel')}
-                            features={[
-                                t('go.pricingFeature1'),
-                                t('go.pricingFeature2'),
-                                t('go.pricingFeature3'),
-                                t('go.pricingFeature4'),
-                                t('go.pricingFeature5'),
-                                t('go.pricingFeature6')
-                            ]}
-                        />
-                    </div>
-                </section>
-
                 <ComparisonTable
                     badge={t('go.comparison')}
                     heading={t('go.comparisonTitle')}
                     description={t('go.comparisonDescription')}
-                    logoSuffix='Go'
+                    logoSuffix='Desktop'
                     rows={[
-                        {
-                            us: t('nav.goSubtitle'),
-                            others: t('nav.cloudSubtitle')
-                        },
                         {
                             us: t('go.comparisonLocalUs'),
                             others: t('go.comparisonLocalOthers')
@@ -392,10 +278,7 @@ const Go: FC = (): ReactNode => {
                     title={t('go.ctaTitle')}
                     description={t('go.ctaDescription')}
                 >
-                    <GoWaitlistForm
-                        {...waitlistFormProps}
-                        guestClassName='flex gap-2'
-                    />
+                    <GoDownloadButtons />
                 </LandingCTA>
             </main>
 
