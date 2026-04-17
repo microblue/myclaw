@@ -1,0 +1,17 @@
+[Unit]
+Description=MyClaw API
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/myclaw/apps/api
+EnvironmentFile=/home/ubuntu/myclaw/apps/api/.env
+ExecStart=/usr/bin/env bash -lc 'pnpm start'
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/myclaw-api.log
+StandardError=append:/var/log/myclaw-api.log
+
+[Install]
+WantedBy=multi-user.target

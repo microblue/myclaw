@@ -7,16 +7,14 @@
         "build": "turbo build",
         "dev:web": "pnpm --filter web dev",
         "dev:api": "pnpm --filter api dev",
-        "dev:mobile": "pnpm --filter mobile dev",
-        "dev:desktop": "pnpm --filter myclawgo dev",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "format": "prettier --write . && eslint . --fix",
         "format:check": "prettier --check .",
         "test": "turbo test",
         "test:watch": "turbo test:watch",
-        "check": "pnpm --filter api check && pnpm --filter web check && pnpm --filter myclawgo check",
-        "version:patch": "pnpm --filter api exec npm version patch --no-git-tag-version && pnpm --filter web exec npm version patch --no-git-tag-version && pnpm --filter mobile exec npm version patch --no-git-tag-version && pnpm --filter myclawgo exec npm version patch --no-git-tag-version",
+        "check": "pnpm --filter api check && pnpm --filter web check",
+        "version:patch": "pnpm --filter api exec npm version patch --no-git-tag-version && pnpm --filter web exec npm version patch --no-git-tag-version",
         "prepare": "husky"
     },
     "devDependencies": {
