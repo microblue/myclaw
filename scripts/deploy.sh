@@ -13,7 +13,6 @@ SHA=$(git rev-parse --short HEAD)
 echo "    at $SHA"
 
 echo "==> install deps"
-corepack enable
 pnpm install --frozen-lockfile
 
 echo "==> build web"
