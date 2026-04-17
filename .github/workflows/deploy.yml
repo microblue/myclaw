@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 15
     environment:
       name: production
-      url: https://${{ secrets.LIGHTSAIL_HOST }}
+      url: https://myclaw.one
     steps:
       - name: SSH and run deploy script
         uses: appleboy/ssh-action@v1.2.0
