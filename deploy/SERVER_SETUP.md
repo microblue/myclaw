@@ -68,7 +68,13 @@ After this, web is served from `~/myclaw/apps/web/dist` by nginx.
 
 ## 6. GitHub Actions secrets
 
-In the `microblue/myclaw` repo → Settings → Secrets and variables → Actions, add:
+Use **Environment secrets**, not Repository secrets, so deploys are scoped + auditable.
+
+Settings → Environments → New environment → name it `production`. Optional but recommended:
+- **Deployment branches**: restrict to `main` only
+- **Required reviewers**: add yourself if you want a manual approval gate before prod deploys
+
+Then in that `production` environment, add:
 
 | Secret | Value |
 |---|---|
