@@ -6,12 +6,12 @@ After=network.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/myclaw/apps/api
-EnvironmentFile=/home/ubuntu/myclaw/apps/api/.env
-ExecStart=/usr/bin/env bash -lc 'pnpm start'
+ExecStart=/usr/bin/pnpm start
 Restart=always
 RestartSec=5
-StandardOutput=append:/var/log/myclaw-api.log
-StandardError=append:/var/log/myclaw-api.log
+Environment=NODE_ENV=production
+Environment=PORT=2222
+EnvironmentFile=/home/ubuntu/myclaw/apps/api/.env
 
 [Install]
 WantedBy=multi-user.target
