@@ -20,7 +20,7 @@ const DemoPreviewSection: FC<DemoPreviewSectionProps> = ({
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
                 style={{ scale: previewScale }}
-                className='border-border bg-background flex h-[80vh] flex-col overflow-hidden rounded-2xl border'
+                className='border-border bg-background flex h-[40vh] flex-col overflow-hidden rounded-2xl border'
             >
                 <Suspense
                     fallback={
