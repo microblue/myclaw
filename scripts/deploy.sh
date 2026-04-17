@@ -13,9 +13,6 @@ SHA=$(git rev-parse --short HEAD)
 echo "    at $SHA"
 
 echo "==> install deps"
-echo "    PATH=$PATH"
-echo "    which pnpm: $(which pnpm || echo none)"
-echo "    pnpm version: $(pnpm --version 2>&1 | head -1 || echo none)"
 pnpm install --frozen-lockfile
 
 echo "==> build web"
