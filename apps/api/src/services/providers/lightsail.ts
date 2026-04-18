@@ -32,7 +32,8 @@ import {
     DeleteKeyPairCommand,
     AllocateStaticIpCommand,
     AttachStaticIpCommand,
-    ReleaseStaticIpCommand
+    ReleaseStaticIpCommand,
+    PutInstancePublicPortsCommand
 } from '@aws-sdk/client-lightsail'
 
 // Lightsail bundle (plan) pricing - USD per month
@@ -128,10 +129,48 @@ class LightsailProvider implements CloudProvider {
 
         const response = await regionClient.send(command)
         const instance = response.operations?.[0]
-        
+
         if (!instance?.resourceName) {
             throw new Error('Failed to create Lightsail instance')
         }
+
+        // Open the Lightsail-level firewall for HTTPS. New instances only
+        // have 22 + 80 open by default; without this certbot can
+        // get a cert but external clients time out on :443. 22/80 have
+        // to be listed too since PutInstancePublicPorts replaces the
+        // whole rule set.
+        regionClient
+            .send(
+                new PutInstancePublicPortsCommand({
+                    instanceName: options.name,
+                    portInfos: [
+                        {
+                            fromPort: 22,
+                            toPort: 22,
+                            protocol: 'tcp',
+                            cidrs: ['0.0.0.0/0'],
+                            ipv6Cidrs: ['::/0']
+                        },
+                        {
+                            fromPort: 80,
+                            toPort: 80,
+                            protocol: 'tcp',
+                            cidrs: ['0.0.0.0/0'],
+                            ipv6Cidrs: ['::/0']
+                        },
+                        {
+                            fromPort: 443,
+                            toPort: 443,
+                            protocol: 'tcp',
+                            cidrs: ['0.0.0.0/0'],
+                            ipv6Cidrs: ['::/0']
+                        }
+                    ]
+                })
+            )
+            .catch((err) =>
+                console.error('[lightsail] PutInstancePublicPorts', err)
+            )
 
         // Allocate static IP and attach async (instance may not be running yet)
         const staticIpName = options.name + '-ip'

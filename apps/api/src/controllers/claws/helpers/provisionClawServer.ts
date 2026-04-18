@@ -98,26 +98,20 @@ const provisionClawServer = async ({
         })
 
         // Stage 1 of the lifecycle: provider accepted the request and
-        // assigned an IP. Status stays at 'creating' (= "Launching
-        // instance") until the provider reports the VPS is running.
-        // Note: we do NOT flip to configuring yet — configuring means
-        // "the VPS is booted, cloud-init is running OpenClaw install".
-        await Promise.all([
-            claw.subdomain
-                ? cloudflare
-                      .createDNSRecord(claw.subdomain, server.ip)
-                      .catch((err) =>
-                          console.error('[provisionClawServer] DNS', err)
-                      )
-                : Promise.resolve(),
-            db
-                .update(claws)
-                .set({
-                    providerServerId: server.serverId,
-                    ip: server.ip
-                })
-                .where(eq(claws.id, clawId))
-        ])
+        // assigned a provisional IP (Lightsail returns 0.0.0.0 until
+        // the VPS is actually running). Status stays at 'creating'.
+        //
+        // DNS is deliberately NOT created here — server.ip would be
+        // 0.0.0.0 on Lightsail and certbot's HTTP-01 challenge would
+        // then fail. DNS creation moves into pollLifecycle once we
+        // know the real IP.
+        await db
+            .update(claws)
+            .set({
+                providerServerId: server.serverId,
+                ip: server.ip
+            })
+            .where(eq(claws.id, clawId))
 
         void pollLifecycle({
             provider,
@@ -196,21 +190,38 @@ const pollLifecycle = async ({
 }): Promise<void> => {
     // Stage 1: wait for the provider to report running, flip to
     // configuring so the UI changes from "Launching" to "Deploying".
+    // As soon as we see a real IP (not Lightsail's 0.0.0.0 placeholder)
+    // create the Cloudflare A record — doing this before the IP is
+    // known left the DNS pointing at 0.0.0.0 after the VPS came up.
     let currentIp = ip
+    let dnsCreated = false
     const stage1Deadline = Date.now() + PROVIDER_POLL_MAX_MS
     let providerRunning = false
     while (Date.now() < stage1Deadline && !providerRunning) {
         await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
         try {
             const live = await provider.getServer(serverId, locationId)
-            if (live.ip) currentIp = live.ip
+            if (live.ip && live.ip !== '0.0.0.0') currentIp = live.ip
+            if (
+                !dnsCreated &&
+                subdomain &&
+                currentIp &&
+                currentIp !== '0.0.0.0'
+            ) {
+                dnsCreated = true
+                await cloudflare
+                    .createDNSRecord(subdomain, currentIp)
+                    .catch((err) =>
+                        console.error('[provisionClawServer] DNS', err)
+                    )
+            }
             if (live.status === clawStatus.running) {
                 providerRunning = true
                 await db
                     .update(claws)
                     .set({
                         status: clawStatus.configuring,
-                        ip: live.ip || undefined
+                        ip: currentIp
                     })
                     .where(eq(claws.id, clawId))
             }
