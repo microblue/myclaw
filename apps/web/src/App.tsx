@@ -12,6 +12,11 @@ import Desktop from '@/pages/Desktop'
 import Landing from '@/pages/Landing'
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const NewClawShell = lazy(() => import('@/pages/NewClaw/WizardShell'))
+const NewClawStepType = lazy(() => import('@/pages/NewClaw/StepType'))
+const NewClawStepProvider = lazy(() => import('@/pages/NewClaw/StepProvider'))
+const NewClawStepPlan = lazy(() => import('@/pages/NewClaw/StepPlan'))
+const NewClawStepReview = lazy(() => import('@/pages/NewClaw/StepReview'))
 const SSHKeys = lazy(() => import('@/pages/SSHKeys'))
 const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
@@ -70,6 +75,28 @@ const App: FC = (): ReactNode => {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route
+                            path={ROUTES.NEW_CLAW}
+                            element={
+                                <ProtectedRoute>
+                                    <NewClawShell />
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route index element={<NewClawStepType />} />
+                            <Route
+                                path='provider'
+                                element={<NewClawStepProvider />}
+                            />
+                            <Route
+                                path='plan'
+                                element={<NewClawStepPlan />}
+                            />
+                            <Route
+                                path='review'
+                                element={<NewClawStepReview />}
+                            />
+                        </Route>
                         <Route
                             path={ROUTES.SSH_KEYS}
                             element={
