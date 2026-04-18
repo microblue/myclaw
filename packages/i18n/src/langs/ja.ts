@@ -449,6 +449,8 @@ const ja: Translations = {
         pendingClawCancelled: '購入をキャンセルしました.',
         failedToCancelPendingClaw: '購入のキャンセルに失敗しました!',
         clawPurchaseInitiated: '購入を開始しました.',
+        clawNameSuggested: '名前を提案しました.',
+        clawTypeNotYetSupported: 'このClawタイプはまだサポートされていません.',
         sshKeysFetched: 'SSHキーを取得しました.',
         sshKeyCreated: 'SSHキーを作成しました.',
         sshKeyDeleted: 'SSHキーを削除しました.',

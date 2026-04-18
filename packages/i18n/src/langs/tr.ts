@@ -440,6 +440,8 @@ const tr: Translations = {
         pendingClawCancelled: 'Satın alma iptal edildi.',
         failedToCancelPendingClaw: 'Satın alma iptal edilemedi!',
         clawPurchaseInitiated: 'Satın alma başarıyla başlatıldı.',
+        clawNameSuggested: 'Ad önerildi.',
+        clawTypeNotYetSupported: 'Bu Claw türü henüz desteklenmiyor.',
         sshKeysFetched: 'SSH anahtarları başarıyla getirildi.',
         sshKeyCreated: 'SSH anahtarı başarıyla oluşturuldu.',
         sshKeyDeleted: 'SSH anahtarı başarıyla silindi.',

@@ -94,6 +94,7 @@ const provisionClaw = async (
             id,
             userId: pending.userId,
             name: pending.name,
+            clawType: pending.clawType,
             status: clawStatus.creating,
             planId: pending.planId,
             location: pending.location,

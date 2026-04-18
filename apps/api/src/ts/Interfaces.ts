@@ -490,6 +490,7 @@ export interface UpdateProfileBody {
 
 export interface InitiateClawPurchaseBody {
     name?: string
+    clawType?: string  // 'openclaw' (default); reserved: zeroclaw, picoclaw, hermes, nanoclaw
     planId: string
     location: string
     password?: string

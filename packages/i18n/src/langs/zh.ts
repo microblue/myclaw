@@ -423,6 +423,8 @@ const zh: Translations = {
         pendingClawCancelled: '购买已取消.',
         failedToCancelPendingClaw: '取消购买失败!',
         clawPurchaseInitiated: '购买已成功发起.',
+        clawNameSuggested: '已建议名称。',
+        clawTypeNotYetSupported: '该 Claw 类型尚未支持。',
         sshKeysFetched: 'SSH 密钥获取成功.',
         sshKeyCreated: 'SSH 密钥创建成功.',
         sshKeyDeleted: 'SSH 密钥删除成功.',

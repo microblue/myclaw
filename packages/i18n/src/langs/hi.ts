@@ -447,6 +447,8 @@ const hi: Translations = {
         pendingClawCancelled: 'खरीद रद्द की गई.',
         failedToCancelPendingClaw: 'खरीद रद्द करने में विफल!',
         clawPurchaseInitiated: 'खरीद सफलतापूर्वक शुरू हुई.',
+        clawNameSuggested: 'नाम सुझाया गया.',
+        clawTypeNotYetSupported: 'यह Claw प्रकार अभी तक समर्थित नहीं है.',
         sshKeysFetched: 'SSH कुंजियाँ सफलतापूर्वक प्राप्त हुईं.',
         sshKeyCreated: 'SSH कुंजी सफलतापूर्वक बनाई गई.',
         sshKeyDeleted: 'SSH कुंजी सफलतापूर्वक हटाई गई.',

@@ -445,6 +445,8 @@ const ru: Translations = {
         pendingClawCancelled: 'Покупка отменена.',
         failedToCancelPendingClaw: 'Не удалось отменить покупку!',
         clawPurchaseInitiated: 'Покупка успешно инициирована.',
+        clawNameSuggested: 'Имя предложено.',
+        clawTypeNotYetSupported: 'Этот тип Claw ещё не поддерживается.',
         sshKeysFetched: 'SSH-ключи успешно загружены.',
         sshKeyCreated: 'SSH-ключ успешно создан.',
         sshKeyDeleted: 'SSH-ключ успешно удалён.',

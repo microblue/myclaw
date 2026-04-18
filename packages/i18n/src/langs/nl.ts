@@ -450,6 +450,8 @@ const nl: Translations = {
         pendingClawCancelled: 'Aankoop geannuleerd.',
         failedToCancelPendingClaw: 'Aankoop annuleren mislukt!',
         clawPurchaseInitiated: 'Aankoop succesvol gestart.',
+        clawNameSuggested: 'Naam voorgesteld.',
+        clawTypeNotYetSupported: 'Dit Claw-type wordt nog niet ondersteund.',
         sshKeysFetched: 'SSH-sleutels succesvol opgehaald.',
         sshKeyCreated: 'SSH-sleutel succesvol aangemaakt.',
         sshKeyDeleted: 'SSH-sleutel succesvol verwijderd.',

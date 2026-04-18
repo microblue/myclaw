@@ -461,6 +461,8 @@ const de: Translations = {
         pendingClawCancelled: 'Kauf abgebrochen.',
         failedToCancelPendingClaw: 'Kauf konnte nicht abgebrochen werden!',
         clawPurchaseInitiated: 'Kauf erfolgreich eingeleitet.',
+        clawNameSuggested: 'Name vorgeschlagen.',
+        clawTypeNotYetSupported: 'Dieser Claw-Typ wird noch nicht unterstützt.',
         sshKeysFetched: 'SSH-Schlüssel erfolgreich abgerufen.',
         sshKeyCreated: 'SSH-Schlüssel erfolgreich erstellt.',
         sshKeyDeleted: 'SSH-Schlüssel erfolgreich gelöscht.',

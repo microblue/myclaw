@@ -435,6 +435,8 @@ const ar: Translations = {
         pendingClawCancelled: 'تم إلغاء الشراء.',
         failedToCancelPendingClaw: 'فشل إلغاء الشراء !',
         clawPurchaseInitiated: 'تم بدء الشراء بنجاح.',
+        clawNameSuggested: 'تم اقتراح الاسم.',
+        clawTypeNotYetSupported: 'نوع Claw هذا غير مدعوم بعد.',
         sshKeysFetched: 'تم جلب مفاتيح SSH بنجاح.',
         sshKeyCreated: 'تم إنشاء مفتاح SSH بنجاح.',
         sshKeyDeleted: 'تم حذف مفتاح SSH بنجاح.',

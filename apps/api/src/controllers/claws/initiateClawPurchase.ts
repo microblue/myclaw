@@ -8,7 +8,7 @@ import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
 import provisionClaw from '@/controllers/claws/provisionClaw'
-import { generatePassword } from '@/controllers/claws/helpers'
+import { generatePassword, generateClawName } from '@/controllers/claws/helpers'
 import { getProvider } from '@/services/provider'
 import { providerRegistry } from '@/services/providers'
 import { t } from '@openclaw/i18n'
@@ -16,96 +16,10 @@ import { ok, fail } from '@/lib/response'
 import { getEnvironment } from '@/lib/environment'
 import withErrorHandler from '@/lib/withErrorHandler'
 
-const adjectives = [
-    'cozy',
-    'swift',
-    'brave',
-    'calm',
-    'tiny',
-    'wild',
-    'warm',
-    'cool',
-    'happy',
-    'lucky',
-    'fuzzy',
-    'snowy',
-    'dusty',
-    'misty',
-    'sunny',
-    'sleepy',
-    'clever',
-    'gentle',
-    'mighty',
-    'silent',
-    'golden',
-    'cosmic',
-    'polar',
-    'rusty',
-    'nimble',
-    'jolly',
-    'witty',
-    'noble',
-    'vivid',
-    'crisp'
-]
-
-const nouns = [
-    'claw',
-    'panda',
-    'otter',
-    'fox',
-    'wolf',
-    'bear',
-    'falcon',
-    'lynx',
-    'raven',
-    'crane',
-    'pike',
-    'owl',
-    'hare',
-    'frog',
-    'moth',
-    'finch',
-    'cedar',
-    'maple',
-    'birch',
-    'reef',
-    'dune',
-    'peak',
-    'brook',
-    'grove',
-    'ember',
-    'spark',
-    'drift',
-    'frost',
-    'cloud',
-    'storm'
-]
-
 let lastPendingCleanup = 0
 const CLEANUP_INTERVAL = 60 * 60 * 1000
 
-let namePool: string[] = []
-
-const shufflePool = () => {
-    namePool = []
-    for (const adj of adjectives) {
-        for (const noun of nouns) {
-            namePool.push(`${adj}-${noun}`)
-        }
-    }
-    for (let i = namePool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[namePool[i], namePool[j]] = [namePool[j], namePool[i]]
-    }
-}
-
-const generateClawName = (): string => {
-    if (namePool.length === 0) {
-        shufflePool()
-    }
-    return namePool.pop()!
-}
+const SUPPORTED_CLAW_TYPES = new Set(['openclaw'])
 
 const PLAN_TO_POLAR: Record<string, string> = {
     cx23: 'CX23',
@@ -158,6 +72,7 @@ const initiateClawPurchase = withErrorHandler(
     const userId = c.get('userId')
     const {
         name: rawName,
+        clawType: rawClawType,
         planId,
         location,
         password,
@@ -167,6 +82,11 @@ const initiateClawPurchase = withErrorHandler(
         billingInterval: rawBillingInterval,
         provider: requestedProvider
     } = await c.req.json<InitiateClawPurchaseBody>()
+
+    const clawType = rawClawType || 'openclaw'
+    if (!SUPPORTED_CLAW_TYPES.has(clawType)) {
+        return fail(c, t('api.clawTypeNotYetSupported'), 400)
+    }
 
     const billingCycle =
         rawBillingInterval === billingInterval.YEAR
@@ -198,6 +118,7 @@ const initiateClawPurchase = withErrorHandler(
             userId,
             checkoutId: `dev-checkout-${pendingId}`,
             name,
+            clawType,
             planId,
             location,
             provider: selectedProvider,
@@ -356,6 +277,7 @@ const initiateClawPurchase = withErrorHandler(
         userId,
         checkoutId: checkout.id,
         name,
+        clawType,
         planId,
         location,
         provider: selectedProviderId,

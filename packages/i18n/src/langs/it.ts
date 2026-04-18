@@ -461,6 +461,8 @@ const it: Translations = {
         pendingClawCancelled: 'Acquisto annullato.',
         failedToCancelPendingClaw: "Impossibile annullare l'acquisto!",
         clawPurchaseInitiated: 'Acquisto avviato con successo.',
+        clawNameSuggested: 'Nome suggerito.',
+        clawTypeNotYetSupported: 'Questo tipo di Claw non è ancora supportato.',
         sshKeysFetched: 'Chiavi SSH recuperate con successo.',
         sshKeyCreated: 'Chiave SSH creata con successo.',
         sshKeyDeleted: 'Chiave SSH eliminata con successo.',

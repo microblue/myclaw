@@ -439,6 +439,8 @@ const en = {
         pendingClawCancelled: 'Purchase cancelled.',
         failedToCancelPendingClaw: 'Failed to cancel purchase!',
         clawPurchaseInitiated: 'Purchase initiated successfully.',
+        clawNameSuggested: 'Name suggested.',
+        clawTypeNotYetSupported: 'This Claw type is not yet supported.',
         sshKeysFetched: 'SSH keys fetched successfully.',
         sshKeyCreated: 'SSH key created successfully.',
         sshKeyDeleted: 'SSH key deleted successfully.',
