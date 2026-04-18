@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
-import { getProvider } from '@/services/provider'
+import { providerRegistry } from '@/services/providers'
 import cloudflare from '@/services/cloudflare'
 import checkSubdomainReady from '@/controllers/claws/helpers/checkSubdomainReady'
 
@@ -19,20 +19,48 @@ const transitionCompletedBy: Record<string, string[]> = {
     [clawStatus.restarting]: [clawStatus.running]
 }
 
-const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
-    let serverMap = new Map<string, ServerStatus>()
+// If the Cloudflare DNS integration isn't configured the subdomain
+// readiness check can never succeed, so we treat the provider's own
+// "running" signal as enough to flip the claw to running. Without this
+// dev/no-DNS deployments get stuck in configuring forever.
+const CLOUDFLARE_DISABLED =
+    !process.env.CLOUDFLARE_API_TOKEN ||
+    process.env.CLOUDFLARE_API_TOKEN.startsWith('your_') ||
+    !process.env.CLOUDFLARE_ZONE_ID
 
-    try {
-        serverMap = await getProvider().getServers()
-    } catch (error) {
-        console.error('syncClawServers', error)
+const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
+    // Group claws by provider so we make one getServers() call per
+    // registered provider instead of one-per-claw (and instead of the
+    // legacy single-provider behaviour that ignored claw.provider).
+    const byProvider = new Map<string, ClawRow[]>()
+    for (const c of clawList) {
+        const pid = c.provider || 'hetzner'
+        const arr = byProvider.get(pid)
+        if (arr) arr.push(c)
+        else byProvider.set(pid, [c])
     }
+
+    const serverMapsByProvider = new Map<string, Map<string, ServerStatus>>()
+    await Promise.all(
+        Array.from(byProvider.keys()).map(async (pid) => {
+            const provider = providerRegistry.getProvider(pid)
+            if (!provider) return
+            try {
+                const map = await provider.getServers()
+                serverMapsByProvider.set(pid, map)
+            } catch (error) {
+                console.error(`syncClawServers ${pid}`, error)
+            }
+        })
+    )
 
     const syncedClaws = await Promise.all(
         clawList.map(async (claw) => {
             if (!claw.providerServerId) return claw
-
-            const live = serverMap.get(claw.providerServerId)
+            const pid = claw.provider || 'hetzner'
+            const live = serverMapsByProvider.get(pid)?.get(
+                claw.providerServerId
+            )
             if (!live) return claw
 
             if (claw.status === clawStatus.configuring) {
@@ -69,7 +97,11 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
                 }
 
                 if (live.status === clawStatus.running && claw.subdomain) {
-                    const ready = await checkSubdomainReady(claw.subdomain)
+                    // Without working DNS the subdomain check always
+                    // fails, so skip it and trust the provider's signal.
+                    const ready = CLOUDFLARE_DISABLED
+                        ? true
+                        : await checkSubdomainReady(claw.subdomain)
                     if (ready) {
                         await db
                             .update(claws)

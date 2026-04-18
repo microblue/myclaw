@@ -3,7 +3,8 @@ import type { ClawRow } from '@/ts/Types'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
-import { getProvider, updateCachedServerStatus } from '@/services/provider'
+import { providerRegistry } from '@/services/providers'
+import { updateCachedServerStatus } from '@/services/provider'
 
 const LIFECYCLE_CONFIG = {
     start: {
@@ -33,14 +34,17 @@ const executeServerLifecycle = async (
         .where(eq(claws.id, claw.id))
 
     try {
-        const provider = getProvider()
+        const providerId = claw.provider || 'hetzner'
+        const provider = providerRegistry.getProvider(providerId)
+        if (!provider) throw new Error(`provider ${providerId} unavailable`)
         await provider[config.providerMethod](claw.providerServerId!)
         updateCachedServerStatus(
             claw.providerServerId!,
             config.transitionalStatus
         )
         return { success: true, status: config.transitionalStatus }
-    } catch {
+    } catch (err) {
+        console.error('executeServerLifecycle', err)
         await db
             .update(claws)
             .set({ status: previousStatus })

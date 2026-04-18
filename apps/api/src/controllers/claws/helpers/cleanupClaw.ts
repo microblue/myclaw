@@ -3,14 +3,29 @@ import type { ClawCleanupData } from '@/ts/Interfaces'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
-import { getProvider } from '@/services/provider'
+import { providerRegistry } from '@/services/providers'
 import cloudflare from '@/services/cloudflare'
+
+// Route cleanup to the claw's own cloud provider. The legacy
+// single-provider getProvider() was hard-wired to Hetzner, so Lightsail
+// / DigitalOcean deletes silently no-op'd.
+
+type CleanupOptions = ClawCleanupData & {
+    provider?: string | null
+}
 
 const cleanupClaw = async (
     clawId: string,
-    claw: ClawCleanupData
+    claw: CleanupOptions
 ): Promise<void> => {
-    const provider = getProvider()
+    const providerId = claw.provider || 'hetzner'
+    const provider = providerRegistry.getProvider(providerId)
+
+    if (!provider) {
+        console.error(
+            `cleanupClaw: provider ${providerId} unavailable for ${clawId}`
+        )
+    }
 
     const clawVolumes = await db
         .select()
@@ -21,8 +36,13 @@ const cleanupClaw = async (
         ...clawVolumes
             .filter((vol) => vol.providerVolumeId)
             .map(async (vol) => {
-                await provider.detachVolume(vol.providerVolumeId!)
-                await provider.deleteVolume(vol.providerVolumeId!)
+                if (!provider?.detachVolume || !provider?.deleteVolume) return
+                try {
+                    await provider.detachVolume(String(vol.providerVolumeId))
+                    await provider.deleteVolume(String(vol.providerVolumeId))
+                } catch (err) {
+                    console.error('cleanupClaw volume', err)
+                }
             }),
         claw.subdomain
             ? cloudflare
@@ -30,9 +50,14 @@ const cleanupClaw = async (
                   .then((rec) =>
                       rec ? cloudflare.deleteDNSRecord(rec.id) : null
                   )
+                  .catch((err) => console.error('cleanupClaw dns', err))
             : Promise.resolve(),
-        claw.providerServerId
-            ? provider.deleteServer(claw.providerServerId)
+        claw.providerServerId && provider
+            ? provider
+                  .deleteServer(claw.providerServerId)
+                  .catch((err) =>
+                      console.error('cleanupClaw deleteServer', err)
+                  )
             : Promise.resolve()
     ])
 
