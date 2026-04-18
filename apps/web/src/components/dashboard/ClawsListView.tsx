@@ -66,6 +66,9 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
         setSelectedClawId(claw.id)
         setDashboardTab(DASHBOARD_TABS.PLAYGROUND)
     }
+    const handleViewDetails = (claw: Claw) => {
+        navigate(`/claw/${claw.id}`)
+    }
 
     if (claws.length === 0) {
         return (
@@ -112,6 +115,7 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
                         onRestart={handleRestart}
                         onDelete={handleDelete}
                         onDiagnose={handleDiagnose}
+                        onViewDetails={handleViewDetails}
                     />
                 ))}
             </div>

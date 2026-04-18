@@ -23,6 +23,7 @@ type Props = {
     onRestart: (claw: Claw) => void
     onDelete: (claw: Claw) => void
     onDiagnose: (claw: Claw) => void
+    onViewDetails: (claw: Claw) => void
 }
 
 const statusTone = (status: string): string => {
@@ -47,7 +48,8 @@ const ClawInstanceCard: FC<Props> = ({
     onStop,
     onRestart,
     onDelete,
-    onDiagnose
+    onDiagnose,
+    onViewDetails
 }) => {
     const clawType = getClawType(claw.clawType || 'openclaw')
     const isRunning = claw.status === clawStatus.running
@@ -62,9 +64,13 @@ const ClawInstanceCard: FC<Props> = ({
                             className={`h-2.5 w-2.5 rounded-full ${statusTone(claw.status)}`}
                             aria-hidden
                         />
-                        <h3 className='truncate text-lg font-semibold'>
+                        <button
+                            type='button'
+                            onClick={() => onViewDetails(claw)}
+                            className='truncate text-lg font-semibold hover:underline'
+                        >
                             {claw.name}
-                        </h3>
+                        </button>
                     </div>
                     <p className='text-muted-foreground mt-1 text-xs capitalize'>
                         {claw.status}
@@ -126,6 +132,9 @@ const ClawInstanceCard: FC<Props> = ({
                             disabled={!isRunning}
                         >
                             Restart
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onViewDetails(claw)}>
+                            View details
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onDiagnose(claw)}>
                             Diagnostics

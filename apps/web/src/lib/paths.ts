@@ -3,6 +3,7 @@ const PATHS = {
     GO: 'desktop',
     LOGIN: 'login',
     CLAWS: 'claws',
+    CLAW_DETAIL: 'claw',
     NEW_CLAW: 'new',
     NEW_CLAW_PROVIDER: 'new/provider',
     NEW_CLAW_PLAN: 'new/plan',
