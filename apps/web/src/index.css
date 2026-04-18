@@ -209,9 +209,9 @@
 
 .landing-grid {
     background-image:
-        linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
+        linear-gradient(rgba(99, 102, 241, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.025) 1px, transparent 1px);
+    background-size: 64px 64px;
     height: 100vh;
     position: absolute;
     top: 0;
@@ -232,8 +232,8 @@
 }
 .dark .landing-grid {
     background-image:
-        linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+        linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
 }
 
 @property --glow-angle {
