@@ -197,11 +197,16 @@ const PlanGrid: FC<{
                                 {p.architecture}
                             </span>
                         </div>
-                        <div className='text-primary mt-2 text-2xl font-semibold'>
-                            ${p.priceMonthly.toFixed(2)}
-                            <span className='text-muted-foreground ml-1 text-xs font-normal'>
-                                /mo
-                            </span>
+                        <div className='mt-2'>
+                            <div className='text-primary text-2xl font-semibold'>
+                                ${p.priceMonthly.toFixed(2)}
+                                <span className='text-muted-foreground ml-1 text-xs font-normal'>
+                                    /mo
+                                </span>
+                            </div>
+                            <div className='text-muted-foreground text-xs'>
+                                ≈ ${(p.priceMonthly / 30).toFixed(2)}/day
+                            </div>
                         </div>
                         <dl className='text-muted-foreground mt-3 space-y-1 text-xs'>
                             <div className='flex justify-between'>
