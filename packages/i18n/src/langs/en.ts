@@ -566,7 +566,19 @@ const en = {
         adminExportsFetched: 'Exports fetched successfully.',
         failedToGetAdminExports: 'Failed to fetch exports!',
         adminEmailsFetched: 'Emails fetched successfully.',
-        failedToGetAdminEmails: 'Failed to fetch emails!'
+        failedToGetAdminEmails: 'Failed to fetch emails!',
+        providersRetrieved: 'Providers retrieved.',
+        providerNotFound: 'Provider not found.',
+        providerInfoRetrieved: 'Provider info retrieved.',
+        plansRetrieved: 'Plans retrieved.',
+        failedToGetPlans: 'Failed to get plans.',
+        locationsRetrieved: 'Locations retrieved.',
+        failedToGetLocations: 'Failed to get locations.',
+        availabilityRetrieved: 'Availability retrieved.',
+        failedToGetAvailability: 'Failed to get availability.',
+        providerDoesNotSupportVolumes: 'Provider does not support volumes.',
+        volumePricingRetrieved: 'Volume pricing retrieved.',
+        failedToGetVolumePricing: 'Failed to get volume pricing.'
     },
     emails: {
         otpSubject: 'Your MyClaw.One sign-in code',

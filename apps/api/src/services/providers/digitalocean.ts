@@ -15,7 +15,7 @@ import type {
     SSHKeyInfo,
     VolumeInfo,
     VolumePricing
-} from '../types'
+} from './types'
 import { providerRegistry } from '@/services/providers/registry'
 import { RequestClient } from '@openclaw/shared'
 

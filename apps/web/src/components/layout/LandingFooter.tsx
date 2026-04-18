@@ -154,7 +154,6 @@ const LandingFooter: FC = (): ReactNode => {
                         </ul>
                     </nav>
 
-
                 </div>
             </div>
         </footer>

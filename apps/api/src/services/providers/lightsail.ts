@@ -15,7 +15,7 @@ import type {
     ServerStatus,
     SSHKeyInfo,
     VolumePricing
-} from '../types'
+} from './types'
 import { providerRegistry } from '@/services/providers/registry'
 import {
     LightsailClient,
@@ -135,7 +135,6 @@ class LightsailProvider implements CloudProvider {
 
         // Allocate static IP and attach async (instance may not be running yet)
         const staticIpName = options.name + '-ip'
-        const self = this
         const doAttachStaticIp = async () => {
             try {
                 await regionClient.send(new AllocateStaticIpCommand({ staticIpName }))
@@ -144,7 +143,7 @@ class LightsailProvider implements CloudProvider {
                 for (let i = 0; i < 36; i++) {
                     await new Promise(r => setTimeout(r, 5000))
                     try {
-                        const status = await self.getServer(options.name)
+                        const status = await this.getServer(options.name)
                         if (status.status === 'running') { running = true; break }
                     } catch (_) {}
                 }

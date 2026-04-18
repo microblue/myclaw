@@ -15,7 +15,7 @@ import type {
     SSHKeyInfo,
     VolumeInfo,
     VolumePricing
-} from '../types'
+} from './types'
 import hetzner from '@/services/hetzner'
 import { providerRegistry } from '@/services/providers/registry'
 

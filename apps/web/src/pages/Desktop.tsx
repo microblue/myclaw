@@ -166,7 +166,6 @@ const Go: FC = (): ReactNode => {
         { label: t('go.faqTitle'), href: '#faq', id: 'faq' }
     ]
 
-
     return (
         <div className='font-satoshi bg-background text-foreground min-h-screen'>
             <PageTitle title={t('go.pageTitle')} />

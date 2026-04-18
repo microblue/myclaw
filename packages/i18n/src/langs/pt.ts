@@ -590,7 +590,19 @@ const pt: Translations = {
         adminExportsFetched: 'Exports fetched.',
         failedToGetAdminExports: 'Failed to fetch exports!',
         adminEmailsFetched: 'Emails fetched.',
-        failedToGetAdminEmails: 'Failed to fetch emails!'
+        failedToGetAdminEmails: 'Failed to fetch emails!',
+        providersRetrieved: 'Providers retrieved.',
+        providerNotFound: 'Provider not found.',
+        providerInfoRetrieved: 'Provider info retrieved.',
+        plansRetrieved: 'Plans retrieved.',
+        failedToGetPlans: 'Failed to get plans.',
+        locationsRetrieved: 'Locations retrieved.',
+        failedToGetLocations: 'Failed to get locations.',
+        availabilityRetrieved: 'Availability retrieved.',
+        failedToGetAvailability: 'Failed to get availability.',
+        providerDoesNotSupportVolumes: 'Provider does not support volumes.',
+        volumePricingRetrieved: 'Volume pricing retrieved.',
+        failedToGetVolumePricing: 'Failed to get volume pricing.'
     },
     emails: {
         otpSubject: 'Seu código de login no MyClaw.One',
