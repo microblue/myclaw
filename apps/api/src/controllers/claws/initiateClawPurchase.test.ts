@@ -71,8 +71,12 @@ vi.mock('@/lib/polar', () => ({
     customers: { getOrCreate: h.mockCustomersGetOrCreate }
 }))
 
-vi.mock('@/controllers/claws/provisionClaw', () => ({
-    default: h.mockProvisionClaw
+vi.mock('@/controllers/claws/helpers', () => ({
+    generatePassword: vi.fn(() => 'generated-pw'),
+    generateClawName: vi.fn(() => 'swift-fox'),
+    generateSlug: vi.fn(() => 'happy-panda'),
+    generateToken: vi.fn(() => 'gate-token'),
+    provisionClawServer: h.mockProvisionClaw
 }))
 
 vi.mock('@/services/providers', () => ({
@@ -88,10 +92,6 @@ vi.mock('@/services/provider', () => ({
 
 vi.mock('@/lib/environment', () => ({
     getEnvironment: vi.fn(() => 'test')
-}))
-
-vi.mock('@/controllers/claws/helpers', () => ({
-    generatePassword: vi.fn(() => 'generated-pw')
 }))
 
 vi.mock('@openclaw/i18n', () => ({
@@ -173,29 +173,30 @@ describe('initiateClawPurchase', () => {
         expect(status).toBe(400)
     })
 
-    it('dev mode provisions directly when no Polar product is configured', async () => {
-        mockProvisionClaw.mockResolvedValue({ success: true, clawId: 'claw-xyz' })
+    it('dev mode inserts the claws row and kicks off background provisioning', async () => {
+        mockProvisionClaw.mockResolvedValue(undefined)
         const { ctx } = buildContext()
         // @ts-expect-error stubbed context
         const { status, body } = await readResponse(initiateClawPurchase(ctx))
 
         expect(status).toBe(200)
-        expect(body.data).toMatchObject({
-            devMode: true,
-            pendingClawId: 'claw-xyz'
-        })
-        expect(mockProvisionClaw).toHaveBeenCalledTimes(1)
+        expect(body.data).toMatchObject({ devMode: true })
+        expect(typeof (body.data as { pendingClawId: string }).pendingClawId).toBe('string')
+        // Exactly one insert (claws row) — no pendingClaws insert anymore
         expect(mockDbInsert).toHaveBeenCalledTimes(1)
+        // provisionClawServer called fire-and-forget with the new claw id
+        expect(mockProvisionClaw).toHaveBeenCalledTimes(1)
         expect(mockCheckoutsCreate).not.toHaveBeenCalled()
     })
 
-    it('dev mode returns 500 when provisionClaw fails', async () => {
-        mockProvisionClaw.mockResolvedValue({ success: false, error: 'boom' })
+    it('dev mode still returns 200 even if background provisioning rejects', async () => {
+        // Fire-and-forget means rejection does not affect the response.
+        mockProvisionClaw.mockRejectedValue(new Error('boom'))
         const { ctx } = buildContext()
         // @ts-expect-error stubbed context
         const { status, body } = await readResponse(initiateClawPurchase(ctx))
-        expect(status).toBe(500)
-        expect(body.message).toBe('boom')
+        expect(status).toBe(200)
+        expect(body.data).toMatchObject({ devMode: true })
     })
 
     describe('production mode', () => {

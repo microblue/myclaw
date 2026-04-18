@@ -11,6 +11,27 @@ import {
     DropdownMenuSeparator
 } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
+import { CircleNotchIcon } from '@phosphor-icons/react'
+
+const TRANSIENT_STATUSES = new Set<string>([
+    clawStatus.creating,
+    clawStatus.configuring,
+    clawStatus.initializing,
+    clawStatus.starting,
+    clawStatus.stopping,
+    clawStatus.restarting,
+    clawStatus.rebuilding
+])
+
+const TRANSIENT_LABELS: Record<string, string> = {
+    [clawStatus.creating]: 'Deploying…',
+    [clawStatus.configuring]: 'Configuring…',
+    [clawStatus.initializing]: 'Initializing…',
+    [clawStatus.starting]: 'Starting…',
+    [clawStatus.stopping]: 'Stopping…',
+    [clawStatus.restarting]: 'Restarting…',
+    [clawStatus.rebuilding]: 'Rebuilding…'
+}
 
 // Big card replacing the old table row. Designed for users who only
 // have a handful of instances — the page should feel populated.
@@ -54,16 +75,26 @@ const ClawInstanceCard: FC<Props> = ({
     const clawType = getClawType(claw.clawType || 'openclaw')
     const isRunning = claw.status === clawStatus.running
     const isStopped = claw.status === clawStatus.stopped
+    const isTransient = TRANSIENT_STATUSES.has(claw.status)
+    const transientLabel = TRANSIENT_LABELS[claw.status]
 
     return (
         <div className='bg-card flex flex-col gap-4 rounded-xl border p-6 transition-shadow hover:shadow-md'>
             <div className='flex items-start justify-between'>
                 <div className='min-w-0'>
                     <div className='flex items-center gap-2'>
-                        <span
-                            className={`h-2.5 w-2.5 rounded-full ${statusTone(claw.status)}`}
-                            aria-hidden
-                        />
+                        {isTransient ? (
+                            <CircleNotchIcon
+                                className='text-primary h-3 w-3 animate-spin'
+                                weight='bold'
+                                aria-hidden
+                            />
+                        ) : (
+                            <span
+                                className={`h-2.5 w-2.5 rounded-full ${statusTone(claw.status)}`}
+                                aria-hidden
+                            />
+                        )}
                         <button
                             type='button'
                             onClick={() => onViewDetails(claw)}
@@ -73,7 +104,7 @@ const ClawInstanceCard: FC<Props> = ({
                         </button>
                     </div>
                     <p className='text-muted-foreground mt-1 text-xs capitalize'>
-                        {claw.status}
+                        {transientLabel || claw.status}
                     </p>
                 </div>
                 <span className='bg-muted text-muted-foreground rounded px-2 py-1 text-xs'>

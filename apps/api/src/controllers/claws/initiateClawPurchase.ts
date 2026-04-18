@@ -7,8 +7,15 @@ import { inputValidation, billingInterval } from '@openclaw/shared'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
-import provisionClaw from '@/controllers/claws/provisionClaw'
-import { generatePassword, generateClawName } from '@/controllers/claws/helpers'
+import {
+    generatePassword,
+    generateClawName,
+    generateSlug,
+    generateToken,
+    provisionClawServer
+} from '@/controllers/claws/helpers'
+import { clawStatus } from '@openclaw/shared'
+import { subscriptionStatus } from '@/lib/constants'
 import { getProvider } from '@/services/provider'
 import { providerRegistry } from '@/services/providers'
 import { t } from '@openclaw/i18n'
@@ -103,52 +110,59 @@ const initiateClawPurchase = withErrorHandler(
     const finalPassword = password || generatePassword()
     const referralCode = c.req.header('X-Referral-Code') || null
 
-    // DEV MODE: If no Polar product configured, provision claw directly without payment
+    // DEV MODE: no Polar product configured → skip payment, insert the
+    // claws row immediately with status=creating, and kick off the real
+    // provisioning in the background so the UI returns instantly and the
+    // dashboard tile appears with a spinner until the server is ready.
     if (!productId) {
-        console.log('[DEV MODE] No Polar product configured, provisioning claw directly')
+        console.log('[DEV MODE] No Polar product configured, inserting claw + background provisioning')
 
-        // Use requested provider or default to first available
-        const selectedProvider = requestedProvider || providerRegistry.getAvailableProviders()[0]?.id || 'hetzner'
+        const selectedProvider =
+            requestedProvider ||
+            providerRegistry.getAvailableProviders()[0]?.id ||
+            'hetzner'
 
-        const pendingId = crypto.randomUUID()
-        const fakeSubId = `dev-sub-${pendingId}`
+        const clawId = crypto.randomUUID()
+        const subdomain = generateSlug(clawId)
+        const gatewayToken = generateToken()
+        const fakeSubId = `dev-sub-${clawId}`
 
-        await db.insert(pendingClaws).values({
-            id: pendingId,
+        await db.insert(claws).values({
+            id: clawId,
             userId,
-            checkoutId: `dev-checkout-${pendingId}`,
             name,
             clawType,
+            status: clawStatus.creating,
             planId,
             location,
             provider: selectedProvider,
             rootPassword: finalPassword,
             sshKeyId: sshKeyId || null,
-            volumeSize: volumeSize || null,
-            priceMonthly: Math.round(priceMonthly * 100),
-            billingInterval: billingCycle,
-            referralCode: null,
-            expiresAt: new Date(Date.now() + 60 * 60 * 1000)
+            subdomain,
+            gatewayToken,
+            polarSubscriptionId: fakeSubId,
+            polarProductId: 'dev-product',
+            polarCustomerId: 'dev-customer',
+            subscriptionStatus: subscriptionStatus.active,
+            billingInterval: billingCycle
         })
 
-        const result = await provisionClaw({
-            pendingClawId: pendingId,
-            subscriptionId: fakeSubId,
-            productId: 'dev-product',
-            customerId: 'dev-customer'
-        })
-
-        if (!result.success) {
-            console.error('[DEV MODE] provisionClaw failed:', result.error)
-            return fail(c, result.error || t('api.failedToProvisionClaw'), 500)
-        }
+        // Fire-and-forget. The helper updates the row with serverId + IP
+        // when the provider finishes, or flips status to unreachable on
+        // failure. We never await it.
+        void provisionClawServer({
+            clawId,
+            volumeSize: volumeSize ?? null
+        }).catch((err) =>
+            console.error('[DEV MODE] background provisioning failed', err)
+        )
 
         return ok(
             c,
             {
-                checkoutUrl: `/claws?payment=success&clawId=${result.clawId}`,
-                checkoutId: `dev-checkout-${pendingId}`,
-                pendingClawId: result.clawId,
+                checkoutUrl: `/claws?provisioning=${clawId}`,
+                checkoutId: `dev-checkout-${clawId}`,
+                pendingClawId: clawId,
                 expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
                 devMode: true
             },

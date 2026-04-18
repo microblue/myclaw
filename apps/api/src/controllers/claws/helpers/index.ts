@@ -3,6 +3,7 @@ import checkSubdomainReady from '@/controllers/claws/helpers/checkSubdomainReady
 import generateSlug from '@/controllers/claws/helpers/generateSlug'
 import generatePassword from '@/controllers/claws/helpers/generatePassword'
 import generateClawName from '@/controllers/claws/helpers/generateClawName'
+import provisionClawServer from '@/controllers/claws/helpers/provisionClawServer'
 import generateServerName from '@/controllers/claws/helpers/generateServerName'
 import generateToken from '@/controllers/claws/helpers/generateToken'
 import cleanupClaw from '@/controllers/claws/helpers/cleanupClaw'
@@ -46,6 +47,7 @@ export {
     generateSlug,
     generatePassword,
     generateClawName,
+    provisionClawServer,
     generateServerName,
     generateToken,
     cleanupClaw,
