@@ -8,12 +8,12 @@ describe('generateCloudInit', () => {
         'tok_abc123'
     )
 
-    it('starts with #cloud-config', () => {
-        expect(output.startsWith('#cloud-config')).toBe(true)
+    it('starts with a bash shebang so Lightsail + cloud-init treat it as a shell script', () => {
+        expect(output.startsWith('#!/bin/bash')).toBe(true)
     })
 
     it('includes the root password', () => {
-        expect(output).toContain('root:myP@ss123')
+        expect(output).toContain("'myP@ss123'")
     })
 
     it('includes the full domain', () => {
@@ -24,12 +24,12 @@ describe('generateCloudInit', () => {
         expect(output).toContain('tok_abc123')
     })
 
-    it('includes required packages', () => {
-        expect(output).toContain('- curl')
-        expect(output).toContain('- nginx')
-        expect(output).toContain('- certbot')
-        expect(output).toContain('- ufw')
-        expect(output).toContain('- git')
+    it('installs required packages', () => {
+        expect(output).toContain('curl')
+        expect(output).toContain('nginx')
+        expect(output).toContain('certbot')
+        expect(output).toContain('ufw')
+        expect(output).toContain('git')
     })
 
     it('sets up systemd service', () => {
@@ -65,7 +65,7 @@ describe('generateCloudInit', () => {
         expect(output).toContain('"host": "gateway"')
     })
 
-    it('includes final message', () => {
-        expect(output).toContain('OpenClaw instance ready!')
+    it('logs a bootstrap start banner', () => {
+        expect(output).toContain('openclaw bootstrap starting')
     })
 })

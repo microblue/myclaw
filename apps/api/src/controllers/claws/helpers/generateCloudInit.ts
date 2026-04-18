@@ -1,6 +1,14 @@
 import applyToolsDefaults from '@/controllers/claws/helpers/applyToolsDefaults'
 import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
+// Emits a plain bash script, not a #cloud-config YAML. Lightsail
+// prepends its own shell preamble to user-data (SSH CA registration
+// etc.), which makes cloud-init treat the whole thing as a shell
+// script and a YAML-formatted file explodes at the first `ssh_pwauth:`
+// line ("not found" for every directive). Shell works on all three
+// providers (Lightsail / Hetzner / DigitalOcean) even with an injected
+// preamble, so this is the portable path.
+
 const generateCloudInit = (
     rootPassword: string,
     subdomain: string,
@@ -47,175 +55,176 @@ const generateCloudInit = (
     applyToolsDefaults(config)
     config.agents = { defaults: { sandbox: { mode: 'off' } } }
 
-    const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
+    const configJson = JSON.stringify(config, null, 2)
 
-    return `#cloud-config
+    // Root password injected via printf %s to survive any shell
+    // metacharacters in the generated password.
+    const rootPwEscaped = rootPassword.replace(/'/g, "'\\''")
 
-ssh_pwauth: true
+    return `#!/bin/bash
+set -eu
+exec > >(tee -a /var/log/openclaw-bootstrap.log) 2>&1
+echo "=== openclaw bootstrap starting at $(date -u) ==="
 
-chpasswd:
-  list: |
-    root:${rootPassword}
-  expire: false
+# Enable SSH password auth + set root password
+sed -i 's/^#\\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+for svc in sshd ssh; do systemctl restart $svc 2>/dev/null && break; done || true
+printf 'root:%s\\n' '${rootPwEscaped}' | chpasswd
+chage -d 99999 root || true
 
-package_update: true
+# 2G swap
+if [ ! -f /swapfile ]; then
+    fallocate -l 2G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 
-packages:
-  - curl
-  - nginx
-  - certbot
-  - python3-certbot-nginx
-  - ufw
-  - ca-certificates
-  - gnupg
-  - git
-  - dnsutils
+# Base packages
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates gnupg git dnsutils
 
-runcmd:
-  - fallocate -l 2G /swapfile
-  - chmod 600 /swapfile
-  - mkswap /swapfile
-  - swapon /swapfile
-  - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+# Node.js 22 via NodeSource
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
+apt-get update
+apt-get install -y nodejs
+npm install -g openclaw@${OPENCLAW_VERSION}
 
-  - mkdir -p /etc/apt/keyrings
-  - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-  - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
-  - apt-get update -o Dir::Etc::sourcelist="sources.list.d/nodesource.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
-  - apt-get install -y nodejs
+# openclaw system user
+if ! id openclaw >/dev/null 2>&1; then
+    useradd -r -m -d /home/openclaw -s /bin/bash openclaw
+fi
+echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
-  - npm install -g openclaw@${OPENCLAW_VERSION}
+# Chrome (for browser tool)
+wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb
+dpkg -i /tmp/google-chrome.deb || apt-get install -f -y
+rm -f /tmp/google-chrome.deb
 
-  - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
-  - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
+# OpenClaw config
+mkdir -p /home/openclaw/.openclaw/agents/main/agent
+cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
+${configJson}
+OCCONFIG
+chown -R openclaw:openclaw /home/openclaw
 
-  - wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb
-  - dpkg -i /tmp/google-chrome.deb || apt-get install -f -y
-  - rm -f /tmp/google-chrome.deb
+# systemd unit
+cat > /etc/systemd/system/openclaw-gateway.service << 'SYSTEMD'
+[Unit]
+Description=OpenClaw Gateway
+After=network.target
 
-  - mkdir -p /home/openclaw/.openclaw
-  - mkdir -p /home/openclaw/.openclaw/agents/main/agent
+[Service]
+Type=simple
+User=openclaw
+Group=openclaw
+WorkingDirectory=/home/openclaw
+Environment=HOME=/home/openclaw
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=0
+StandardOutput=append:/var/log/openclaw-gateway.log
+StandardError=append:/var/log/openclaw-gateway.log
 
-  - |
-    cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
-    ${configJson}
-    OCCONFIG
+[Install]
+WantedBy=multi-user.target
+SYSTEMD
 
-  - chown -R openclaw:openclaw /home/openclaw
+systemctl daemon-reload
+systemctl enable openclaw-gateway
+systemctl start openclaw-gateway
 
-  - |
-    cat > /etc/systemd/system/openclaw-gateway.service <<'SYSTEMD'
-    [Unit]
-    Description=OpenClaw Gateway
-    After=network.target
+# Wait for gateway to answer locally (kick if slow to boot)
+for i in $(seq 1 30); do
+    if curl -sf -o /dev/null http://127.0.0.1:18789; then break; fi
+    systemctl restart openclaw-gateway 2>/dev/null || true
+    sleep 10
+done
 
-    [Service]
-    Type=simple
-    User=openclaw
-    Group=openclaw
-    WorkingDirectory=/home/openclaw
-    Environment=HOME=/home/openclaw
-    Environment=NODE_ENV=production
-    ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
-    Restart=always
-    RestartSec=10
-    StartLimitIntervalSec=0
-    StandardOutput=append:/var/log/openclaw-gateway.log
-    StandardError=append:/var/log/openclaw-gateway.log
+# Firewall
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw --force enable
 
-    [Install]
-    WantedBy=multi-user.target
-    SYSTEMD
+# nginx reverse proxy → OpenClaw gateway
+cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
 
-  - systemctl daemon-reload
-  - systemctl enable openclaw-gateway
-  - systemctl start openclaw-gateway
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    return 444;
+}
 
-  - |
-    for i in $(seq 1 30); do
-      if curl -sf -o /dev/null http://127.0.0.1:18789; then
-        break
-      fi
-      systemctl restart openclaw-gateway 2>/dev/null || true
-      sleep 10
-    done
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${fullDomain};
 
-  - ufw allow 22/tcp
-  - ufw allow 80/tcp
-  - ufw allow 443/tcp
-  - ufw --force enable
-
-  - |
-    cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
-    map $http_upgrade $connection_upgrade {
-        default upgrade;
-        '' close;
+    location / {
+        proxy_pass http://127.0.0.1:18789;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400;
+        proxy_send_timeout 86400;
     }
+}
+NGINXEOF
 
-    server {
-        listen 80 default_server;
-        listen [::]:80 default_server;
-        server_name _;
-        return 444;
-    }
+ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+mkdir -p /etc/systemd/system/nginx.service.d
+cat > /etc/systemd/system/nginx.service.d/override.conf << 'NGINXOVERRIDE'
+[Service]
+Restart=always
+RestartSec=5
+NGINXOVERRIDE
+systemctl daemon-reload
+nginx -t && systemctl reload nginx
+systemctl enable nginx
 
-    server {
-        listen 80;
-        listen [::]:80;
-        server_name ${fullDomain};
-
-        location / {
-            proxy_pass http://127.0.0.1:18789;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_cache_bypass $http_upgrade;
-            proxy_read_timeout 86400;
-            proxy_send_timeout 86400;
-        }
-    }
-    NGINXEOF
-
-  - ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
-  - rm -f /etc/nginx/sites-enabled/default
-  - mkdir -p /etc/systemd/system/nginx.service.d
-  - |
-    cat > /etc/systemd/system/nginx.service.d/override.conf <<'NGINXOVERRIDE'
-    [Service]
-    Restart=always
-    RestartSec=5
-    NGINXOVERRIDE
-  - systemctl daemon-reload
-  - nginx -t && systemctl reload nginx
-  - systemctl enable nginx
-
-  - |
-    for i in $(seq 1 24); do
-      if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
+# Wait for DNS propagation (Cloudflare A record written by the control
+# plane before createServer) and then hand nginx to certbot for HTTPS.
+for i in $(seq 1 24); do
+    if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
         sleep 15
         break
-      fi
-      sleep 5
-    done
-  - certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@${domain} --redirect
+    fi
+    sleep 5
+done
+certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@${domain} --redirect || true
 
-  - echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
-  - chmod 644 /etc/cron.d/certbot-renew
+echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
+chmod 644 /etc/cron.d/certbot-renew
 
-  - |
-    cat > /tmp/install-brew.sh << 'BREWSCRIPT'
-    #!/bin/bash
-    su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/openclaw/.bashrc
-    BREWSCRIPT
-    chmod +x /tmp/install-brew.sh
-    nohup /tmp/install-brew.sh > /var/log/brew-install.log 2>&1 &
+# Homebrew for the openclaw user (background — lets bootstrap finish
+# fast and the user gets brew later)
+cat > /tmp/install-brew.sh << 'BREWSCRIPT'
+#!/bin/bash
+su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/openclaw/.bashrc
+BREWSCRIPT
+chmod +x /tmp/install-brew.sh
+nohup /tmp/install-brew.sh > /var/log/brew-install.log 2>&1 &
 
-final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
+echo "=== openclaw bootstrap finished at $(date -u) ==="
 `
 }
 
