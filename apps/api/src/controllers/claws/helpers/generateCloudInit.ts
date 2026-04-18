@@ -62,6 +62,13 @@ const generateCloudInit = (
     const rootPwEscaped = rootPassword.replace(/'/g, "'\\''")
 
     return `#!/bin/bash
+# Lightsail prepends its own "#!/bin/sh" preamble to the user-data,
+# so the whole thing actually runs under dash (posix sh) by default.
+# dash doesn't support process substitution (>(...)) or other bash
+# bits we rely on below, so if we're not already in bash, re-exec
+# the entire combined script under bash. Lightsail's own preamble
+# is idempotent (cat > ..., echo >> ...), so re-running it is fine.
+[ -z "\${BASH_VERSION:-}" ] && exec /bin/bash "$0" "$@"
 set -eu
 exec > >(tee -a /var/log/openclaw-bootstrap.log) 2>&1
 echo "=== openclaw bootstrap starting at $(date -u) ==="
