@@ -11,6 +11,7 @@ const pendingClaws = pgTable(
             .references(() => users.id, { onDelete: 'cascade' }),
         checkoutId: text('checkout_id').notNull().unique(),
         name: text('name').notNull(),
+        clawType: text('claw_type').notNull().default('openclaw'),
         provider: text('provider').notNull().default('hetzner'),
         planId: text('plan_id').notNull(),
         location: text('location').notNull(),
