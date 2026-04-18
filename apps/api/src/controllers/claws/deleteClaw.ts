@@ -97,7 +97,8 @@ const deleteClaw = withErrorHandler(
         cleanupClaw(id, {
             providerServerId: claw.providerServerId,
             subdomain: claw.subdomain,
-            provider: claw.provider
+            provider: claw.provider,
+            location: claw.location
         })
     ])
 

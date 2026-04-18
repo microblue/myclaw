@@ -32,7 +32,8 @@ const hardDeleteClaw = withErrorHandler(
         cleanupClaw(id, {
             providerServerId: claw[0].providerServerId,
             subdomain: claw[0].subdomain,
-            provider: claw[0].provider
+            provider: claw[0].provider,
+            location: claw[0].location
         })
     ])
 

@@ -29,38 +29,29 @@ const CLOUDFLARE_DISABLED =
     !process.env.CLOUDFLARE_ZONE_ID
 
 const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
-    // Group claws by provider so we make one getServers() call per
-    // registered provider instead of one-per-claw (and instead of the
-    // legacy single-provider behaviour that ignored claw.provider).
-    const byProvider = new Map<string, ClawRow[]>()
-    for (const c of clawList) {
-        const pid = c.provider || 'hetzner'
-        const arr = byProvider.get(pid)
-        if (arr) arr.push(c)
-        else byProvider.set(pid, [c])
-    }
-
-    const serverMapsByProvider = new Map<string, Map<string, ServerStatus>>()
-    await Promise.all(
-        Array.from(byProvider.keys()).map(async (pid) => {
-            const provider = providerRegistry.getProvider(pid)
-            if (!provider) return
-            try {
-                const map = await provider.getServers()
-                serverMapsByProvider.set(pid, map)
-            } catch (error) {
-                console.error(`syncClawServers ${pid}`, error)
-            }
-        })
-    )
-
+    // One getServer call per claw, routed to the claw's own provider
+    // AND region. Bulk getServers() was cheaper but Lightsail is
+    // region-local — a single getServers() only sees instances in the
+    // default AWS region, so anything else (us-east-1, eu-west-2, etc.)
+    // would never sync. Per-claw getServer is correct; N calls per poll
+    // is fine at the expected user counts.
     const syncedClaws = await Promise.all(
         clawList.map(async (claw) => {
             if (!claw.providerServerId) return claw
             const pid = claw.provider || 'hetzner'
-            const live = serverMapsByProvider.get(pid)?.get(
-                claw.providerServerId
-            )
+            const provider = providerRegistry.getProvider(pid)
+            if (!provider) return claw
+
+            let live: ServerStatus | undefined
+            try {
+                live = await provider.getServer(
+                    claw.providerServerId,
+                    claw.location || undefined
+                )
+            } catch (error) {
+                console.error(`syncClawServers ${pid}`, error)
+                return claw
+            }
             if (!live) return claw
 
             if (claw.status === clawStatus.configuring) {

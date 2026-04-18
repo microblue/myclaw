@@ -166,9 +166,34 @@ class LightsailProvider implements CloudProvider {
         }
     }
 
-    async getServer(serverId: string): Promise<ServerStatus> {
+    // Lightsail instances live in one region and any API call against
+    // them must use a client pointed at that region. Callers pass the
+    // locationId (= AWS region) so we can pick the right client. When
+    // they can't supply it (e.g. legacy call sites), fall back to the
+    // default client — that matches the old behaviour.
+    private regionClients = new Map<string, LightsailClient>()
+
+    private clientFor(locationId?: string): LightsailClient {
+        if (!locationId) return this.client
+        const cached = this.regionClients.get(locationId)
+        if (cached) return cached
+        const c = new LightsailClient({
+            region: locationId,
+            credentials: {
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+            }
+        })
+        this.regionClients.set(locationId, c)
+        return c
+    }
+
+    async getServer(
+        serverId: string,
+        locationId?: string
+    ): Promise<ServerStatus> {
         const command = new GetInstanceCommand({ instanceName: serverId })
-        const response = await this.client.send(command)
+        const response = await this.clientFor(locationId).send(command)
         const instance = response.instance
 
         if (!instance) {
@@ -190,7 +215,7 @@ class LightsailProvider implements CloudProvider {
     async getServers(): Promise<Map<string, ServerStatus>> {
         const command = new GetInstancesCommand({})
         const response = await this.client.send(command)
-        
+
         const result = new Map<string, ServerStatus>()
         for (const instance of response.instances || []) {
             if (instance.name) {
@@ -209,29 +234,39 @@ class LightsailProvider implements CloudProvider {
         return result
     }
 
-    async startServer(serverId: string): Promise<void> {
-        await this.client.send(new StartInstanceCommand({ instanceName: serverId }))
+    async startServer(serverId: string, locationId?: string): Promise<void> {
+        await this.clientFor(locationId).send(
+            new StartInstanceCommand({ instanceName: serverId })
+        )
     }
 
-    async stopServer(serverId: string): Promise<void> {
-        await this.client.send(new StopInstanceCommand({ instanceName: serverId }))
+    async stopServer(serverId: string, locationId?: string): Promise<void> {
+        await this.clientFor(locationId).send(
+            new StopInstanceCommand({ instanceName: serverId })
+        )
     }
 
-    async restartServer(serverId: string): Promise<void> {
-        await this.client.send(new RebootInstanceCommand({ instanceName: serverId }))
+    async restartServer(
+        serverId: string,
+        locationId?: string
+    ): Promise<void> {
+        await this.clientFor(locationId).send(
+            new RebootInstanceCommand({ instanceName: serverId })
+        )
     }
 
-    async deleteServer(serverId: string): Promise<void> {
-        // Release static IP first
+    async deleteServer(serverId: string, locationId?: string): Promise<void> {
+        const client = this.clientFor(locationId)
+        // Release static IP first (ignore if it doesn't exist)
         try {
-            await this.client.send(new ReleaseStaticIpCommand({
-                staticIpName: `${serverId}-ip`
-            }))
-        } catch (e) {
-            // Ignore if IP doesn't exist
+            await client.send(
+                new ReleaseStaticIpCommand({ staticIpName: `${serverId}-ip` })
+            )
+        } catch (_) {
+            /* ignore */
         }
-        
-        await this.client.send(new DeleteInstanceCommand({ instanceName: serverId }))
+
+        await client.send(new DeleteInstanceCommand({ instanceName: serverId }))
     }
 
     async getPlans(): Promise<ServerPlan[]> {

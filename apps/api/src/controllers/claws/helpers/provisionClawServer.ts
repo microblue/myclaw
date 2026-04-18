@@ -124,7 +124,8 @@ const provisionClawServer = async ({
         void pollForRunning({
             provider,
             clawId,
-            serverId: server.serverId
+            serverId: server.serverId,
+            locationId: claw.location || undefined
         })
 
         if (
@@ -171,19 +172,21 @@ const POLL_MAX_MS = 5 * 60 * 1000
 const pollForRunning = async ({
     provider,
     clawId,
-    serverId
+    serverId,
+    locationId
 }: {
     provider: NonNullable<
         ReturnType<typeof providerRegistry.getProvider>
     >
     clawId: string
     serverId: string
+    locationId?: string
 }): Promise<void> => {
     const deadline = Date.now() + POLL_MAX_MS
     while (Date.now() < deadline) {
         await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
         try {
-            const live = await provider.getServer(serverId)
+            const live = await provider.getServer(serverId, locationId)
             if (live.status === clawStatus.running) {
                 await db
                     .update(claws)

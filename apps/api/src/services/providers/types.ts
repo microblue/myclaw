@@ -125,14 +125,17 @@ export interface CloudProvider {
     readonly providerName: string
     getProviderInfo(): ProviderInfo
 
-    // Server operations
+    // Server operations. locationId is optional for providers with a
+    // global API (Hetzner, DigitalOcean) but required in practice for
+    // Lightsail where every instance lives in a single region and the
+    // AWS SDK client has to be pointed at that region.
     createServer(options: CreateServerOptions): Promise<CreateServerResult>
-    getServer(serverId: string): Promise<ServerStatus>
+    getServer(serverId: string, locationId?: string): Promise<ServerStatus>
     getServers(): Promise<Map<string, ServerStatus>>
-    startServer(serverId: string): Promise<void>
-    stopServer(serverId: string): Promise<void>
-    restartServer(serverId: string): Promise<void>
-    deleteServer(serverId: string): Promise<void>
+    startServer(serverId: string, locationId?: string): Promise<void>
+    stopServer(serverId: string, locationId?: string): Promise<void>
+    restartServer(serverId: string, locationId?: string): Promise<void>
+    deleteServer(serverId: string, locationId?: string): Promise<void>
 
     // Plan and location info
     getPlans(): Promise<ServerPlan[]>

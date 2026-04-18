@@ -12,6 +12,7 @@ import cloudflare from '@/services/cloudflare'
 
 type CleanupOptions = ClawCleanupData & {
     provider?: string | null
+    location?: string | null
 }
 
 const cleanupClaw = async (
@@ -54,7 +55,10 @@ const cleanupClaw = async (
             : Promise.resolve(),
         claw.providerServerId && provider
             ? provider
-                  .deleteServer(claw.providerServerId)
+                  .deleteServer(
+                      claw.providerServerId,
+                      claw.location || undefined
+                  )
                   .catch((err) =>
                       console.error('cleanupClaw deleteServer', err)
                   )

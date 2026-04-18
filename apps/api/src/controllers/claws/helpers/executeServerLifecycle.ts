@@ -37,7 +37,10 @@ const executeServerLifecycle = async (
         const providerId = claw.provider || 'hetzner'
         const provider = providerRegistry.getProvider(providerId)
         if (!provider) throw new Error(`provider ${providerId} unavailable`)
-        await provider[config.providerMethod](claw.providerServerId!)
+        await provider[config.providerMethod](
+            claw.providerServerId!,
+            claw.location || undefined
+        )
         updateCachedServerStatus(
             claw.providerServerId!,
             config.transitionalStatus
