@@ -83,7 +83,7 @@ class LightsailProvider implements CloudProvider {
                 'ca-central-1', 'sa-east-1'
             ],
             features: {
-                volumes: true,
+                volumes: false,
                 snapshots: true,
                 backups: true,
                 ipv6: true,
