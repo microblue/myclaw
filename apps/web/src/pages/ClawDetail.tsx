@@ -2,242 +2,294 @@ import type { FC } from 'react'
 import type { Claw } from '@/ts/Interfaces'
 
 import { useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { clawStatus } from '@openclaw/shared'
-import { ROUTES, DASHBOARD_TABS } from '@/lib'
-import { usePreferencesStore, useDashboardStore } from '@/lib/store'
+import { ROUTES } from '@/lib'
 import { useToast } from '@/hooks'
 import useClaw from '@/hooks/useClaws/useClaw'
 import useStartClaw from '@/hooks/useClaws/useStartClaw'
 import useStopClaw from '@/hooks/useClaws/useStopClaw'
 import useRestartClaw from '@/hooks/useClaws/useRestartClaw'
 import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
-import { Button } from '@/components/ui'
+import AppShell from '@/components/layout/AppShell'
+import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
+import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
+import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
+import {
+    Button,
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator
+} from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
+import {
+    ArrowSquareOutIcon,
+    DotsThreeIcon
+} from '@phosphor-icons/react'
 
-// Phase 1 "Plan C" monitoring: no provider metrics SDK yet. Shows the
-// status the DB already has plus a derived uptime and the connection
-// bits a user needs. Logs / terminal / diagnostics stay on the
-// dashboard for now; this page is the overview.
+type TabId = 'overview' | 'logs' | 'terminal' | 'diagnostics'
+
+const TABS: { id: TabId; label: string }[] = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'logs', label: 'Logs' },
+    { id: 'terminal', label: 'Terminal' },
+    { id: 'diagnostics', label: 'Diagnostics' }
+]
 
 const ClawDetail: FC = () => {
     const { id = '' } = useParams<{ id: string }>()
     const navigate = useNavigate()
     const toast = useToast()
+    const [searchParams, setSearchParams] = useSearchParams()
+
     const { data: claw, isLoading, error } = useClaw(id)
 
-    const { setDashboardTab } = usePreferencesStore()
-    const { setSelectedClawId, setChatSelectedAgent } = useDashboardStore()
+    const tab: TabId =
+        (searchParams.get('tab') as TabId | null) || 'overview'
+
+    const setTab = (next: TabId) => {
+        const params = new URLSearchParams(searchParams)
+        params.set('tab', next)
+        setSearchParams(params, { replace: true })
+    }
 
     const start = useStartClaw()
     const stop = useStopClaw()
     const restart = useRestartClaw()
     const del = useDeleteClaw()
 
+    const openSubdomain = () => {
+        if (!claw?.subdomain) {
+            toast.error('This instance has no subdomain yet.')
+            return
+        }
+        window.open(`https://${claw.subdomain}.myclaw.one`, '_blank', 'noopener')
+    }
+
+    const wrap = (label: string, fn: () => Promise<unknown>) => async () => {
+        try {
+            await fn()
+            toast.success(label)
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : `${label} failed`)
+        }
+    }
+
     if (isLoading) {
         return (
-            <div className='text-muted-foreground p-10 text-center text-sm'>
-                Loading instance…
-            </div>
+            <AppShell>
+                <div className='flex h-[calc(100vh-3.5rem)] items-center justify-center'>
+                    <div className='h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent opacity-50' />
+                </div>
+            </AppShell>
         )
     }
     if (error || !claw) {
         return (
-            <div className='mx-auto max-w-lg p-10 text-center'>
-                <p className='text-destructive text-sm'>
-                    Could not load this instance.
-                </p>
-                <Button
-                    className='mt-4'
-                    variant='outline'
-                    onClick={() => navigate(ROUTES.CLAWS)}
-                >
-                    Back to dashboard
-                </Button>
-            </div>
-        )
-    }
-
-    return (
-        <ClawDetailView
-            claw={claw}
-            onBack={() => navigate(ROUTES.CLAWS)}
-            onOpenChat={() => {
-                setSelectedClawId(claw.id)
-                setChatSelectedAgent(null)
-                setDashboardTab(DASHBOARD_TABS.CHAT)
-                navigate(ROUTES.CLAWS)
-            }}
-            onStart={async () => {
-                try {
-                    await start.mutateAsync(claw.id)
-                    toast.success(`Starting ${claw.name}`)
-                } catch (e) {
-                    toast.error(e instanceof Error ? e.message : 'Start failed')
-                }
-            }}
-            onStop={async () => {
-                try {
-                    await stop.mutateAsync(claw.id)
-                    toast.success(`Pausing ${claw.name}`)
-                } catch (e) {
-                    toast.error(e instanceof Error ? e.message : 'Pause failed')
-                }
-            }}
-            onRestart={async () => {
-                try {
-                    await restart.mutateAsync(claw.id)
-                    toast.success(`Restarting ${claw.name}`)
-                } catch (e) {
-                    toast.error(
-                        e instanceof Error ? e.message : 'Restart failed'
-                    )
-                }
-            }}
-            onDelete={async () => {
-                if (!window.confirm(`Delete ${claw.name}?`)) return
-                try {
-                    await del.mutateAsync(claw.id)
-                    toast.success(`Deletion scheduled`)
-                    navigate(ROUTES.CLAWS)
-                } catch (e) {
-                    toast.error(
-                        e instanceof Error ? e.message : 'Delete failed'
-                    )
-                }
-            }}
-        />
-    )
-}
-
-type ViewProps = {
-    claw: Claw
-    onBack: () => void
-    onOpenChat: () => void
-    onStart: () => void
-    onStop: () => void
-    onRestart: () => void
-    onDelete: () => void
-}
-
-const ClawDetailView: FC<ViewProps> = ({
-    claw,
-    onBack,
-    onOpenChat,
-    onStart,
-    onStop,
-    onRestart,
-    onDelete
-}) => {
-    const clawType = getClawType(claw.clawType || 'openclaw')
-    const isRunning = claw.status === clawStatus.running
-    const isStopped = claw.status === clawStatus.stopped
-
-    const uptime = useMemo(() => formatUptime(claw.createdAt), [claw.createdAt])
-
-    return (
-        <div className='bg-background min-h-screen'>
-            <header className='border-b'>
-                <div className='mx-auto flex max-w-5xl items-center justify-between px-6 py-4'>
-                    <button
-                        type='button'
-                        onClick={onBack}
-                        className='text-muted-foreground hover:text-foreground text-sm'
-                    >
-                        ← Back to dashboard
-                    </button>
-                    <div className='flex gap-2'>
-                        <Button onClick={onOpenChat} disabled={!isRunning}>
-                            Open Chat
-                        </Button>
-                        {isStopped ? (
-                            <Button variant='outline' onClick={onStart}>
-                                Start
-                            </Button>
-                        ) : (
-                            <Button
-                                variant='outline'
-                                onClick={onStop}
-                                disabled={!isRunning}
-                            >
-                                Pause
-                            </Button>
-                        )}
-                        <Button
-                            variant='outline'
-                            onClick={onRestart}
-                            disabled={!isRunning}
-                        >
-                            Restart
-                        </Button>
-                    </div>
-                </div>
-            </header>
-
-            <main className='mx-auto max-w-5xl space-y-8 px-6 py-8'>
-                <section className='bg-card rounded-xl border p-6'>
-                    <div className='flex items-center gap-3'>
-                        <StatusDot status={claw.status} />
-                        <h1 className='text-2xl font-semibold'>{claw.name}</h1>
-                        <span className='bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs'>
-                            {clawType?.name || 'OpenClaw'}
-                        </span>
-                    </div>
-                    <p className='text-muted-foreground mt-1 text-sm capitalize'>
-                        {claw.status} · uptime {uptime}
-                    </p>
-                </section>
-
-                <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-                    <StatCard label='Provider' value={claw.provider || '—'} />
-                    <StatCard
-                        label='Plan'
-                        value={(claw.planId || '—').toUpperCase()}
-                    />
-                    <StatCard label='Region' value={claw.location || '—'} />
-                    <StatCard label='IP' value={claw.ip || '—'} mono />
-                </section>
-
-                <section className='bg-card space-y-4 rounded-xl border p-6'>
-                    <h2 className='font-semibold'>Connection</h2>
-                    <dl className='space-y-2 text-sm'>
-                        <Row
-                            label='Subdomain'
-                            value={
-                                claw.subdomain
-                                    ? `${claw.subdomain}.myclaw.one`
-                                    : '—'
-                            }
-                        />
-                        <Row label='SSH' value={claw.ip ? `root@${claw.ip}` : '—'} mono />
-                    </dl>
-                    <p className='text-muted-foreground pt-2 text-xs'>
-                        Detailed metrics (CPU, memory, network) land in a later
-                        phase — this view currently shows the status the
-                        control plane has.
-                    </p>
-                </section>
-
-                <section className='border-destructive/40 rounded-xl border p-6'>
-                    <h2 className='text-destructive font-semibold'>
-                        Danger zone
-                    </h2>
-                    <p className='text-muted-foreground mt-1 text-sm'>
-                        Deleting schedules the instance for removal. You can
-                        undo this within 24 hours.
+            <AppShell>
+                <div className='mx-auto max-w-lg p-10 text-center'>
+                    <p className='text-destructive text-sm'>
+                        Could not load this instance.
                     </p>
                     <Button
                         className='mt-4'
-                        variant='destructive'
-                        onClick={onDelete}
+                        variant='outline'
+                        onClick={() => navigate(ROUTES.CLAWS)}
                     >
-                        Delete instance
+                        Back to instances
                     </Button>
-                </section>
-            </main>
+                </div>
+            </AppShell>
+        )
+    }
+
+    const isRunning = claw.status === clawStatus.running
+    const isStopped = claw.status === clawStatus.stopped
+
+    const actions = (
+        <div className='flex items-center gap-2'>
+            <Button
+                size='sm'
+                onClick={openSubdomain}
+                disabled={!isRunning || !claw.subdomain}
+            >
+                <ArrowSquareOutIcon className='mr-1.5 h-4 w-4' weight='bold' />
+                Open chat
+            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant='outline' size='sm' aria-label='More'>
+                        <DotsThreeIcon className='h-4 w-4' weight='bold' />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end'>
+                    {isStopped ? (
+                        <DropdownMenuItem
+                            onClick={wrap('Starting', () =>
+                                start.mutateAsync(claw.id)
+                            )}
+                        >
+                            Start
+                        </DropdownMenuItem>
+                    ) : (
+                        <DropdownMenuItem
+                            onClick={wrap('Pausing', () =>
+                                stop.mutateAsync(claw.id)
+                            )}
+                            disabled={!isRunning}
+                        >
+                            Pause
+                        </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem
+                        onClick={wrap('Restarting', () =>
+                            restart.mutateAsync(claw.id)
+                        )}
+                        disabled={!isRunning}
+                    >
+                        Restart
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        onClick={async () => {
+                            if (!window.confirm(`Delete ${claw.name}?`)) return
+                            try {
+                                await del.mutateAsync(claw.id)
+                                toast.success('Deletion scheduled')
+                                navigate(ROUTES.CLAWS)
+                            } catch (e) {
+                                toast.error(
+                                    e instanceof Error
+                                        ? e.message
+                                        : 'Delete failed'
+                                )
+                            }
+                        }}
+                        className='text-destructive focus:text-destructive'
+                    >
+                        Delete
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+    )
+
+    return (
+        <AppShell pageActions={actions}>
+            <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
+                <DetailHeader claw={claw} />
+
+                <div className='border-border -mx-4 mt-6 overflow-x-auto border-b px-4 md:-mx-6 md:px-6'>
+                    <div className='flex gap-6'>
+                        {TABS.map((t) => (
+                            <button
+                                key={t.id}
+                                type='button'
+                                onClick={() => setTab(t.id)}
+                                className={`border-b-2 py-3 text-sm font-medium transition-colors ${
+                                    tab === t.id
+                                        ? 'border-primary text-foreground'
+                                        : 'text-muted-foreground hover:text-foreground border-transparent'
+                                }`}
+                            >
+                                {t.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className='mt-6'>
+                    {tab === 'overview' && <OverviewTab claw={claw} />}
+                    {tab === 'logs' && (
+                        <div className='bg-card rounded-lg border p-4'>
+                            <ClawLogsContent
+                                clawId={claw.id}
+                                enabled
+                                embedded
+                            />
+                        </div>
+                    )}
+                    {tab === 'terminal' && (
+                        <div className='bg-card rounded-lg border p-4'>
+                            <ClawTerminalContent
+                                clawId={claw.id}
+                                enabled
+                            />
+                        </div>
+                    )}
+                    {tab === 'diagnostics' && (
+                        <div className='bg-card rounded-lg border p-4'>
+                            <ClawDiagnosticsContent
+                                clawId={claw.id}
+                                enabled
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+        </AppShell>
+    )
+}
+
+const DetailHeader: FC<{ claw: Claw }> = ({ claw }) => {
+    const clawType = getClawType(claw.clawType || 'openclaw')
+    const uptime = useMemo(() => formatUptime(claw.createdAt), [claw.createdAt])
+    return (
+        <div>
+            <div className='flex items-center gap-3'>
+                <StatusDot status={claw.status} />
+                <h1 className='text-xl font-semibold md:text-2xl'>
+                    {claw.name}
+                </h1>
+                <span className='bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs'>
+                    {clawType?.name || 'OpenClaw'}
+                </span>
+            </div>
+            <p className='text-muted-foreground mt-1 text-sm capitalize'>
+                {claw.status} · uptime {uptime}
+            </p>
         </div>
     )
 }
+
+const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
+    <div className='space-y-6'>
+        <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+            <StatCard label='Provider' value={claw.provider || '—'} />
+            <StatCard
+                label='Plan'
+                value={(claw.planId || '—').toUpperCase()}
+            />
+            <StatCard label='Region' value={claw.location || '—'} />
+            <StatCard label='IP' value={claw.ip || '—'} mono />
+        </section>
+
+        <section className='bg-card space-y-4 rounded-lg border p-6'>
+            <h2 className='font-semibold'>Connection</h2>
+            <dl className='space-y-2 text-sm'>
+                <Row
+                    label='Subdomain'
+                    value={
+                        claw.subdomain
+                            ? `${claw.subdomain}.myclaw.one`
+                            : '—'
+                    }
+                />
+                <Row
+                    label='SSH'
+                    value={claw.ip ? `root@${claw.ip}` : '—'}
+                    mono
+                />
+            </dl>
+            <p className='text-muted-foreground pt-2 text-xs'>
+                Detailed metrics (CPU, memory, network) land in a later phase
+                — this view currently shows the status the control plane has.
+            </p>
+        </section>
+    </div>
+)
 
 const StatusDot: FC<{ status: string }> = ({ status }) => {
     const tone =
@@ -273,9 +325,7 @@ const Row: FC<{ label: string; value: string; mono?: boolean }> = ({
 }) => (
     <div className='flex justify-between'>
         <dt className='text-muted-foreground'>{label}</dt>
-        <dd
-            className={`text-foreground ${mono ? 'font-mono text-xs' : ''}`}
-        >
+        <dd className={`text-foreground ${mono ? 'font-mono text-xs' : ''}`}>
             {value}
         </dd>
     </div>
