@@ -877,6 +877,7 @@ export interface AIModelOption {
 
 export interface PurchaseClawData {
     name: string
+    clawType?: string  // 'openclaw' default; reserved: zeroclaw, picoclaw, hermes, nanoclaw
     planId: string
     location: string
     password?: string

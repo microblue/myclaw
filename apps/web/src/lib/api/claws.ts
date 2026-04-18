@@ -57,6 +57,8 @@ const claws = {
         client.post<PurchaseClawResponse>(API_PATHS.CLAWS.PURCHASE, data, {
             headers: getReferralHeaders()
         }),
+    suggestClawName: () =>
+        client.get<{ name: string }>(API_PATHS.CLAWS.SUGGEST_NAME),
     startClaw: (id: string) => client.post<Claw>(API_PATHS.CLAWS.START(id)),
     stopClaw: (id: string) => client.post<Claw>(API_PATHS.CLAWS.STOP(id)),
     restartClaw: (id: string) => client.post<Claw>(API_PATHS.CLAWS.RESTART(id)),

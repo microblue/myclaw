@@ -10,10 +10,20 @@ const API_PATHS = {
         VOLUME_PRICING: '/plans/volume-pricing',
         AVAILABILITY: '/plans/availability'
     },
+    PROVIDERS: {
+        BASE: '/providers',
+        byId: (id: string) => `/providers/${id}`,
+        PLANS: (id: string) => `/providers/${id}/plans`,
+        CURATED_PLANS: (id: string) => `/providers/${id}/curated-plans`,
+        LOCATIONS: (id: string) => `/providers/${id}/locations`,
+        AVAILABILITY: (id: string) => `/providers/${id}/availability`,
+        VOLUME_PRICING: (id: string) => `/providers/${id}/volume-pricing`
+    },
     CLAWS: {
         BASE: '/claws',
         ADMIN: '/claws/admin',
         PURCHASE: '/claws/purchase',
+        SUGGEST_NAME: '/claws/suggest-name',
         byId: (id: string) => `/claws/${id}`,
         PENDING: (id: string) => `/claws/pending/${id}`,
         SYNC: (id: string) => `/claws/${id}/sync`,
