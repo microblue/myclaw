@@ -6,8 +6,6 @@ import useVersionsStore from '@/lib/store/useVersionsStore'
 import useVariablesStore from '@/lib/store/useVariablesStore'
 import useClawHubStore from '@/lib/store/useClawHubStore'
 import useTerminalStore from '@/lib/store/useTerminalStore'
-import useDashboardStore from '@/lib/store/useDashboardStore'
-import usePlaygroundDetailTabStore from '@/lib/store/usePlaygroundDetailTabStore'
 
 export {
     useUIStore,
@@ -17,7 +15,5 @@ export {
     useVersionsStore,
     useVariablesStore,
     useClawHubStore,
-    useTerminalStore,
-    useDashboardStore,
-    usePlaygroundDetailTabStore
+    useTerminalStore
 }

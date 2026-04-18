@@ -96,27 +96,9 @@ import {
     GITHUB_STARS_QUERY_KEY
 } from '@/hooks/useGitHubStars'
 
-import {
-    useClawAgents,
-    useAllClawAgents,
-    usePlaygroundGraph,
-    PLAYGROUND_AGENTS_QUERY_KEY,
-    CLAW_CHANNELS_QUERY_KEY,
-    WHATSAPP_PAIR_INITIAL_QUERY_KEY,
-    WHATSAPP_PAIR_STATUS_QUERY_KEY,
-    CLAW_ENV_QUERY_KEY,
-    AGENT_CONFIG_QUERY_KEY,
-    CLAW_BINDINGS_QUERY_KEY
-} from '@/hooks/usePlayground'
-
-import useAgentChat from '@/hooks/useAgentChat/useAgentChat'
-import useClawCardActions from '@/hooks/useClawCardActions'
-import useGatewayState from '@/hooks/useGatewayState'
-import useScrollToBottom from '@/hooks/useScrollToBottom'
-import useSpeechRecognition from '@/hooks/useSpeechRecognition'
-import useTextToSpeech from '@/hooks/useTextToSpeech'
 import useDebouncedValue from '@/hooks/useDebouncedValue'
 import useNetworkStatus from '@/hooks/useNetworkStatus'
+import useScrollToBottom from '@/hooks/useScrollToBottom'
 import useThemeEffect from '@/hooks/useThemeEffect'
 import useLanguageEffect from '@/hooks/useLanguageEffect'
 import useAppVersion from '@/hooks/useAppVersion'
@@ -125,14 +107,12 @@ import useRefer from '@/hooks/useRefer'
 import useRoutePrefetch from '@/hooks/useRoutePrefetch'
 import useInfiniteScrollObserver from '@/hooks/useInfiniteScrollObserver'
 import usePaginationState from '@/hooks/usePaginationState'
-import useURLStateRestoration from '@/hooks/useURLStateRestoration'
 import useClawSettingsForm from '@/hooks/useClawSettingsForm'
 import useLinkedProvider from '@/hooks/useLinkedProvider'
 import useAgentNameValidation from '@/hooks/useAgentNameValidation'
 import createApiMutation from '@/hooks/createApiMutation'
 import useToast from '@/hooks/useToast'
 import useCopyWithFeedback from '@/hooks/useCopyWithFeedback'
-import useCreateClawForm from '@/hooks/useCreateClawForm'
 
 export {
     ADMIN_USERS_QUERY_KEY,
@@ -203,24 +183,9 @@ export {
     useGitHubStars,
     GITHUB_REPO_URL,
     GITHUB_STARS_QUERY_KEY,
-    useClawAgents,
-    useAllClawAgents,
-    usePlaygroundGraph,
-    PLAYGROUND_AGENTS_QUERY_KEY,
-    CLAW_CHANNELS_QUERY_KEY,
-    WHATSAPP_PAIR_INITIAL_QUERY_KEY,
-    WHATSAPP_PAIR_STATUS_QUERY_KEY,
-    CLAW_ENV_QUERY_KEY,
-    AGENT_CONFIG_QUERY_KEY,
-    CLAW_BINDINGS_QUERY_KEY,
-    useAgentChat,
-    useClawCardActions,
     useDebouncedValue,
     useNetworkStatus,
-    useGatewayState,
     useScrollToBottom,
-    useSpeechRecognition,
-    useTextToSpeech,
     useThemeEffect,
     useLanguageEffect,
     useAppVersion,
@@ -229,14 +194,12 @@ export {
     useRoutePrefetch,
     useInfiniteScrollObserver,
     usePaginationState,
-    useURLStateRestoration,
     useClawSettingsForm,
     useLinkedProvider,
     useAgentNameValidation,
     createApiMutation,
     useToast,
     useCopyWithFeedback,
-    useCreateClawForm,
     useProviders,
     useProviderPlans,
     useProviderLocations,
