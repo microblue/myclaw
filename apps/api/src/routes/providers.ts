@@ -9,6 +9,7 @@ import {
     getProviders,
     getProviderInfo,
     getProviderPlans,
+    getProviderCuratedPlans,
     getProviderLocations,
     getProviderAvailability,
     getProviderVolumePricing
@@ -22,6 +23,7 @@ providersRoutes.get('/', getProviders)
 // Provider details and resources
 providersRoutes.get('/:providerId', getProviderInfo)
 providersRoutes.get('/:providerId/plans', getProviderPlans)
+providersRoutes.get('/:providerId/curated-plans', getProviderCuratedPlans)
 providersRoutes.get('/:providerId/locations', getProviderLocations)
 providersRoutes.get('/:providerId/availability', getProviderAvailability)
 providersRoutes.get('/:providerId/volume-pricing', getProviderVolumePricing)

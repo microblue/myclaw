@@ -8,6 +8,7 @@ import type { Context } from 'hono'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 import { providerRegistry } from '@/services/providers'
+import { getCuratedPlanIds } from '@/services/providers/curatedPlans'
 
 /**
  * GET /providers
@@ -58,6 +59,43 @@ export const getProviderPlans = async (c: Context) => {
         return ok(c, plans, t('api.plansRetrieved'))
     } catch (error) {
         console.error(`Failed to get plans for ${providerId}:`, error)
+        return fail(c, t('api.failedToGetPlans'), 500)
+    }
+}
+
+/**
+ * GET /providers/:providerId/curated-plans
+ * Return the ~12 handpicked plans for the provider, in display order.
+ * Falls back to the full plan list if no curation exists (unlikely —
+ * every registered provider has a whitelist).
+ */
+export const getProviderCuratedPlans = async (c: Context) => {
+    const providerId = c.req.param('providerId')
+    if (!providerId) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
+    const provider = providerRegistry.getProvider(providerId)
+    if (!provider) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
+    try {
+        const allPlans = await provider.getPlans()
+        const curatedIds = getCuratedPlanIds(providerId)
+
+        if (curatedIds.length === 0) {
+            return ok(c, allPlans, t('api.plansRetrieved'))
+        }
+
+        const byId = new Map(allPlans.map((p) => [p.id, p]))
+        const curated = curatedIds
+            .map((id) => byId.get(id))
+            .filter((p): p is NonNullable<typeof p> => Boolean(p))
+
+        return ok(c, curated, t('api.plansRetrieved'))
+    } catch (error) {
+        console.error(`Failed to get curated plans for ${providerId}:`, error)
         return fail(c, t('api.failedToGetPlans'), 500)
     }
 }
