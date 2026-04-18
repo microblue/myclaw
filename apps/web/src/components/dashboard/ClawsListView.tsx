@@ -84,21 +84,16 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
     }
 
     return (
-        <div className='mx-auto w-full max-w-5xl px-6 py-8'>
-            <div className='mb-6 flex items-center justify-between'>
-                <div>
-                    <h2 className='text-2xl font-semibold'>
-                        Welcome back{displayName ? `, ${displayName}` : ''}
-                    </h2>
-                    <p className='text-muted-foreground mt-1 text-sm'>
-                        You have {claws.length} {claws.length === 1 ? 'instance' : 'instances'}.
-                    </p>
-                </div>
-                <Button onClick={() => navigate(ROUTES.NEW_CLAW)}>
-                    Deploy new
-                </Button>
+        <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
+            <div className='mb-6'>
+                <h2 className='text-xl font-semibold md:text-2xl'>
+                    Welcome back{displayName ? `, ${displayName}` : ''}
+                </h2>
+                <p className='text-muted-foreground mt-1 text-sm'>
+                    You have {claws.length} {claws.length === 1 ? 'instance' : 'instances'}.
+                </p>
             </div>
-            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'>
+            <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
                 {claws.map((claw) => (
                     <ClawInstanceCard
                         key={claw.id}
