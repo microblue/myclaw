@@ -10,7 +10,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Lint (api + web) — blocking
+        run: |
+          pnpm --filter api lint
+          pnpm --filter web lint
+      - name: Typecheck web — blocking
+        run: pnpm --filter web typecheck
+      - name: Typecheck api — advisory (see task #10 for outstanding errors)
+        continue-on-error: true
+        run: pnpm --filter api typecheck
+
   deploy:
+    needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment:
