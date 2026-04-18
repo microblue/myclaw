@@ -2,16 +2,9 @@ import type { FC } from 'react'
 import type { Claw } from '@/ts/Interfaces'
 
 import { clawStatus } from '@openclaw/shared'
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator
-} from '@/components/ui'
+import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
-import { CircleNotchIcon } from '@phosphor-icons/react'
+import { CircleNotchIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
 
 const TRANSIENT_STATUSES = new Set<string>([
     clawStatus.creating,
@@ -33,17 +26,14 @@ const TRANSIENT_LABELS: Record<string, string> = {
     [clawStatus.rebuilding]: 'Rebuilding…'
 }
 
-// Big card replacing the old table row. Designed for users who only
-// have a handful of instances — the page should feel populated.
+// Big card for the instance list. Two actions only: Open Chat (jumps
+// straight to the OpenClaw UI in a new tab) and clicking anywhere on
+// the card (or the name) to go to the /claw/:id management page.
+// Start/Pause/Restart/Delete/Diagnostics all live on the detail page.
 
 type Props = {
     claw: Claw
     onOpenChat: (claw: Claw) => void
-    onStart: (claw: Claw) => void
-    onStop: (claw: Claw) => void
-    onRestart: (claw: Claw) => void
-    onDelete: (claw: Claw) => void
-    onDiagnose: (claw: Claw) => void
     onViewDetails: (claw: Claw) => void
 }
 
@@ -62,24 +52,30 @@ const statusTone = (status: string): string => {
     return 'bg-muted'
 }
 
-const ClawInstanceCard: FC<Props> = ({
-    claw,
-    onOpenChat,
-    onStart,
-    onStop,
-    onRestart,
-    onDelete,
-    onDiagnose,
-    onViewDetails
-}) => {
+const ClawInstanceCard: FC<Props> = ({ claw, onOpenChat, onViewDetails }) => {
     const clawType = getClawType(claw.clawType || 'openclaw')
     const isRunning = claw.status === clawStatus.running
-    const isStopped = claw.status === clawStatus.stopped
     const isTransient = TRANSIENT_STATUSES.has(claw.status)
     const transientLabel = TRANSIENT_LABELS[claw.status]
 
+    // Click anywhere on the card body (outside the primary Open Chat
+    // button) navigates to the detail page — the card is essentially a
+    // big link with one escape-hatch action.
+    const handleCardClick = () => onViewDetails(claw)
+
     return (
-        <div className='bg-card flex flex-col gap-4 rounded-xl border p-6 shadow-sm transition-shadow hover:shadow-md'>
+        <div
+            role='button'
+            tabIndex={0}
+            onClick={handleCardClick}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleCardClick()
+                }
+            }}
+            className='bg-card flex flex-col gap-4 rounded-xl border p-6 text-left shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer'
+        >
             <div className='flex items-start justify-between'>
                 <div className='min-w-0'>
                     <div className='flex items-center gap-2'>
@@ -95,13 +91,9 @@ const ClawInstanceCard: FC<Props> = ({
                                 aria-hidden
                             />
                         )}
-                        <button
-                            type='button'
-                            onClick={() => onViewDetails(claw)}
-                            className='truncate text-lg font-semibold hover:underline'
-                        >
+                        <span className='truncate text-lg font-semibold'>
                             {claw.name}
-                        </button>
+                        </span>
                     </div>
                     <p className='text-muted-foreground mt-1 text-xs capitalize'>
                         {transientLabel || claw.status}
@@ -131,54 +123,21 @@ const ClawInstanceCard: FC<Props> = ({
                 </dd>
             </dl>
 
-            <div className='mt-auto flex items-center gap-2 pt-2'>
+            <div className='mt-auto pt-2'>
                 <Button
-                    className='flex-1'
-                    onClick={() => onOpenChat(claw)}
+                    className='w-full'
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onOpenChat(claw)
+                    }}
                     disabled={!isRunning}
                 >
+                    <ArrowSquareOutIcon
+                        className='mr-1.5 h-4 w-4'
+                        weight='bold'
+                    />
                     Open Chat
                 </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant='outline' size='icon' aria-label='More'>
-                            ⋯
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                        {isStopped ? (
-                            <DropdownMenuItem onClick={() => onStart(claw)}>
-                                Start
-                            </DropdownMenuItem>
-                        ) : (
-                            <DropdownMenuItem
-                                onClick={() => onStop(claw)}
-                                disabled={!isRunning}
-                            >
-                                Pause
-                            </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem
-                            onClick={() => onRestart(claw)}
-                            disabled={!isRunning}
-                        >
-                            Restart
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onViewDetails(claw)}>
-                            View details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDiagnose(claw)}>
-                            Diagnostics
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            onClick={() => onDelete(claw)}
-                            className='text-destructive focus:text-destructive'
-                        >
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
         </div>
     )

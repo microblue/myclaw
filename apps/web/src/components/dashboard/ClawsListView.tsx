@@ -4,10 +4,6 @@ import type { Claw } from '@/ts/Interfaces'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/lib'
 import { useToast } from '@/hooks'
-import useStartClaw from '@/hooks/useClaws/useStartClaw'
-import useStopClaw from '@/hooks/useClaws/useStopClaw'
-import useRestartClaw from '@/hooks/useClaws/useRestartClaw'
-import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
 import { Button } from '@/components/ui'
 import ClawInstanceCard from '@/components/dashboard/ClawInstanceCard'
 
@@ -20,49 +16,25 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
     const navigate = useNavigate()
     const toast = useToast()
 
-    const startMutation = useStartClaw()
-    const stopMutation = useStopClaw()
-    const restartMutation = useRestartClaw()
-    const deleteMutation = useDeleteClaw()
-
+    // Open Chat from the tile goes straight to the OpenClaw UI
+    // (authenticated via ?token=) in a new tab — the management
+    // buttons (Start/Pause/Restart/Delete/Diagnostics) live on the
+    // /claw/:id detail page the rest of the card opens.
     const handleOpenChat = (claw: Claw) => {
-        navigate(`/claw/${claw.id}`)
+        if (!claw.subdomain) {
+            toast.error('This instance has no subdomain yet.')
+            return
+        }
+        const base = `https://${claw.subdomain}.myclaw.one/`
+        const url = claw.gatewayToken
+            ? `${base}?token=${encodeURIComponent(claw.gatewayToken)}`
+            : base
+        window.open(url, '_blank', 'noopener')
     }
 
-    const wrap = (
-        label: string,
-        fn: (id: string) => Promise<unknown>
-    ) => async (claw: Claw) => {
-        try {
-            await fn(claw.id)
-            toast.success(`${label} ${claw.name}`)
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : `${label} failed`
-            toast.error(msg)
-        }
-    }
-
-    const handleStart = wrap('Starting', (id) => startMutation.mutateAsync(id))
-    const handleStop = wrap('Pausing', (id) => stopMutation.mutateAsync(id))
-    const handleRestart = wrap('Restarting', (id) =>
-        restartMutation.mutateAsync(id)
-    )
-    const handleDelete = async (claw: Claw) => {
-        if (!window.confirm(`Delete ${claw.name}? This can be undone for 24h.`)) return
-        try {
-            await deleteMutation.mutateAsync(claw.id)
-            toast.success(`Deletion scheduled for ${claw.name}`)
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Delete failed'
-            toast.error(msg)
-        }
-    }
     const handleViewDetails = (claw: Claw) => {
         navigate(`/claw/${claw.id}`)
     }
-    // Diagnose routes to the detail page for now; a dedicated
-    // diagnostics surface lives there in the site-wide redesign.
-    const handleDiagnose = handleViewDetails
 
     if (claws.length === 0) {
         return (
@@ -99,11 +71,6 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
                         key={claw.id}
                         claw={claw}
                         onOpenChat={handleOpenChat}
-                        onStart={handleStart}
-                        onStop={handleStop}
-                        onRestart={handleRestart}
-                        onDelete={handleDelete}
-                        onDiagnose={handleDiagnose}
                         onViewDetails={handleViewDetails}
                     />
                 ))}

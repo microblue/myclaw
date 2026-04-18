@@ -15,20 +15,10 @@ import AppShell from '@/components/layout/AppShell'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
 import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator
-} from '@/components/ui'
+import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
 import { useState } from 'react'
-import {
-    ArrowSquareOutIcon,
-    DotsThreeIcon
-} from '@phosphor-icons/react'
+import { ArrowSquareOutIcon } from '@phosphor-icons/react'
 
 type TabId = 'overview' | 'logs' | 'terminal' | 'diagnostics'
 
@@ -116,78 +106,62 @@ const ClawDetail: FC = () => {
     const isRunning = claw.status === clawStatus.running
     const isStopped = claw.status === clawStatus.stopped
 
-    const actions = (
-        <div className='flex items-center gap-2'>
+    const handleDelete = async () => {
+        if (!window.confirm(`Delete ${claw.name}?`)) return
+        try {
+            await del.mutateAsync(claw.id)
+            toast.success('Deletion scheduled')
+            navigate(ROUTES.CLAWS)
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Delete failed')
+        }
+    }
+
+    const actionBar = (
+        <div className='flex flex-wrap items-center gap-2'>
             <Button
-                size='sm'
                 onClick={openSubdomain}
                 disabled={!isRunning || !claw.subdomain}
             >
                 <ArrowSquareOutIcon className='mr-1.5 h-4 w-4' weight='bold' />
                 Open chat
             </Button>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant='outline' size='sm' aria-label='More'>
-                        <DotsThreeIcon className='h-4 w-4' weight='bold' />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                    {isStopped ? (
-                        <DropdownMenuItem
-                            onClick={wrap('Starting', () =>
-                                start.mutateAsync(claw.id)
-                            )}
-                        >
-                            Start
-                        </DropdownMenuItem>
-                    ) : (
-                        <DropdownMenuItem
-                            onClick={wrap('Pausing', () =>
-                                stop.mutateAsync(claw.id)
-                            )}
-                            disabled={!isRunning}
-                        >
-                            Pause
-                        </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem
-                        onClick={wrap('Restarting', () =>
-                            restart.mutateAsync(claw.id)
-                        )}
-                        disabled={!isRunning}
-                    >
-                        Restart
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        onClick={async () => {
-                            if (!window.confirm(`Delete ${claw.name}?`)) return
-                            try {
-                                await del.mutateAsync(claw.id)
-                                toast.success('Deletion scheduled')
-                                navigate(ROUTES.CLAWS)
-                            } catch (e) {
-                                toast.error(
-                                    e instanceof Error
-                                        ? e.message
-                                        : 'Delete failed'
-                                )
-                            }
-                        }}
-                        className='text-destructive focus:text-destructive'
-                    >
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            {isStopped ? (
+                <Button
+                    variant='outline'
+                    onClick={wrap('Starting', () => start.mutateAsync(claw.id))}
+                >
+                    Start
+                </Button>
+            ) : (
+                <Button
+                    variant='outline'
+                    onClick={wrap('Pausing', () => stop.mutateAsync(claw.id))}
+                    disabled={!isRunning}
+                >
+                    Pause
+                </Button>
+            )}
+            <Button
+                variant='outline'
+                onClick={wrap('Restarting', () => restart.mutateAsync(claw.id))}
+                disabled={!isRunning}
+            >
+                Restart
+            </Button>
+            <div className='flex-1' />
+            <Button variant='destructive' onClick={handleDelete}>
+                Delete
+            </Button>
         </div>
     )
 
     return (
-        <AppShell pageActions={actions}>
+        <AppShell>
             <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
                 <DetailHeader claw={claw} />
+
+                <div className='mt-6'>{actionBar}</div>
 
                 <div className='border-border -mx-4 mt-6 overflow-x-auto border-b px-4 md:-mx-6 md:px-6'>
                     <div className='flex gap-6'>
