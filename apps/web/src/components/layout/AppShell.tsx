@@ -201,33 +201,47 @@ const TopBar: FC<{
     openLinksWindowed,
     isLocal,
     onSignOut
-}) => (
-    <header className='border-border bg-background/80 sticky top-0 z-20 flex h-14 items-center justify-between border-b px-4 backdrop-blur md:px-6'>
-        <div className='flex items-center gap-3'>
-            <Button
-                variant='ghost'
-                size='icon'
-                className='md:hidden'
-                onClick={onMenu}
-                aria-label='Open menu'
-            >
-                <ListIcon className='h-5 w-5' />
-            </Button>
-            <div className='md:hidden'>
-                <Logo />
+}) => {
+    const location = useLocation()
+    const navigate = useNavigate()
+    const onDashboard = location.pathname === ROUTES.CLAWS
+    return (
+        <header className='border-border bg-background/80 sticky top-0 z-20 flex h-14 items-center justify-between border-b px-4 backdrop-blur md:px-6'>
+            <div className='flex items-center gap-3'>
+                <Button
+                    variant='ghost'
+                    size='icon'
+                    className='md:hidden'
+                    onClick={onMenu}
+                    aria-label='Open menu'
+                >
+                    <ListIcon className='h-5 w-5' />
+                </Button>
+                <div className='md:hidden'>
+                    <Logo />
+                </div>
             </div>
-        </div>
-        <div className='flex items-center gap-2'>
-            {pageActions}
-            <UserDropdown
-                displayName={displayName}
-                onSignOut={onSignOut}
-                appVersion={appVersion ?? undefined}
-                footerLinks={isLocal ? dropdownFooterLinks : []}
-                openLinksWindowed={openLinksWindowed}
-            />
-        </div>
-    </header>
-)
+            <div className='flex items-center gap-2'>
+                {!onDashboard && (
+                    <Button
+                        variant='ghost'
+                        size='sm'
+                        onClick={() => navigate(ROUTES.CLAWS)}
+                    >
+                        Dashboard
+                    </Button>
+                )}
+                {pageActions}
+                <UserDropdown
+                    displayName={displayName}
+                    onSignOut={onSignOut}
+                    appVersion={appVersion ?? undefined}
+                    footerLinks={isLocal ? dropdownFooterLinks : []}
+                    openLinksWindowed={openLinksWindowed}
+                />
+            </div>
+        </header>
+    )
+}
 
 export default AppShell
