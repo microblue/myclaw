@@ -77,7 +77,12 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
     }, [mobileOpen])
 
     return (
-        <div className='bg-background text-foreground min-h-screen'>
+        <div className='bg-background text-foreground relative min-h-screen'>
+            {/* Soft brand gradient behind everything (echoes the landing page
+                treatment). The sidebar is opaque bg-card so the gradient only
+                peeks through in the main content column. */}
+            <div className='landing-gradient pointer-events-none fixed inset-0 z-0' />
+
             {/* Desktop sidebar — hidden on mobile */}
             <aside className='border-border bg-card fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r md:flex'>
                 <SidebarContent items={items} />
@@ -101,7 +106,7 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
             )}
 
             {/* Content column */}
-            <div className='flex min-h-screen flex-col md:pl-60'>
+            <div className='relative z-10 flex min-h-screen flex-col md:pl-60'>
                 <TopBar
                     onMenu={() => setMobileOpen(true)}
                     pageActions={pageActions}
@@ -112,7 +117,10 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
                     isLocal={!!isLocal}
                     onSignOut={signOut}
                 />
-                <main className='flex-1'>{children}</main>
+                <main className='relative flex-1'>
+                    <div className='landing-grid pointer-events-none absolute inset-x-0 top-0 h-[28rem] opacity-60' />
+                    <div className='relative'>{children}</div>
+                </main>
             </div>
         </div>
     )

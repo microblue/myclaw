@@ -217,7 +217,7 @@ const Landing: FC = (): ReactNode => {
                 <section
                     className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : announcementVisible ? 'pt-44' : 'pt-32'}`}
                 >
-                    <div className='landing-grid pointer-events-none' />
+                    <div className='landing-grid pointer-events-none absolute inset-0' />
 
                     <div className='animate-hero-fade-in relative mx-auto max-w-6xl'>
                         <div className='flex flex-col items-center text-center'>

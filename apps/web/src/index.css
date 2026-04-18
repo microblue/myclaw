@@ -212,11 +212,6 @@
         linear-gradient(rgba(59, 130, 246, 0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(59, 130, 246, 0.025) 1px, transparent 1px);
     background-size: 64px 64px;
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     mask-image: linear-gradient(
         to bottom,
         rgba(0, 0, 0, 1) 0%,
