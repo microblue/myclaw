@@ -24,6 +24,7 @@ const createVolume = async (
 
     return {
         id: data.volume.id,
+        name: data.volume.name,
         size: data.volume.size,
         location: data.volume.location.name
     }

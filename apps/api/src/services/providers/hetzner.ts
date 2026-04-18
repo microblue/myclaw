@@ -118,7 +118,7 @@ class HetznerProvider implements CloudProvider {
             id: t.name,
             name: t.name.toUpperCase(),
             description: t.description,
-            cpu: t.cpu,
+            cpu: t.cores,
             memory: t.memory,
             disk: t.disk,
             diskType: 'nvme' as const,
@@ -127,7 +127,7 @@ class HetznerProvider implements CloudProvider {
             priceYearly: parseFloat((t.priceMonthly * 10).toFixed(2)),
             priceHourly: t.priceMonthly / 730,
             architecture: (t.architecture === 'arm' ? 'arm64' : 'x86') as 'x86' | 'arm64',
-            disabled: t.disabled
+            disabled: t.disabled ?? false
         }))
     }
 
@@ -229,7 +229,7 @@ class HetznerProvider implements CloudProvider {
             name: volume.name,
             size: volume.size,
             status: volume.status as VolumeInfo['status'],
-            attachedTo: volume.attachedTo?.toString(),
+            attachedTo: volume.serverId?.toString(),
             locationId: volume.location
         }
     }

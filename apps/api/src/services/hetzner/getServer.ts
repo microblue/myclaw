@@ -8,6 +8,7 @@ const getServer = async (serverId: string): Promise<ServerStatus> => {
         `/servers/${serverId}`
     )
     return {
+        name: data.server.name,
         status: mapStatus(data.server.status),
         ip: data.server.public_net.ipv4.ip
     }

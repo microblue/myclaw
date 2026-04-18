@@ -25,7 +25,10 @@ export const getProviders = async (c: Context) => {
  */
 export const getProviderInfo = async (c: Context) => {
     const providerId = c.req.param('providerId')
-    
+    if (!providerId) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
     const provider = providerRegistry.getProvider(providerId)
     if (!provider) {
         return fail(c, t('api.providerNotFound'), 404)
@@ -41,7 +44,10 @@ export const getProviderInfo = async (c: Context) => {
  */
 export const getProviderPlans = async (c: Context) => {
     const providerId = c.req.param('providerId')
-    
+    if (!providerId) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
     const provider = providerRegistry.getProvider(providerId)
     if (!provider) {
         return fail(c, t('api.providerNotFound'), 404)
@@ -62,7 +68,10 @@ export const getProviderPlans = async (c: Context) => {
  */
 export const getProviderLocations = async (c: Context) => {
     const providerId = c.req.param('providerId')
-    
+    if (!providerId) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
     const provider = providerRegistry.getProvider(providerId)
     if (!provider) {
         return fail(c, t('api.providerNotFound'), 404)
@@ -83,7 +92,10 @@ export const getProviderLocations = async (c: Context) => {
  */
 export const getProviderAvailability = async (c: Context) => {
     const providerId = c.req.param('providerId')
-    
+    if (!providerId) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
     const provider = providerRegistry.getProvider(providerId)
     if (!provider) {
         return fail(c, t('api.providerNotFound'), 404)
@@ -104,7 +116,10 @@ export const getProviderAvailability = async (c: Context) => {
  */
 export const getProviderVolumePricing = async (c: Context) => {
     const providerId = c.req.param('providerId')
-    
+    if (!providerId) {
+        return fail(c, t('api.providerNotFound'), 404)
+    }
+
     const provider = providerRegistry.getProvider(providerId)
     if (!provider) {
         return fail(c, t('api.providerNotFound'), 404)

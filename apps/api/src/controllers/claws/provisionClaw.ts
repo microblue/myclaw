@@ -165,7 +165,7 @@ const provisionClaw = async (
                         clawId: id,
                         name: `${pending.name}-storage`,
                         size: pending.volumeSize,
-                        providerVolumeId: providerVolume.id,
+                        providerVolumeId: parseInt(providerVolume.id, 10),
                         location: pending.location,
                         status: 'available'
                     })

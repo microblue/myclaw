@@ -14,7 +14,8 @@ const createSSHKey = async (
     return {
         id: data.ssh_key.id,
         name: data.ssh_key.name,
-        fingerprint: data.ssh_key.fingerprint
+        fingerprint: data.ssh_key.fingerprint,
+        publicKey: data.ssh_key.public_key
     }
 }
 

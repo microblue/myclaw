@@ -111,8 +111,8 @@ class LightsailProvider implements CloudProvider {
         const regionClient = new LightsailClient({
             region: options.locationId,
             credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
             }
         })
 
@@ -154,7 +154,7 @@ class LightsailProvider implements CloudProvider {
                     console.warn('[lightsail] Instance not running after 3min, skip static IP attach')
                 }
             } catch (e) {
-                console.error('[lightsail] Static IP error (non-fatal):', e.message)
+                console.error('[lightsail] Static IP error (non-fatal):', e instanceof Error ? e.message : e)
             }
         }
         doAttachStaticIp()  // fire and forget

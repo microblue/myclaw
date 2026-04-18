@@ -199,6 +199,7 @@ export interface HetznerVolumeResponse {
 }
 
 export interface ServerStatus {
+    name: string
     status: string
     ip: string
 }
@@ -218,6 +219,7 @@ export interface ServerTypeInfo {
     architecture: string
     priceHourly: number
     priceMonthly: number
+    disabled?: boolean
 }
 
 export interface LocationInfo {
@@ -240,19 +242,23 @@ export interface CreateSSHKeyResult {
     id: number
     name: string
     fingerprint: string
+    publicKey: string
 }
 
 export interface VolumeInfo {
     id: number
+    name: string
     size: number
     location: string
 }
 
 export interface VolumeDetails {
     id: number
+    name: string
     size: number
     status: string
     serverId: number | null
+    location: string
 }
 
 export interface VolumePricingResult {

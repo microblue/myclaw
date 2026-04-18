@@ -11,6 +11,7 @@ const getServers = async (): Promise<Map<string, ServerStatus>> => {
 
     for (const server of first.servers) {
         result.set(String(server.id), {
+            name: server.name,
             status: mapStatus(server.status),
             ip: server.public_net.ipv4.ip
         })
@@ -29,6 +30,7 @@ const getServers = async (): Promise<Map<string, ServerStatus>> => {
         for (const data of remaining) {
             for (const server of data.servers) {
                 result.set(String(server.id), {
+                    name: server.name,
                     status: mapStatus(server.status),
                     ip: server.public_net.ipv4.ip
                 })
