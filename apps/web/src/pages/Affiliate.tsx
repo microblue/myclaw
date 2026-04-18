@@ -2,7 +2,6 @@ import type { FC, ReactNode } from 'react'
 import type { AffiliatePeriod } from '@/ts/Types'
 
 import { Fragment, useState, useRef, useCallback, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import { Link, useSearchParams } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import {
@@ -15,14 +14,8 @@ import { getLocale, ROUTES } from '@/lib'
 import { useAuth } from '@/lib/auth'
 import { AFFILIATE_PERIOD, TOAST_TYPE } from '@/lib/constants'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import {
-    ErrorState,
-    Header,
-    LandingFooter,
-    PageBackground,
-    PageTitle,
-    PageHeader
-} from '@/components'
+import { ErrorState, PageTitle, PageHeader } from '@/components'
+import AppShell from '@/components/layout/AppShell'
 import {
     AffiliateConfirmDialog,
     AffiliatePaymentHistory,
@@ -162,21 +155,14 @@ const Affiliate: FC = (): ReactNode => {
     }
 
     return (
-        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
+        <AppShell>
             <PageTitle
                 title={t('affiliate.title')}
                 description={t('affiliate.description')}
                 noIndex
             />
-            <PageBackground />
-            <Header />
 
-            <motion.main
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8'
-            >
+            <main className='mx-auto w-full max-w-5xl px-4 py-6 md:px-6 md:py-8'>
                 <PageHeader title={t('affiliate.title')} />
                 <p className='text-muted-foreground -mt-4 mb-6 text-base'>
                     {t('affiliate.subtitle')}{' '}
@@ -188,7 +174,7 @@ const Affiliate: FC = (): ReactNode => {
                     </Link>
                 </p>
 
-                <div className='border-border bg-foreground/5 rounded-xl border p-8 backdrop-blur-sm'>
+                <div className='bg-card rounded-xl border p-6 md:p-8'>
                     <AffiliatePeriodSelector
                         period={period}
                         onPeriodChange={setPeriod}
@@ -218,7 +204,7 @@ const Affiliate: FC = (): ReactNode => {
                         </Fragment>
                     )}
                 </div>
-            </motion.main>
+            </main>
 
             <AffiliateConfirmDialog
                 open={confirmSave}
@@ -226,9 +212,7 @@ const Affiliate: FC = (): ReactNode => {
                 onConfirm={confirmAndSave}
                 isPending={updateCode.isPending}
             />
-
-            <LandingFooter />
-        </div>
+        </AppShell>
     )
 }
 

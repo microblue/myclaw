@@ -2,7 +2,6 @@ import type { FC, ReactNode } from 'react'
 import type { BillingOrder } from '@/ts/Interfaces'
 
 import { Fragment, useState, useRef, useCallback } from 'react'
-import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
@@ -11,15 +10,13 @@ import { api } from '@/lib'
 import { useUserStats, useBillingHistory } from '@/hooks'
 import { BillingOrderCard } from '@/components/billing'
 import {
-    Header,
-    LandingFooter,
-    PageBackground,
     PageTitle,
     ActionButton,
     EmptyState,
     ErrorState,
     PageHeader
 } from '@/components'
+import AppShell from '@/components/layout/AppShell'
 import {
     CircleNotchIcon,
     ReceiptIcon,
@@ -105,21 +102,13 @@ const Billing: FC = (): ReactNode => {
     }
 
     return (
-        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
+        <AppShell>
             <PageTitle
                 title={t('billing.title')}
                 description={t('billing.description')}
                 noIndex
             />
-            <PageBackground />
-            <Header />
-
-            <motion.main
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8'
-            >
+            <main className='mx-auto w-full max-w-5xl px-4 py-6 md:px-6 md:py-8'>
                 {authLoading ? (
                     <div className='flex min-h-[60vh] items-center justify-center'>
                         <CircleNotchIcon className='text-primary h-8 w-8 animate-spin' />
@@ -149,7 +138,7 @@ const Billing: FC = (): ReactNode => {
                             }
                         />
 
-                        <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-8'>
+                        <div className='bg-card rounded-xl border p-4 sm:p-8'>
                             {isBillingError ? (
                                 <ErrorState
                                     title={t('billing.failedToLoadBilling')}
@@ -233,10 +222,8 @@ const Billing: FC = (): ReactNode => {
                         </div>
                     </Fragment>
                 )}
-            </motion.main>
-
-            <LandingFooter />
-        </div>
+            </main>
+        </AppShell>
     )
 }
 

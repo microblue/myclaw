@@ -2,7 +2,6 @@ import type { FC, ReactNode } from 'react'
 
 import { Fragment, useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { goLicense } from '@openclaw/shared'
 import { useQueryClient } from '@tanstack/react-query'
@@ -12,13 +11,8 @@ import { TOAST_TYPE } from '@/lib/constants'
 import { api, ROUTES } from '@/lib'
 import { useProfile, PROFILE_QUERY_KEY } from '@/hooks'
 import { Button, Badge } from '@/components/ui'
-import {
-    Header,
-    LandingFooter,
-    PageBackground,
-    PageTitle,
-    PageHeader
-} from '@/components'
+import { PageTitle, PageHeader } from '@/components'
+import AppShell from '@/components/layout/AppShell'
 import {
     CircleNotchIcon,
     CheckCircleIcon,
@@ -64,20 +58,15 @@ const License: FC = (): ReactNode => {
     ]
 
     return (
-        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
+        <AppShell>
             <PageTitle
                 title={t('license.title')}
                 description={t('license.description')}
                 noIndex
             />
-            <PageBackground />
-            <Header />
 
-            <motion.main
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8'
+            <main
+                className='mx-auto w-full max-w-5xl px-4 py-6 md:px-6 md:py-8'
             >
                 {authLoading ? (
                     <div className='flex min-h-[60vh] items-center justify-center'>
@@ -199,10 +188,8 @@ const License: FC = (): ReactNode => {
                         </div>
                     </Fragment>
                 )}
-            </motion.main>
-
-            <LandingFooter />
-        </div>
+            </main>
+        </AppShell>
     )
 }
 

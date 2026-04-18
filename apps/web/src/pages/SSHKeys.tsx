@@ -1,33 +1,16 @@
 import type { FC, ReactNode } from 'react'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth'
-import { usePreferencesStore } from '@/lib/store'
-import { ROUTES } from '@/lib'
-import {
-    useSSHKeys,
-    useUserStats,
-    useProfile,
-    useAppVersion,
-    useLocalFooterLinks
-} from '@/hooks'
+import { useSSHKeys, useUserStats } from '@/hooks'
 import {
     EmptyState,
     ErrorState,
-    Header,
-    LandingFooter,
-    LocalBackground,
-    Logo,
-    LanguageSelector,
-    ThemeToggle,
-    UserDropdown,
-    PageBackground,
     PageTitle,
     PageHeader,
     ActionButton
 } from '@/components'
+import AppShell from '@/components/layout/AppShell'
 import {
     SSHKeySkeleton,
     SSHKeyCard,
@@ -37,19 +20,6 @@ import { PlusCircleIcon, KeyIcon, CaretDownIcon } from '@phosphor-icons/react'
 
 const SSHKeys: FC = (): ReactNode => {
     const [showCreate, setShowCreate] = useState(false)
-    const { isLocal, user, cachedProfile } = useAuth()
-    const { openLinksWindowed } = usePreferencesStore()
-    const { data: profile } = useProfile({
-        enabled: !!user,
-        staleTime: 1000 * 60 * 5
-    })
-
-    const appVersion = useAppVersion(!!isLocal)
-    const dropdownFooterLinks = useLocalFooterLinks(!!isLocal)
-
-    const localDisplayName =
-        profile?.name || cachedProfile?.name || t('account.noNameSet')
-
     const { data: sshKeys, isLoading, isError, refetch } = useSSHKeys()
     const { data: userStats, isLoading: isStatsLoading } = useUserStats()
     const skeletonCount = userStats?.sshKeyCount ?? 0
@@ -57,65 +27,31 @@ const SSHKeys: FC = (): ReactNode => {
 
     const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
+    const headerAction =
+        sshKeys && sshKeys.length > 0 ? (
+            <ActionButton
+                onClick={() => setShowCreate(true)}
+                icon={<PlusCircleIcon className='h-5 w-5' weight='bold' />}
+                label={t('sshKeys.addSshKey')}
+            />
+        ) : undefined
+
     return (
-        <div
-            className={`bg-background text-foreground ${isLocal ? 'fixed inset-0 flex flex-col overflow-hidden' : 'relative flex min-h-screen flex-col'}`}
-        >
-            {isLocal && <LocalBackground />}
+        <AppShell>
             <PageTitle
                 title={t('sshKeys.title')}
                 description={t('sshKeys.description')}
                 noIndex
             />
-            {!isLocal && <PageBackground />}
-            {isLocal ? (
-                <div className='border-border bg-background relative z-10 flex items-center justify-between border-b px-6 py-3'>
-                    <Logo to={ROUTES.CLAWS} />
-                    <div className='flex items-center gap-1.5 sm:gap-3'>
-                        <LanguageSelector />
-                        <ThemeToggle />
-                        <UserDropdown
-                            displayName={localDisplayName}
-                            onSignOut={async () => {}}
-                            hideBilling
-                            hideSignOut
-                            footerLinks={dropdownFooterLinks}
-                            openLinksWindowed={openLinksWindowed}
-                            appVersion={appVersion || undefined}
-                        />
-                    </div>
-                </div>
-            ) : (
-                <Header />
-            )}
-
-            <motion.main
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className={`relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8 ${isLocal ? 'overflow-y-auto' : ''}`}
-            >
+            <main className='mx-auto w-full max-w-5xl px-4 py-6 md:px-6 md:py-8'>
                 <PageHeader
                     title={t('sshKeys.title')}
                     description={`${sshKeys?.length ?? 0} ${sshKeys?.length === 1 ? t('sshKeys.key') : t('sshKeys.keys')}`}
-                    action={
-                        sshKeys && sshKeys.length > 0 ? (
-                            <ActionButton
-                                onClick={() => setShowCreate(true)}
-                                icon={
-                                    <PlusCircleIcon
-                                        className='h-5 w-5'
-                                        weight='bold'
-                                    />
-                                }
-                                label={t('sshKeys.addSshKey')}
-                            />
-                        ) : undefined
-                    }
+                    action={headerAction}
                 />
 
-                <div className='border-border bg-foreground/5 rounded-xl border p-8 backdrop-blur-sm'>
-                    <div className='border-border bg-foreground/5 mb-6 rounded-lg border'>
+                <div className='bg-card rounded-xl border p-6 md:p-8'>
+                    <div className='bg-muted mb-6 rounded-lg'>
                         <button
                             type='button'
                             onClick={() => setHowItWorksOpen(!howItWorksOpen)}
@@ -137,9 +73,7 @@ const SSHKeys: FC = (): ReactNode => {
                                     <strong className='text-foreground'>
                                         public key
                                     </strong>
-                                    {t('sshKeys.step2').split(
-                                        'public key'
-                                    )[1] || ' here.'}
+                                    {t('sshKeys.step2').split('public key')[1] || ' here.'}
                                 </li>
                                 <li>{t('sshKeys.step3')}</li>
                                 <li>
@@ -156,49 +90,31 @@ const SSHKeys: FC = (): ReactNode => {
                     {isError ? (
                         <ErrorState
                             title={t('errors.failedToLoadSSHKeys')}
-                            description={t(
-                                'errors.failedToLoadSSHKeysDescription'
-                            )}
+                            description={t('errors.failedToLoadSSHKeysDescription')}
                             onRetry={() => refetch()}
                         />
                     ) : isLoading && knowsCount && skeletonCount === 0 ? (
                         <EmptyState
-                            icon={
-                                <KeyIcon className='text-primary h-10 w-10' />
-                            }
+                            icon={<KeyIcon className='text-primary h-10 w-10' />}
                             title={t('sshKeys.noSshKeysYet')}
                             description={t('sshKeys.noSshKeysDescription')}
                             actionLabel={t('sshKeys.addSshKey')}
-                            actionIcon={
-                                <PlusCircleIcon
-                                    className='h-5 w-5'
-                                    weight='bold'
-                                />
-                            }
+                            actionIcon={<PlusCircleIcon className='h-5 w-5' weight='bold' />}
                             onAction={() => setShowCreate(true)}
                         />
                     ) : isLoading && skeletonCount > 0 ? (
                         <div className='space-y-1.5'>
-                            {Array.from({ length: skeletonCount }).map(
-                                (_, i) => (
-                                    <SSHKeySkeleton key={i} />
-                                )
-                            )}
+                            {Array.from({ length: skeletonCount }).map((_, i) => (
+                                <SSHKeySkeleton key={i} />
+                            ))}
                         </div>
                     ) : sshKeys?.length === 0 ? (
                         <EmptyState
-                            icon={
-                                <KeyIcon className='text-primary h-10 w-10' />
-                            }
+                            icon={<KeyIcon className='text-primary h-10 w-10' />}
                             title={t('sshKeys.noSshKeysYet')}
                             description={t('sshKeys.noSshKeysDescription')}
                             actionLabel={t('sshKeys.addSshKey')}
-                            actionIcon={
-                                <PlusCircleIcon
-                                    className='h-5 w-5'
-                                    weight='bold'
-                                />
-                            }
+                            actionIcon={<PlusCircleIcon className='h-5 w-5' weight='bold' />}
                             onAction={() => setShowCreate(true)}
                         />
                     ) : (
@@ -213,10 +129,8 @@ const SSHKeys: FC = (): ReactNode => {
                 {showCreate && (
                     <CreateSSHKeyModal onClose={() => setShowCreate(false)} />
                 )}
-            </motion.main>
-
-            {!isLocal && <LandingFooter />}
-        </div>
+            </main>
+        </AppShell>
     )
 }
 

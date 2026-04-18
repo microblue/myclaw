@@ -3,19 +3,13 @@ import type { AdminEntitySelection } from '@/ts/Interfaces'
 
 import { Fragment, useState } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib'
 import { useAdminStats, useProfile } from '@/hooks'
-import {
-    Header,
-    LandingFooter,
-    PageBackground,
-    PageTitle,
-    PageHeader
-} from '@/components'
+import { PageTitle, PageHeader } from '@/components'
+import AppShell from '@/components/layout/AppShell'
 import {
     AdminAnalyticsTab,
     AdminBillingTab,
@@ -90,21 +84,14 @@ const Admin: FC = (): ReactNode => {
     const isPageLoading = authLoading || isProfileLoading
 
     return (
-        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
+        <AppShell>
             <PageTitle
                 title={t('admin.title')}
                 description={t('admin.description')}
                 noIndex
             />
-            <PageBackground />
-            <Header />
 
-            <motion.main
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8 sm:px-6'
-            >
+            <main className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
                 {isPageLoading ? (
                     <Fragment>
                         <div className='mb-2 space-y-2'>
@@ -297,9 +284,7 @@ const Admin: FC = (): ReactNode => {
                         </div>
                     </Fragment>
                 )}
-            </motion.main>
-
-            <LandingFooter />
+            </main>
 
             <AdminDetailModal
                 entity={selectedEntity}
@@ -312,7 +297,7 @@ const Admin: FC = (): ReactNode => {
                     })
                 }
             />
-        </div>
+        </AppShell>
     )
 }
 

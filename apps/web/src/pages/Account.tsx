@@ -2,14 +2,13 @@ import type { FC, ReactNode } from 'react'
 
 import { Fragment, useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { TOAST_TYPE } from '@/lib/constants'
-import { api, ROUTES } from '@/lib'
+import { api } from '@/lib'
 import {
     useProfile,
     useUpdateProfile,
@@ -18,21 +17,14 @@ import {
     PROFILE_QUERY_KEY
 } from '@/hooks'
 import {
-    Header,
-    LandingFooter,
     LicenseCard,
-    LocalBackground,
-    Logo,
-    LanguageSelector,
-    ThemeToggle,
-    UserDropdown,
-    PageBackground,
     PageTitle,
     PageHeader,
     AccountProfileSection,
     AccountSettingsSection,
     ConnectedAccountsSection
 } from '@/components'
+import AppShell from '@/components/layout/AppShell'
 import { CircleNotchIcon } from '@phosphor-icons/react'
 
 const Account: FC = (): ReactNode => {
@@ -40,8 +32,7 @@ const Account: FC = (): ReactNode => {
         user,
         loading: authLoading,
         updateCachedProfile,
-        isLocal,
-        signOut
+        isLocal
     } = useAuth()
     const { showToast } = useUIStore()
     const { adminMode, setAdminMode, openLinksWindowed, setOpenLinksWindowed } =
@@ -119,57 +110,20 @@ const Account: FC = (): ReactNode => {
     }
 
     const email = user?.email || profile?.email || ''
-    const displayName =
-        name || profile?.name || (isLocal ? t('account.noNameSet') : email)
 
     const joinedDate = isLocal
         ? profile?.createdAt
         : user?.metadata?.creationTime
 
     return (
-        <div
-            className={`bg-background text-foreground ${isLocal ? 'fixed inset-0 flex flex-col overflow-hidden' : 'relative flex min-h-screen flex-col'}`}
-        >
-            {isLocal && <LocalBackground />}
+        <AppShell>
             <PageTitle
                 title={t('account.title')}
                 description={t('account.description')}
                 noIndex
             />
-            {!isLocal && <PageBackground />}
-            {isLocal ? (
-                <div className='border-border bg-background md:bg-background/80 relative z-10 flex shrink-0 items-center justify-between border-b px-6 py-3 md:backdrop-blur-xl'>
-                    <Logo to={ROUTES.CLAWS} />
-                    <div className='flex items-center gap-1.5 sm:gap-3'>
-                        <div className='flex items-center gap-1.5'>
-                            <LanguageSelector />
-                            <ThemeToggle />
-                        </div>
-                        <UserDropdown
-                            displayName={displayName}
-                            onSignOut={signOut}
-                            hideBilling
-                            hideSSHKeys
-                        />
-                    </div>
-                </div>
-            ) : (
-                <Header />
-            )}
 
-            <div
-                className={
-                    isLocal
-                        ? 'relative z-10 flex-1 overflow-y-auto'
-                        : 'relative flex-1'
-                }
-            >
-                <motion.main
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className='relative mx-auto w-full max-w-6xl px-6 pb-16 pt-8'
-                >
+            <main className='mx-auto w-full max-w-5xl px-4 py-6 md:px-6 md:py-8'>
                     {authLoading || !profile ? (
                         <div className='flex min-h-[60vh] items-center justify-center'>
                             <CircleNotchIcon className='text-primary h-8 w-8 animate-spin' />
@@ -253,11 +207,8 @@ const Account: FC = (): ReactNode => {
                             />
                         </Fragment>
                     )}
-                </motion.main>
-            </div>
-
-            {!isLocal && <LandingFooter />}
-        </div>
+            </main>
+        </AppShell>
     )
 }
 
