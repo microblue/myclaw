@@ -58,6 +58,8 @@ export interface Volume {
 export interface Claw {
     id: string
     name: string
+    clawType: string
+    provider: string
     status: ClawStatus
     ip: string | null
     planId: string

@@ -45,6 +45,7 @@ import {
     DashboardHeader,
     DashboardPlaygroundView
 } from '@/components/dashboard'
+import ClawsListView from '@/components/dashboard/ClawsListView'
 import { PlaygroundLoadingState } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 
@@ -271,8 +272,8 @@ const Dashboard: FC = (): ReactNode => {
     )
 
     const handleCreateClick = useCallback(() => {
-        setShowCreate(true)
-    }, [])
+        navigate(ROUTES.NEW_CLAW)
+    }, [navigate])
 
     return (
         <motion.div
@@ -340,6 +341,13 @@ const Dashboard: FC = (): ReactNode => {
                 ) : isLoading ? (
                     <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
                         <PlaygroundLoadingState />
+                    </div>
+                ) : dashboardTab === DASHBOARD_TABS.INSTANCES ? (
+                    <div className='w-full overflow-auto'>
+                        <ClawsListView
+                            claws={displayedClaws}
+                            displayName={displayName}
+                        />
                     </div>
                 ) : dashboardTab === DASHBOARD_TABS.CHAT ? (
                     <DashboardChatView

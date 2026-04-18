@@ -16,7 +16,8 @@ import {
     ChatCircleDotsIcon,
     CircleNotchIcon,
     GraphIcon,
-    LightningIcon
+    LightningIcon,
+    SquaresFourIcon
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui'
 
@@ -44,6 +45,28 @@ const DashboardHeader: FC<DashboardHeaderProps> = ({
                     {(window as unknown as ElectronWindow).electronAPI
                         ?.isDesktop && <BetaBadge />}
                     <div className='border-border flex items-center rounded-lg border p-0.5'>
+                        <button
+                            onClick={() => onTabChange(DASHBOARD_TABS.INSTANCES)}
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.INSTANCES ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                        >
+                            <SquaresFourIcon
+                                className='h-3.5 w-3.5'
+                                weight={
+                                    dashboardTab === DASHBOARD_TABS.INSTANCES
+                                        ? 'fill'
+                                        : 'regular'
+                                }
+                            />
+                            <span
+                                className={
+                                    dashboardTab === DASHBOARD_TABS.INSTANCES
+                                        ? 'hidden sm:inline'
+                                        : 'hidden md:inline'
+                                }
+                            >
+                                Instances
+                            </span>
+                        </button>
                         <button
                             onClick={() => onTabChange(DASHBOARD_TABS.CHAT)}
                             className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
