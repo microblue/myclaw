@@ -15,14 +15,10 @@ import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { useUIStore, usePreferencesStore, useDashboardStore } from '@/lib/store'
 import { TOAST_TYPE } from '@/lib/constants'
-import { ROUTES, DASHBOARD_TABS, AGENT_DETAIL_TABS } from '@/lib'
+import { ROUTES } from '@/lib'
 import {
     useClaws,
     useAdminClaws,
-    useSSHKeys,
-    usePlans,
-    useAllClawAgents,
-    usePlaygroundGraph,
     useProfile,
     useNetworkStatus,
     useAppVersion,
@@ -36,11 +32,7 @@ import {
     PageTitle,
     ProductHuntBanner
 } from '@/components'
-import {
-    DashboardChatView,
-    DashboardHeader,
-    DashboardPlaygroundView
-} from '@/components/dashboard'
+import { DashboardHeader } from '@/components/dashboard'
 import ClawsListView from '@/components/dashboard/ClawsListView'
 import { PlaygroundLoadingState } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
@@ -178,25 +170,6 @@ const Dashboard: FC = (): ReactNode => {
         awaitingClaw
     })
 
-    const handleConfigureAgent = useCallback(
-        (agentId: string, clawId: string) => {
-            setDashboardTab(DASHBOARD_TABS.PLAYGROUND)
-            setSelectedAgentId(agentId)
-            setSelectedAgentClawId(clawId)
-            setSelectedClawId(null)
-            setPlaygroundAgentTab(AGENT_DETAIL_TABS.CONFIGURATION)
-        },
-        [setDashboardTab]
-    )
-
-    const handleCreateAgent = useCallback(
-        (clawId: string, clawName: string) => {
-            setCreateAgentClawId(clawId)
-            setCreateAgentClawName(clawName)
-        },
-        []
-    )
-
     const {
         data: claws,
         isLoading: isClawsLoading,
@@ -221,46 +194,13 @@ const Dashboard: FC = (): ReactNode => {
         return claws || []
     }, [claws, adminMode, adminClaws])
 
-    const { plans: hetznerPlans } = usePlans()
-    const plans = [...(hetznerPlans || [])]
-    const { data: sshKeys } = useSSHKeys()
-
     const activeClawsLoading = adminMode ? isAdminClawsLoading : isClawsLoading
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
         authLoading || activeClawsLoading || (!awaitingClaw && !minLoadingMet)
 
-    const agentQueries = useAllClawAgents(displayedClaws)
-    const { nodes, edges } = usePlaygroundGraph(displayedClaws, agentQueries)
-
-    const chatEmpty =
-        dashboardTab === DASHBOARD_TABS.CHAT &&
-        !isLoading &&
-        !activeIsError &&
-        displayedClaws.length === 0
-    const chatHasContent =
-        dashboardTab === DASHBOARD_TABS.CHAT &&
-        !isLoading &&
-        !activeIsError &&
-        displayedClaws.length > 0
-    const showFullBackground =
-        dashboardTab === DASHBOARD_TABS.PLAYGROUND ||
-        chatEmpty ||
-        activeIsError ||
-        isLoading
-
-    const handleClawSelect = useCallback((clawId: string | null) => {
-        setSelectedClawId(clawId)
-    }, [])
-
-    const handleAgentSelect = useCallback(
-        (agentId: string | null, clawId: string | null) => {
-            setSelectedAgentId(agentId)
-            setSelectedAgentClawId(clawId)
-        },
-        []
-    )
+    const showFullBackground = activeIsError || isLoading
 
     const handleCreateClick = useCallback(() => {
         navigate(ROUTES.NEW_CLAW)
@@ -285,7 +225,7 @@ const Dashboard: FC = (): ReactNode => {
                 <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
             )}
             <div
-                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal || chatHasContent ? 'opacity-30' : ''}`}
+                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal ? 'opacity-30' : ''}`}
             />
             <PageTitle
                 title={
@@ -333,54 +273,13 @@ const Dashboard: FC = (): ReactNode => {
                     <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
                         <PlaygroundLoadingState />
                     </div>
-                ) : dashboardTab === DASHBOARD_TABS.INSTANCES ? (
+                ) : (
                     <div className='w-full overflow-auto'>
                         <ClawsListView
                             claws={displayedClaws}
                             displayName={displayName}
                         />
                     </div>
-                ) : dashboardTab === DASHBOARD_TABS.CHAT ? (
-                    <DashboardChatView
-                        displayedClaws={displayedClaws}
-                        agentQueries={agentQueries}
-                        plans={plans}
-                        sshKeys={sshKeys || []}
-                        adminMode={adminMode}
-                        chatSelectedAgent={chatSelectedAgent}
-                        chatSettingsClawId={chatSettingsClawId}
-                        chatAgentTab={chatAgentTab}
-                        chatClawTab={chatClawTab}
-                        onAgentSelect={setChatSelectedAgent}
-                        onConfigureAgent={handleConfigureAgent}
-                        onCreateAgent={handleCreateAgent}
-                        onSettingsClawChange={setChatSettingsClawId}
-                        onAgentTabChange={setChatAgentTab}
-                        onClawTabChange={setChatClawTab}
-                        onCreateClick={handleCreateClick}
-                    />
-                ) : (
-                    <DashboardPlaygroundView
-                        displayedClaws={displayedClaws}
-                        agentQueries={agentQueries}
-                        adminMode={adminMode}
-                        nodes={nodes}
-                        edges={edges}
-                        plans={plans}
-                        sshKeys={sshKeys || []}
-                        selectedClawId={selectedClawId}
-                        selectedAgentId={selectedAgentId}
-                        selectedAgentClawId={selectedAgentClawId}
-                        playgroundClawTab={playgroundClawTab}
-                        playgroundAgentTab={playgroundAgentTab}
-                        isLoading={isLoading}
-                        activeIsError={activeIsError}
-                        onClawSelect={handleClawSelect}
-                        onAgentSelect={handleAgentSelect}
-                        onPlaygroundClawTabChange={setPlaygroundClawTab}
-                        onPlaygroundAgentTabChange={setPlaygroundAgentTab}
-                        onCreateClick={handleCreateClick}
-                    />
                 )}
             </div>
 

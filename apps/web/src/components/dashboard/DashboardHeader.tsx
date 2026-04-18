@@ -3,7 +3,6 @@ import type { DashboardHeaderProps, ElectronWindow } from '@/ts/Interfaces'
 
 import { Fragment } from 'react'
 import { t } from '@openclaw/i18n'
-import { DASHBOARD_TABS } from '@/lib'
 import {
     BetaBadge,
     ActionButton,
@@ -13,16 +12,12 @@ import {
     UserDropdown
 } from '@/components'
 import {
-    ChatCircleDotsIcon,
     CircleNotchIcon,
-    GraphIcon,
-    LightningIcon,
-    SquaresFourIcon
+    LightningIcon
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui'
 
 const DashboardHeader: FC<DashboardHeaderProps> = ({
-    dashboardTab,
     isLocal,
     isLoading,
     displayedClaws,
@@ -32,7 +27,6 @@ const DashboardHeader: FC<DashboardHeaderProps> = ({
     openLinksWindowed,
     appVersion,
     dropdownFooterLinks,
-    onTabChange,
     onCreateClick,
     onDnsSetup,
     onSignOut
@@ -44,76 +38,6 @@ const DashboardHeader: FC<DashboardHeaderProps> = ({
                     <Logo />
                     {(window as unknown as ElectronWindow).electronAPI
                         ?.isDesktop && <BetaBadge />}
-                    <div className='border-border flex items-center rounded-lg border p-0.5'>
-                        <button
-                            onClick={() => onTabChange(DASHBOARD_TABS.INSTANCES)}
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.INSTANCES ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                        >
-                            <SquaresFourIcon
-                                className='h-3.5 w-3.5'
-                                weight={
-                                    dashboardTab === DASHBOARD_TABS.INSTANCES
-                                        ? 'fill'
-                                        : 'regular'
-                                }
-                            />
-                            <span
-                                className={
-                                    dashboardTab === DASHBOARD_TABS.INSTANCES
-                                        ? 'hidden sm:inline'
-                                        : 'hidden md:inline'
-                                }
-                            >
-                                Instances
-                            </span>
-                        </button>
-                        <button
-                            onClick={() => onTabChange(DASHBOARD_TABS.CHAT)}
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                        >
-                            <ChatCircleDotsIcon
-                                className='h-3.5 w-3.5'
-                                weight={
-                                    dashboardTab === DASHBOARD_TABS.CHAT
-                                        ? 'fill'
-                                        : 'regular'
-                                }
-                            />
-                            <span
-                                className={
-                                    dashboardTab === DASHBOARD_TABS.CHAT
-                                        ? 'hidden sm:inline'
-                                        : 'hidden md:inline'
-                                }
-                            >
-                                {t('dashboard.chatTab')}
-                            </span>
-                        </button>
-                        <button
-                            onClick={() =>
-                                onTabChange(DASHBOARD_TABS.PLAYGROUND)
-                            }
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                        >
-                            <GraphIcon
-                                className='h-3.5 w-3.5'
-                                weight={
-                                    dashboardTab === DASHBOARD_TABS.PLAYGROUND
-                                        ? 'fill'
-                                        : 'regular'
-                                }
-                            />
-                            <span
-                                className={
-                                    dashboardTab === DASHBOARD_TABS.PLAYGROUND
-                                        ? 'hidden sm:inline'
-                                        : 'hidden md:inline'
-                                }
-                            >
-                                {t('dashboard.playgroundTab')}
-                            </span>
-                        </button>
-                    </div>
                 </div>
 
                 <div className='flex items-center gap-1.5 sm:gap-3'>

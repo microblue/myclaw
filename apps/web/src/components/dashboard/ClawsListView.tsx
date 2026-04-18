@@ -2,8 +2,7 @@ import type { FC } from 'react'
 import type { Claw } from '@/ts/Interfaces'
 
 import { useNavigate } from 'react-router-dom'
-import { ROUTES, DASHBOARD_TABS } from '@/lib'
-import { usePreferencesStore, useDashboardStore } from '@/lib/store'
+import { ROUTES } from '@/lib'
 import { useToast } from '@/hooks'
 import useStartClaw from '@/hooks/useClaws/useStartClaw'
 import useStopClaw from '@/hooks/useClaws/useStopClaw'
@@ -20,8 +19,6 @@ type Props = {
 const ClawsListView: FC<Props> = ({ claws, displayName }) => {
     const navigate = useNavigate()
     const toast = useToast()
-    const { setDashboardTab } = usePreferencesStore()
-    const { setSelectedClawId, setChatSelectedAgent } = useDashboardStore()
 
     const startMutation = useStartClaw()
     const stopMutation = useStopClaw()
@@ -29,9 +26,7 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
     const deleteMutation = useDeleteClaw()
 
     const handleOpenChat = (claw: Claw) => {
-        setSelectedClawId(claw.id)
-        setChatSelectedAgent(null)
-        setDashboardTab(DASHBOARD_TABS.CHAT)
+        navigate(`/claw/${claw.id}`)
     }
 
     const wrap = (
@@ -62,13 +57,12 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
             toast.error(msg)
         }
     }
-    const handleDiagnose = (claw: Claw) => {
-        setSelectedClawId(claw.id)
-        setDashboardTab(DASHBOARD_TABS.PLAYGROUND)
-    }
     const handleViewDetails = (claw: Claw) => {
         navigate(`/claw/${claw.id}`)
     }
+    // Diagnose routes to the detail page for now; a dedicated
+    // diagnostics surface lives there in the site-wide redesign.
+    const handleDiagnose = handleViewDetails
 
     if (claws.length === 0) {
         return (
