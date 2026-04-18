@@ -23,7 +23,7 @@ const FaqSection: FC<FaqSectionProps> = ({
                 <div className='mb-16 text-center'>
                     <Badge
                         variant='outline'
-                        className='border-border bg-foreground/5 text-foreground/80 mb-4'
+                        className='border-border bg-card shadow-sm text-foreground/80 mb-4'
                     >
                         {badge}
                     </Badge>

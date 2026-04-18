@@ -11,14 +11,14 @@ const HeroBadge: FC<HeroBadgeProps> = ({
 }): ReactNode => {
     return (
         <div className='mb-8 flex flex-wrap items-center justify-center gap-3'>
-            <div className='glow-border border-border bg-foreground/5 inline-flex items-center gap-2 rounded-full border px-4 py-2'>
+            <div className='glow-border border-border bg-card shadow-sm inline-flex items-center gap-2 rounded-full border px-4 py-2'>
                 <SparkleIcon className='h-4 w-4 text-[#6366f1]' weight='fill' />
                 <span className='text-foreground/80 text-sm'>{label}</span>
             </div>
             {tutorialBadge && onTutorialClick && (
                 <button
                     onClick={onTutorialClick}
-                    className='glow-border border-border bg-foreground/5 hover:bg-foreground/10 hidden cursor-pointer items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-4 transition-colors'
+                    className='glow-border border-border bg-card shadow-sm hover:bg-muted hidden cursor-pointer items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-4 transition-colors'
                 >
                     <div className='relative h-7 w-10 flex-shrink-0 overflow-hidden rounded-full'>
                         <img

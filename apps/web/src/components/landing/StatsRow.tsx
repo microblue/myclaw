@@ -7,7 +7,7 @@ const StatsRow: FC<StatsRowProps> = ({ stats }): ReactNode => {
             {stats.map((stat, index) => (
                 <div key={stat.label} className='contents'>
                     {index > 0 && (
-                        <div className='bg-foreground/10 hidden h-12 w-px md:block' />
+                        <div className='bg-muted hidden h-12 w-px md:block' />
                     )}
                     <div>
                         <div className='font-clash text-foreground text-3xl font-bold md:text-4xl'>

@@ -30,7 +30,7 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
                     {post.tags.map((tag) => (
                         <span
                             key={tag}
-                            className='bg-foreground/5 text-muted-foreground rounded-full px-2.5 py-0.5 text-xs'
+                            className='bg-card shadow-sm text-muted-foreground rounded-full px-2.5 py-0.5 text-xs'
                         >
                             {tag}
                         </span>

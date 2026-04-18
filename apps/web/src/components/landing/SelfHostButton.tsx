@@ -17,7 +17,7 @@ const SelfHostButton: FC<SelfHostButtonProps> = ({
         <Button
             size='lg'
             variant='outline'
-            className={`border-border bg-foreground/5 text-foreground hover:bg-foreground/10 gap-2 ${large ? 'px-8 py-6 text-lg' : 'px-6'} ${className || ''}`}
+            className={`border-border bg-card shadow-sm text-foreground hover:bg-muted gap-2 ${large ? 'px-8 py-6 text-lg' : 'px-6'} ${className || ''}`}
             asChild
         >
             <a href={GITHUB_REPO_URL} target='_blank' rel='noopener noreferrer'>
@@ -25,7 +25,7 @@ const SelfHostButton: FC<SelfHostButtonProps> = ({
                 {label}
 
                 {showStars && gitHubStars && (
-                    <span className='bg-foreground/10 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs'>
+                    <span className='bg-muted flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs'>
                         {gitHubStars.formatted}
                         <span className='text-[12px]'>★</span>
                     </span>

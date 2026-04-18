@@ -169,7 +169,7 @@ const SimplePlanCard: FC<SimplePlanCardProps> = ({
                 ))}
             </div>
             <Button
-                className={`mt-auto w-full gap-2 ${popular ? 'border-0 bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white hover:opacity-90' : 'bg-foreground/10 text-foreground hover:bg-foreground/20 border-0'}`}
+                className={`mt-auto w-full gap-2 ${popular ? 'border-0 bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white hover:opacity-90' : 'bg-muted text-foreground hover:bg-foreground/20 border-0'}`}
                 asChild
             >
                 <Link
@@ -203,7 +203,7 @@ const PricingSection: FC<PricingSectionProps> = ({
                 <div className='mb-16 text-center'>
                     <Badge
                         variant='outline'
-                        className='border-border bg-foreground/5 text-foreground/80 mb-4'
+                        className='border-border bg-card shadow-sm text-foreground/80 mb-4'
                     >
                         {t('landing.pricing')}
                     </Badge>
@@ -363,7 +363,7 @@ const PricingSection: FC<PricingSectionProps> = ({
                                                                 className={`gap-2 px-4 ${
                                                                     isRecommended
                                                                         ? 'border-0 bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white hover:opacity-90'
-                                                                        : 'bg-foreground/10 text-foreground hover:bg-foreground/20 border-0'
+                                                                        : 'bg-muted text-foreground hover:bg-foreground/20 border-0'
                                                                 }`}
                                                                 asChild
                                                             >
