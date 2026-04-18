@@ -6,6 +6,7 @@
 
 import type { Context } from 'hono'
 import { t } from '@openclaw/i18n'
+import { inputValidation } from '@openclaw/shared'
 import { ok, fail } from '@/lib/response'
 import { providerRegistry } from '@/services/providers'
 import { getCuratedPlanIds } from '@/services/providers/curatedPlans'
@@ -91,7 +92,10 @@ export const getProviderCuratedPlans = async (c: Context) => {
         const byId = new Map(allPlans.map((p) => [p.id, p]))
         const curated = curatedIds
             .map((id) => byId.get(id))
-            .filter((p): p is NonNullable<typeof p> => Boolean(p))
+            .filter(
+                (p): p is NonNullable<typeof p> =>
+                    Boolean(p) && p!.memory >= inputValidation.MIN_MEMORY_GB.MIN
+            )
 
         return ok(c, curated, t('api.plansRetrieved'))
     } catch (error) {

@@ -6,7 +6,7 @@ import digitalocean from './digitalocean'
 import { getCuratedPlanIds } from './index'
 
 describe('curated plan whitelists', () => {
-    it('each provider exposes exactly 12 curated plan ids', () => {
+    it('each provider exposes 12 curated plan ids', () => {
         expect(hetzner).toHaveLength(12)
         expect(lightsail).toHaveLength(12)
         expect(digitalocean).toHaveLength(12)
