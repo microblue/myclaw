@@ -131,3 +131,19 @@ Eight work packages, each commit-worthy on its own. You pick which to fund.
 6. **Order.** Start with AppShell (#1) + detail tabs (#3) as the highest-impact duo, or different priorities?
 
 Tell me 1–6 and I start with the top of your list.
+
+---
+
+## Decisions (locked 2026-04-18)
+
+1. **Sidebar: yes**, but must handle **mobile + tablet** properly from day one.
+2. **No in-app chat UI.** "Open Chat" opens `https://{subdomain}.myclaw.one` in a new tab — the OpenClaw instance is already a full chat product, don't duplicate. Keep OpenWebUI swap as a future per-instance setting if we ever need uniform chat across versions.
+3. **Agent graph retired.** Not coming back.
+4. **Tone pass incremental** — cleanup happens as we touch each page, no dedicated package.
+5. **Marketing included** — landing / blog / compare get the same treatment.
+6. **Order (by dependency):**
+   1. AppShell with responsive nav
+   2. Instance detail tabs (Chat tab = external link to subdomain)
+   3. Delete orphaned chat/playground/graph/card-dialog code
+   4. Wizard polish
+   5. Marketing tone sync
