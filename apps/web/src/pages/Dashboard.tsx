@@ -21,9 +21,6 @@ import {
     useAdminClaws,
     useSSHKeys,
     usePlans,
-    useLocations,
-    useVolumePricing,
-    usePlanAvailability,
     useAllClawAgents,
     usePlaygroundGraph,
     useProfile,
@@ -40,7 +37,6 @@ import {
     ProductHuntBanner
 } from '@/components'
 import {
-    CreateClawModal,
     DashboardChatView,
     DashboardHeader,
     DashboardPlaygroundView
@@ -78,9 +74,7 @@ const Dashboard: FC = (): ReactNode => {
         setPlaygroundClawTab,
         chatClawTab,
         setChatClawTab,
-        showCreate,
         setShowCreate,
-        preselectedPlanId,
         setPreselectedPlanId,
         createAgentClawId,
         setCreateAgentClawId,
@@ -229,10 +223,7 @@ const Dashboard: FC = (): ReactNode => {
 
     const { plans: hetznerPlans } = usePlans()
     const plans = [...(hetznerPlans || [])]
-    const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
-    const { data: volumePricing } = useVolumePricing()
-    const { data: planAvailability } = usePlanAvailability()
 
     const activeClawsLoading = adminMode ? isAdminClawsLoading : isClawsLoading
     const activeIsError = adminMode ? isAdminClawsError : isError
@@ -392,26 +383,6 @@ const Dashboard: FC = (): ReactNode => {
                     />
                 )}
             </div>
-
-            {showCreate && !isLocal && plans.length > 0 && (
-                <CreateClawModal
-                    plans={plans}
-                    locations={locations || []}
-                    sshKeys={sshKeys || []}
-                    volumePricing={volumePricing}
-                    planAvailability={planAvailability}
-                    preselectedPlanId={preselectedPlanId}
-                    onClose={() => {
-                        setShowCreate(false)
-                        setPreselectedPlanId(null)
-                    }}
-                    onNavigateToSSHKeys={() => {
-                        setShowCreate(false)
-                        setPreselectedPlanId(null)
-                        navigate(ROUTES.SSH_KEYS)
-                    }}
-                />
-            )}
 
             {createAgentClawId && (
                 <CreateAgentModal
