@@ -66,7 +66,14 @@ const ClawDetail: FC = () => {
             toast.error('This instance has no subdomain yet.')
             return
         }
-        window.open(`https://${claw.subdomain}.myclaw.one`, '_blank', 'noopener')
+        // Append the gateway token so the OpenClaw control UI authenticates
+        // automatically instead of dropping the user on the
+        // "unauthorized: gateway token missing" screen.
+        const base = `https://${claw.subdomain}.myclaw.one/`
+        const url = claw.gatewayToken
+            ? `${base}?token=${encodeURIComponent(claw.gatewayToken)}`
+            : base
+        window.open(url, '_blank', 'noopener')
     }
 
     const wrap = (label: string, fn: () => Promise<unknown>) => async () => {
@@ -326,14 +333,58 @@ const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
                     value={claw.ip ? `root@${claw.ip}` : '—'}
                     mono
                 />
+                <GatewayTokenRow token={claw.gatewayToken || ''} />
             </dl>
             <p className='text-muted-foreground pt-2 text-xs'>
-                Detailed metrics (CPU, memory, network) land in a later phase
-                — this view currently shows the status the control plane has.
+                The gateway token authenticates you to the OpenClaw
+                Control UI. "Open chat" opens the instance with the
+                token already attached; you only need to copy the token
+                if you want to paste it manually.
             </p>
         </section>
     </div>
 )
+
+const GatewayTokenRow: FC<{ token: string }> = ({ token }) => {
+    const toast = useToast()
+    const [revealed, setRevealed] = useState(false)
+    if (!token) {
+        return <Row label='Gateway token' value='—' />
+    }
+    const masked = token.slice(0, 6) + '…' + token.slice(-4)
+    const copy = async () => {
+        try {
+            await navigator.clipboard.writeText(token)
+            toast.success('Token copied')
+        } catch (_) {
+            toast.error('Copy failed')
+        }
+    }
+    return (
+        <div className='flex items-center justify-between'>
+            <dt className='text-muted-foreground'>Gateway token</dt>
+            <dd className='flex items-center gap-2'>
+                <span className='font-mono text-xs'>
+                    {revealed ? token : masked}
+                </span>
+                <button
+                    type='button'
+                    onClick={() => setRevealed((r) => !r)}
+                    className='text-muted-foreground hover:text-foreground text-xs underline'
+                >
+                    {revealed ? 'Hide' : 'Reveal'}
+                </button>
+                <button
+                    type='button'
+                    onClick={copy}
+                    className='text-muted-foreground hover:text-foreground text-xs underline'
+                >
+                    Copy
+                </button>
+            </dd>
+        </div>
+    )
+}
 
 const StatusDot: FC<{ status: string }> = ({ status }) => {
     const tone =
