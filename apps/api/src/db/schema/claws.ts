@@ -42,7 +42,9 @@ const claws = pgTable(
         index('claws_user_id_created_at_idx').on(table.userId, table.createdAt),
         index('claws_polar_subscription_id_idx').on(table.polarSubscriptionId),
         index('claws_subdomain_idx').on(table.subdomain),
-        index('claws_deletion_scheduled_at_idx').on(table.deletionScheduledAt)
+        index('claws_deletion_scheduled_at_idx').on(table.deletionScheduledAt),
+        index('claws_status_idx').on(table.status),
+        index('claws_provider_idx').on(table.provider)
     ]
 )
 
