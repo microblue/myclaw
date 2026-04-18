@@ -24,6 +24,7 @@ import {
     DropdownMenuSeparator
 } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
+import { useState } from 'react'
 import {
     ArrowSquareOutIcon,
     DotsThreeIcon
@@ -203,13 +204,7 @@ const ClawDetail: FC = () => {
                 <div className='mt-6'>
                     {tab === 'overview' && <OverviewTab claw={claw} />}
                     {tab === 'logs' && (
-                        <div className='bg-card rounded-lg border p-4'>
-                            <ClawLogsContent
-                                clawId={claw.id}
-                                enabled
-                                embedded
-                            />
-                        </div>
+                        <LogsTab claw={claw} />
                     )}
                     {tab === 'terminal' && (
                         <div className='bg-card rounded-lg border p-4'>
@@ -250,6 +245,55 @@ const DetailHeader: FC<{ claw: Claw }> = ({ claw }) => {
             <p className='text-muted-foreground mt-1 text-sm capitalize'>
                 {claw.status} · uptime {uptime}
             </p>
+        </div>
+    )
+}
+
+const LogsTab: FC<{ claw: Claw }> = ({ claw }) => {
+    // Default to bootstrap while the claw is still deploying so the user
+    // sees cloud-init progress; once running, the gateway log is the
+    // interesting one.
+    const defaultSource: 'gateway' | 'bootstrap' =
+        claw.status === clawStatus.running ? 'gateway' : 'bootstrap'
+    const [source, setSource] = useState<'gateway' | 'bootstrap'>(
+        defaultSource
+    )
+    return (
+        <div className='bg-card rounded-lg border'>
+            <div className='border-border flex gap-1 border-b p-1.5'>
+                {(
+                    [
+                        { id: 'bootstrap', label: 'Bootstrap' },
+                        { id: 'gateway', label: 'Gateway' }
+                    ] as const
+                ).map((s) => (
+                    <button
+                        key={s.id}
+                        type='button'
+                        onClick={() => setSource(s.id)}
+                        className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                            source === s.id
+                                ? 'bg-foreground/10 text-foreground'
+                                : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                    >
+                        {s.label}
+                    </button>
+                ))}
+                <span className='text-muted-foreground ml-auto self-center pr-2 text-xs'>
+                    {source === 'bootstrap'
+                        ? '/var/log/openclaw-bootstrap.log'
+                        : '/var/log/openclaw-gateway.log'}
+                </span>
+            </div>
+            <div className='p-4'>
+                <ClawLogsContent
+                    clawId={claw.id}
+                    enabled
+                    embedded
+                    source={source}
+                />
+            </div>
         </div>
     )
 }

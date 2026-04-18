@@ -48,6 +48,7 @@ import getClawCredentials from '@/controllers/claws/getClawCredentials'
 import cancelPendingClaw from '@/controllers/claws/cancelPendingClaw'
 import provisionClaw from '@/controllers/claws/provisionClaw'
 import suggestClawName from '@/controllers/claws/suggestClawName'
+import getClawBootstrapLog from '@/controllers/claws/getClawBootstrapLog'
 
 export {
     getClaws,
@@ -99,5 +100,6 @@ export {
     getClawCredentials,
     cancelPendingClaw,
     provisionClaw,
-    suggestClawName
+    suggestClawName,
+    getClawBootstrapLog
 }

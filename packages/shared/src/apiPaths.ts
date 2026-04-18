@@ -40,6 +40,8 @@ const API_PATHS = {
         DIAGNOSTICS: {
             STATUS: (id: string) => `/claws/${id}/diagnostics/status`,
             LOGS: (id: string) => `/claws/${id}/diagnostics/logs`,
+            BOOTSTRAP_LOG: (id: string) =>
+                `/claws/${id}/diagnostics/bootstrap-log`,
             REPAIR: (id: string) => `/claws/${id}/diagnostics/repair`
         },
         VERSION: (id: string) => `/claws/${id}/version`,

@@ -13,9 +13,10 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
     clawId,
     enabled,
     embedded,
-    mockLogs
+    mockLogs,
+    source
 }): ReactNode => {
-    const query = useClawLogs(clawId, enabled && !mockLogs)
+    const query = useClawLogs(clawId, enabled && !mockLogs, source)
     const logs = mockLogs
         ? { data: { logs: mockLogs }, isPending: false, isError: false }
         : query

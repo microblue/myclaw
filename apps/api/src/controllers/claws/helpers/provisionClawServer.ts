@@ -97,6 +97,11 @@ const provisionClawServer = async ({
             userData: cloudInitScript
         })
 
+        // Stage 1 of the lifecycle: provider accepted the request and
+        // assigned an IP. Status stays at 'creating' (= "Launching
+        // instance") until the provider reports the VPS is running.
+        // Note: we do NOT flip to configuring yet — configuring means
+        // "the VPS is booted, cloud-init is running OpenClaw install".
         await Promise.all([
             claw.subdomain
                 ? cloudflare
@@ -109,23 +114,19 @@ const provisionClawServer = async ({
                 .update(claws)
                 .set({
                     providerServerId: server.serverId,
-                    status: clawStatus.configuring,
                     ip: server.ip
                 })
                 .where(eq(claws.id, clawId))
         ])
 
-        // Poll the provider until the VPS is actually running, then flip
-        // the claw to running directly. This bypasses the dashboard's
-        // 4-second sync loop so the UI picks up "running" within seconds
-        // of the provider reporting it. Stop after POLL_MAX_MS; if the
-        // instance isn't up by then, leave it as configuring — the
-        // dashboard's sync loop will catch it on subsequent polls.
-        void pollForRunning({
+        void pollLifecycle({
             provider,
             clawId,
             serverId: server.serverId,
-            locationId: claw.location || undefined
+            locationId: claw.location || undefined,
+            ip: server.ip,
+            subdomain: claw.subdomain || '',
+            domain: DOMAIN
         })
 
         if (
@@ -162,47 +163,93 @@ const provisionClawServer = async ({
     }
 }
 
-// Provider createServer calls return quickly with status=creating/pending
-// even though the VPS takes another 30-120s to actually boot. Poll the
-// provider's getServer every few seconds so the dashboard doesn't depend
-// on its own periodic sync to see the state change.
+// Two-stage provisioning poll:
+//   Stage 1  creating    -> configuring : provider reports VPS running
+//                                         (VPS is up, cloud-init can start)
+//   Stage 2  configuring -> running     : OpenClaw gateway answers HTTP
+//                                         via the nginx proxy
+// So the dashboard's label reflects the actual step:
+//   "Launching instance…"  (creating)
+//   "Deploying Claw…"      (configuring)
+//   "Running"              (running)
 const POLL_INTERVAL_MS = 5_000
-const POLL_MAX_MS = 5 * 60 * 1000
+const PROVIDER_POLL_MAX_MS = 5 * 60 * 1000
+const GATEWAY_POLL_MAX_MS = 6 * 60 * 1000
+const GATEWAY_TIMEOUT_MS = 3_000
 
-const pollForRunning = async ({
+const pollLifecycle = async ({
     provider,
     clawId,
     serverId,
-    locationId
+    locationId,
+    ip,
+    subdomain,
+    domain
 }: {
-    provider: NonNullable<
-        ReturnType<typeof providerRegistry.getProvider>
-    >
+    provider: NonNullable<ReturnType<typeof providerRegistry.getProvider>>
     clawId: string
     serverId: string
     locationId?: string
+    ip: string
+    subdomain: string
+    domain: string
 }): Promise<void> => {
-    const deadline = Date.now() + POLL_MAX_MS
-    while (Date.now() < deadline) {
+    // Stage 1: wait for the provider to report running, flip to
+    // configuring so the UI changes from "Launching" to "Deploying".
+    let currentIp = ip
+    const stage1Deadline = Date.now() + PROVIDER_POLL_MAX_MS
+    let providerRunning = false
+    while (Date.now() < stage1Deadline && !providerRunning) {
         await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
         try {
             const live = await provider.getServer(serverId, locationId)
+            if (live.ip) currentIp = live.ip
             if (live.status === clawStatus.running) {
+                providerRunning = true
                 await db
                     .update(claws)
                     .set({
-                        status: clawStatus.running,
+                        status: clawStatus.configuring,
                         ip: live.ip || undefined
                     })
                     .where(eq(claws.id, clawId))
-                return
             }
         } catch (err) {
-            console.error('[provisionClawServer] poll', err)
+            console.error('[provisionClawServer] provider-poll', err)
+        }
+    }
+    if (!providerRunning) {
+        console.warn(
+            `[provisionClawServer] provider never went running for ${clawId}`
+        )
+        return
+    }
+
+    // Stage 2: poll the OpenClaw gateway (via nginx) until it answers.
+    // We hit http://{ip}/ with a Host header for the claw's subdomain
+    // so this works even before Cloudflare DNS propagates to the new
+    // A record. Any < 500 response means nginx + gateway are up.
+    const stage2Deadline = Date.now() + GATEWAY_POLL_MAX_MS
+    while (Date.now() < stage2Deadline) {
+        await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
+        try {
+            const res = await fetch(`http://${currentIp}/`, {
+                headers: subdomain ? { Host: `${subdomain}.${domain}` } : {},
+                signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS)
+            })
+            if (res.status < 500) {
+                await db
+                    .update(claws)
+                    .set({ status: clawStatus.running })
+                    .where(eq(claws.id, clawId))
+                return
+            }
+        } catch (_) {
+            /* gateway not up yet, keep polling */
         }
     }
     console.warn(
-        `[provisionClawServer] poll timed out for ${clawId}; sync loop will pick up`
+        `[provisionClawServer] gateway never answered for ${clawId}; dashboard sync loop will continue trying`
     )
 }
 

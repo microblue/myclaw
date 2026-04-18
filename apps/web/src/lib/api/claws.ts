@@ -82,6 +82,10 @@ const claws = {
         client.post<DiagnosticsLogsResponse>(
             API_PATHS.CLAWS.DIAGNOSTICS.LOGS(id)
         ),
+    getClawBootstrapLog: (id: string) =>
+        client.post<DiagnosticsLogsResponse>(
+            API_PATHS.CLAWS.DIAGNOSTICS.BOOTSTRAP_LOG(id)
+        ),
     repairClaw: (id: string) =>
         client.post<void>(API_PATHS.CLAWS.DIAGNOSTICS.REPAIR(id)),
     reinstallClaw: (id: string) =>

@@ -884,6 +884,7 @@ export interface ClawLogsContentProps {
     enabled: boolean
     embedded?: boolean
     mockLogs?: string
+    source?: 'gateway' | 'bootstrap'
 }
 
 export interface ParsedLogLine {

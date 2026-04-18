@@ -24,8 +24,8 @@ const TRANSIENT_STATUSES = new Set<string>([
 ])
 
 const TRANSIENT_LABELS: Record<string, string> = {
-    [clawStatus.creating]: 'Deploying…',
-    [clawStatus.configuring]: 'Configuring…',
+    [clawStatus.creating]: 'Launching instance…',
+    [clawStatus.configuring]: 'Deploying Claw…',
     [clawStatus.initializing]: 'Initializing…',
     [clawStatus.starting]: 'Starting…',
     [clawStatus.stopping]: 'Stopping…',

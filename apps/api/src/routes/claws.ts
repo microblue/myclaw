@@ -50,7 +50,8 @@ import {
     updateClawBindings,
     getClawCredentials,
     cancelPendingClaw,
-    suggestClawName
+    suggestClawName,
+    getClawBootstrapLog
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -70,6 +71,7 @@ app.post('/:id/cancel-deletion', cancelDeletion)
 app.post('/:id/hard-delete', adminOnly, hardDeleteClaw)
 app.post('/:id/diagnostics/status', getClawDiagnostics)
 app.post('/:id/diagnostics/logs', getClawLogs)
+app.post('/:id/diagnostics/bootstrap-log', getClawBootstrapLog)
 app.post('/:id/diagnostics/repair', adminOnly, repairClaw)
 app.post('/:id/reinstall', reinstallClaw)
 app.get('/:id/export', exportClaw)
