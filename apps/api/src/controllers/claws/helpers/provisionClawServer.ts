@@ -115,6 +115,18 @@ const provisionClawServer = async ({
                 .where(eq(claws.id, clawId))
         ])
 
+        // Poll the provider until the VPS is actually running, then flip
+        // the claw to running directly. This bypasses the dashboard's
+        // 4-second sync loop so the UI picks up "running" within seconds
+        // of the provider reporting it. Stop after POLL_MAX_MS; if the
+        // instance isn't up by then, leave it as configuring — the
+        // dashboard's sync loop will catch it on subsequent polls.
+        void pollForRunning({
+            provider,
+            clawId,
+            serverId: server.serverId
+        })
+
         if (
             volumeSize &&
             volumeSize >= inputValidation.VOLUME_SIZE.MIN &&
@@ -147,6 +159,48 @@ const provisionClawServer = async ({
         console.error('[provisionClawServer]', err)
         await markError(clawId, err instanceof Error ? err.message : 'failed')
     }
+}
+
+// Provider createServer calls return quickly with status=creating/pending
+// even though the VPS takes another 30-120s to actually boot. Poll the
+// provider's getServer every few seconds so the dashboard doesn't depend
+// on its own periodic sync to see the state change.
+const POLL_INTERVAL_MS = 5_000
+const POLL_MAX_MS = 5 * 60 * 1000
+
+const pollForRunning = async ({
+    provider,
+    clawId,
+    serverId
+}: {
+    provider: NonNullable<
+        ReturnType<typeof providerRegistry.getProvider>
+    >
+    clawId: string
+    serverId: string
+}): Promise<void> => {
+    const deadline = Date.now() + POLL_MAX_MS
+    while (Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
+        try {
+            const live = await provider.getServer(serverId)
+            if (live.status === clawStatus.running) {
+                await db
+                    .update(claws)
+                    .set({
+                        status: clawStatus.running,
+                        ip: live.ip || undefined
+                    })
+                    .where(eq(claws.id, clawId))
+                return
+            }
+        } catch (err) {
+            console.error('[provisionClawServer] poll', err)
+        }
+    }
+    console.warn(
+        `[provisionClawServer] poll timed out for ${clawId}; sync loop will pick up`
+    )
 }
 
 const markError = async (clawId: string, reason: string) => {
