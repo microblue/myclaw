@@ -79,7 +79,7 @@ const ClawInstanceCard: FC<Props> = ({
     const transientLabel = TRANSIENT_LABELS[claw.status]
 
     return (
-        <div className='bg-card flex flex-col gap-4 rounded-xl border p-6 transition-shadow hover:shadow-md'>
+        <div className='bg-card flex flex-col gap-4 rounded-xl border p-6 shadow-sm transition-shadow hover:shadow-md'>
             <div className='flex items-start justify-between'>
                 <div className='min-w-0'>
                     <div className='flex items-center gap-2'>
