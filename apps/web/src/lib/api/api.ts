@@ -4,7 +4,6 @@ import auth from '@/lib/api/auth'
 import claws from '@/lib/api/claws'
 import plans from '@/lib/api/plans'
 import providers from '@/lib/api/providers'
-import ssh from '@/lib/api/ssh'
 import users from '@/lib/api/users'
 import waitlist from '@/lib/api/waitlist'
 
@@ -15,7 +14,6 @@ const api = {
     ...claws,
     ...affiliate,
     ...admin,
-    ...ssh,
     ...users,
     ...waitlist
 }

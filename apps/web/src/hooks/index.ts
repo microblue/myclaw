@@ -54,13 +54,6 @@ import {
 } from '@/hooks/useClaws'
 
 import {
-    useSSHKeys,
-    useCreateSSHKey,
-    useDeleteSSHKey,
-    SSH_KEYS_QUERY_KEY
-} from '@/hooks/useSSHKeys'
-
-import {
     useProfile,
     useUpdateProfile,
     useUserStats,
@@ -161,10 +154,6 @@ export {
     CLAW_FILE_QUERY_KEY,
     CLAW_VERSION_QUERY_KEY,
     CLAW_VERSIONS_QUERY_KEY,
-    useSSHKeys,
-    useCreateSSHKey,
-    useDeleteSSHKey,
-    SSH_KEYS_QUERY_KEY,
     useProfile,
     useUpdateProfile,
     useUserStats,

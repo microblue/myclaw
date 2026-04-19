@@ -415,16 +415,6 @@ const SshAccess: FC<{ claw: Claw }> = ({ claw }) => {
                     </button>
                 </dd>
             </div>
-            <p className='text-muted-foreground text-xs'>
-                Prefer key-based login?{' '}
-                <a
-                    href={ROUTES.SSH_KEYS}
-                    className='underline hover:text-foreground'
-                >
-                    Add an SSH key
-                </a>{' '}
-                before deploying your next Claw.
-            </p>
         </div>
     )
 }

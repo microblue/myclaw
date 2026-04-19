@@ -82,10 +82,6 @@ const API_PATHS = {
         GENERATE: '/affiliate/generate',
         CODE: '/affiliate/code'
     },
-    SSH_KEYS: {
-        BASE: '/ssh-keys',
-        byId: (id: string) => `/ssh-keys/${id}`
-    },
     USERS: {
         ME: '/users/me',
         STATS: '/users/me/stats',

@@ -23,7 +23,6 @@ import {
 } from '@/components/ui'
 import ClawMascotOutline from '@/components/shared/ClawMascotOutline'
 import {
-    KeyIcon,
     UserIcon,
     SignOutIcon,
     ReceiptIcon,
@@ -36,7 +35,6 @@ const UserDropdown: FC<UserDropdownProps> = ({
     onSignOut,
     onOpen,
     hideBilling,
-    hideSSHKeys,
     hideSignOut,
     footerLinks,
     openLinksWindowed,
@@ -107,16 +105,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
                     <ClawMascotOutline className='h-4 w-4' />
                     {t('nav.claws')}
                 </DropdownMenuItem>
-                {!hideSSHKeys && (
-                    <DropdownMenuItem
-                        onClick={() => navigate(ROUTES.SSH_KEYS)}
-                        className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.SSH_KEYS ? 'bg-foreground/10' : ''}`}
-                    >
-                        <KeyIcon className='h-4 w-4' />
-                        {t('nav.sshKeys')}
-                    </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
+<DropdownMenuItem
                     onClick={() => navigate(ROUTES.AFFILIATE)}
                     className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.AFFILIATE ? 'bg-foreground/10' : ''}`}
                 >

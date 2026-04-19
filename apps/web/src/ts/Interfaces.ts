@@ -504,7 +504,6 @@ export interface UserDropdownProps {
     onSignOut: () => Promise<void>
     onOpen?: () => void
     hideBilling?: boolean
-    hideSSHKeys?: boolean
     hideSignOut?: boolean
     footerLinks?: FooterLink[]
     openLinksWindowed?: boolean

@@ -79,7 +79,6 @@ const DashboardHeader: FC<DashboardHeaderProps> = ({
                         displayName={displayName}
                         onSignOut={onSignOut}
                         hideBilling={isLocal}
-                        hideSSHKeys={isLocal}
                         hideSignOut={isLocal}
                         footerLinks={dropdownFooterLinks}
                         openLinksWindowed={

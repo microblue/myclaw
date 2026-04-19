@@ -18,7 +18,6 @@ const NewClawStepProvider = lazy(() => import('@/pages/NewClaw/StepProvider'))
 const NewClawStepPlan = lazy(() => import('@/pages/NewClaw/StepPlan'))
 const NewClawStepReview = lazy(() => import('@/pages/NewClaw/StepReview'))
 const ClawDetail = lazy(() => import('@/pages/ClawDetail'))
-const SSHKeys = lazy(() => import('@/pages/SSHKeys'))
 const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
 const Affiliate = lazy(() => import('@/pages/Affiliate'))
@@ -106,14 +105,6 @@ const App: FC = (): ReactNode => {
                                 element={<NewClawStepReview />}
                             />
                         </Route>
-                        <Route
-                            path={ROUTES.SSH_KEYS}
-                            element={
-                                <ProtectedRoute>
-                                    <SSHKeys />
-                                </ProtectedRoute>
-                            }
-                        />
                         <Route
                             path={ROUTES.ACCOUNT}
                             element={

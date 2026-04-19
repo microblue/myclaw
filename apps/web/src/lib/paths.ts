@@ -8,7 +8,6 @@ const PATHS = {
     NEW_CLAW_PROVIDER: 'new/provider',
     NEW_CLAW_PLAN: 'new/plan',
     NEW_CLAW_REVIEW: 'new/review',
-    SSH_KEYS: 'ssh-keys',
     ACCOUNT: 'account',
     BILLING: 'billing',
     ADMIN: 'admin',
