@@ -10,6 +10,7 @@ import clawExports from '@/db/schema/clawExports'
 import emails from '@/db/schema/emails'
 import waitlist from '@/db/schema/waitlist'
 import volumes from '@/db/schema/volumes'
+import systemSettings from '@/db/schema/systemSettings'
 
 export {
     users,
@@ -23,5 +24,6 @@ export {
     clawExports,
     emails,
     waitlist,
-    volumes
+    volumes,
+    systemSettings
 }

@@ -135,42 +135,47 @@ class LightsailProvider implements CloudProvider {
         }
 
         // Open the Lightsail-level firewall for HTTPS. New instances only
-        // have 22 + 80 open by default; without this certbot can
-        // get a cert but external clients time out on :443. 22/80 have
-        // to be listed too since PutInstancePublicPorts replaces the
-        // whole rule set.
-        regionClient
-            .send(
-                new PutInstancePublicPortsCommand({
-                    instanceName: options.name,
-                    portInfos: [
-                        {
-                            fromPort: 22,
-                            toPort: 22,
-                            protocol: 'tcp',
-                            cidrs: ['0.0.0.0/0'],
-                            ipv6Cidrs: ['::/0']
-                        },
-                        {
-                            fromPort: 80,
-                            toPort: 80,
-                            protocol: 'tcp',
-                            cidrs: ['0.0.0.0/0'],
-                            ipv6Cidrs: ['::/0']
-                        },
-                        {
-                            fromPort: 443,
-                            toPort: 443,
-                            protocol: 'tcp',
-                            cidrs: ['0.0.0.0/0'],
-                            ipv6Cidrs: ['::/0']
-                        }
-                    ]
-                })
-            )
-            .catch((err) =>
-                console.error('[lightsail] PutInstancePublicPorts', err)
-            )
+        // have 22 + 80 open by default; without this certbot can get a
+        // cert but external clients time out on :443. 22/80 have to be
+        // listed too since PutInstancePublicPorts replaces the whole
+        // rule set.
+        //
+        // We AWAIT this — we used to fire-and-forget it ("instance not
+        // ready yet, retry in background"), but the dev server's tsx
+        // watch hot-reloads on file save and any in-flight async like
+        // this one dies with the old process, leaving 443 silently
+        // closed forever. The first attempt almost always succeeds in
+        // practice; the retry loop covers the rare race where the
+        // instance hasn't registered with the firewall service yet.
+        const portInfos = [
+            { fromPort: 22, toPort: 22, protocol: 'tcp' as const, cidrs: ['0.0.0.0/0'], ipv6Cidrs: ['::/0'] },
+            { fromPort: 80, toPort: 80, protocol: 'tcp' as const, cidrs: ['0.0.0.0/0'], ipv6Cidrs: ['::/0'] },
+            { fromPort: 443, toPort: 443, protocol: 'tcp' as const, cidrs: ['0.0.0.0/0'], ipv6Cidrs: ['::/0'] }
+        ]
+        let firewallOpened = false
+        for (let attempt = 1; attempt <= 6; attempt++) {
+            try {
+                await regionClient.send(
+                    new PutInstancePublicPortsCommand({
+                        instanceName: options.name,
+                        portInfos
+                    })
+                )
+                console.log(`[lightsail] firewall opened for ${options.name} on attempt ${attempt}`)
+                firewallOpened = true
+                break
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err)
+                console.warn(`[lightsail] PutInstancePublicPorts attempt ${attempt} failed: ${msg}`)
+                await new Promise((r) => setTimeout(r, 3_000 * attempt))
+            }
+        }
+        if (!firewallOpened) {
+            // Surface as throw so provisionClaw marks the claw as
+            // unreachable instead of leaving it stuck in `creating`
+            // with a dead :443.
+            throw new Error(`Lightsail firewall could not be opened after 6 attempts for ${options.name}`)
+        }
 
         // Allocate static IP and attach async (instance may not be running yet)
         const staticIpName = options.name + '-ip'

@@ -21,7 +21,8 @@ import {
     AdminSSHKeysTab,
     AdminDetailModal,
     AdminVolumesTab,
-    AdminWaitlistTab
+    AdminWaitlistTab,
+    AdminSettingsTab
 } from '@/components/admin'
 import {
     Skeleton,
@@ -41,7 +42,8 @@ import {
     ExportIcon,
     EnvelopeIcon,
     ChartLineUpIcon,
-    CreditCardIcon
+    CreditCardIcon,
+    GearIcon
 } from '@phosphor-icons/react'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 import { UsersTab } from '@/pages/Admin/tabs'
@@ -57,7 +59,8 @@ const ADMIN_TABS = {
     WAITLIST: 'waitlist',
     EXPORTS: 'exports',
     EMAILS: 'emails',
-    BILLING: 'billing'
+    BILLING: 'billing',
+    SETTINGS: 'settings'
 } as const
 
 const Admin: FC = (): ReactNode => {
@@ -188,6 +191,12 @@ const Admin: FC = (): ReactNode => {
                                         icon: CreditCardIcon,
                                         label: t('admin.billingTab'),
                                         count: stats?.billing
+                                    },
+                                    {
+                                        key: ADMIN_TABS.SETTINGS,
+                                        icon: GearIcon,
+                                        label: 'Settings',
+                                        showLabel: true
                                     }
                                 ].map((tab) => {
                                     const isActive = activeTab === tab.key
@@ -280,6 +289,9 @@ const Admin: FC = (): ReactNode => {
                             )}
                             {activeTab === ADMIN_TABS.USERS && (
                                 <UsersTab onSelectEntity={setSelectedEntity} />
+                            )}
+                            {activeTab === ADMIN_TABS.SETTINGS && (
+                                <AdminSettingsTab />
                             )}
                         </div>
                     </Fragment>

@@ -1,13 +1,41 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawLogsContentProps, ParsedLogLine } from '@/ts/Interfaces'
 
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { getLocale } from '@/lib'
+import { getLocale, Envs } from '@/lib'
+import { getCachedToken } from '@/lib/firebase'
 import { Skeleton } from '@/components/ui'
 import { ScrollIcon } from '@phosphor-icons/react'
-import { useClawLogs, useScrollToBottom } from '@/hooks'
+import { useScrollToBottom } from '@/hooks'
 import { PanelPlaceholder, ScrollToBottomButton } from '@/components/shared'
+
+// Strips ANSI CSI + OSC sequences so colored output from certbot / npm
+// / apt (which the VPS-side `tail -F` forwards verbatim from the
+// bootstrap log) doesn't render as gibberish. Terminal rendering lives
+// in the SSH tab; this component is a web log viewer, not a pty.
+const ANSI_REGEX =
+    // eslint-disable-next-line no-control-regex
+    /\x1b\[[0-9;?]*[a-zA-Z]|\x1b\][^\x07]*\x07/g
+
+const MAX_LINES = 2000
+const TIMESTAMP_REGEX = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\s*/
+
+const parseLine = (raw: string): ParsedLogLine => {
+    const clean = raw.replace(ANSI_REGEX, '')
+    const match = clean.match(TIMESTAMP_REGEX)
+    if (match) {
+        const date = new Date(match[1])
+        const time = date.toLocaleTimeString(getLocale(), {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        })
+        return { time, text: clean.slice(match[0].length) }
+    }
+    return { time: null, text: clean }
+}
 
 const ClawLogsContent: FC<ClawLogsContentProps> = ({
     clawId,
@@ -16,10 +44,18 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
     mockLogs,
     source
 }): ReactNode => {
-    const query = useClawLogs(clawId, enabled && !mockLogs, source)
-    const logs = mockLogs
-        ? { data: { logs: mockLogs }, isPending: false, isError: false }
-        : query
+    const [lines, setLines] = useState<ParsedLogLine[]>(() =>
+        mockLogs
+            ? mockLogs
+                  .split('\n')
+                  .filter((l) => l.trim())
+                  .map(parseLine)
+            : []
+    )
+    const [status, setStatus] = useState<'pending' | 'streaming' | 'error'>(
+        mockLogs ? 'streaming' : 'pending'
+    )
+    const pendingFragmentRef = useRef('')
     const {
         scrollRef,
         showButton,
@@ -28,41 +64,73 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
         isAtBottomRef
     } = useScrollToBottom({ threshold: 50 })
     const isFirstLoadRef = useRef(true)
-    const timestampRegex =
-        /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\s*/
 
-    const parsedLines = useMemo((): ParsedLogLine[] => {
-        if (!embedded || !logs.data?.logs) return []
-        return logs.data.logs
-            .split('\n')
-            .filter((line) => line.trim())
-            .map((line): ParsedLogLine => {
-                const match = line.match(timestampRegex)
-                if (match) {
-                    const raw = match[1]
-                    const date = new Date(raw)
-                    const time = date.toLocaleTimeString(getLocale(), {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    })
-                    return { time, text: line.slice(match[0].length) }
-                }
-                return { time: null, text: line }
-            })
-    }, [embedded, logs.data])
+    // Subscribes to the control-plane's terminal WS in read-only tail
+    // mode (`?stream=bootstrap|gateway`) and feeds incoming chunks
+    // through the line parser. Re-runs when `source` flips, tearing
+    // down the old WS so the viewer always reflects exactly one log.
+    useEffect(() => {
+        if (!enabled || mockLogs) return
+        let cancelled = false
+        let ws: WebSocket | null = null
+
+        setLines([])
+        pendingFragmentRef.current = ''
+        setStatus('pending')
+
+        const connect = async () => {
+            const token = await getCachedToken()
+            if (cancelled) return
+            if (!token) {
+                setStatus('error')
+                return
+            }
+
+            const apiUrl = Envs.VITE_API_URL
+            const streamParam = `&stream=${source || 'bootstrap'}`
+            const url = apiUrl.startsWith('http')
+                ? `${apiUrl.replace(/^http/, 'ws')}/claws/${clawId}/terminal?token=${encodeURIComponent(token)}${streamParam}`
+                : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/claws/${clawId}/terminal?token=${encodeURIComponent(token)}${streamParam}`
+
+            ws = new WebSocket(url)
+            ws.onopen = () => setStatus('streaming')
+            ws.onmessage = (ev) => {
+                const incoming =
+                    typeof ev.data === 'string'
+                        ? ev.data
+                        : new TextDecoder().decode(ev.data as ArrayBuffer)
+                const combined = pendingFragmentRef.current + incoming
+                const parts = combined.split('\n')
+                pendingFragmentRef.current = parts.pop() ?? ''
+                const newLines = parts
+                    .filter((l) => l.trim())
+                    .map(parseLine)
+                if (newLines.length === 0) return
+                setLines((prev) => {
+                    const next = prev.concat(newLines)
+                    return next.length > MAX_LINES
+                        ? next.slice(next.length - MAX_LINES)
+                        : next
+                })
+            }
+            ws.onerror = () => setStatus('error')
+        }
+        connect()
+        return () => {
+            cancelled = true
+            ws?.close()
+        }
+    }, [enabled, mockLogs, clawId, source])
 
     useEffect(() => {
-        if (logs.data) {
-            if (isFirstLoadRef.current) {
-                setTimeout(() => scrollToBottom('instant'), 0)
-                isFirstLoadRef.current = false
-            } else if (isAtBottomRef.current) {
-                setTimeout(() => scrollToBottom('instant'), 0)
-            }
+        if (lines.length === 0) return
+        if (isFirstLoadRef.current) {
+            setTimeout(() => scrollToBottom('instant'), 0)
+            isFirstLoadRef.current = false
+        } else if (isAtBottomRef.current) {
+            setTimeout(() => scrollToBottom('instant'), 0)
         }
-    }, [logs.data])
+    }, [lines])
 
     useEffect(() => {
         if (!enabled) {
@@ -70,6 +138,17 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
             isAtBottomRef.current = true
         }
     }, [enabled])
+
+    const showPending = status === 'pending' && lines.length === 0
+    const showError = status === 'error' && lines.length === 0
+
+    const joined = useMemo(
+        () =>
+            lines
+                .map((l) => (l.time ? `${l.time} ${l.text}` : l.text))
+                .join('\n'),
+        [lines]
+    )
 
     return (
         <div
@@ -80,13 +159,13 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                 onScroll={handleScroll}
                 className={`overflow-y-auto ${embedded ? 'min-h-0 flex-1' : 'h-full'}`}
             >
-                {logs.isPending && embedded && (
+                {showPending && embedded && (
                     <div className='bg-foreground/5 h-full w-full animate-pulse' />
                 )}
-                {logs.isPending && !embedded && (
+                {showPending && !embedded && (
                     <Skeleton className='border-border h-full w-full rounded-md border' />
                 )}
-                {logs.isError && (
+                {showError && (
                     <PanelPlaceholder
                         icon={
                             <ScrollIcon
@@ -98,16 +177,16 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                         description={t('api.failedToGetLogsDescription')}
                     />
                 )}
-                {logs.data && !embedded && (
+                {!embedded && !showPending && !showError && (
                     <pre className='border-border bg-muted text-muted-foreground overflow-auto whitespace-pre-wrap break-words rounded-md border p-3 text-xs leading-snug'>
-                        {logs.data.logs || t('dashboard.diagnosticsNoLogs')}
+                        {joined || t('dashboard.diagnosticsNoLogs')}
                     </pre>
                 )}
-                {logs.data && embedded && (
+                {embedded && !showPending && !showError && (
                     <div
-                        className={`bg-muted/50 flex flex-col gap-1 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}
+                        className={`bg-muted/50 flex flex-col gap-1 p-4 ${lines.length === 0 ? 'h-full items-center justify-center' : ''}`}
                     >
-                        {parsedLines.length === 0 && (
+                        {lines.length === 0 && (
                             <PanelPlaceholder
                                 icon={
                                     <ScrollIcon
@@ -119,7 +198,7 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                                 description=''
                             />
                         )}
-                        {parsedLines.map((line, i) => (
+                        {lines.map((line, i) => (
                             <div key={i} className='flex gap-2'>
                                 {line.time && (
                                     <span className='text-muted-foreground/60 shrink-0 font-mono text-[10px] leading-4'>

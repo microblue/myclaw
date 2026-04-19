@@ -43,10 +43,10 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
                     🐾
                 </div>
                 <h2 className='text-2xl font-semibold'>
-                    No instances yet, {displayName || 'there'}
+                    No Claws yet, {displayName || 'there'}
                 </h2>
                 <p className='text-muted-foreground max-w-md text-sm'>
-                    Deploy your first Claw to get started. It takes a couple of minutes and you can pause or delete it whenever.
+                    Deploy your first Claw to get started. It takes a few minutes — you can pause or delete it anytime.
                 </p>
                 <Button onClick={() => navigate(ROUTES.NEW_CLAW)} size='lg'>
                     Deploy your first Claw
@@ -57,13 +57,18 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
 
     return (
         <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
-            <div className='mb-6'>
-                <h2 className='text-xl font-semibold md:text-2xl'>
-                    Welcome back{displayName ? `, ${displayName}` : ''}
-                </h2>
-                <p className='text-muted-foreground mt-1 text-sm'>
-                    You have {claws.length} {claws.length === 1 ? 'instance' : 'instances'}.
-                </p>
+            <div className='mb-6 flex items-end justify-between gap-4'>
+                <div>
+                    <h2 className='text-xl font-semibold md:text-2xl'>
+                        Welcome back{displayName ? `, ${displayName}` : ''}
+                    </h2>
+                    <p className='text-muted-foreground mt-1 text-sm'>
+                        You have {claws.length} {claws.length === 1 ? 'Claw' : 'Claws'}.
+                    </p>
+                </div>
+                <Button onClick={() => navigate(ROUTES.NEW_CLAW)}>
+                    Deploy new
+                </Button>
             </div>
             <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
                 {claws.map((claw) => (

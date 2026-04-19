@@ -18,6 +18,10 @@ import {
     generateCloudInit,
     DOMAIN
 } from '@/controllers/claws/helpers'
+import {
+    getSystemSetting,
+    SETTINGS_KEYS
+} from '@/services/systemSettings'
 import { t } from '@openclaw/i18n'
 
 const provisionClaw = async (
@@ -83,11 +87,17 @@ const provisionClaw = async (
             }
         }
 
+        const [openrouterApiKey, defaultModel] = await Promise.all([
+            getSystemSetting(SETTINGS_KEYS.defaultOpenrouterApiKey),
+            getSystemSetting(SETTINGS_KEYS.defaultOpenrouterModel)
+        ])
+
         const cloudInitScript = generateCloudInit(
             pending.rootPassword || '',
             subdomain,
             DOMAIN,
-            gatewayToken
+            gatewayToken,
+            { openrouterApiKey, defaultModel }
         )
 
         await db.insert(claws).values({

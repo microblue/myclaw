@@ -118,7 +118,9 @@ const API_PATHS = {
         REFERRALS: '/admin/referrals',
         WAITLIST: '/admin/waitlist',
         EXPORTS: '/admin/exports',
-        EMAILS: '/admin/emails'
+        EMAILS: '/admin/emails',
+        SETTINGS: '/admin/settings',
+        UPDATE_SETTING: (key: string) => `/admin/settings/${key}`
     },
     WEBHOOKS: {
         POLAR: '/webhooks/polar'

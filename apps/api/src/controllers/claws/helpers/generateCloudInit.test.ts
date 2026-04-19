@@ -68,4 +68,54 @@ describe('generateCloudInit', () => {
     it('logs a bootstrap start banner', () => {
         expect(output).toContain('openclaw bootstrap starting')
     })
+
+    describe('with openrouter llm config', () => {
+        it('prefixes bare model slugs with "openrouter/" for agents.defaults.model.primary', () => {
+            const out = generateCloudInit(
+                'pw',
+                'test',
+                'example.com',
+                'tok',
+                {
+                    openrouterApiKey: 'sk-or-v1-abc',
+                    defaultModel: 'deepseek/deepseek-v3.2'
+                }
+            )
+            expect(out).toContain('"primary": "openrouter/deepseek/deepseek-v3.2"')
+            expect(out).not.toContain('"primary": "deepseek/deepseek-v3.2"')
+        })
+
+        it('writes OPENROUTER_API_KEY into the systemd unit so the built-in extension picks it up', () => {
+            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
+                openrouterApiKey: 'sk-or-v1-abc',
+                defaultModel: 'auto'
+            })
+            expect(out).toContain('Environment=OPENROUTER_API_KEY=sk-or-v1-abc')
+        })
+
+        it('falls back to openrouter/auto when no default model is saved', () => {
+            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
+                openrouterApiKey: 'sk-or-v1-abc'
+            })
+            expect(out).toContain('"primary": "openrouter/auto"')
+        })
+
+        it('does not double-prefix already-qualified refs', () => {
+            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
+                openrouterApiKey: 'sk-or-v1-abc',
+                defaultModel: 'openrouter/anthropic/claude-sonnet-4'
+            })
+            expect(out).toContain('"primary": "openrouter/anthropic/claude-sonnet-4"')
+            expect(out).not.toContain('openrouter/openrouter/')
+        })
+
+        it('omits OPENROUTER_API_KEY and model config when no api key is configured', () => {
+            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
+                openrouterApiKey: null,
+                defaultModel: null
+            })
+            expect(out).not.toContain('OPENROUTER_API_KEY')
+            expect(out).not.toContain('"primary":')
+        })
+    })
 })

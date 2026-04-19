@@ -54,6 +54,42 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
             }
             if (!live) return claw
 
+            // Self-healing DNS creation. Normally pollLifecycle (in
+            // provisionClawServer) writes the Cloudflare A record as
+            // soon as the provider returns a non-placeholder IP. But
+            // if the API process restarts mid-provision (tsx hot
+            // reload, deploy, crash), pollLifecycle dies and the
+            // record never gets written — leaving the claw with a
+            // public IP but no DNS. Catch it here for both `creating`
+            // and `configuring` states.
+            if (
+                (claw.status === clawStatus.creating ||
+                    claw.status === clawStatus.configuring) &&
+                live.ip &&
+                live.ip !== '0.0.0.0' &&
+                claw.subdomain
+            ) {
+                cloudflare
+                    .findDNSRecord(claw.subdomain)
+                    .then(async (existing) => {
+                        if (!existing) {
+                            await cloudflare.createDNSRecord(
+                                claw.subdomain!,
+                                live!.ip!
+                            )
+                        } else if (existing.ip !== live!.ip) {
+                            await cloudflare.updateDNSRecord(
+                                existing.id,
+                                claw.subdomain!,
+                                live!.ip!
+                            )
+                        }
+                    })
+                    .catch((err) =>
+                        console.error('[syncClawServers] DNS heal', err)
+                    )
+            }
+
             if (claw.status === clawStatus.configuring) {
                 if (
                     live.ip &&
@@ -117,6 +153,55 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
             const completionStates = transitionCompletedBy[claw.status]
             if (completionStates && !completionStates.includes(live.status)) {
                 return { ...claw, ip: live.ip }
+            }
+
+            // GUARD: never flip a transient first-time-setup status
+            // (creating / configuring / initializing / rebuilding)
+            // straight to running just because the cloud provider says
+            // the VPS is up. The VPS being on doesn't mean cloud-init
+            // finished, DNS exists, the cert is issued, or the
+            // OpenClaw gateway is answering. If we flip here, the
+            // dashboard tile turns green and "Open chat" 404/502s.
+            //
+            // For these transitions we require checkSubdomainReady to
+            // succeed (HTTPS 200 on the public subdomain) — which in
+            // turn requires DNS + nginx + cert + gateway all working.
+            // Only `starting` (resume from paused) is a fast path
+            // worth trusting on the provider's signal alone, since the
+            // disk image already has everything wired.
+            const FIRST_BOOT_TRANSIENTS = new Set<string>([
+                clawStatus.creating,
+                clawStatus.configuring,
+                clawStatus.initializing,
+                clawStatus.rebuilding
+            ])
+            if (
+                FIRST_BOOT_TRANSIENTS.has(claw.status) &&
+                live.status === clawStatus.running &&
+                claw.subdomain
+            ) {
+                const ready = CLOUDFLARE_DISABLED
+                    ? true
+                    : await checkSubdomainReady(claw.subdomain)
+                if (!ready) {
+                    // Don't write running yet. Bump to configuring so
+                    // the dashboard label moves on from "Launching" to
+                    // "Setting things up".
+                    if (claw.status !== clawStatus.configuring) {
+                        await db
+                            .update(claws)
+                            .set({
+                                status: clawStatus.configuring,
+                                ip: live.ip
+                            })
+                            .where(eq(claws.id, claw.id))
+                    }
+                    return {
+                        ...claw,
+                        status: clawStatus.configuring,
+                        ip: live.ip
+                    }
+                }
             }
 
             if (claw.status !== live.status) {

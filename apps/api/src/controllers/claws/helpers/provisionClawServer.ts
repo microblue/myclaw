@@ -10,6 +10,10 @@ import {
     generateCloudInit,
     DOMAIN
 } from '@/controllers/claws/helpers'
+import {
+    getSystemSetting,
+    SETTINGS_KEYS
+} from '@/services/systemSettings'
 
 // Background provisioning worker. Expects a `claws` row to already
 // exist with status=creating and the rootPassword / sshKeyId / subdomain
@@ -79,11 +83,17 @@ const provisionClawServer = async ({
             providerSshKeyIds = [String(sshKeyResult[0].providerKeyId)]
         }
 
+        const [openrouterApiKey, defaultModel] = await Promise.all([
+            getSystemSetting(SETTINGS_KEYS.defaultOpenrouterApiKey),
+            getSystemSetting(SETTINGS_KEYS.defaultOpenrouterModel)
+        ])
+
         const cloudInitScript = generateCloudInit(
             claw.rootPassword || '',
             claw.subdomain || '',
             DOMAIN,
-            claw.gatewayToken || ''
+            claw.gatewayToken || '',
+            { openrouterApiKey, defaultModel }
         )
 
         const serverName = generateServerName(claw.name, claw.id)
@@ -236,27 +246,62 @@ const pollLifecycle = async ({
         return
     }
 
-    // Stage 2: poll the OpenClaw gateway (via nginx) until it answers.
-    // We hit http://{ip}/ with a Host header for the claw's subdomain
-    // so this works even before Cloudflare DNS propagates to the new
-    // A record. Any < 500 response means nginx + gateway are up.
+    // Stage 2: poll until the OpenClaw gateway — not just nginx — is
+    // actually answering, end-to-end.
+    //
+    // The older check accepted any <500 response from http://{ip}/ with
+    // a Host header, which let us flip to "running" while:
+    //   - cloud-init was still installing nginx and the distro default
+    //     welcome page returned 200,
+    //   - nginx was up but openclaw-gateway was not (proxy_pass → 502,
+    //     which is >500 but the prior redirect hop could have been 301
+    //     <500), or
+    //   - HTTPS was not actually working yet.
+    //
+    // New rules:
+    //   - probe HTTPS on the public subdomain (forces cert + DNS + nginx
+    //     + gateway to all be wired up),
+    //   - require HTTP 200 (not 502 from upstream, not a redirect),
+    //   - body must look like OpenClaw's Control UI, not nginx's
+    //     "Welcome to nginx" default page,
+    //   - require 3 consecutive successes so a brief gateway blip
+    //     before a crash loop doesn't sell us out.
+    const isOpenclawResponse = (body: string): boolean => {
+        const lower = body.toLowerCase()
+        if (lower.includes('welcome to nginx')) return false
+        return (
+            lower.includes('openclaw') ||
+            lower.includes('control ui') ||
+            lower.includes('gateway') ||
+            body.trim().startsWith('{')
+        )
+    }
+
+    const REQUIRED_CONSECUTIVE_OK = 3
+    let consecutiveOk = 0
     const stage2Deadline = Date.now() + GATEWAY_POLL_MAX_MS
     while (Date.now() < stage2Deadline) {
         await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
         try {
-            const res = await fetch(`http://${currentIp}/`, {
-                headers: subdomain ? { Host: `${subdomain}.${domain}` } : {},
-                signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS)
-            })
-            if (res.status < 500) {
-                await db
-                    .update(claws)
-                    .set({ status: clawStatus.running })
-                    .where(eq(claws.id, clawId))
-                return
+            const res = await fetch(
+                `https://${subdomain}.${domain}/`,
+                { signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS) }
+            )
+            const body = res.status === 200 ? await res.text() : ''
+            if (res.status === 200 && isOpenclawResponse(body)) {
+                consecutiveOk += 1
+                if (consecutiveOk >= REQUIRED_CONSECUTIVE_OK) {
+                    await db
+                        .update(claws)
+                        .set({ status: clawStatus.running })
+                        .where(eq(claws.id, clawId))
+                    return
+                }
+            } else {
+                consecutiveOk = 0
             }
         } catch (_) {
-            /* gateway not up yet, keep polling */
+            consecutiveOk = 0
         }
     }
     console.warn(

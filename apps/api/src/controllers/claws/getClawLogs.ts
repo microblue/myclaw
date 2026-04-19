@@ -16,10 +16,14 @@ const getClawLogs = async (c: AuthenticatedContext) => {
         if (!claw.ip || !claw.rootPassword)
             return fail(c, t('api.failedToGetDiagnostics'), 400)
 
+        // `|| true` so the SSH call succeeds even when the log file
+        // doesn't exist yet (cloud-init hasn't finished, or the gateway
+        // never ran). The UI renders the stderr ("No such file…")
+        // verbatim, which is more useful than a red error banner.
         const output = await executeSSH(
             claw.ip,
             claw.rootPassword,
-            'tail -100 /var/log/openclaw-gateway.log 2>&1'
+            'tail -200 /var/log/openclaw-gateway.log 2>&1 || true'
         )
 
         return ok(c, { logs: output }, t('api.logsFetched'))

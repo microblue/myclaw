@@ -14,7 +14,6 @@ import { Button } from '@/components/ui'
 import type { Icon } from '@phosphor-icons/react'
 import {
     SquaresFourIcon,
-    KeyIcon,
     ReceiptIcon,
     HandshakeIcon,
     UserIcon,
@@ -30,9 +29,12 @@ type NavItem = {
     adminOnly?: boolean
 }
 
+// SSH keys intentionally omitted from the sidebar — power-user feature.
+// The per-claw detail page surfaces SSH access (root password + link
+// to /ssh-keys if you want to upload a public key) in its Advanced
+// panel. /ssh-keys itself still works as a direct URL.
 const NAV_ITEMS: NavItem[] = [
-    { to: ROUTES.CLAWS, label: 'Instances', icon: SquaresFourIcon },
-    { to: ROUTES.SSH_KEYS, label: 'SSH keys', icon: KeyIcon },
+    { to: ROUTES.CLAWS, label: 'My Claws', icon: SquaresFourIcon },
     { to: ROUTES.BILLING, label: 'Billing', icon: ReceiptIcon },
     { to: ROUTES.AFFILIATE, label: 'Referrals', icon: HandshakeIcon },
     { to: ROUTES.ACCOUNT, label: 'Account', icon: UserIcon },

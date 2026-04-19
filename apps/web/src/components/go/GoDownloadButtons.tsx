@@ -3,7 +3,7 @@ import type { FC, ReactNode } from 'react'
 import { DownloadSimpleIcon } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
 
-const DOWNLOAD_VERSION = '1.4.0'
+const DOWNLOAD_VERSION = '1.4.2'
 const BASE_URL = `https://github.com/microblue/myclaw-desktop-releases/releases/download/v${DOWNLOAD_VERSION}`
 
 const WindowsIcon = () => (

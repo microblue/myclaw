@@ -98,7 +98,18 @@ const admin = {
     listAdminEmails: (page: number = 1, limit: number = 20, sort?: string) =>
         client.get<AdminPaginatedResponse<AdminEmailListItem>>(
             `${API_PATHS.ADMIN.EMAILS}?${buildAdminPaginatedQuery({ page, limit, sort })}`
-        )
+        ),
+    getAdminSettings: () =>
+        client.get<{
+            settings: Array<{
+                key: string
+                value: string | null
+                isSecret: boolean
+                updatedAt: string
+            }>
+        }>(API_PATHS.ADMIN.SETTINGS),
+    updateAdminSetting: (key: string, value: string | null) =>
+        client.put<void>(API_PATHS.ADMIN.UPDATE_SETTING(key), { value })
 }
 
 export default admin

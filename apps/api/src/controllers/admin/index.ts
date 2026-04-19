@@ -12,6 +12,8 @@ import getAdminUserDetail from '@/controllers/admin/getAdminUserDetail'
 import getAdminVolumes from '@/controllers/admin/getAdminVolumes'
 import getAdminWaitlist from '@/controllers/admin/getAdminWaitlist'
 import updateAdminUser from '@/controllers/admin/updateAdminUser'
+import getAdminSettings from '@/controllers/admin/getAdminSettings'
+import updateAdminSetting from '@/controllers/admin/updateAdminSetting'
 
 export {
     getAdminAnalytics,
@@ -27,5 +29,7 @@ export {
     getAdminUserDetail,
     getAdminVolumes,
     getAdminWaitlist,
-    updateAdminUser
+    updateAdminUser,
+    getAdminSettings,
+    updateAdminSetting
 }

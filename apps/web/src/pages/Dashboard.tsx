@@ -2,11 +2,9 @@ import type { FC, ReactNode } from 'react'
 import type { Claw } from '@/ts/Interfaces'
 
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { usePreferencesStore } from '@/lib/store'
-import { ROUTES } from '@/lib'
 import {
     useClaws,
     useAdminClaws,
@@ -15,11 +13,9 @@ import {
 import { ErrorState, PageTitle } from '@/components'
 import AppShell from '@/components/layout/AppShell'
 import ClawsListView from '@/components/dashboard/ClawsListView'
-import { Button } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 
 const Dashboard: FC = (): ReactNode => {
-    const navigate = useNavigate()
     const { user, cachedProfile, isLocal } = useAuth()
     const { data: profile } = useProfile({
         enabled: !!user,
@@ -59,14 +55,8 @@ const Dashboard: FC = (): ReactNode => {
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading = adminMode ? isAdminClawsLoading : isClawsLoading
 
-    const deployButton = (
-        <Button size='sm' onClick={() => navigate(ROUTES.NEW_CLAW)}>
-            Deploy new
-        </Button>
-    )
-
     return (
-        <AppShell pageActions={deployButton}>
+        <AppShell>
             <PageTitle
                 title={
                     adminMode ? t('dashboard.adminTitle') : t('dashboard.title')

@@ -1,5 +1,4 @@
 import applyToolsDefaults from '@/controllers/claws/helpers/applyToolsDefaults'
-import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
 // Emits a plain bash script, not a #cloud-config YAML. Lightsail
 // prepends its own shell preamble to user-data (SSH CA registration
@@ -13,7 +12,8 @@ const generateCloudInit = (
     rootPassword: string,
     subdomain: string,
     domain: string,
-    gatewayToken: string
+    gatewayToken: string,
+    llm?: { openrouterApiKey?: string | null; defaultModel?: string | null }
 ): string => {
     const fullDomain = `${subdomain}.${domain}`
     const config: Record<string, unknown> = {
@@ -53,7 +53,42 @@ const generateCloudInit = (
     }
 
     applyToolsDefaults(config)
-    config.agents = { defaults: { sandbox: { mode: 'off' } } }
+    const agentsConfig: Record<string, unknown> = {
+        defaults: { sandbox: { mode: 'off' } as Record<string, unknown> }
+    }
+
+    // Wire the platform-default LLM so the Control UI lands with a
+    // working model on first open. Admin can rotate the key or default
+    // model via /admin/settings; each new claw picks up the live values
+    // at provision time.
+    //
+    // Shape mirrors what `openclaw onboard` writes when the user picks
+    // OpenRouter. OpenRouter is a built-in extension
+    // (enabledByDefault=true), so we don't configure a custom
+    // `models.providers.openrouter` block — the extension picks up the
+    // API key from the gateway process env (systemd unit below).
+    //
+    // Model refs must be provider-qualified (`openrouter/<slug>`); a
+    // bare ref like `deepseek/deepseek-v3.2` is parsed as
+    // provider=deepseek by the runtime and fails with "Unknown model".
+    // Auto-prefix when the admin's saved value is a bare slug.
+    const modelRef = llm?.openrouterApiKey
+        ? (() => {
+              const raw = llm.defaultModel?.trim() || 'auto'
+              return raw.startsWith('openrouter/') ? raw : `openrouter/${raw}`
+          })()
+        : null
+
+    if (modelRef) {
+        ;(agentsConfig.defaults as Record<string, unknown>).model = {
+            primary: modelRef
+        }
+        ;(agentsConfig.defaults as Record<string, unknown>).models = {
+            [modelRef]: { alias: 'OpenRouter' }
+        }
+    }
+
+    config.agents = agentsConfig
 
     const configJson = JSON.stringify(config, null, 2)
 
@@ -73,8 +108,18 @@ set -eu
 exec > >(tee -a /var/log/openclaw-bootstrap.log) 2>&1
 echo "=== openclaw bootstrap starting at $(date -u) ==="
 
-# Enable SSH password auth + set root password
+# Enable SSH password + root login. sshd uses first-match for these
+# directives, so AWS Lightsail's /etc/ssh/sshd_config.d/50-cloud-init.conf
+# (PasswordAuthentication no) wins over anything we put in the main
+# config. Drop an override file that sorts first alphabetically AND
+# flip the main config, so on any provider the result is the same.
 sed -i 's/^#\\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^#\\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+mkdir -p /etc/ssh/sshd_config.d
+cat > /etc/ssh/sshd_config.d/00-openclaw.conf << 'SSHCONF'
+PasswordAuthentication yes
+PermitRootLogin yes
+SSHCONF
 for svc in sshd ssh; do systemctl restart $svc 2>/dev/null && break; done || true
 printf 'root:%s\\n' '${rootPwEscaped}' | chpasswd
 chage -d 99999 root || true
@@ -99,7 +144,13 @@ curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dea
 echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
 apt-get update
 apt-get install -y nodejs
-npm install -g openclaw@${OPENCLAW_VERSION}
+# Pinned openclaw version. NOT @latest and NOT 2026.4.14/4.15 stable —
+# those carry a regression (openclaw/openclaw #67575, #67698, #66833)
+# where every OpenRouter turn returns \`payloads=0\`, so first chat on
+# a fresh claw looks stuck. 2026.4.19-beta.2 is the first build that
+# parses OpenRouter stream deltas correctly again. Bump this line once
+# a stable ≥2026.4.19 ships.
+npm install -g openclaw@2026.4.19-beta.2
 
 # openclaw system user
 if ! id openclaw >/dev/null 2>&1; then
@@ -132,7 +183,7 @@ Group=openclaw
 WorkingDirectory=/home/openclaw
 Environment=HOME=/home/openclaw
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
+${llm?.openrouterApiKey ? `Environment=OPENROUTER_API_KEY=${llm.openrouterApiKey}\n` : ''}ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
 Restart=always
 RestartSec=10
 StartLimitIntervalSec=0
@@ -208,15 +259,41 @@ nginx -t && systemctl reload nginx
 systemctl enable nginx
 
 # Wait for DNS propagation (Cloudflare A record written by the control
-# plane before createServer) and then hand nginx to certbot for HTTPS.
-for i in $(seq 1 24); do
+# plane after provider reports "running") and then hand nginx to
+# certbot for HTTPS. The DNS wait polls a public resolver; once the
+# record shows up we still sleep a bit for wider propagation before
+# issuing the challenge.
+echo "[bootstrap] waiting for DNS record for ${fullDomain}"
+for i in $(seq 1 60); do
     if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
-        sleep 15
+        echo "[bootstrap] DNS resolved after \${i} attempts; sleeping 20s for propagation"
+        sleep 20
         break
     fi
     sleep 5
 done
-certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@${domain} --redirect || true
+
+# Certbot retry loop. A single-shot call silently leaves nginx without
+# a :443 listener if Let's Encrypt couldn't reach us (DNS still
+# propagating, transient HTTP-01 failure, etc.), so retry a few times
+# before giving up. After each failure we bounce nginx to clear any
+# half-applied state. On the final attempt we drop the \`|| true\` so
+# the bootstrap log shows the real certbot error if all retries fail.
+cert_ok=0
+for attempt in 1 2 3 4; do
+    echo "[bootstrap] certbot attempt $attempt"
+    if certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@${domain} --redirect; then
+        cert_ok=1
+        echo "[bootstrap] certbot attempt $attempt succeeded"
+        break
+    fi
+    echo "[bootstrap] certbot attempt $attempt failed, sleeping 30s"
+    systemctl reload nginx 2>/dev/null || true
+    sleep 30
+done
+if [ "$cert_ok" -ne 1 ]; then
+    echo "[bootstrap] WARNING: certbot never succeeded; HTTPS will be unavailable until the dashboard's repair step re-runs certbot."
+fi
 
 echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
 chmod 644 /etc/cron.d/certbot-renew

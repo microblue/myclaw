@@ -15,7 +15,9 @@ import {
     getAdminUserDetail,
     getAdminVolumes,
     getAdminWaitlist,
-    updateAdminUser
+    updateAdminUser,
+    getAdminSettings,
+    updateAdminSetting
 } from '@/controllers/admin'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -36,5 +38,7 @@ app.get('/referrals', getAdminReferrals)
 app.get('/waitlist', getAdminWaitlist)
 app.get('/exports', getAdminExports)
 app.get('/emails', getAdminEmails)
+app.get('/settings', getAdminSettings)
+app.put('/settings/:key', updateAdminSetting)
 
 export default app

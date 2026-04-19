@@ -3,8 +3,9 @@ import type { Claw } from '@/ts/Interfaces'
 
 import { useMemo } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { clawStatus } from '@openclaw/shared'
-import { ROUTES } from '@/lib'
+import { ROUTES, api } from '@/lib'
 import { useToast } from '@/hooks'
 import useClaw from '@/hooks/useClaws/useClaw'
 import useStartClaw from '@/hooks/useClaws/useStartClaw'
@@ -14,19 +15,17 @@ import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
 import AppShell from '@/components/layout/AppShell'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
-import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
 import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
 import { useState } from 'react'
 import { ArrowSquareOutIcon } from '@phosphor-icons/react'
 
-type TabId = 'overview' | 'logs' | 'terminal' | 'diagnostics'
+type TabId = 'overview' | 'logs' | 'ssh'
 
 const TABS: { id: TabId; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'logs', label: 'Logs' },
-    { id: 'terminal', label: 'Terminal' },
-    { id: 'diagnostics', label: 'Diagnostics' }
+    { id: 'ssh', label: 'SSH' }
 ]
 
 const ClawDetail: FC = () => {
@@ -187,20 +186,22 @@ const ClawDetail: FC = () => {
                     {tab === 'logs' && (
                         <LogsTab claw={claw} />
                     )}
-                    {tab === 'terminal' && (
-                        <div className='bg-card rounded-lg border p-4'>
-                            <ClawTerminalContent
-                                clawId={claw.id}
-                                enabled
-                            />
-                        </div>
-                    )}
-                    {tab === 'diagnostics' && (
-                        <div className='bg-card rounded-lg border p-4'>
-                            <ClawDiagnosticsContent
-                                clawId={claw.id}
-                                enabled
-                            />
+                    {tab === 'ssh' && (
+                        <div className='bg-card rounded-lg border p-0 overflow-hidden'>
+                            <div className='border-border text-muted-foreground border-b px-4 py-2 text-xs'>
+                                Logged in as <span className='font-mono'>root@{claw.ip || '—'}</span> via secure WebSocket.
+                            </div>
+                            <div className='h-[28rem]'>
+                                <ClawTerminalContent
+                                    clawId={claw.id}
+                                    enabled={isRunning}
+                                />
+                            </div>
+                            {!isRunning && (
+                                <div className='text-muted-foreground border-t px-4 py-3 text-xs'>
+                                    SSH is available once the instance is running.
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -240,8 +241,8 @@ const LogsTab: FC<{ claw: Claw }> = ({ claw }) => {
         defaultSource
     )
     return (
-        <div className='bg-card rounded-lg border'>
-            <div className='border-border flex gap-1 border-b p-1.5'>
+        <div className='bg-card flex h-[32rem] flex-col rounded-lg border'>
+            <div className='border-border flex shrink-0 gap-1 border-b p-1.5'>
                 {(
                     [
                         { id: 'bootstrap', label: 'Bootstrap' },
@@ -267,7 +268,10 @@ const LogsTab: FC<{ claw: Claw }> = ({ claw }) => {
                         : '/var/log/openclaw-gateway.log'}
                 </span>
             </div>
-            <div className='p-4'>
+            {/* flex-1 + min-h-0 is what lets the inner scroller actually
+                overflow instead of growing the card — Tailwind's default
+                min-height on flex children is auto, which breaks clipping. */}
+            <div className='flex min-h-0 flex-1 flex-col'>
                 <ClawLogsContent
                     clawId={claw.id}
                     enabled
@@ -295,29 +299,135 @@ const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
             <h2 className='font-semibold'>Connection</h2>
             <dl className='space-y-2 text-sm'>
                 <Row
-                    label='Subdomain'
+                    label='Chat URL'
                     value={
                         claw.subdomain
                             ? `${claw.subdomain}.myclaw.one`
                             : '—'
                     }
                 />
-                <Row
-                    label='SSH'
-                    value={claw.ip ? `root@${claw.ip}` : '—'}
-                    mono
-                />
-                <GatewayTokenRow token={claw.gatewayToken || ''} />
             </dl>
-            <p className='text-muted-foreground pt-2 text-xs'>
-                The gateway token authenticates you to the OpenClaw
-                Control UI. "Open chat" opens the instance with the
-                token already attached; you only need to copy the token
-                if you want to paste it manually.
+            <p className='text-muted-foreground pt-1 text-xs'>
+                Click "Open chat" above to log in automatically.
             </p>
         </section>
+
+        <AdvancedSection claw={claw} />
     </div>
 )
+
+const AdvancedSection: FC<{ claw: Claw }> = ({ claw }) => {
+    const [open, setOpen] = useState(false)
+    return (
+        <section className='bg-card rounded-lg border p-6'>
+            <button
+                type='button'
+                onClick={() => setOpen((v) => !v)}
+                className='flex w-full items-center justify-between text-left'
+            >
+                <div>
+                    <h2 className='font-semibold'>Advanced</h2>
+                    <p className='text-muted-foreground text-xs'>
+                        SSH access, gateway token, and other technical
+                        details.
+                    </p>
+                </div>
+                <span className='text-muted-foreground text-xs'>
+                    {open ? 'Hide' : 'Show'}
+                </span>
+            </button>
+            {open && (
+                <div className='border-border mt-4 space-y-4 border-t pt-4'>
+                    <SshAccess claw={claw} />
+                    <GatewayTokenRow token={claw.gatewayToken || ''} />
+                </div>
+            )}
+        </section>
+    )
+}
+
+const SshAccess: FC<{ claw: Claw }> = ({ claw }) => {
+    const toast = useToast()
+    const credsQuery = useQuery({
+        queryKey: ['clawCredentials', claw.id],
+        queryFn: () => api.getClawCredentials(claw.id),
+        staleTime: 60_000
+    })
+    const [pwVisible, setPwVisible] = useState(false)
+    const sshCmd = claw.ip ? `ssh root@${claw.ip}` : '—'
+    const copy = async (text: string, label: string) => {
+        try {
+            await navigator.clipboard.writeText(text)
+            toast.success(`${label} copied`)
+        } catch (_) {
+            toast.error('Copy failed')
+        }
+    }
+    return (
+        <div className='space-y-3'>
+            <h3 className='text-sm font-medium'>SSH access</h3>
+            <div className='flex items-center justify-between text-sm'>
+                <dt className='text-muted-foreground'>Command</dt>
+                <dd className='flex items-center gap-2'>
+                    <code className='bg-muted rounded px-2 py-0.5 font-mono text-xs'>
+                        {sshCmd}
+                    </code>
+                    <button
+                        type='button'
+                        onClick={() => copy(sshCmd, 'Command')}
+                        className='text-muted-foreground hover:text-foreground text-xs underline'
+                        disabled={!claw.ip}
+                    >
+                        Copy
+                    </button>
+                </dd>
+            </div>
+            <div className='flex items-center justify-between text-sm'>
+                <dt className='text-muted-foreground'>Root password</dt>
+                <dd className='flex items-center gap-2'>
+                    <span className='font-mono text-xs'>
+                        {credsQuery.isPending
+                            ? 'Loading…'
+                            : pwVisible
+                              ? credsQuery.data?.rootPassword || '—'
+                              : '••••••••••'}
+                    </span>
+                    <button
+                        type='button'
+                        onClick={() => setPwVisible((v) => !v)}
+                        className='text-muted-foreground hover:text-foreground text-xs underline'
+                        disabled={!credsQuery.data?.rootPassword}
+                    >
+                        {pwVisible ? 'Hide' : 'Reveal'}
+                    </button>
+                    <button
+                        type='button'
+                        onClick={() =>
+                            copy(
+                                credsQuery.data?.rootPassword || '',
+                                'Password'
+                            )
+                        }
+                        className='text-muted-foreground hover:text-foreground text-xs underline'
+                        disabled={!credsQuery.data?.rootPassword}
+                    >
+                        Copy
+                    </button>
+                </dd>
+            </div>
+            <p className='text-muted-foreground text-xs'>
+                Prefer key-based login?{' '}
+                <a
+                    href={ROUTES.SSH_KEYS}
+                    className='underline hover:text-foreground'
+                >
+                    Add an SSH key
+                </a>{' '}
+                before deploying your next Claw.
+            </p>
+        </div>
+    )
+}
 
 const GatewayTokenRow: FC<{ token: string }> = ({ token }) => {
     const toast = useToast()
