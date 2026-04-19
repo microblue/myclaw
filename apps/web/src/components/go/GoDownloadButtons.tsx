@@ -1,7 +1,9 @@
 import type { FC, ReactNode } from 'react'
 
+import { Link } from 'react-router-dom'
 import { DownloadSimpleIcon } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
+import { ROUTES } from '@/lib'
 
 const DOWNLOAD_VERSION = '1.4.2'
 const BASE_URL = `https://github.com/microblue/myclaw-desktop-releases/releases/download/v${DOWNLOAD_VERSION}`
@@ -110,9 +112,19 @@ const GoDownloadButtons: FC = (): ReactNode => {
                 ))}
             </div>
 
-            {/* Version + releases link */}
+            {/* Version + releases link. "What's new" is the primary
+                discovery path — links to the per-version changelog on
+                myclaw.one. "All releases" still links to GitHub for
+                users who want the raw binaries page. */}
             <p className='text-muted-foreground text-xs'>
                 {t('go.currentVersion', { version: DOWNLOAD_VERSION })} ·{' '}
+                <Link
+                    to={ROUTES.DESKTOP_CHANGELOG}
+                    className='hover:text-foreground underline underline-offset-2 transition-colors'
+                >
+                    What&rsquo;s new
+                </Link>{' '}
+                ·{' '}
                 <a
                     href='https://github.com/microblue/myclaw-desktop-releases/releases'
                     target='_blank'
