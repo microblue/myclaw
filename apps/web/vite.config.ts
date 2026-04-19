@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import { existsSync, readFileSync } from 'fs'
+import { execSync } from 'child_process'
 
 import path from 'path'
 import react from '@vitejs/plugin-react'
@@ -9,6 +10,22 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import remarkGfm from 'remark-gfm'
 import viteCompression from 'vite-plugin-compression'
 import viteMdxSanitize from './src/plugins/vite-mdx-sanitize'
+
+// Resolve the displayed version from git so the footer always matches the
+// deployed commit. On the exact tagged commit → "v1.0"; N commits past →
+// "v1.0-N-gSHA"; dirty tree → "…-dirty". Falls back to package.json when
+// git is unavailable (shallow CI clone, tarball build, etc.).
+const resolveBuildVersion = (pkgVersion: string): string => {
+    try {
+        return execSync('git describe --tags --always --dirty', {
+            cwd: __dirname,
+            encoding: 'utf-8',
+            stdio: ['ignore', 'pipe', 'ignore']
+        }).trim()
+    } catch {
+        return `v${pkgVersion}`
+    }
+}
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd())
@@ -30,7 +47,7 @@ export default defineConfig(({ mode }) => {
 
     return {
         define: {
-            __APP_VERSION__: JSON.stringify(`v${pkg.version}`),
+            __APP_VERSION__: JSON.stringify(resolveBuildVersion(pkg.version)),
             ...wranglerEnv
         },
         plugins: [
