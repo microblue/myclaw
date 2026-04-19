@@ -182,7 +182,7 @@ const ru: Translations = {
         statsLocally: 'Работает локально',
         statsZero: 'Ноль',
         statsZeroConfig: 'Без настройки',
-        statsVersion: 'v1.4.0',
+        statsVersion: 'v1.4.2',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',

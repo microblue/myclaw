@@ -183,7 +183,7 @@ const hi: Translations = {
         statsLocally: 'स्थानीय रूप से चलता है',
         statsZero: 'शून्य',
         statsZeroConfig: 'शून्य कॉन्फ़िग',
-        statsVersion: 'v1.4.0',
+        statsVersion: 'v1.4.2',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',
