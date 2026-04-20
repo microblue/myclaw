@@ -19,13 +19,7 @@ import { ErrorState } from '@/components'
 import {
     UsersIcon,
     HardDrivesIcon,
-    KeyIcon,
-    DatabaseIcon,
-    HourglassIcon,
     HandshakeIcon,
-    ClockCountdownIcon,
-    ExportIcon,
-    EnvelopeIcon,
     ChartLineUpIcon,
     FunnelIcon
 } from '@phosphor-icons/react'
@@ -51,6 +45,9 @@ const RANGES = [
     }
 ]
 
+// Kept parallel to the admin tabs that survive the 5e10f8a cleanup —
+// anything whose tab was removed (ssh keys, volumes, pending claws,
+// waitlist, exports, emails) is also not useful as a trend chart.
 const RESOURCES = [
     {
         key: 'users' as const,
@@ -65,46 +62,10 @@ const RESOURCES = [
         color: '#3b82f6'
     },
     {
-        key: 'sshKeys' as const,
-        label: 'admin.sshKeysTab' as const,
-        icon: KeyIcon,
-        color: '#f59e0b'
-    },
-    {
-        key: 'volumes' as const,
-        label: 'admin.volumesTab' as const,
-        icon: DatabaseIcon,
-        color: '#10b981'
-    },
-    {
-        key: 'pendingClaws' as const,
-        label: 'admin.pendingClawsTab' as const,
-        icon: HourglassIcon,
-        color: '#f97316'
-    },
-    {
         key: 'referrals' as const,
         label: 'admin.referralsTab' as const,
         icon: HandshakeIcon,
         color: '#ec4899'
-    },
-    {
-        key: 'waitlist' as const,
-        label: 'admin.waitlistTab' as const,
-        icon: ClockCountdownIcon,
-        color: '#06b6d4'
-    },
-    {
-        key: 'exports' as const,
-        label: 'admin.exportsTab' as const,
-        icon: ExportIcon,
-        color: '#84cc16'
-    },
-    {
-        key: 'emails' as const,
-        label: 'admin.emailsTab' as const,
-        icon: EnvelopeIcon,
-        color: '#a855f7'
     }
 ]
 
