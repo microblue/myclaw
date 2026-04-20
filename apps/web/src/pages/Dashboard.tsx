@@ -4,6 +4,7 @@ import type { Claw } from '@/ts/Interfaces'
 import { useMemo } from 'react'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
+import { usePreferencesStore } from '@/lib/store'
 import {
     useClaws,
     useAdminClaws,
@@ -20,13 +21,12 @@ const Dashboard: FC = (): ReactNode => {
         enabled: !!user,
         staleTime: 1000 * 60 * 5
     })
-    // Admins get the fleet-wide view by default: landing on /claws
-    // shows every user's claws, tagged with owner email on each tile.
-    // No preference toggle — the sidebar + /admin page are separate
-    // destinations for admin-scoped drilling; the main dashboard is
-    // the "see everything at a glance" surface.
+    // `/claws` is per-user. Admins can still see the fleet via
+    // `/admin?tab=claws`; surfacing other users' claws on the main
+    // dashboard was confusing.
+    const { adminMode: adminModeRaw } = usePreferencesStore()
     const isAdmin = profile?.role === userRole.admin
-    const adminMode = !!isAdmin
+    const adminMode = !!isAdmin && adminModeRaw
 
     const displayName =
         profile?.name ||

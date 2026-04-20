@@ -162,17 +162,6 @@ const ClawInstanceCard: FC<Props> = ({ claw, onOpenChat, onViewDetails }) => {
                 <dd className='text-foreground text-right font-mono text-xs'>
                     {claw.ip || '—'}
                 </dd>
-                {/* Only populated when the API is serving the admin
-                    fleet-wide listing — regular /claws only surfaces
-                    the viewer's own claws and leaves this undefined. */}
-                {claw.ownerEmail && (
-                    <>
-                        <dt>Owner</dt>
-                        <dd className='text-foreground truncate text-right font-mono text-xs'>
-                            {claw.ownerEmail}
-                        </dd>
-                    </>
-                )}
             </dl>
 
             <div className='mt-auto pt-2'>
