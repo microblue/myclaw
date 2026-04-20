@@ -5,6 +5,7 @@ import type {
 } from '@/ts/Interfaces'
 
 import Cloudflare from 'cloudflare'
+import DOMAIN from '@/controllers/claws/helpers/constants'
 
 const getClient = () => {
     const token = process.env.CLOUDFLARE_API_TOKEN
@@ -87,7 +88,7 @@ const cloudflare = {
 
         const client = getClient()
         const zoneId = getZoneId()
-        const fullName = `${subdomain}.clawhost.cloud`
+        const fullName = `${subdomain}.${DOMAIN}`
 
         const promise = client.dns.records
             .list({
