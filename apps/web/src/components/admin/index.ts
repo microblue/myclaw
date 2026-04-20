@@ -1,7 +1,6 @@
 import AdminAnalyticsTab from '@/components/admin/AdminAnalyticsTab'
 import AdminBillingDetailView from '@/components/admin/AdminBillingDetailView'
 import AdminBillingTab from '@/components/admin/AdminBillingTab'
-import AdminClawDetailView from '@/components/admin/AdminClawDetailView'
 import AdminClawsTab from '@/components/admin/AdminClawsTab'
 import AdminDetailField from '@/components/admin/AdminDetailField'
 import AdminDetailModal from '@/components/admin/AdminDetailModal'
@@ -18,7 +17,6 @@ export {
     AdminAnalyticsTab,
     AdminBillingDetailView,
     AdminBillingTab,
-    AdminClawDetailView,
     AdminClawsTab,
     AdminDetailField,
     AdminDetailModal,

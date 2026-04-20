@@ -2,8 +2,9 @@ import type { FC, ReactNode } from 'react'
 import type { AdminResourceTabProps } from '@/ts/Interfaces'
 
 import { Fragment, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { formatDate } from '@/lib'
+import { formatDate, PATHS } from '@/lib'
 import {
     useAdminClawsList,
     useDebouncedValue,
@@ -20,16 +21,14 @@ import {
     SelectTrigger
 } from '@/components/ui'
 import { EmptyState, ErrorState } from '@/components'
-import { PLAYGROUND_NODE_TYPE } from '@/lib/constants'
 import { HardDrivesIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 import AdminStatusBadge from '@/components/admin/AdminStatusBadge'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 
 const PAGE_SIZE = 20
 
-const AdminClawsTab: FC<AdminResourceTabProps> = ({
-    onSelectEntity
-}): ReactNode => {
+const AdminClawsTab: FC<AdminResourceTabProps> = (): ReactNode => {
+    const navigate = useNavigate()
     const [search, setSearch] = useState('')
     const [sortOrder, setSortOrder] = useState('newest')
     const debouncedSearch = useDebouncedValue(search, 300)
@@ -117,12 +116,14 @@ const AdminClawsTab: FC<AdminResourceTabProps> = ({
                         <Card
                             key={claw.id}
                             className='hover:bg-foreground/10 cursor-pointer transition-colors'
+                            // Admins get the full per-claw page (overview
+                            // + logs + SSH + start/stop/delete), not a
+                            // shallow modal — they need the same controls
+                            // the owner has. The `/claw/:id` endpoint
+                            // already widens access via findUserClaw's
+                            // isAdmin flag.
                             onClick={() =>
-                                onSelectEntity({
-                                    type: PLAYGROUND_NODE_TYPE.CLAW,
-                                    id: claw.id,
-                                    data: claw
-                                })
+                                navigate(`/${PATHS.CLAW_DETAIL}/${claw.id}`)
                             }
                         >
                             <CardContent className='py-4'>

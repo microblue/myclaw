@@ -158,6 +158,18 @@ const ClawDetail: FC = () => {
     return (
         <AppShell>
             <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
+                {/* When an admin opens another user's claw we surface
+                    the owner at the top so it's obvious this isn't
+                    their own instance. `claw.ownerEmail` is only
+                    populated by the admin endpoint. */}
+                {claw.ownerEmail && (
+                    <div className='border-border bg-foreground/[0.04] mb-4 rounded-lg border px-4 py-2 text-xs'>
+                        <span className='text-muted-foreground'>
+                            Admin view ·{' '}
+                        </span>
+                        <span className='font-mono'>{claw.ownerEmail}</span>
+                    </div>
+                )}
                 <DetailHeader claw={claw} />
 
                 <div className='mt-6'>{actionBar}</div>

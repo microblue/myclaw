@@ -1,13 +1,11 @@
 import type { FC, ReactNode } from 'react'
 import type {
     AdminDetailModalProps,
-    AdminClawListItem,
     AdminReferralListItem,
     BillingOrder
 } from '@/ts/Interfaces'
 
 import { Dialog, DialogContent } from '@/components/ui'
-import AdminClawDetailView from '@/components/admin/AdminClawDetailView'
 import AdminReferralDetailView from '@/components/admin/AdminReferralDetailView'
 import AdminBillingDetailView from '@/components/admin/AdminBillingDetailView'
 import AdminUserDetailView from '@/components/admin/AdminUserDetailView'
@@ -25,14 +23,9 @@ const AdminDetailModal: FC<AdminDetailModalProps> = ({
                 return (
                     <AdminUserDetailView userId={entity.id} onClose={onClose} />
                 )
-            case 'claw':
-                return (
-                    <AdminClawDetailView
-                        claw={entity.data as AdminClawListItem}
-                        onClose={onClose}
-                        onNavigateToUser={onNavigateToUser}
-                    />
-                )
+            // `claw` no longer opens in the modal — AdminClawsTab
+            // navigates directly to /claw/:id so admins get the full
+            // page (status actions, logs, SSH) on any user's claw.
             case 'referral':
                 return (
                     <AdminReferralDetailView
