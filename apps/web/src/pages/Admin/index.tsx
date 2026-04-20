@@ -14,14 +14,8 @@ import {
     AdminAnalyticsTab,
     AdminBillingTab,
     AdminClawsTab,
-    AdminEmailsTab,
-    AdminExportsTab,
-    AdminPendingClawsTab,
     AdminReferralsTab,
-    AdminSSHKeysTab,
     AdminDetailModal,
-    AdminVolumesTab,
-    AdminWaitlistTab,
     AdminSettingsTab
 } from '@/components/admin'
 import {
@@ -34,13 +28,7 @@ import {
 import {
     UsersIcon,
     HardDrivesIcon,
-    KeyIcon,
-    DatabaseIcon,
     HandshakeIcon,
-    HourglassIcon,
-    ClockCountdownIcon,
-    ExportIcon,
-    EnvelopeIcon,
     ChartLineUpIcon,
     CreditCardIcon,
     GearIcon
@@ -48,17 +36,15 @@ import {
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 import { UsersTab } from '@/pages/Admin/tabs'
 
+// Six tabs is intentional — anything else (pending claws, ssh keys,
+// volumes, waitlist, exports, emails) was removed because either the
+// feature itself is gone (SSH keys) or the admin view was surfacing
+// low-signal operational data that belongs in logs/DB, not the UI.
 const ADMIN_TABS = {
     ANALYTICS: 'analytics',
     USERS: 'users',
     CLAWS: 'claws',
-    PENDING_CLAWS: 'pending',
-    SSH_KEYS: 'ssh-keys',
-    VOLUMES: 'volumes',
     REFERRALS: 'referrals',
-    WAITLIST: 'waitlist',
-    EXPORTS: 'exports',
-    EMAILS: 'emails',
     BILLING: 'billing',
     SETTINGS: 'settings'
 } as const
@@ -145,46 +131,10 @@ const Admin: FC = (): ReactNode => {
                                         count: stats?.claws
                                     },
                                     {
-                                        key: ADMIN_TABS.SSH_KEYS,
-                                        icon: KeyIcon,
-                                        label: t('admin.sshKeysTab'),
-                                        count: stats?.sshKeys
-                                    },
-                                    {
-                                        key: ADMIN_TABS.VOLUMES,
-                                        icon: DatabaseIcon,
-                                        label: t('admin.volumesTab'),
-                                        count: stats?.volumes
-                                    },
-                                    {
-                                        key: ADMIN_TABS.PENDING_CLAWS,
-                                        icon: HourglassIcon,
-                                        label: t('admin.pendingClawsTab'),
-                                        count: stats?.pendingClaws
-                                    },
-                                    {
                                         key: ADMIN_TABS.REFERRALS,
                                         icon: HandshakeIcon,
                                         label: t('admin.referralsTab'),
                                         count: stats?.referrals
-                                    },
-                                    {
-                                        key: ADMIN_TABS.WAITLIST,
-                                        icon: ClockCountdownIcon,
-                                        label: t('admin.waitlistTab'),
-                                        count: stats?.waitlist
-                                    },
-                                    {
-                                        key: ADMIN_TABS.EXPORTS,
-                                        icon: ExportIcon,
-                                        label: t('admin.exportsTab'),
-                                        count: stats?.exports
-                                    },
-                                    {
-                                        key: ADMIN_TABS.EMAILS,
-                                        icon: EnvelopeIcon,
-                                        label: t('admin.emailsTab'),
-                                        count: stats?.emails
                                     },
                                     {
                                         key: ADMIN_TABS.BILLING,
@@ -244,38 +194,8 @@ const Admin: FC = (): ReactNode => {
                                     onSelectEntity={setSelectedEntity}
                                 />
                             )}
-                            {activeTab === ADMIN_TABS.PENDING_CLAWS && (
-                                <AdminPendingClawsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.SSH_KEYS && (
-                                <AdminSSHKeysTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.VOLUMES && (
-                                <AdminVolumesTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
                             {activeTab === ADMIN_TABS.REFERRALS && (
                                 <AdminReferralsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.WAITLIST && (
-                                <AdminWaitlistTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.EXPORTS && (
-                                <AdminExportsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.EMAILS && (
-                                <AdminEmailsTab
                                     onSelectEntity={setSelectedEntity}
                                 />
                             )}
