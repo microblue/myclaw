@@ -88,8 +88,14 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
 
             const apiUrl = Envs.VITE_API_URL
             const streamParam = `&stream=${source || 'bootstrap'}`
+            // Swap the `/api` suffix for `/ws` so the handshake goes
+            // through nginx's WebSocket-upgrading `/ws/` location. The
+            // `/api/` block is plain HTTP proxy and drops Upgrade /
+            // Connection headers, which silently breaks this WS.
+            // In dev `VITE_API_URL` has no `/api` suffix; the regex
+            // is a no-op and the request hits the API directly.
             const url = apiUrl.startsWith('http')
-                ? `${apiUrl.replace(/^http/, 'ws')}/claws/${clawId}/terminal?token=${encodeURIComponent(token)}${streamParam}`
+                ? `${apiUrl.replace(/^http/, 'ws').replace(/\/api$/, '/ws')}/claws/${clawId}/terminal?token=${encodeURIComponent(token)}${streamParam}`
                 : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/claws/${clawId}/terminal?token=${encodeURIComponent(token)}${streamParam}`
 
             ws = new WebSocket(url)

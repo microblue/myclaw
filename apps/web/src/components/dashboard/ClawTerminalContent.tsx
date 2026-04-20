@@ -245,8 +245,12 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
             const { terminal, fitAndCrop } = createTerminal(container)
 
             const apiUrl = Envs.VITE_API_URL
+            // Swap the `/api` suffix for `/ws` so the handshake goes
+            // through nginx's WebSocket-upgrading `/ws/` location (the
+            // `/api/` block is plain HTTP proxy and silently drops the
+            // Upgrade header). No-op in dev where VITE_API_URL is bare.
             const wsUrl = apiUrl.startsWith('http')
-                ? `${apiUrl.replace(/^http/, 'ws')}/claws/${clawId}/terminal?token=${encodeURIComponent(token)}`
+                ? `${apiUrl.replace(/^http/, 'ws').replace(/\/api$/, '/ws')}/claws/${clawId}/terminal?token=${encodeURIComponent(token)}`
                 : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/claws/${clawId}/terminal?token=${encodeURIComponent(token)}`
             const ws = new WebSocket(wsUrl)
             wsRef.current = ws
