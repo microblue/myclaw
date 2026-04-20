@@ -137,6 +137,39 @@ set -eu
 exec > >(tee -a /var/log/openclaw-bootstrap.log) 2>&1
 echo "=== openclaw bootstrap starting at $(date -u) ==="
 
+# Status sentinel — the dashboard / syncClawServers can't see this
+# directly (we don't SSH during sync) but it survives reboots and is
+# visible via the Logs tab or SSH when a user asks "why is it stuck?".
+# We touch it at each major stage and final status so failures point
+# at a specific step instead of just "cloud-init never finished".
+mkdir -p /var/lib/openclaw-bootstrap
+BOOTSTRAP_STATE=/var/lib/openclaw-bootstrap/state
+stage() {
+    echo "stage=$1 at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
+    echo "[bootstrap] >>> $1"
+}
+trap 'rc=$?; [ $rc -ne 0 ] && { echo "status=failed stage=$(awk -F= "/^stage=/{print \\$2}" "$BOOTSTRAP_STATE" 2>/dev/null) exitCode=$rc at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"; echo "[bootstrap] !!! FAILED (rc=$rc, stage=$(awk -F= \\"/^stage=/{print \\\\\\$2}\\" "$BOOTSTRAP_STATE" 2>/dev/null))"; }' EXIT
+
+# Retry any command up to 5 times with exponential backoff. Every
+# external resource fetch (apt, npm, curl, dpkg) goes through this —
+# transient network blips on a fresh VM, registry 5xx, apt-lock
+# contention, etc. are the rule, not the exception.
+with_retry() {
+    local attempts=5 delay=3 i=1
+    while true; do
+        if "$@"; then return 0; fi
+        if [ $i -ge $attempts ]; then
+            echo "[bootstrap] retry exhausted ($attempts attempts): $*"
+            return 1
+        fi
+        echo "[bootstrap] attempt $i/$attempts failed, sleeping \${delay}s: $*"
+        sleep $delay
+        delay=$((delay * 2))
+        i=$((i + 1))
+    done
+}
+
+stage sshd-config
 # Enable SSH password + root login. sshd uses first-match for these
 # directives, so AWS Lightsail's /etc/ssh/sshd_config.d/50-cloud-init.conf
 # (PasswordAuthentication no) wins over anything we put in the main
@@ -153,7 +186,7 @@ for svc in sshd ssh; do systemctl restart $svc 2>/dev/null && break; done || tru
 printf 'root:%s\\n' '${rootPwEscaped}' | chpasswd
 chage -d 99999 root || true
 
-# 2G swap
+stage swap
 if [ ! -f /swapfile ]; then
     fallocate -l 2G /swapfile
     chmod 600 /swapfile
@@ -162,37 +195,65 @@ if [ ! -f /swapfile ]; then
     echo '/swapfile none swap sw 0 0' >> /etc/fstab
 fi
 
-# Base packages
+stage apt-base
 export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates gnupg git dnsutils
-
-# Node.js 22 via NodeSource
+# Single apt-get update covering both the base repos and (after the
+# NodeSource repo is added below) the NodeSource apt source — we add
+# the NodeSource file first, then update, to save a redundant pass.
 mkdir -p /etc/apt/keyrings
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+with_retry curl -fsSL -o /etc/apt/keyrings/nodesource.gpg.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+gpg --dearmor --batch --yes -o /etc/apt/keyrings/nodesource.gpg /etc/apt/keyrings/nodesource.gpg.key
 echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
-apt-get update
-apt-get install -y nodejs
+with_retry apt-get update
+with_retry apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates gnupg git dnsutils nodejs
+
+stage openclaw-install
 # Pinned openclaw version. NOT @latest and NOT 2026.4.14/4.15 stable —
 # those carry a regression (openclaw/openclaw #67575, #67698, #66833)
 # where every OpenRouter turn returns \`payloads=0\`, so first chat on
 # a fresh claw looks stuck. 2026.4.19-beta.2 is the first build that
 # parses OpenRouter stream deltas correctly again. Bump this line once
 # a stable ≥2026.4.19 ships.
-npm install -g openclaw@2026.4.19-beta.2
+#
+# --prefer-offline: if npm already has tarballs cached, skip the HEAD
+#   check round-trips (typically saves 10–30s on cold boots).
+# --no-audit / --no-fund: cosmetic output; skip the registry round-trip
+#   for vulnerability scan we'd ignore anyway on a single-package install.
+with_retry npm install -g --prefer-offline --no-audit --no-fund openclaw@2026.4.19-beta.2
 
-# openclaw system user
+stage openclaw-user
 if ! id openclaw >/dev/null 2>&1; then
     useradd -r -m -d /home/openclaw -s /bin/bash openclaw
 fi
 echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
-# Chrome (for browser tool)
-wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb
-dpkg -i /tmp/google-chrome.deb || apt-get install -f -y
-rm -f /tmp/google-chrome.deb
+stage chrome
+# Architecture-aware Chrome install — we used to hard-code amd64 which
+# breaks the moment someone boots an ARM64 Lightsail / Hetzner ARM.
+CHROME_ARCH=$(dpkg --print-architecture)
+case "$CHROME_ARCH" in
+    amd64)
+        CHROME_URL='https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
+        ;;
+    arm64)
+        # Google doesn't publish an arm64 .deb — fall through to
+        # Chromium from apt, which is close enough for headless.
+        CHROME_URL=''
+        ;;
+    *)
+        CHROME_URL=''
+        ;;
+esac
+if [ -n "$CHROME_URL" ]; then
+    with_retry curl -fsSL -o /tmp/google-chrome.deb "$CHROME_URL"
+    dpkg -i /tmp/google-chrome.deb || with_retry apt-get install -f -y
+    rm -f /tmp/google-chrome.deb
+else
+    echo "[bootstrap] no Chrome .deb for $CHROME_ARCH; installing chromium from apt"
+    with_retry apt-get install -y chromium || with_retry apt-get install -y chromium-browser || true
+fi
 
-# OpenClaw config
+stage openclaw-config
 mkdir -p /home/openclaw/.openclaw/agents/main/agent
 cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
 ${configJson}
@@ -243,22 +304,31 @@ StandardError=append:/var/log/openclaw-gateway.log
 WantedBy=multi-user.target
 SYSTEMD
 
-systemctl daemon-reload
-systemctl enable openclaw-gateway
-systemctl start openclaw-gateway
-
-# Wait for gateway to answer locally (kick if slow to boot)
-for i in $(seq 1 30); do
-    if curl -sf -o /dev/null http://127.0.0.1:18789; then break; fi
-    systemctl restart openclaw-gateway 2>/dev/null || true
-    sleep 10
-done
-
-# Firewall
+stage firewall
+# Firewall before gateway/nginx so there's no window where a service
+# is listening with the firewall still transitioning. ufw reload
+# doesn't drop existing connections — safe to call anytime.
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
 ufw --force enable
+
+stage gateway-start
+systemctl daemon-reload
+systemctl enable openclaw-gateway
+systemctl start openclaw-gateway
+
+# Wait for gateway to answer locally. Purely passive — the old loop
+# forced a restart on every failed poll, which worked around the
+# now-fixed first-boot config-rewrite cycle but actively interfered
+# with a healthy-but-slow gateway startup.
+for i in $(seq 1 30); do
+    if curl -sf -o /dev/null http://127.0.0.1:18789; then
+        echo "[bootstrap] gateway up after \${i}x 5s"
+        break
+    fi
+    sleep 5
+done
 
 # nginx reverse proxy → OpenClaw gateway
 cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
@@ -307,27 +377,28 @@ systemctl daemon-reload
 nginx -t && systemctl reload nginx
 systemctl enable nginx
 
-# Wait for DNS propagation (Cloudflare A record written by the control
-# plane after provider reports "running") and then hand nginx to
-# certbot for HTTPS. The DNS wait polls a public resolver; once the
-# record shows up we still sleep a bit for wider propagation before
-# issuing the challenge.
+stage dns-wait
+# DNS is written by the control-plane's provisionClawServer as soon
+# as the provider hands us a real IP — normally that lands in
+# Cloudflare within a second or two, and 1.1.1.1 picks it up on the
+# next TTL tick (60s). We poll up to 30x2s = 60s. If DNS never
+# shows up in that window, fall through to certbot anyway; the
+# certbot retry loop below absorbs brief delays.
 echo "[bootstrap] waiting for DNS record for ${fullDomain}"
-for i in $(seq 1 60); do
+for i in $(seq 1 30); do
     if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
-        echo "[bootstrap] DNS resolved after \${i} attempts; sleeping 20s for propagation"
-        sleep 20
+        echo "[bootstrap] DNS resolved after \${i}x 2s"
         break
     fi
-    sleep 5
+    sleep 2
 done
 
-# Certbot retry loop. A single-shot call silently leaves nginx without
-# a :443 listener if Let's Encrypt couldn't reach us (DNS still
-# propagating, transient HTTP-01 failure, etc.), so retry a few times
-# before giving up. After each failure we bounce nginx to clear any
-# half-applied state. On the final attempt we drop the \`|| true\` so
-# the bootstrap log shows the real certbot error if all retries fail.
+stage certbot
+# Certbot retry loop. A single-shot call silently leaves nginx
+# without a :443 listener if Let's Encrypt couldn't reach us
+# (DNS still propagating, transient HTTP-01 failure, etc.), so
+# retry a few times before giving up. After each failure we bounce
+# nginx to clear any half-applied state.
 cert_ok=0
 for attempt in 1 2 3 4; do
     echo "[bootstrap] certbot attempt $attempt"
@@ -336,27 +407,25 @@ for attempt in 1 2 3 4; do
         echo "[bootstrap] certbot attempt $attempt succeeded"
         break
     fi
-    echo "[bootstrap] certbot attempt $attempt failed, sleeping 30s"
+    echo "[bootstrap] certbot attempt $attempt failed, sleeping 20s"
     systemctl reload nginx 2>/dev/null || true
-    sleep 30
+    sleep 20
 done
 if [ "$cert_ok" -ne 1 ]; then
-    echo "[bootstrap] WARNING: certbot never succeeded; HTTPS will be unavailable until the dashboard's repair step re-runs certbot."
+    echo "[bootstrap] ERROR: certbot exhausted retries; :443 is not available."
+    echo "status=failed stage=certbot at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
+    # Don't exit 1 — the VPS is otherwise healthy and the user can
+    # manually re-run certbot once DNS sorts itself out. The sync
+    # loop will flip the claw to \`unreachable\` after its timeout so
+    # the dashboard surfaces the failure state.
 fi
 
 echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
 chmod 644 /etc/cron.d/certbot-renew
 
-# Homebrew for the openclaw user (background — lets bootstrap finish
-# fast and the user gets brew later)
-cat > /tmp/install-brew.sh << 'BREWSCRIPT'
-#!/bin/bash
-su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/openclaw/.bashrc
-BREWSCRIPT
-chmod +x /tmp/install-brew.sh
-nohup /tmp/install-brew.sh > /var/log/brew-install.log 2>&1 &
-
+# Success marker. Everything reaching this point succeeded; the trap
+# handler on failure rewrites this file with status=failed + stage.
+echo "status=ok at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
 echo "=== openclaw bootstrap finished at $(date -u) ==="
 `
 }

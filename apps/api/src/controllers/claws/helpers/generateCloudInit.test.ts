@@ -148,4 +148,63 @@ describe('generateCloudInit', () => {
             expect(out).not.toContain('"primary":')
         })
     })
+
+    // ── Robustness harness ──
+    describe('robustness hardening', () => {
+        it('defines a with_retry helper and routes network fetches through it', () => {
+            expect(output).toMatch(/^with_retry\(\)\s*\{/m)
+            expect(output).toContain('with_retry apt-get update')
+            expect(output).toContain('with_retry apt-get install -y curl')
+            expect(output).toContain('with_retry npm install -g')
+        })
+
+        it('picks Chrome build by dpkg architecture, falls back to chromium', () => {
+            expect(output).toContain('dpkg --print-architecture')
+            expect(output).toContain('google-chrome-stable_current_amd64.deb')
+            expect(output).toContain('chromium')
+        })
+
+        it('writes a bootstrap state sentinel at /var/lib/openclaw-bootstrap/state', () => {
+            expect(output).toContain('/var/lib/openclaw-bootstrap/state')
+            expect(output).toContain('status=ok')
+            expect(output).toContain('status=failed')
+            expect(output).toContain('stage openclaw-install')
+            expect(output).toContain('stage certbot')
+        })
+
+        it('firewall opens 22/80/443 before gateway + nginx start', () => {
+            const fwIdx = output.indexOf('ufw allow 22/tcp')
+            const gwIdx = output.indexOf('systemctl start openclaw-gateway')
+            const nginxIdx = output.indexOf('systemctl reload nginx')
+            expect(fwIdx).toBeGreaterThan(-1)
+            expect(gwIdx).toBeGreaterThan(fwIdx)
+            expect(nginxIdx).toBeGreaterThan(fwIdx)
+        })
+
+        it('gateway health poll is passive — no forced restart inside the loop', () => {
+            // The old loop did `systemctl restart openclaw-gateway`
+            // on every failed poll, which worked around a now-fixed
+            // first-boot cycle but interfered with a healthy-but-slow
+            // gateway startup. Ensure we don't reintroduce it.
+            const pollSection = output.slice(
+                output.indexOf('systemctl start openclaw-gateway'),
+                output.indexOf('# nginx reverse proxy')
+            )
+            expect(pollSection).not.toMatch(
+                /systemctl restart openclaw-gateway/
+            )
+        })
+
+        it('DNS wait is ~1 minute (30x2s), not the old 5-minute budget', () => {
+            expect(output).toMatch(/for i in \$\(seq 1 30\); do\s+if host/)
+            // The old 20s-extra-sleep after first resolve is gone.
+            expect(output).not.toContain('20s for propagation')
+        })
+
+        it('drops the Homebrew background install', () => {
+            expect(output).not.toContain('Homebrew')
+            expect(output).not.toContain('install-brew.sh')
+            expect(output).not.toContain('brew-install.log')
+        })
+    })
 })

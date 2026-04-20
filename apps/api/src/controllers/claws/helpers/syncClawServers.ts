@@ -28,6 +28,14 @@ const CLOUDFLARE_DISABLED =
     process.env.CLOUDFLARE_API_TOKEN.startsWith('your_') ||
     !process.env.CLOUDFLARE_ZONE_ID
 
+// If a claw stays in creating/configuring beyond this, cloud-init
+// probably failed (certbot couldn't get a cert, npm install timed
+// out, whatever). Flip it to `unreachable` so the dashboard shows
+// a clear terminal state instead of an indefinite spinner — the
+// user can open the Logs tab to inspect bootstrap output + root-SSH
+// to check `/var/lib/openclaw-bootstrap/state` for the failing stage.
+const PROVISION_TIMEOUT_MS = 20 * 60 * 1000
+
 const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
     // One getServer call per claw, routed to the claw's own provider
     // AND region. Bulk getServers() was cheaper but Lightsail is
@@ -41,6 +49,24 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
             const pid = claw.provider || 'hetzner'
             const provider = providerRegistry.getProvider(pid)
             if (!provider) return claw
+
+            // Timeout rescue: a claw that's been in creating/configuring
+            // for > PROVISION_TIMEOUT_MS is stuck (cloud-init failure,
+            // stale cert request, etc.). Flag it so the dashboard
+            // surfaces a terminal state.
+            if (
+                (claw.status === clawStatus.creating ||
+                    claw.status === clawStatus.configuring) &&
+                claw.createdAt &&
+                Date.now() - new Date(claw.createdAt).getTime() >
+                    PROVISION_TIMEOUT_MS
+            ) {
+                await db
+                    .update(claws)
+                    .set({ status: clawStatus.unreachable })
+                    .where(eq(claws.id, claw.id))
+                return { ...claw, status: clawStatus.unreachable }
+            }
 
             let live: ServerStatus | undefined
             try {
