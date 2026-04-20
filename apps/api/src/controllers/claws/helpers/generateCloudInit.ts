@@ -34,11 +34,16 @@ const generateCloudInit = (
             trustedProxies: ['127.0.0.1', '::1']
         },
         channels: {
-            whatsapp: { dmPolicy: 'open', allowFrom: ['*'] },
-            telegram: { dmPolicy: 'open', allowFrom: ['*'] },
-            discord: {},
-            slack: {},
-            signal: { dmPolicy: 'open', allowFrom: ['*'] }
+            // Every channel carries `enabled: true` explicitly so
+            // openclaw's first-boot normalizer doesn't add it and
+            // immediately rewrite the file (which triggers its own
+            // config-watcher → SIGTERM → systemd restart cycle, 2-3
+            // minutes of delay for every new user).
+            whatsapp: { dmPolicy: 'open', allowFrom: ['*'], enabled: true },
+            telegram: { dmPolicy: 'open', allowFrom: ['*'], enabled: true },
+            discord: { enabled: true },
+            slack: { enabled: true },
+            signal: { dmPolicy: 'open', allowFrom: ['*'], enabled: true }
         },
         commands: {
             restart: true,
@@ -49,6 +54,16 @@ const generateCloudInit = (
             executablePath: '/usr/bin/google-chrome-stable',
             headless: true,
             noSandbox: true
+        },
+        // Same rationale as the channel `enabled` flags — without
+        // these pre-populated, the first-boot normalizer fills them
+        // in and rewrites, triggering a restart. We list every plugin
+        // our config actually uses.
+        plugins: {
+            entries: {
+                openrouter: { enabled: true },
+                browser: { enabled: true }
+            }
         }
     }
 
@@ -89,6 +104,20 @@ const generateCloudInit = (
     }
 
     config.agents = agentsConfig
+
+    // `meta` block is the third piece that openclaw would otherwise
+    // add on first boot (alongside channel.enabled + plugins.entries).
+    // Pre-populating it prevents the "missing-meta-before-write"
+    // anomaly + the resulting rewrite. `lastTouchedVersion` should
+    // match the openclaw version we pin in the install step below
+    // so openclaw's own stamping logic sees no drift. `lastTouchedAt`
+    // is a fixed pre-installation marker; openclaw rewrites it the
+    // first time it touches the config for any other reason (a user
+    // config change, a plugin toggle, etc.), which is fine.
+    config.meta = {
+        lastTouchedVersion: '2026.4.19-beta.2',
+        lastTouchedAt: '2026-04-01T00:00:00.000Z'
+    }
 
     const configJson = JSON.stringify(config, null, 2)
 

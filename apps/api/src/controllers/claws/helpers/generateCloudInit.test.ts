@@ -77,6 +77,28 @@ describe('generateCloudInit', () => {
         expect(output).toContain('"bootstrapSeededAt"')
     })
 
+    // These three shapes are what openclaw's first-boot normalizer
+    // would otherwise add, triggering a file rewrite + self-restart
+    // cycle. Writing them ourselves keeps first boot a single pass.
+    it('includes `enabled: true` on every channel so the normalizer no-ops', () => {
+        expect(output).toContain('"whatsapp"')
+        // Count occurrences of "enabled": true — 5 channels + 2 plugin
+        // entries (openrouter + browser) + browser block = 8 minimum.
+        const enabledMatches = output.match(/"enabled":\s*true/g) || []
+        expect(enabledMatches.length).toBeGreaterThanOrEqual(8)
+    })
+
+    it('includes a `plugins.entries` block for built-in plugins', () => {
+        expect(output).toContain('"plugins"')
+        expect(output).toContain('"openrouter"')
+    })
+
+    it('includes a pre-populated `meta` block matching the pinned openclaw version', () => {
+        expect(output).toContain('"meta"')
+        expect(output).toContain('"lastTouchedVersion": "2026.4.19-beta.2"')
+        expect(output).toContain('"lastTouchedAt"')
+    })
+
     describe('with openrouter llm config', () => {
         it('prefixes bare model slugs with "openrouter/" for agents.defaults.model.primary', () => {
             const out = generateCloudInit(
