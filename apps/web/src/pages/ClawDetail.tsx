@@ -105,6 +105,13 @@ const ClawDetail: FC = () => {
     const isRunning = claw.status === clawStatus.running
     const isStopped = claw.status === clawStatus.stopped
 
+    // SSH can work any time port 22 is up on the VPS, which is true
+    // from the first minute of cloud-init — no need to wait for
+    // gateway/chat to be ready. That's especially important for
+    // diagnosing a claw stuck in `configuring`: you open the SSH
+    // tab exactly because something didn't finish.
+    const canSsh = Boolean(claw.ip && claw.hasRootPassword)
+
     const handleDelete = async () => {
         if (!window.confirm(`Delete ${claw.name}?`)) return
         try {
@@ -206,12 +213,12 @@ const ClawDetail: FC = () => {
                             <div className='h-[28rem]'>
                                 <ClawTerminalContent
                                     clawId={claw.id}
-                                    enabled={isRunning}
+                                    enabled={canSsh}
                                 />
                             </div>
-                            {!isRunning && (
+                            {!canSsh && (
                                 <div className='text-muted-foreground border-t px-4 py-3 text-xs'>
-                                    SSH is available once the instance is running.
+                                    SSH becomes available once the instance has a public IP and root password provisioned (usually within the first minute of setup).
                                 </div>
                             )}
                         </div>
