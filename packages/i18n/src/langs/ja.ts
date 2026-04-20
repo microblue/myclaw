@@ -71,8 +71,8 @@ const ja: Translations = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: 'ダッシュボード',
         playground: 'プレイグラウンド',
-        sshKeys: 'SSHキー',
         account: 'アカウント',
         billing: '請求',
         affiliate: 'アフィリエイト',

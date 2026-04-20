@@ -18,7 +18,12 @@ import {
     UserDropdown
 } from '@/components/shared'
 import { ROUTES } from '@/lib'
-import { LightningIcon, ListIcon, XIcon } from '@phosphor-icons/react'
+import {
+    LightningIcon,
+    ListIcon,
+    SquaresFourIcon,
+    XIcon
+} from '@phosphor-icons/react'
 
 const Header: FC<HeaderProps> = ({
     showNavLinks = false,
@@ -127,11 +132,36 @@ const Header: FC<HeaderProps> = ({
                                 <Skeleton className='bg-foreground/10 hidden h-4 w-16 rounded sm:block' />
                             </Button>
                         ) : user || cachedProfile ? (
-                            <UserDropdown
-                                displayName={displayName}
-                                onSignOut={signOut}
-                                onOpen={closeMobileMenu}
-                            />
+                            <Fragment>
+                                {/* Make the landing → dashboard path
+                                    explicit for returning users. On
+                                    mobile we render icon-only to keep
+                                    the top-bar from wrapping. */}
+                                <Button
+                                    size='sm'
+                                    variant='ghost'
+                                    asChild
+                                    className='text-muted-foreground hover:text-foreground gap-1.5'
+                                >
+                                    <Link
+                                        to={ROUTES.CLAWS}
+                                        onMouseEnter={() =>
+                                            prefetchRoute(ROUTES.CLAWS)
+                                        }
+                                    >
+                                        <SquaresFourIcon className='h-4 w-4' />
+                                        <span className='hidden sm:inline'>
+                                            {t('nav.dashboard')}
+                                        </span>
+                                    </Link>
+                                </Button>
+                                <UserDropdown
+                                    displayName={displayName}
+                                    onSignOut={signOut}
+                                    onOpen={closeMobileMenu}
+                                    variant='public'
+                                />
+                            </Fragment>
                         ) : (
                             <div className='flex items-center gap-2'>
                                 <Link

@@ -71,8 +71,8 @@ const pl: Translations = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: 'Panel',
         playground: 'Playground',
-        sshKeys: 'Klucze SSH',
         account: 'Konto',
         billing: 'Płatności',
         affiliate: 'Partner',

@@ -71,8 +71,8 @@ const ru: Translations = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: 'Панель',
         playground: 'Песочница',
-        sshKeys: 'SSH-ключи',
         account: 'Аккаунт',
         billing: 'Оплата',
         affiliate: 'Партнёр',

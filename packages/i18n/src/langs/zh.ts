@@ -71,8 +71,8 @@ const zh: Translations = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: '控制台',
         playground: '游乐场',
-        sshKeys: 'SSH 密钥',
         account: '账户',
         billing: '账单',
         affiliate: '推荐计划',

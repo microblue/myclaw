@@ -71,8 +71,8 @@ const ar: Translations = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: 'لوحة التحكم',
         playground: 'ساحة التجربة',
-        sshKeys: 'مفاتيح SSH',
         account: 'الحساب',
         billing: 'الفواتير',
         affiliate: 'شريك',

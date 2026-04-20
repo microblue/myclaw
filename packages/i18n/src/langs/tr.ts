@@ -71,8 +71,8 @@ const tr: Translations = {
     },
     nav: {
         claws: "Claw'lar",
+        dashboard: 'Kontrol Paneli',
         playground: 'Playground',
-        sshKeys: 'SSH Anahtarları',
         account: 'Hesap',
         billing: 'Faturalama',
         affiliate: 'Ortaklık',

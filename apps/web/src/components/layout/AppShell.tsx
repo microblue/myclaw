@@ -16,10 +16,10 @@ import {
     SquaresFourIcon,
     ReceiptIcon,
     HandshakeIcon,
-    UserIcon,
     ShieldCheckIcon,
     ListIcon,
-    XIcon
+    XIcon,
+    HouseIcon
 } from '@phosphor-icons/react'
 
 type NavItem = {
@@ -29,15 +29,14 @@ type NavItem = {
     adminOnly?: boolean
 }
 
-// SSH keys intentionally omitted from the sidebar — power-user feature.
-// The per-claw detail page surfaces SSH access (root password + link
-// to /ssh-keys if you want to upload a public key) in its Advanced
-// panel. /ssh-keys itself still works as a direct URL.
+// Sidebar is the primary nav for logged-in users. Account is
+// intentionally NOT here — it lives in the header avatar dropdown
+// (standard SaaS pattern, frees a slot in a list of otherwise
+// high-frequency destinations).
 const NAV_ITEMS: NavItem[] = [
-    { to: ROUTES.CLAWS, label: 'My Claws', icon: SquaresFourIcon },
+    { to: ROUTES.CLAWS, label: 'Claws', icon: SquaresFourIcon },
     { to: ROUTES.BILLING, label: 'Billing', icon: ReceiptIcon },
     { to: ROUTES.AFFILIATE, label: 'Referrals', icon: HandshakeIcon },
-    { to: ROUTES.ACCOUNT, label: 'Account', icon: UserIcon },
     { to: ROUTES.ADMIN, label: 'Admin', icon: ShieldCheckIcon, adminOnly: true }
 ]
 
@@ -204,9 +203,7 @@ const TopBar: FC<{
     isLocal,
     onSignOut
 }) => {
-    const location = useLocation()
     const navigate = useNavigate()
-    const onDashboard = location.pathname === ROUTES.CLAWS
     return (
         <header className='border-border bg-background/80 sticky top-0 z-20 flex h-14 items-center justify-between border-b px-4 backdrop-blur md:px-6'>
             <div className='flex items-center gap-3'>
@@ -224,19 +221,24 @@ const TopBar: FC<{
                 </div>
             </div>
             <div className='flex items-center gap-2'>
-                {!onDashboard && (
-                    <Button
-                        variant='ghost'
-                        size='sm'
-                        onClick={() => navigate(ROUTES.CLAWS)}
-                    >
-                        Dashboard
-                    </Button>
-                )}
+                {/* One-click back to the marketing site. Dashboard
+                    link is redundant (sidebar "Claws" handles it and
+                    shows active state), so it's gone. */}
+                <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={() => navigate(ROUTES.HOME)}
+                    className='text-muted-foreground hover:text-foreground gap-1.5'
+                    aria-label='Home'
+                >
+                    <HouseIcon className='h-4 w-4' />
+                    <span className='hidden sm:inline'>Home</span>
+                </Button>
                 {pageActions}
                 <UserDropdown
                     displayName={displayName}
                     onSignOut={onSignOut}
+                    variant='app'
                     appVersion={appVersion ?? undefined}
                     footerLinks={isLocal ? dropdownFooterLinks : []}
                     openLinksWindowed={openLinksWindowed}

@@ -71,8 +71,8 @@ const hi: Translations = {
     },
     nav: {
         claws: 'क्लॉज़',
+        dashboard: 'डैशबोर्ड',
         playground: 'प्लेग्राउंड',
-        sshKeys: 'SSH कुंजियाँ',
         account: 'खाता',
         billing: 'बिलिंग',
         affiliate: 'सहबद्ध',

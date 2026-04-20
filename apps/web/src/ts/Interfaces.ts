@@ -503,6 +503,16 @@ export interface UserDropdownProps {
     displayName: string
     onSignOut: () => Promise<void>
     onOpen?: () => void
+    // `app` = inside AppShell (left sidebar is visible). Dropdown
+    //   collapses to account + sign-out — everything else is in the
+    //   sidebar, so duplicating it in the dropdown is just noise.
+    // `public` = landing / blog / docs (no sidebar). Dropdown is the
+    //   only logged-in nav, so it lists Claws / Billing / Referrals /
+    //   etc. Default for backwards compat with external callers.
+    variant?: 'app' | 'public'
+    // Desktop (Electron) hacks — no billing or sign-out in that shell.
+    // Still scoped to DashboardHeader callers; app/public paths should
+    // use `variant` instead.
     hideBilling?: boolean
     hideSignOut?: boolean
     footerLinks?: FooterLink[]

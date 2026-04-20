@@ -71,8 +71,8 @@ const de: Translations = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: 'Dashboard',
         playground: 'Playground',
-        sshKeys: 'SSH-Schlüssel',
         account: 'Konto',
         billing: 'Abrechnung',
         affiliate: 'Partner',

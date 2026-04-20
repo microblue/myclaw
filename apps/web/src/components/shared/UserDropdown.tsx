@@ -34,12 +34,14 @@ const UserDropdown: FC<UserDropdownProps> = ({
     displayName,
     onSignOut,
     onOpen,
+    variant = 'public',
     hideBilling,
     hideSignOut,
     footerLinks,
     openLinksWindowed,
     appVersion
 }): ReactNode => {
+    const isAppShell = variant === 'app'
     const navigate = useNavigate()
     const location = useLocation()
     const { data: profile } = useProfile()
@@ -98,20 +100,8 @@ const UserDropdown: FC<UserDropdownProps> = ({
                 align='end'
                 className='border-border bg-popover w-56'
             >
-                <DropdownMenuItem
-                    onClick={() => navigate(ROUTES.CLAWS)}
-                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.CLAWS ? 'bg-foreground/10' : ''}`}
-                >
-                    <ClawMascotOutline className='h-4 w-4' />
-                    {t('nav.claws')}
-                </DropdownMenuItem>
-<DropdownMenuItem
-                    onClick={() => navigate(ROUTES.AFFILIATE)}
-                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.AFFILIATE ? 'bg-foreground/10' : ''}`}
-                >
-                    <HandshakeIcon className='h-4 w-4' />
-                    {t('nav.affiliate')}
-                </DropdownMenuItem>
+                {/* Account is always shown — it's the primary reason
+                    to open the dropdown in both shell variants. */}
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.ACCOUNT)}
                     className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.ACCOUNT ? 'bg-foreground/10' : ''}`}
@@ -119,24 +109,46 @@ const UserDropdown: FC<UserDropdownProps> = ({
                     <UserIcon className='h-4 w-4' />
                     {t('nav.account')}
                 </DropdownMenuItem>
-                {!hideBilling && (
-                    <DropdownMenuItem
-                        onClick={() => navigate(ROUTES.BILLING)}
-                        className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.BILLING ? 'bg-foreground/10' : ''}`}
-                    >
-                        <ReceiptIcon className='h-4 w-4' />
-                        {t('nav.billing')}
-                    </DropdownMenuItem>
-                )}
 
-                {isAdmin && (
-                    <DropdownMenuItem
-                        onClick={() => navigate(ROUTES.ADMIN)}
-                        className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.ADMIN ? 'bg-foreground/10' : ''}`}
-                    >
-                        <ShieldCheckIcon className='h-4 w-4' />
-                        {t('nav.admin')}
-                    </DropdownMenuItem>
+                {/* Public-shell only: the sidebar-equivalent nav items.
+                    Inside AppShell the left sidebar already surfaces
+                    Claws / Billing / Referrals / Admin, so we skip
+                    them here to avoid two-way duplication. */}
+                {!isAppShell && (
+                    <Fragment>
+                        <DropdownMenuItem
+                            onClick={() => navigate(ROUTES.CLAWS)}
+                            className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.CLAWS ? 'bg-foreground/10' : ''}`}
+                        >
+                            <ClawMascotOutline className='h-4 w-4' />
+                            {t('nav.claws')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => navigate(ROUTES.AFFILIATE)}
+                            className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.AFFILIATE ? 'bg-foreground/10' : ''}`}
+                        >
+                            <HandshakeIcon className='h-4 w-4' />
+                            {t('nav.affiliate')}
+                        </DropdownMenuItem>
+                        {!hideBilling && (
+                            <DropdownMenuItem
+                                onClick={() => navigate(ROUTES.BILLING)}
+                                className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.BILLING ? 'bg-foreground/10' : ''}`}
+                            >
+                                <ReceiptIcon className='h-4 w-4' />
+                                {t('nav.billing')}
+                            </DropdownMenuItem>
+                        )}
+                        {isAdmin && (
+                            <DropdownMenuItem
+                                onClick={() => navigate(ROUTES.ADMIN)}
+                                className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.ADMIN ? 'bg-foreground/10' : ''}`}
+                            >
+                                <ShieldCheckIcon className='h-4 w-4' />
+                                {t('nav.admin')}
+                            </DropdownMenuItem>
+                        )}
+                    </Fragment>
                 )}
                 {footerLinks && footerLinks.length > 0 && (
                     <Fragment>

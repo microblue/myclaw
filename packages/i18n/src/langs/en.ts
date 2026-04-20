@@ -69,8 +69,8 @@ const en = {
     },
     nav: {
         claws: 'Claws',
+        dashboard: 'Dashboard',
         playground: 'Playground',
-        sshKeys: 'SSH Keys',
         account: 'Account',
         billing: 'Billing',
         affiliate: 'Affiliate',
