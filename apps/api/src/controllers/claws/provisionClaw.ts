@@ -141,10 +141,17 @@ const provisionClaw = async (
             throw providerErr
         }
 
+        // DNS create has 5 internal retries. If it still throws we
+        // log loudly but don't roll back — the VPS is paid for, and
+        // the periodic reconcile job (services/dnsReconciler) will
+        // pick up the missing record within an hour.
         await Promise.all([
-            cloudflare
-                .createDNSRecord(subdomain, ip)
-                .catch((dnsError) => console.error('provisionClaw', dnsError)),
+            cloudflare.createDNSRecord(subdomain, ip).catch((dnsError) =>
+                console.error(
+                    `[provisionClaw] DNS create exhausted retries for ${subdomain}, reconciler will fix`,
+                    dnsError
+                )
+            ),
             db
                 .update(claws)
                 .set({

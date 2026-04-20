@@ -7,6 +7,7 @@ import { resolve } from 'path'
 
 import app from '@/app'
 import setupTerminalSocket from '@/services/terminalSocket'
+import startDnsReconciler from '@/services/dnsReconciler'
 
 const port = Number(process.env.PORT)
 const pkg = JSON.parse(
@@ -41,3 +42,4 @@ const server = serve(
 )
 
 setupTerminalSocket(server as Server)
+startDnsReconciler()

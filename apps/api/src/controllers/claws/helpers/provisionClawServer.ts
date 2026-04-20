@@ -218,12 +218,20 @@ const pollLifecycle = async ({
                 currentIp &&
                 currentIp !== '0.0.0.0'
             ) {
-                dnsCreated = true
-                await cloudflare
-                    .createDNSRecord(subdomain, currentIp)
-                    .catch((err) =>
-                        console.error('[provisionClawServer] DNS', err)
+                // createDNSRecord has its own 5-attempt retry budget;
+                // if it still throws, we DON'T mark dnsCreated so the
+                // next poll tick tries again. Without retry OR this
+                // bail-out, a single transient Cloudflare error left
+                // claws with NXDOMAIN forever (see gentle-owl).
+                try {
+                    await cloudflare.createDNSRecord(subdomain, currentIp)
+                    dnsCreated = true
+                } catch (err) {
+                    console.error(
+                        `[provisionClawServer] DNS create exhausted retries for ${subdomain}`,
+                        err
                     )
+                }
             }
             if (live.status === clawStatus.running) {
                 providerRunning = true
