@@ -22,3 +22,8 @@ PROJECT_BOOTSTRAP.md
 memory/
 .openclaw/
 apps/api/.env.bak
+
+# tsc incremental build artifact — regenerated on every `pnpm build`,
+# tracking it just makes `git describe --dirty` pin a permanent
+# "-dirty" suffix on the footer and pollutes diffs for no benefit.
+apps/web/tsconfig.tsbuildinfo
