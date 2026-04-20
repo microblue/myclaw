@@ -69,6 +69,14 @@ describe('generateCloudInit', () => {
         expect(output).toContain('openclaw bootstrap starting')
     })
 
+    it('pre-marks the agent workspace as setup-complete so onboarding is skipped', () => {
+        expect(output).toContain(
+            '/home/openclaw/.openclaw/workspace/.openclaw/workspace-state.json'
+        )
+        expect(output).toContain('"setupCompletedAt"')
+        expect(output).toContain('"bootstrapSeededAt"')
+    })
+
     describe('with openrouter llm config', () => {
         it('prefixes bare model slugs with "openrouter/" for agents.defaults.model.primary', () => {
             const out = generateCloudInit(

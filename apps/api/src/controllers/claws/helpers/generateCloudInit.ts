@@ -168,6 +168,26 @@ mkdir -p /home/openclaw/.openclaw/agents/main/agent
 cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
 ${configJson}
 OCCONFIG
+
+# Pre-mark the workspace as setup-complete so OpenClaw skips the
+# "bootstrap onboarding" flow (BOOTSTRAP.md + name/creature/vibe/emoji
+# Q&A) on first chat. Weaker models — including
+# openrouter/google/gemini-2.5-flash-lite, our current default — can't
+# reliably follow BOOTSTRAP.md's "then delete me when done" step and
+# loop writing the file back every turn (openclaw#67575-style).
+# Users who want a custom persona can still edit IDENTITY.md / USER.md
+# after the fact. Without this, the setupCompletedAt transition needs
+# BOOTSTRAP.md to not exist during an ensureAgentWorkspace pass, which
+# is racy against the confused-agent writes.
+mkdir -p /home/openclaw/.openclaw/workspace/.openclaw
+cat > /home/openclaw/.openclaw/workspace/.openclaw/workspace-state.json << 'WSTATE'
+{
+  "version": 1,
+  "bootstrapSeededAt": "2026-04-01T00:00:00.000Z",
+  "setupCompletedAt": "2026-04-01T00:00:00.000Z"
+}
+WSTATE
+
 chown -R openclaw:openclaw /home/openclaw
 
 # systemd unit
