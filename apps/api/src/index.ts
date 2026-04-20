@@ -8,6 +8,11 @@ import { resolve } from 'path'
 import app from '@/app'
 import setupTerminalSocket from '@/services/terminalSocket'
 import startDnsReconciler from '@/services/dnsReconciler'
+import validateEnv from '@/services/envCheck'
+
+// Fail fast on broken / placeholder secrets rather than running for
+// weeks with silently-failing CF / Firebase / DB calls.
+validateEnv()
 
 const port = Number(process.env.PORT)
 const pkg = JSON.parse(
