@@ -218,17 +218,29 @@ const pollLifecycle = async ({
                 currentIp &&
                 currentIp !== '0.0.0.0'
             ) {
-                // createDNSRecord has its own 5-attempt retry budget;
-                // if it still throws, we DON'T mark dnsCreated so the
-                // next poll tick tries again. Without retry OR this
-                // bail-out, a single transient Cloudflare error left
-                // claws with NXDOMAIN forever (see gentle-owl).
+                // syncClawServers' self-heal path may have already
+                // written the record before we got here. Look first;
+                // only create if missing, update if stale. Previously
+                // we called create() blind, and Cloudflare error 81058
+                // ("identical record already exists") bubbled all the
+                // way out — leaving dnsCreated=false and the poll loop
+                // spamming the same error for 5 minutes (see
+                // happy-raven incident 2026-04-21).
                 try {
-                    await cloudflare.createDNSRecord(subdomain, currentIp)
+                    const existing = await cloudflare.findDNSRecord(subdomain)
+                    if (!existing) {
+                        await cloudflare.createDNSRecord(subdomain, currentIp)
+                    } else if (existing.ip !== currentIp) {
+                        await cloudflare.updateDNSRecord(
+                            existing.id,
+                            subdomain,
+                            currentIp
+                        )
+                    }
                     dnsCreated = true
                 } catch (err) {
                     console.error(
-                        `[provisionClawServer] DNS create exhausted retries for ${subdomain}`,
+                        `[provisionClawServer] DNS sync exhausted retries for ${subdomain}`,
                         err
                     )
                 }

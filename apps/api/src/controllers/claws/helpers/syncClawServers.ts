@@ -52,8 +52,14 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
 
             // Timeout rescue: a claw that's been in creating/configuring
             // for > PROVISION_TIMEOUT_MS is stuck (cloud-init failure,
-            // stale cert request, etc.). Flag it so the dashboard
-            // surfaces a terminal state.
+            // stale cert request, etc.). Before flagging it terminal,
+            // probe the public subdomain — if HTTPS 200 is answering,
+            // bootstrap actually succeeded and we just missed the
+            // transition window (e.g. pollLifecycle aborted, API
+            // restarted mid-provision). Seen in happy-raven
+            // (2026-04-21) where bootstrap finished at min 12 but
+            // nobody opened the dashboard till min 22, and sync
+            // flipped it to unreachable purely on age.
             if (
                 (claw.status === clawStatus.creating ||
                     claw.status === clawStatus.configuring) &&
@@ -61,6 +67,17 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
                 Date.now() - new Date(claw.createdAt).getTime() >
                     PROVISION_TIMEOUT_MS
             ) {
+                const ready =
+                    claw.subdomain && !CLOUDFLARE_DISABLED
+                        ? await checkSubdomainReady(claw.subdomain)
+                        : false
+                if (ready) {
+                    await db
+                        .update(claws)
+                        .set({ status: clawStatus.running })
+                        .where(eq(claws.id, claw.id))
+                    return { ...claw, status: clawStatus.running }
+                }
                 await db
                     .update(claws)
                     .set({ status: clawStatus.unreachable })
