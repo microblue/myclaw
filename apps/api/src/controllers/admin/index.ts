@@ -14,6 +14,7 @@ import getAdminWaitlist from '@/controllers/admin/getAdminWaitlist'
 import updateAdminUser from '@/controllers/admin/updateAdminUser'
 import getAdminSettings from '@/controllers/admin/getAdminSettings'
 import updateAdminSetting from '@/controllers/admin/updateAdminSetting'
+import reassignAdminClaw from '@/controllers/admin/reassignAdminClaw'
 
 export {
     getAdminAnalytics,
@@ -31,5 +32,6 @@ export {
     getAdminWaitlist,
     updateAdminUser,
     getAdminSettings,
-    updateAdminSetting
+    updateAdminSetting,
+    reassignAdminClaw
 }

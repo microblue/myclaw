@@ -109,7 +109,12 @@ const admin = {
             }>
         }>(API_PATHS.ADMIN.SETTINGS),
     updateAdminSetting: (key: string, value: string | null) =>
-        client.put<void>(API_PATHS.ADMIN.UPDATE_SETTING(key), { value })
+        client.put<void>(API_PATHS.ADMIN.UPDATE_SETTING(key), { value }),
+    reassignAdminClawOwner: (clawId: string, userId: string) =>
+        client.put<{ userId: string; ownerEmail: string | null }>(
+            API_PATHS.ADMIN.REASSIGN_CLAW_OWNER(clawId),
+            { userId }
+        )
 }
 
 export default admin

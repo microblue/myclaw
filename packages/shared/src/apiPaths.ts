@@ -108,6 +108,7 @@ const API_PATHS = {
         ANALYTICS: '/admin/analytics',
         BILLING: '/admin/billing',
         CLAWS: '/admin/claws',
+        REASSIGN_CLAW_OWNER: (id: string) => `/admin/claws/${id}/owner`,
         PENDING_CLAWS: '/admin/pending-claws',
         SSH_KEYS: '/admin/ssh-keys',
         VOLUMES: '/admin/volumes',

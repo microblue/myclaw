@@ -17,7 +17,8 @@ import {
     getAdminWaitlist,
     updateAdminUser,
     getAdminSettings,
-    updateAdminSetting
+    updateAdminSetting,
+    reassignAdminClaw
 } from '@/controllers/admin'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -31,6 +32,7 @@ app.get('/users', getAdminUsers)
 app.get('/users/:id', getAdminUserDetail)
 app.put('/users/:id', updateAdminUser)
 app.get('/claws', getAdminClaws)
+app.put('/claws/:id/owner', reassignAdminClaw)
 app.get('/pending-claws', getAdminPendingClaws)
 app.get('/ssh-keys', getAdminSSHKeys)
 app.get('/volumes', getAdminVolumes)

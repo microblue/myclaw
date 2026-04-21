@@ -75,7 +75,11 @@ export interface Claw {
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
+    // Only populated by the admin endpoints (/admin/claws, GET /claws/:id
+    // when the viewer is admin and not the owner). Used by the detail
+    // page to render an admin banner + the "Change owner" action.
     ownerEmail?: string | null
+    userId?: string
     deletionScheduledAt: string | null
     checkoutUrl?: string | null
     createdAt: string
