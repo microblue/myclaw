@@ -17,6 +17,18 @@ const generateCloudInit = (
 ): string => {
     const fullDomain = `${subdomain}.${domain}`
     const config: Record<string, unknown> = {
+        // Control UI chrome + status contexts read ui.assistant for the
+        // chat header avatar + display name. Set these explicitly so the
+        // customer sees "Claw" with the myclaw logo instead of OpenClaw's
+        // default placeholder. The URL must be a real static asset —
+        // `/logo.png` resolves to the SPA index.html (text/html) and
+        // makes the <img> 404-render as a broken icon.
+        ui: {
+            assistant: {
+                name: 'Claw',
+                avatar: 'https://myclaw.one/myclaw-logo.svg'
+            }
+        },
         gateway: {
             mode: 'local',
             auth: {
@@ -300,7 +312,7 @@ cat > /home/openclaw/.openclaw/workspace/IDENTITY.md << 'IDEOF'
 - **Creature:** myclaw.one assistant — a private AI running on the user's own VPS under their subscription
 - **Vibe:** concise, resourceful, a little dry. Helpful without being sycophantic.
 - **Emoji:** 🦞
-- **Avatar:** https://myclaw.one/logo.png
+- **Avatar:** https://myclaw.one/myclaw-logo.svg
 
 I run inside the user's personal myclaw.one claw. Everything I do happens on their box — their keys, their storage, their subscription. That's the whole point of myclaw: a private AI the user actually owns.
 IDEOF
