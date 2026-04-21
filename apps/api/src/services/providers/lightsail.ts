@@ -108,6 +108,23 @@ class LightsailProvider implements CloudProvider {
         const availabilityZone = options.locationId + 'a'
         console.log('[lightsail] locationId:', options.locationId, '-> AZ:', availabilityZone)
 
+        // Lightsail caps user-data at 16 KB. Catch bloat before the API
+        // call so the error log names the culprit instead of AWS's
+        // generic "InvalidParams ... exceeds the 16 KB limit" (which
+        // leaves behind a phantom claw row with no provider_server_id —
+        // see calm-birch / wild-owl 2026-04-21).
+        const userDataBytes = Buffer.byteLength(options.userData || '', 'utf8')
+        if (userDataBytes > 16_384) {
+            throw new Error(
+                `[lightsail] user-data is ${userDataBytes} bytes, exceeds Lightsail's 16 KB limit. Trim generateCloudInit output.`
+            )
+        }
+        if (userDataBytes > 15_500) {
+            console.warn(
+                `[lightsail] user-data is ${userDataBytes} bytes — close to Lightsail's 16 KB cap, any further additions may trip the limit.`
+            )
+        }
+
         // Use region-specific client so cross-region creation works
         const regionClient = new LightsailClient({
             region: options.locationId,
