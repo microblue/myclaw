@@ -43,4 +43,13 @@ export interface ClawRuntime {
     // >= 4 GB so it starts at medium_3_0. Missing provider key →
     // claw type isn't offered on that provider.
     curatedPlanIdsByProvider: Record<string, readonly string[]>
+
+    // Defense-in-depth floor enforced inside the provision pipeline.
+    // The wizard already filters plans per-runtime via curated-plans,
+    // but a direct API call could try to buy any plan id — we want
+    // `initiateClawPurchase` / `provisionClawServer` to reject plans
+    // smaller than what this runtime actually boots on. OpenClaw = 4,
+    // PicoClaw = 0 (nano is intended). Future runtimes declare their
+    // own floor here so the check stays type-aware in one place.
+    minMemoryGb: number
 }

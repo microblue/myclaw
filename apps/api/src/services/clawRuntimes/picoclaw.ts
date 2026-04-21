@@ -280,7 +280,8 @@ const picoclawRuntime: ClawRuntime = {
             'small_3_0', //   2 GB · 2 vCPU · 60 GB · $12
             'medium_3_0' //   4 GB · 2 vCPU · 80 GB · $24
         ]
-    }
+    },
+    minMemoryGb: 0
 }
 
 export default picoclawRuntime

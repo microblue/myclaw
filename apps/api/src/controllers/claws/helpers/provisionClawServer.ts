@@ -70,10 +70,13 @@ const provisionClawServer = async ({
             (plan) => plan.id === claw.planId || plan.name === claw.planId
         )
 
-        if (
-            !selectedPlan ||
-            selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN
-        ) {
+        // Memory floor comes from the claw runtime (OpenClaw=4, PicoClaw=0)
+        // so PicoClaw can legitimately boot on Lightsail's 512 MB nano
+        // while OpenClaw still gets the defensive 4 GB check.
+        const memFloor =
+            getClawRuntime(claw.clawType || DEFAULT_CLAW_TYPE)?.minMemoryGb ??
+            inputValidation.MIN_MEMORY_GB.MIN
+        if (!selectedPlan || selectedPlan.memory < memFloor) {
             await markError(clawId, 'plan below minimum memory')
             return
         }

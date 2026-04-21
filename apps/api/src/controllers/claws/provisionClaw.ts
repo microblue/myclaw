@@ -10,6 +10,7 @@ import { db } from '@/db'
 import { subscriptionStatus } from '@/lib/constants'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { providerRegistry } from '@/services/providers'
+import { getClawRuntime, DEFAULT_CLAW_TYPE } from '@/services/clawRuntimes'
 import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
@@ -70,10 +71,10 @@ const provisionClaw = async (
             (plan) => plan.id === pending.planId || plan.name === pending.planId
         )
 
-        if (
-            !selectedPlan ||
-            selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN
-        )
+        const memFloor =
+            getClawRuntime(pending.clawType || DEFAULT_CLAW_TYPE)
+                ?.minMemoryGb ?? inputValidation.MIN_MEMORY_GB.MIN
+        if (!selectedPlan || selectedPlan.memory < memFloor)
             return { success: false, error: t('api.planBelowMinimumMemory') }
 
         const id = crypto.randomUUID()

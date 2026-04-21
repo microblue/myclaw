@@ -27,7 +27,8 @@ const openclawRuntime: ClawRuntime = {
         hetzner: hetznerCuratedPlans,
         lightsail: lightsailCuratedPlans,
         digitalocean: digitaloceanCuratedPlans
-    }
+    },
+    minMemoryGb: 4
 }
 
 export default openclawRuntime

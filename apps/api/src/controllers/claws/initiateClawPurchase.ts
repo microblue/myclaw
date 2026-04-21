@@ -21,7 +21,11 @@ import { providerRegistry } from '@/services/providers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 import { getEnvironment } from '@/lib/environment'
-import { supportedClawTypes } from '@/services/clawRuntimes'
+import {
+    supportedClawTypes,
+    getClawRuntime,
+    DEFAULT_CLAW_TYPE
+} from '@/services/clawRuntimes'
 import withErrorHandler from '@/lib/withErrorHandler'
 
 let lastPendingCleanup = 0
@@ -191,7 +195,10 @@ const initiateClawPurchase = withErrorHandler(
 
     if (!selectedPlan) return fail(c, t('api.invalidPlan'), 400)
 
-    if (selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN)
+    const memFloor =
+        getClawRuntime(clawType || DEFAULT_CLAW_TYPE)?.minMemoryGb ??
+        inputValidation.MIN_MEMORY_GB.MIN
+    if (selectedPlan.memory < memFloor)
         return fail(c, t('api.planBelowMinimumMemory'), 400)
 
     const selectedLocation = locations.find((l) => l.id === location)
