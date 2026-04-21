@@ -8,7 +8,7 @@ import type { ElectronOAuthFn, ResolveConflictFn } from '@/ts/Types'
 import {
     GithubAuthProvider,
     signInWithCredential,
-    signInWithRedirect
+    signInWithPopup
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { Envs } from '@/lib'
@@ -60,7 +60,29 @@ const signInWithGithub = async (
         return
     }
 
-    await signInWithRedirect(auth, new GithubAuthProvider())
+    // See signInWithGoogle for the rationale: popup avoids the
+    // localhost + authDomain cross-origin state loss that breaks
+    // signInWithRedirect in dev.
+    try {
+        await signInWithPopup(auth, new GithubAuthProvider())
+    } catch (error) {
+        const firebaseError = error as FirebaseErrorLike
+        if (
+            firebaseError.code ===
+            'auth/account-exists-with-different-credential'
+        ) {
+            const resolved = await resolveConflict(
+                GithubAuthProvider.credentialFromError(
+                    error as Parameters<
+                        typeof GithubAuthProvider.credentialFromError
+                    >[0]
+                ),
+                'github.com'
+            )
+            if (resolved) return
+        }
+        throw error
+    }
 }
 
 export default signInWithGithub

@@ -4,7 +4,7 @@ import type { ElectronOAuthFn, ResolveConflictFn } from '@/ts/Types'
 import {
     GoogleAuthProvider,
     signInWithCredential,
-    signInWithRedirect
+    signInWithPopup
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { Envs } from '@/lib'
@@ -51,7 +51,32 @@ const signInWithGoogle = async (
         return
     }
 
-    await signInWithRedirect(auth, new GoogleAuthProvider())
+    // Popup instead of redirect: signInWithRedirect relies on Firebase's
+    // auth iframe + postMessage across `authDomain` (myclaw.one) and the
+    // current origin, which breaks on localhost because browsers block
+    // third-party-origin storage on the iframe — the user gets bounced
+    // to /login with no session. Popup stays same-origin and works in
+    // both dev (localhost:1111) and prod (myclaw.one).
+    try {
+        await signInWithPopup(auth, new GoogleAuthProvider())
+    } catch (error) {
+        const firebaseError = error as FirebaseErrorLike
+        if (
+            firebaseError.code ===
+            'auth/account-exists-with-different-credential'
+        ) {
+            const resolved = await resolveConflict(
+                GoogleAuthProvider.credentialFromError(
+                    error as Parameters<
+                        typeof GoogleAuthProvider.credentialFromError
+                    >[0]
+                ),
+                'google.com'
+            )
+            if (resolved) return
+        }
+        throw error
+    }
 }
 
 export default signInWithGoogle
