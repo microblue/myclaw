@@ -1,4 +1,5 @@
 import type { ClawRuntime, GenerateCloudInitParams } from './types'
+import { defaultIsHealthyResponse } from './types'
 
 // PicoClaw (github.com/sipeed/picoclaw) — ultra-light Go agent.
 // Single static binary (~10 MB RAM core), no Node / Chrome needed.
@@ -281,7 +282,11 @@ const picoclawRuntime: ClawRuntime = {
             'medium_3_0' //   4 GB · 2 vCPU · 80 GB · $24
         ]
     },
-    minMemoryGb: 0
+    minMemoryGb: 0,
+    // PicoClaw launcher redirects unauthenticated visitors to
+    // /launcher-login (302). Accept any 2xx/3xx that isn't the nginx
+    // default page — fits the reverse-proxied-launcher shape.
+    isHealthyResponse: defaultIsHealthyResponse
 }
 
 export default picoclawRuntime

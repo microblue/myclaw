@@ -140,7 +140,8 @@ const provisionClawServer = async ({
             locationId: claw.location || undefined,
             ip: server.ip,
             subdomain: claw.subdomain || '',
-            domain: DOMAIN
+            domain: DOMAIN,
+            clawType: claw.clawType || DEFAULT_CLAW_TYPE
         })
 
         if (
@@ -198,7 +199,8 @@ const pollLifecycle = async ({
     locationId,
     ip,
     subdomain,
-    domain
+    domain,
+    clawType
 }: {
     provider: NonNullable<ReturnType<typeof providerRegistry.getProvider>>
     clawId: string
@@ -207,6 +209,7 @@ const pollLifecycle = async ({
     ip: string
     subdomain: string
     domain: string
+    clawType: string
 }): Promise<void> => {
     // Stage 1: wait for the provider to report running, flip to
     // configuring so the UI changes from "Launching" to "Deploying".
@@ -276,36 +279,15 @@ const pollLifecycle = async ({
         return
     }
 
-    // Stage 2: poll until the OpenClaw gateway — not just nginx — is
-    // actually answering, end-to-end.
-    //
-    // The older check accepted any <500 response from http://{ip}/ with
-    // a Host header, which let us flip to "running" while:
-    //   - cloud-init was still installing nginx and the distro default
-    //     welcome page returned 200,
-    //   - nginx was up but openclaw-gateway was not (proxy_pass → 502,
-    //     which is >500 but the prior redirect hop could have been 301
-    //     <500), or
-    //   - HTTPS was not actually working yet.
-    //
-    // New rules:
-    //   - probe HTTPS on the public subdomain (forces cert + DNS + nginx
-    //     + gateway to all be wired up),
-    //   - require HTTP 200 (not 502 from upstream, not a redirect),
-    //   - body must look like OpenClaw's Control UI, not nginx's
-    //     "Welcome to nginx" default page,
-    //   - require 3 consecutive successes so a brief gateway blip
-    //     before a crash loop doesn't sell us out.
-    const isOpenclawResponse = (body: string): boolean => {
-        const lower = body.toLowerCase()
-        if (lower.includes('welcome to nginx')) return false
-        return (
-            lower.includes('openclaw') ||
-            lower.includes('control ui') ||
-            lower.includes('gateway') ||
-            body.trim().startsWith('{')
-        )
-    }
+    // Stage 2: poll until the claw's gateway — not just nginx — is
+    // actually answering, end-to-end. The runtime owns the "is this
+    // response healthy?" predicate: OpenClaw wants a 200 that looks
+    // like the Control UI, PicoClaw's launcher 302s to
+    // /launcher-login which is still a "up and serving" signal.
+    const runtime =
+        getClawRuntime(clawType || DEFAULT_CLAW_TYPE) ||
+        getClawRuntime(DEFAULT_CLAW_TYPE)!
+    const isHealthy = runtime.isHealthyResponse
 
     const REQUIRED_CONSECUTIVE_OK = 3
     let consecutiveOk = 0
@@ -313,12 +295,17 @@ const pollLifecycle = async ({
     while (Date.now() < stage2Deadline) {
         await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
         try {
-            const res = await fetch(
-                `https://${subdomain}.${domain}/`,
-                { signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS) }
-            )
-            const body = res.status === 200 ? await res.text() : ''
-            if (res.status === 200 && isOpenclawResponse(body)) {
+            const res = await fetch(`https://${subdomain}.${domain}/`, {
+                signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS),
+                redirect: 'manual'
+            })
+            // Read a bounded body slice so predicates can fingerprint
+            // without us stalling on giant SPA payloads.
+            const body = await res
+                .text()
+                .then((t) => t.slice(0, 4096))
+                .catch(() => '')
+            if (isHealthy(res.status, body)) {
                 consecutiveOk += 1
                 if (consecutiveOk >= REQUIRED_CONSECUTIVE_OK) {
                     await db

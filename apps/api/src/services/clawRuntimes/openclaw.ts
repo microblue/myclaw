@@ -28,7 +28,21 @@ const openclawRuntime: ClawRuntime = {
         lightsail: lightsailCuratedPlans,
         digitalocean: digitaloceanCuratedPlans
     },
-    minMemoryGb: 4
+    minMemoryGb: 4,
+    // Original readiness check preserved verbatim: 200 + body must
+    // look like the Control UI (not nginx's welcome page, not a bare
+    // 502 from upstream, not a plain redirect).
+    isHealthyResponse: (status, body) => {
+        if (status !== 200) return false
+        const lower = body.toLowerCase()
+        if (lower.includes('welcome to nginx')) return false
+        return (
+            lower.includes('openclaw') ||
+            lower.includes('control ui') ||
+            lower.includes('gateway') ||
+            body.trim().startsWith('{')
+        )
+    }
 }
 
 export default openclawRuntime

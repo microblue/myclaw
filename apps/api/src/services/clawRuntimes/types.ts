@@ -52,4 +52,28 @@ export interface ClawRuntime {
     // PicoClaw = 0 (nano is intended). Future runtimes declare their
     // own floor here so the check stays type-aware in one place.
     minMemoryGb: number
+
+    // pollLifecycle stage-2 readiness predicate. `provisionClawServer`
+    // probes `https://<sub>.<domain>/` after cloud-init signals; the
+    // runtime decides whether the response means "fully up" — OpenClaw
+    // demands 200 + a body keyword match (Control UI fingerprint);
+    // PicoClaw's launcher answers 302 → /launcher-login when the user
+    // isn't signed in, which is still a "launcher is serving" signal.
+    // Called with the raw Response status and the text body (empty
+    // string when no body was read). Runtimes that don't care can
+    // inherit the generic 2xx/3xx-that-isn't-nginx default below.
+    isHealthyResponse: (status: number, body: string) => boolean
+}
+
+// Shared helper for runtimes whose readiness check just needs to rule
+// out the nginx default welcome page and accept any non-5xx response
+// from the reverse-proxied service. Re-usable default for future
+// lightweight runtimes.
+export const defaultIsHealthyResponse = (
+    status: number,
+    body: string
+): boolean => {
+    if (status < 200 || status >= 500) return false
+    if (body.toLowerCase().includes('welcome to nginx')) return false
+    return true
 }
