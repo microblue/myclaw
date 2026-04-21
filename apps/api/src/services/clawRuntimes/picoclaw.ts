@@ -50,6 +50,7 @@ const generatePicoclawCloudInit = ({
     rootPassword,
     subdomain,
     domain,
+    gatewayToken,
     llm
 }: GenerateCloudInitParams): string => {
     const fullDomain = `${subdomain}.${domain}`
@@ -150,6 +151,7 @@ User=picoclaw
 Group=picoclaw
 WorkingDirectory=/home/picoclaw
 Environment=HOME=/home/picoclaw
+Environment=PICOCLAW_LAUNCHER_TOKEN=${gatewayToken}
 ${llm?.openrouterApiKey ? `Environment=OPENROUTER_API_KEY=${llm.openrouterApiKey}\n` : ''}ExecStart=/usr/local/bin/picoclaw-launcher
 Restart=always
 RestartSec=10
@@ -199,6 +201,16 @@ server {
     listen 80;
     listen [::]:80;
     server_name ${fullDomain};
+
+    # One-click SSO from myclaw.one dashboard. Buildchatchat URL points
+    # the user at /sso?token=<gatewayToken>; this tiny page POSTs the
+    # token to the launcher's /api/auth/login (which sets the
+    # picoclaw_launcher_auth cookie) then redirects to /. Avoids forcing
+    # the user to copy-paste the token into the launcher login form.
+    location = /sso {
+        default_type text/html;
+        return 200 '<!doctype html><meta charset="utf-8"><title>Signing in…</title><body style="font-family:system-ui;padding:2rem">Signing you in…</body><script>const t=new URLSearchParams(location.search).get("token");if(!t){document.body.innerText="Missing token.";}else{fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:t}),credentials:"same-origin"}).then(r=>{if(r.ok){location.replace("/")}else{document.body.innerText="Login failed: "+r.status}}).catch(e=>{document.body.innerText=String(e)})}</script>';
+    }
 
     location / {
         proxy_pass http://127.0.0.1:${GATEWAY_PORT};

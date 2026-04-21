@@ -16,18 +16,21 @@ import type { Claw } from '@/ts/Interfaces'
 
 export const buildClawChatUrl = (claw: Claw): string | null => {
     if (!claw.subdomain) return null
-    const base = `https://${claw.subdomain}.myclaw.one/`
+    const base = `https://${claw.subdomain}.myclaw.one`
     const clawType = claw.clawType || 'openclaw'
     if (clawType === 'openclaw' && claw.gatewayToken) {
-        return `${base}?token=${encodeURIComponent(claw.gatewayToken)}`
+        return `${base}/?token=${encodeURIComponent(claw.gatewayToken)}`
     }
-    return base
+    if (clawType === 'picoclaw' && claw.gatewayToken) {
+        // /sso is a tiny HTML page nginx serves on the picoclaw box —
+        // it POSTs the token to /api/auth/login (sets the auth cookie)
+        // and then redirects to /, dropping the user straight into
+        // the launcher UI authenticated.
+        return `${base}/sso?token=${encodeURIComponent(claw.gatewayToken)}`
+    }
+    return `${base}/`
 }
 
-export const chatEntryHint = (claw: Claw): string => {
-    const clawType = claw.clawType || 'openclaw'
-    if (clawType === 'picoclaw') {
-        return 'Click "Open chat" above to launch the PicoClaw web UI.'
-    }
+export const chatEntryHint = (_claw: Claw): string => {
     return 'Click "Open chat" above to log in automatically.'
 }
