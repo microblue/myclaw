@@ -15,7 +15,6 @@ import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
 import AppShell from '@/components/layout/AppShell'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
-import AdminClawOwnerPicker from '@/components/dashboard/AdminClawOwnerPicker'
 import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
 import { useState } from 'react'
@@ -36,7 +35,6 @@ const ClawDetail: FC = () => {
     const [searchParams, setSearchParams] = useSearchParams()
 
     const { data: claw, isLoading, error } = useClaw(id)
-    const [ownerPickerOpen, setOwnerPickerOpen] = useState(false)
 
     const tab: TabId =
         (searchParams.get('tab') as TabId | null) || 'overview'
@@ -167,39 +165,6 @@ const ClawDetail: FC = () => {
     return (
         <AppShell>
             <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
-                {/* When an admin opens another user's claw we surface
-                    the owner at the top so it's obvious this isn't
-                    their own instance. `claw.ownerEmail` is only
-                    populated by the admin endpoint. Clicking opens
-                    the owner-picker modal to reassign. */}
-                {claw.ownerEmail && (
-                    <div className='border-border bg-foreground/[0.04] mb-4 flex items-center justify-between gap-3 rounded-lg border px-4 py-2 text-xs'>
-                        <div>
-                            <span className='text-muted-foreground'>
-                                Admin view ·{' '}
-                            </span>
-                            <span className='font-mono'>
-                                {claw.ownerEmail}
-                            </span>
-                        </div>
-                        <button
-                            type='button'
-                            onClick={() => setOwnerPickerOpen(true)}
-                            className='text-muted-foreground hover:text-foreground shrink-0 underline-offset-2 hover:underline'
-                        >
-                            Change owner
-                        </button>
-                    </div>
-                )}
-                {claw.ownerEmail && claw.userId && (
-                    <AdminClawOwnerPicker
-                        clawId={claw.id}
-                        currentOwnerEmail={claw.ownerEmail}
-                        currentOwnerUserId={claw.userId}
-                        open={ownerPickerOpen}
-                        onClose={() => setOwnerPickerOpen(false)}
-                    />
-                )}
                 <DetailHeader claw={claw} />
 
                 <div className='mt-6'>{actionBar}</div>

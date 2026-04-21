@@ -1,5 +1,8 @@
 import type { FC, ReactNode } from 'react'
-import type { AdminResourceTabProps } from '@/ts/Interfaces'
+import type {
+    AdminClawListItem,
+    AdminResourceTabProps
+} from '@/ts/Interfaces'
 
 import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -21,9 +24,14 @@ import {
     SelectTrigger
 } from '@/components/ui'
 import { EmptyState, ErrorState } from '@/components'
-import { HardDrivesIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import {
+    HardDrivesIcon,
+    MagnifyingGlassIcon,
+    UserSwitchIcon
+} from '@phosphor-icons/react'
 import AdminStatusBadge from '@/components/admin/AdminStatusBadge'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
+import AdminClawOwnerPicker from '@/components/dashboard/AdminClawOwnerPicker'
 
 const PAGE_SIZE = 20
 
@@ -31,6 +39,9 @@ const AdminClawsTab: FC<AdminResourceTabProps> = (): ReactNode => {
     const navigate = useNavigate()
     const [search, setSearch] = useState('')
     const [sortOrder, setSortOrder] = useState('newest')
+    const [editingClaw, setEditingClaw] = useState<AdminClawListItem | null>(
+        null
+    )
     const debouncedSearch = useDebouncedValue(search, 300)
 
     const {
@@ -127,12 +138,12 @@ const AdminClawsTab: FC<AdminResourceTabProps> = (): ReactNode => {
                             }
                         >
                             <CardContent className='py-4'>
-                                <div className='flex items-center justify-between'>
-                                    <div className='flex min-w-0 items-center gap-3'>
+                                <div className='flex items-center justify-between gap-3'>
+                                    <div className='flex min-w-0 flex-1 items-center gap-3'>
                                         <div className='bg-muted flex h-9 w-9 shrink-0 items-center justify-center rounded-full'>
                                             <HardDrivesIcon className='text-muted-foreground h-4 w-4' />
                                         </div>
-                                        <div className='min-w-0'>
+                                        <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
                                                 <span className='truncate font-medium'>
                                                     {claw.name}
@@ -142,17 +153,43 @@ const AdminClawsTab: FC<AdminResourceTabProps> = (): ReactNode => {
                                                 />
                                             </div>
                                             <p className='text-muted-foreground truncate text-sm'>
-                                                {claw.ownerEmail} ·{' '}
                                                 {claw.planId} ·{' '}
                                                 {claw.location ||
                                                     t('admin.notSet')}
                                             </p>
                                         </div>
                                     </div>
-                                    <span className='text-muted-foreground hidden shrink-0 text-sm sm:block'>
+                                    <button
+                                        type='button'
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            setEditingClaw(claw)
+                                        }}
+                                        title='Change owner'
+                                        className='hover:bg-foreground/10 hidden min-w-0 max-w-[220px] shrink items-center gap-1.5 truncate rounded-md px-2 py-1 font-mono text-xs transition-colors sm:flex'
+                                    >
+                                        <UserSwitchIcon className='text-muted-foreground h-3.5 w-3.5 shrink-0' />
+                                        <span className='truncate'>
+                                            {claw.ownerEmail || '—'}
+                                        </span>
+                                    </button>
+                                    <span className='text-muted-foreground hidden shrink-0 text-sm lg:block'>
                                         {formatDate(claw.createdAt)}
                                     </span>
                                 </div>
+                                <button
+                                    type='button'
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setEditingClaw(claw)
+                                    }}
+                                    className='hover:bg-foreground/10 mt-2 flex w-full items-center justify-center gap-1.5 truncate rounded-md px-2 py-1 font-mono text-xs transition-colors sm:hidden'
+                                >
+                                    <UserSwitchIcon className='text-muted-foreground h-3.5 w-3.5 shrink-0' />
+                                    <span className='truncate'>
+                                        {claw.ownerEmail || '—'}
+                                    </span>
+                                </button>
                             </CardContent>
                         </Card>
                     ))}
@@ -167,6 +204,16 @@ const AdminClawsTab: FC<AdminResourceTabProps> = (): ReactNode => {
                         </div>
                     )}
                 </div>
+            )}
+
+            {editingClaw && (
+                <AdminClawOwnerPicker
+                    clawId={editingClaw.id}
+                    currentOwnerEmail={editingClaw.ownerEmail}
+                    currentOwnerUserId={editingClaw.userId}
+                    open={Boolean(editingClaw)}
+                    onClose={() => setEditingClaw(null)}
+                />
             )}
         </Fragment>
     )

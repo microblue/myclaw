@@ -10,6 +10,7 @@ import {
     useToast
 } from '@/hooks'
 import CLAW_QUERY_KEY from '@/hooks/useClaws/CLAW_QUERY_KEY'
+import ADMIN_CLAWS_QUERY_KEY from '@/hooks/useClaws/ADMIN_CLAWS_QUERY_KEY'
 import {
     Button,
     Dialog,
@@ -53,6 +54,7 @@ const AdminClawOwnerPicker: FC<Props> = ({
             api.reassignAdminClawOwner(clawId, userId),
         onSuccess: (_res, vars) => {
             qc.invalidateQueries({ queryKey: [...CLAW_QUERY_KEY, clawId] })
+            qc.invalidateQueries({ queryKey: ADMIN_CLAWS_QUERY_KEY })
             toast.success(
                 `${t('api.clawOwnerUpdated')} → ${vars.email}`
             )
