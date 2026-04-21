@@ -7,9 +7,9 @@ import { providerRegistry } from '@/services/providers'
 import cloudflare from '@/services/cloudflare'
 import {
     generateServerName,
-    generateCloudInit,
     DOMAIN
 } from '@/controllers/claws/helpers'
+import { getClawRuntime, DEFAULT_CLAW_TYPE } from '@/services/clawRuntimes'
 import {
     getSystemSetting,
     SETTINGS_KEYS
@@ -88,13 +88,20 @@ const provisionClawServer = async ({
             getSystemSetting(SETTINGS_KEYS.defaultOpenrouterModel)
         ])
 
-        const cloudInitScript = generateCloudInit(
-            claw.rootPassword || '',
-            claw.subdomain || '',
-            DOMAIN,
-            claw.gatewayToken || '',
-            { openrouterApiKey, defaultModel }
-        )
+        // Dispatch to the per-type cloud-init through the runtime
+        // registry. Fall back to the default (OpenClaw) on unknown
+        // values so an older claw row without claw_type still boots
+        // correctly.
+        const runtime =
+            getClawRuntime(claw.clawType || DEFAULT_CLAW_TYPE) ||
+            getClawRuntime(DEFAULT_CLAW_TYPE)!
+        const cloudInitScript = runtime.generateCloudInit({
+            rootPassword: claw.rootPassword || '',
+            subdomain: claw.subdomain || '',
+            domain: DOMAIN,
+            gatewayToken: claw.gatewayToken || '',
+            llm: { openrouterApiKey, defaultModel }
+        })
 
         const serverName = generateServerName(claw.name, claw.id)
 

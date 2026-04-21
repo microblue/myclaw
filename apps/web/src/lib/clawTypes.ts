@@ -1,8 +1,11 @@
 // Claw type registry — single source of truth for the wizard picker
 // and the dashboard badge on each instance.
 //
-// Only 'openclaw' is selectable in Phase 1. The other four render as
-// Coming soon cards: discoverable but disabled.
+// Phase 1: OpenClaw + PicoClaw are provisionable. The other three
+// (zeroclaw / hermes / nanoclaw) render as Coming soon cards:
+// discoverable but disabled. When a new adapter lands on the server
+// in services/clawRuntimes/, flip its `comingSoon: false` here and
+// the wizard picks it up.
 
 export interface ClawTypeEntry {
     id: string
@@ -31,8 +34,8 @@ export const CLAW_TYPES: ClawTypeEntry[] = [
         id: 'picoclaw',
         name: 'PicoClaw',
         tagline: 'Tiny & fast',
-        description: 'Smallest memory footprint (256 MB target). Great for free tier and always-on background tasks.',
-        comingSoon: true
+        description: 'Sub-10 MB core (Go static binary). Runs on the smallest VPS tier — great for always-on background tasks on a tight budget.',
+        comingSoon: false
     },
     {
         id: 'hermes',

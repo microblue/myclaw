@@ -20,10 +20,13 @@ const providers = {
     getProviderPlans: (providerId: string) =>
         client.get<ProviderPlan[]>(API_PATHS.PROVIDERS.PLANS(providerId)),
 
-    getProviderCuratedPlans: (providerId: string) =>
-        client.get<ProviderPlan[]>(
-            API_PATHS.PROVIDERS.CURATED_PLANS(providerId)
-        ),
+    getProviderCuratedPlans: (providerId: string, clawType?: string) => {
+        const base = API_PATHS.PROVIDERS.CURATED_PLANS(providerId)
+        const url = clawType
+            ? `${base}?clawType=${encodeURIComponent(clawType)}`
+            : base
+        return client.get<ProviderPlan[]>(url)
+    },
 
     getProviderLocations: (providerId: string) =>
         client.get<ProviderLocation[]>(

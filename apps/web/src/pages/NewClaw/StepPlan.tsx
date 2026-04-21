@@ -12,10 +12,11 @@ const StepPlan: FC = () => {
     const providerId = searchParams.get('provider') || ''
     const selectedPlanId = searchParams.get('planId')
     const selectedLocation = searchParams.get('location')
+    const clawType = searchParams.get('type') || 'openclaw'
 
     const plansQuery = useQuery({
-        queryKey: ['curatedPlans', providerId],
-        queryFn: () => api.getProviderCuratedPlans(providerId),
+        queryKey: ['curatedPlans', providerId, clawType],
+        queryFn: () => api.getProviderCuratedPlans(providerId, clawType),
         enabled: Boolean(providerId),
         staleTime: 5 * 60 * 1000
     })

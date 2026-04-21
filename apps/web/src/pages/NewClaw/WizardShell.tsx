@@ -112,8 +112,9 @@ const SummaryPanel: FC = () => {
     const clawType = getClawType(typeId)
 
     const plansQuery = useQuery({
-        queryKey: ['curatedPlans', providerId],
-        queryFn: () => api.getProviderCuratedPlans(providerId || ''),
+        queryKey: ['curatedPlans', providerId, typeId],
+        queryFn: () =>
+            api.getProviderCuratedPlans(providerId || '', typeId),
         enabled: Boolean(providerId),
         staleTime: 5 * 60 * 1000
     })

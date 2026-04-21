@@ -27,8 +27,8 @@ const StepReview: FC = () => {
     })
 
     const plansQuery = useQuery({
-        queryKey: ['curatedPlans', providerId],
-        queryFn: () => api.getProviderCuratedPlans(providerId),
+        queryKey: ['curatedPlans', providerId, clawTypeId],
+        queryFn: () => api.getProviderCuratedPlans(providerId, clawTypeId),
         enabled: Boolean(providerId)
     })
     const locationsQuery = useQuery({

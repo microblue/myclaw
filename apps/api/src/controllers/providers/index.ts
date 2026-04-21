@@ -10,6 +10,7 @@ import { inputValidation } from '@openclaw/shared'
 import { ok, fail } from '@/lib/response'
 import { providerRegistry } from '@/services/providers'
 import { getCuratedPlanIds } from '@/services/providers/curatedPlans'
+import { getClawRuntime, DEFAULT_CLAW_TYPE } from '@/services/clawRuntimes'
 
 /**
  * GET /providers
@@ -81,21 +82,40 @@ export const getProviderCuratedPlans = async (c: Context) => {
         return fail(c, t('api.providerNotFound'), 404)
     }
 
+    // Claw-type-aware plan filtering. Each runtime declares its own
+    // curated plan list per provider (PicoClaw fits on 512 MB nano
+    // while OpenClaw needs >= 4 GB), so the list the user sees depends
+    // on which claw they're creating. Omitted / unknown clawType
+    // defaults to OpenClaw — preserves pre-registry behavior for any
+    // existing caller that didn't pass the query string.
+    const clawType = c.req.query('clawType') || DEFAULT_CLAW_TYPE
+    const runtime = getClawRuntime(clawType)
+
     try {
         const allPlans = await provider.getPlans()
-        const curatedIds = getCuratedPlanIds(providerId)
+        const curatedIds =
+            runtime?.curatedPlanIdsByProvider[providerId] ??
+            getCuratedPlanIds(providerId)
 
         if (curatedIds.length === 0) {
             return ok(c, allPlans, t('api.plansRetrieved'))
         }
 
+        // OpenClaw still enforces the 4 GB floor through the shared
+        // validator; PicoClaw opts out by supplying its own smaller
+        // list (the runtime's plan ids ARE the whitelist, no extra
+        // memory floor applies). For unknown types we keep the
+        // original safety net.
+        const isOpenclaw = !runtime || runtime.id === DEFAULT_CLAW_TYPE
         const byId = new Map(allPlans.map((p) => [p.id, p]))
         const curated = curatedIds
             .map((id) => byId.get(id))
-            .filter(
-                (p): p is NonNullable<typeof p> =>
-                    Boolean(p) && p!.memory >= inputValidation.MIN_MEMORY_GB.MIN
-            )
+            .filter((p): p is NonNullable<typeof p> => {
+                if (!p) return false
+                if (isOpenclaw)
+                    return p.memory >= inputValidation.MIN_MEMORY_GB.MIN
+                return true
+            })
 
         return ok(c, curated, t('api.plansRetrieved'))
     } catch (error) {

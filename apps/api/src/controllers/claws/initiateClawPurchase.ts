@@ -21,12 +21,15 @@ import { providerRegistry } from '@/services/providers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 import { getEnvironment } from '@/lib/environment'
+import { supportedClawTypes } from '@/services/clawRuntimes'
 import withErrorHandler from '@/lib/withErrorHandler'
 
 let lastPendingCleanup = 0
 const CLEANUP_INTERVAL = 60 * 60 * 1000
 
-const SUPPORTED_CLAW_TYPES = new Set(['openclaw'])
+// Derived from the runtime registry — adding a new claw adapter in
+// services/clawRuntimes/ automatically lets users select it here.
+const SUPPORTED_CLAW_TYPES = supportedClawTypes()
 
 const PLAN_TO_POLAR: Record<string, string> = {
     cx23: 'CX23',
