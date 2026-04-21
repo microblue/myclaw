@@ -3,6 +3,7 @@ import type { Claw } from '@/ts/Interfaces'
 
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/lib'
+import { buildClawChatUrl } from '@/lib/clawUrl'
 import { useToast } from '@/hooks'
 import { Button } from '@/components/ui'
 import ClawInstanceCard from '@/components/dashboard/ClawInstanceCard'
@@ -16,19 +17,17 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
     const navigate = useNavigate()
     const toast = useToast()
 
-    // Open Chat from the tile goes straight to the OpenClaw UI
-    // (authenticated via ?token=) in a new tab — the management
+    // Open Chat from the tile goes straight to the on-box Control UI
+    // in a new tab (OpenClaw's gateway auto-auths via ?token=;
+    // PicoClaw's launcher has its own onboarding). Management
     // buttons (Start/Pause/Restart/Delete/Diagnostics) live on the
     // /claw/:id detail page the rest of the card opens.
     const handleOpenChat = (claw: Claw) => {
-        if (!claw.subdomain) {
+        const url = buildClawChatUrl(claw)
+        if (!url) {
             toast.error('This instance has no subdomain yet.')
             return
         }
-        const base = `https://${claw.subdomain}.myclaw.one/`
-        const url = claw.gatewayToken
-            ? `${base}?token=${encodeURIComponent(claw.gatewayToken)}`
-            : base
         window.open(url, '_blank', 'noopener')
     }
 

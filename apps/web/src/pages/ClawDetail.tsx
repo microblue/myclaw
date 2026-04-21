@@ -17,6 +17,7 @@ import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
 import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
+import { buildClawChatUrl, chatEntryHint } from '@/lib/clawUrl'
 import { useState } from 'react'
 import { ArrowSquareOutIcon } from '@phosphor-icons/react'
 
@@ -51,17 +52,11 @@ const ClawDetail: FC = () => {
     const del = useDeleteClaw()
 
     const openSubdomain = () => {
-        if (!claw?.subdomain) {
+        const url = claw ? buildClawChatUrl(claw) : null
+        if (!url) {
             toast.error('This instance has no subdomain yet.')
             return
         }
-        // Append the gateway token so the OpenClaw control UI authenticates
-        // automatically instead of dropping the user on the
-        // "unauthorized: gateway token missing" screen.
-        const base = `https://${claw.subdomain}.myclaw.one/`
-        const url = claw.gatewayToken
-            ? `${base}?token=${encodeURIComponent(claw.gatewayToken)}`
-            : base
         window.open(url, '_blank', 'noopener')
     }
 
@@ -315,7 +310,7 @@ const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
                 />
             </dl>
             <p className='text-muted-foreground pt-1 text-xs'>
-                Click "Open chat" above to log in automatically.
+                {chatEntryHint(claw)}
             </p>
         </section>
 
