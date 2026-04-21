@@ -13,6 +13,11 @@ export interface ClawTypeEntry {
     tagline: string
     description: string
     comingSoon: boolean
+    // Tailwind class pair for the type pill / chip (dashboard tile,
+    // detail header, admin claws list). Subtle fill + darker text so
+    // OpenClaw vs PicoClaw is distinguishable at a glance without
+    // competing with the status dot.
+    badgeClass: string
 }
 
 export const CLAW_TYPES: ClawTypeEntry[] = [
@@ -21,35 +26,40 @@ export const CLAW_TYPES: ClawTypeEntry[] = [
         name: 'OpenClaw',
         tagline: 'Full AI assistant',
         description: 'The flagship OpenClaw instance — full tool access, multi-agent, suitable for day-to-day work.',
-        comingSoon: false
+        comingSoon: false,
+        badgeClass: 'bg-blue-500/15 text-blue-600 dark:text-blue-300'
     },
     {
         id: 'zeroclaw',
         name: 'ZeroClaw',
         tagline: 'Barebones kernel',
         description: 'Minimal footprint, no built-in tools. For users who want to ship their own agent on top of the runtime.',
-        comingSoon: true
+        comingSoon: true,
+        badgeClass: 'bg-slate-500/15 text-slate-600 dark:text-slate-300'
     },
     {
         id: 'picoclaw',
         name: 'PicoClaw',
         tagline: 'Tiny & fast',
         description: 'Sub-10 MB core (Go static binary). Runs on the smallest VPS tier — great for always-on background tasks on a tight budget.',
-        comingSoon: false
+        comingSoon: false,
+        badgeClass: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300'
     },
     {
         id: 'hermes',
         name: 'Hermes Agent',
         tagline: 'Delivery specialist',
         description: 'Pre-wired for API orchestration and background jobs — no chat UI, runs headless.',
-        comingSoon: true
+        comingSoon: true,
+        badgeClass: 'bg-amber-500/15 text-amber-600 dark:text-amber-300'
     },
     {
         id: 'nanoclaw',
         name: 'NanoClaw',
         tagline: 'Edge-ready',
         description: 'Optimised for edge runtimes and tiny VPSes. Lean plugin set, 24/7 always-on budget.',
-        comingSoon: true
+        comingSoon: true,
+        badgeClass: 'bg-violet-500/15 text-violet-600 dark:text-violet-300'
     }
 ]
 

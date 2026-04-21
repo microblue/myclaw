@@ -222,7 +222,9 @@ const DetailHeader: FC<{ claw: Claw }> = ({ claw }) => {
                 <h1 className='text-xl font-semibold md:text-2xl'>
                     {claw.name}
                 </h1>
-                <span className='bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs'>
+                <span
+                    className={`rounded px-2 py-0.5 text-xs font-medium ${clawType?.badgeClass || 'bg-muted text-muted-foreground'}`}
+                >
                     {clawType?.name || 'OpenClaw'}
                 </span>
             </div>

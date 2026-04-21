@@ -2,6 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
 import { findUserClaw } from '@/controllers/claws/helpers'
+import { getClawRuntime, DEFAULT_CLAW_TYPE } from '@/services/clawRuntimes'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -16,14 +17,21 @@ const getClawLogs = async (c: AuthenticatedContext) => {
         if (!claw.ip || !claw.rootPassword)
             return fail(c, t('api.failedToGetDiagnostics'), 400)
 
-        // `|| true` so the SSH call succeeds even when the log file
-        // doesn't exist yet (cloud-init hasn't finished, or the gateway
-        // never ran). The UI renders the stderr ("No such file…")
-        // verbatim, which is more useful than a red error banner.
+        // Per-runtime log file so PicoClaw claws surface
+        // /var/log/picoclaw-gateway.log instead of an empty tab. The
+        // systemdUnit name doubles as the log filename in our cloud-init
+        // (both OpenClaw and PicoClaw systemd units redirect stdout to
+        // /var/log/<unit>.log). `|| true` keeps the SSH exec green when
+        // the file doesn't exist yet — the UI renders stderr verbatim,
+        // more useful than a red error banner.
+        const runtime =
+            getClawRuntime(claw.clawType || DEFAULT_CLAW_TYPE) ||
+            getClawRuntime(DEFAULT_CLAW_TYPE)!
+        const logFile = `/var/log/${runtime.systemdUnit}.log`
         const output = await executeSSH(
             claw.ip,
             claw.rootPassword,
-            'tail -200 /var/log/openclaw-gateway.log 2>&1 || true'
+            `tail -200 ${logFile} 2>&1 || true`
         )
 
         return ok(c, { logs: output }, t('api.logsFetched'))

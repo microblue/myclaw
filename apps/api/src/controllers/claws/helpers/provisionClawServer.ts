@@ -187,7 +187,14 @@ const provisionClawServer = async ({
 //   "Launching instance…"  (creating)
 //   "Deploying Claw…"      (configuring)
 //   "Running"              (running)
-const POLL_INTERVAL_MS = 5_000
+// 2s poll interval + 2 consecutive OK floor ≈ 4s best-case flip to
+// running once the claw's gateway is answering. Was 5s × 3 → 15s+
+// best case, and in practice a DNS / cert-handshake blip reset the
+// counter, leaving rusty-ember at 4m15s in configuring after bootstrap
+// had actually finished (2026-04-21). 2s is tight enough to feel
+// instant, loose enough for 2 OKs to still verify the claw isn't
+// flapping.
+const POLL_INTERVAL_MS = 2_000
 const PROVIDER_POLL_MAX_MS = 5 * 60 * 1000
 const GATEWAY_POLL_MAX_MS = 6 * 60 * 1000
 const GATEWAY_TIMEOUT_MS = 3_000
@@ -289,7 +296,7 @@ const pollLifecycle = async ({
         getClawRuntime(DEFAULT_CLAW_TYPE)!
     const isHealthy = runtime.isHealthyResponse
 
-    const REQUIRED_CONSECUTIVE_OK = 3
+    const REQUIRED_CONSECUTIVE_OK = 2
     let consecutiveOk = 0
     const stage2Deadline = Date.now() + GATEWAY_POLL_MAX_MS
     while (Date.now() < stage2Deadline) {

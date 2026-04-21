@@ -138,7 +138,9 @@ const ClawInstanceCard: FC<Props> = ({ claw, onOpenChat, onViewDetails }) => {
                         </p>
                     )}
                 </div>
-                <span className='bg-muted text-muted-foreground rounded px-2 py-1 text-xs'>
+                <span
+                    className={`rounded px-2 py-1 text-xs font-medium ${clawType?.badgeClass || 'bg-muted text-muted-foreground'}`}
+                >
                     {clawType?.name || 'OpenClaw'}
                 </span>
             </div>
