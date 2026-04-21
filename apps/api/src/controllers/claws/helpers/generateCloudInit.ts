@@ -137,7 +137,7 @@ const generateCloudInit = (
     // metacharacters in the generated password.
     const rootPwEscaped = rootPassword.replace(/'/g, "'\\''")
 
-    return `#!/bin/bash
+    const script = `#!/bin/bash
 # Lightsail prepends its own "#!/bin/sh" preamble to the user-data,
 # so the whole thing actually runs under dash (posix sh) by default.
 # dash doesn't support process substitution (>(...)) or other bash
@@ -482,6 +482,40 @@ chmod 644 /etc/cron.d/certbot-renew
 echo "status=ok at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
 echo "=== openclaw bootstrap finished at $(date -u) ==="
 `
+    return stripShellComments(script)
+}
+
+// Lightsail caps userData at 16 KB AFTER base64 encoding (not raw), so
+// the effective raw-bytes budget is ~12 KB. Inline comments in the bash
+// script are useful when we're reading source for maintenance, but they
+// waste bytes at runtime — strip shell-comment-only lines and blank
+// lines outside heredoc bodies. Heredoc bodies are left untouched since
+// some of them contain Markdown (IDENTITY.md) where `#` is syntactically
+// meaningful as an ATX header.
+const stripShellComments = (script: string): string => {
+    let heredocMarker: string | null = null
+    const kept: string[] = []
+    for (const line of script.split('\n')) {
+        if (heredocMarker !== null) {
+            kept.push(line)
+            if (line.trim() === heredocMarker) heredocMarker = null
+            continue
+        }
+        const heredocOpen = line.match(/<<\s*['"]?(\w+)['"]?\s*$/)
+        if (heredocOpen) {
+            heredocMarker = heredocOpen[1]
+            kept.push(line)
+            continue
+        }
+        if (line.startsWith('#!')) {
+            kept.push(line)
+            continue
+        }
+        if (/^\s*#/.test(line)) continue
+        if (/^\s*$/.test(line)) continue
+        kept.push(line)
+    }
+    return kept.join('\n')
 }
 
 export default generateCloudInit

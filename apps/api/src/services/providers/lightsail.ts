@@ -108,20 +108,23 @@ class LightsailProvider implements CloudProvider {
         const availabilityZone = options.locationId + 'a'
         console.log('[lightsail] locationId:', options.locationId, '-> AZ:', availabilityZone)
 
-        // Lightsail caps user-data at 16 KB. Catch bloat before the API
-        // call so the error log names the culprit instead of AWS's
-        // generic "InvalidParams ... exceeds the 16 KB limit" (which
-        // leaves behind a phantom claw row with no provider_server_id —
-        // see calm-birch / wild-owl 2026-04-21).
-        const userDataBytes = Buffer.byteLength(options.userData || '', 'utf8')
-        if (userDataBytes > 16_384) {
+        // Lightsail caps userData at 16 KB **AFTER** base64 encoding,
+        // not raw (witty-otter incident 2026-04-21: 15811 raw bytes was
+        // still rejected — base64 inflation 4/3 put it at ~21076 bytes).
+        // Measure the encoded length so the guard matches what AWS
+        // actually rejects.
+        const rawBytes = Buffer.byteLength(options.userData || '', 'utf8')
+        const encodedBytes = Buffer.from(options.userData || '').toString(
+            'base64'
+        ).length
+        if (encodedBytes > 16_384) {
             throw new Error(
-                `[lightsail] user-data is ${userDataBytes} bytes, exceeds Lightsail's 16 KB limit. Trim generateCloudInit output.`
+                `[lightsail] user-data is ${rawBytes} bytes raw / ${encodedBytes} bytes base64, exceeds Lightsail's 16 KB limit (measured on base64). Trim generateCloudInit output.`
             )
         }
-        if (userDataBytes > 15_500) {
+        if (encodedBytes > 15_500) {
             console.warn(
-                `[lightsail] user-data is ${userDataBytes} bytes — close to Lightsail's 16 KB cap, any further additions may trip the limit.`
+                `[lightsail] user-data is ${rawBytes}B raw / ${encodedBytes}B base64 — close to the 16 KB cap, further additions may trip the limit.`
             )
         }
 
