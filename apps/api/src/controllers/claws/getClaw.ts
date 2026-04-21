@@ -7,17 +7,17 @@ import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
 
-// When an admin is viewing another user's claw we surface the owner
-// email to the client so the detail page can render a clear "admin
-// view of <email>" banner. Non-admin callers always see their own
-// claws, so the banner stays hidden (field is null/undefined) for
-// them — consistent with how getAdminClaws already works.
+// Admin viewers always get the owner email enriched — even for claws
+// they own themselves — so the detail page can render the admin
+// banner + "Change owner" action on every claw. The banner is how
+// admins access the reassign flow, so hiding it for self-owned claws
+// would just be an annoying gap. Non-admin callers are unaffected
+// (ownerEmail stays undefined).
 const attachOwnerEmail = async <T extends { userId: string }>(
     claw: T,
-    isAdmin: boolean,
-    viewerUserId: string
+    isAdmin: boolean
 ): Promise<T & { ownerEmail?: string | null }> => {
-    if (!isAdmin || claw.userId === viewerUserId) return claw
+    if (!isAdmin) return claw
     const [owner] = await db
         .select({ email: users.email })
         .from(users)
@@ -30,7 +30,6 @@ const getClaw = withErrorHandler('getClaw')(
     withClaw()(async (c, claw) => {
         const id = c.req.param('id')!
         const sync = c.req.query('sync') === 'true'
-        const viewerUserId = c.get('userId')
         const isAdmin = c.get('isAdmin')
 
         if (sync && claw.providerServerId) {
@@ -56,8 +55,7 @@ const getClaw = withErrorHandler('getClaw')(
                             status: serverStatus.status,
                             ip: serverStatus.ip
                         }),
-                        isAdmin,
-                        viewerUserId
+                        isAdmin
                     )
                     return ok(c, enriched, t('api.clawFetched'))
                 }
@@ -66,11 +64,7 @@ const getClaw = withErrorHandler('getClaw')(
             }
         }
 
-        const enriched = await attachOwnerEmail(
-            sanitizeClaw(claw),
-            isAdmin,
-            viewerUserId
-        )
+        const enriched = await attachOwnerEmail(sanitizeClaw(claw), isAdmin)
         return ok(c, enriched, t('api.clawFetched'))
     })
 )
