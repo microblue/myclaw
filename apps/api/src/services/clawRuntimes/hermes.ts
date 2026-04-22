@@ -10,7 +10,7 @@ import { defaultIsHealthyResponse } from './types'
 // 250-400 MB RAM idle, 600 MB+ during a turn. Lightsail nano (512 MB)
 // will OOM, so the curated plans floor is micro_3_0 (1 GB).
 
-const WEB_PORT = 8080
+const WEB_PORT = 9119
 
 const stripShellComments = (script: string): string => {
     let heredocMarker: string | null = null
@@ -101,8 +101,15 @@ fi
 
 stage apt-base
 export DEBIAN_FRONTEND=noninteractive
+# Node 22 from NodeSource — Ubuntu 24's apt nodejs is 18.x and Vite
+# (which builds Hermes' web dashboard) ESM-loads its config.js using
+# Node 20+ APIs, so the in-distro version errors out at first launch.
+mkdir -p /etc/apt/keyrings
+with_retry curl -fsSL -o /etc/apt/keyrings/nodesource.gpg.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+gpg --dearmor --batch --yes -o /etc/apt/keyrings/nodesource.gpg /etc/apt/keyrings/nodesource.gpg.key
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
 with_retry apt-get update
-with_retry apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates dnsutils python3 python3-venv git build-essential
+with_retry apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates dnsutils python3 python3-venv git build-essential nodejs
 
 stage hermes-user
 if ! id hermes >/dev/null 2>&1; then
@@ -114,9 +121,17 @@ stage hermes-install
 # builds python 3.11 venv with [all] extras, symlinks ~/.local/bin/hermes.
 # Run as hermes user so all artifacts land in $HOME/.hermes/.
 sudo -u hermes -H bash -c 'curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | HERMES_NO_PROMPT=1 bash' || true
-
-# Make hermes binary discoverable to systemd
 ln -sf /home/hermes/.local/bin/hermes /usr/local/bin/hermes 2>/dev/null || true
+
+stage hermes-web-build
+# pip install of hermes does NOT bundle the web dashboard's frontend
+# (only the Docker image does). hermes dashboard will try to npm
+# install + vite build on first launch — too slow for a service unit
+# and prone to error storms on restart. Build it explicitly here.
+cd /home/hermes/.hermes/hermes-agent/web
+sudo -u hermes -H npm install 2>&1 | tail -3 || true
+sudo -u hermes -H npm run build 2>&1 | tail -3 || true
+cd -
 
 stage hermes-config
 # Pre-seed OpenRouter key in .env + non-interactive model selection +
@@ -174,7 +189,7 @@ User=hermes
 Group=hermes
 WorkingDirectory=/home/hermes
 Environment=HOME=/home/hermes
-ExecStart=/usr/local/bin/hermes web --host 127.0.0.1 --port ${WEB_PORT}
+ExecStart=/usr/local/bin/hermes dashboard --no-open --host 127.0.0.1 --port ${WEB_PORT}
 Restart=always
 RestartSec=10
 StandardOutput=append:/var/log/hermes-web.log
