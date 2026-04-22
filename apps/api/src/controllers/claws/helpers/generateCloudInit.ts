@@ -413,16 +413,13 @@ docker pull ghcr.io/open-webui/open-webui:main
 docker rm -f open-webui 2>/dev/null || true
 docker run -d --name open-webui --restart always \\
     -p 127.0.0.1:8080:8080 --add-host=host.docker.internal:host-gateway \\
-    -e OPENAI_API_BASE_URL=http://host.docker.internal:18789/v1 \\
-    -e OPENAI_API_KEY="${gatewayToken}" -e WEBUI_AUTH=False \\
+    -e OPENAI_API_BASE_URLS="http://host.docker.internal:18789/v1;https://openrouter.ai/api/v1" \\
+    -e OPENAI_API_KEYS="${gatewayToken};${llm?.openrouterApiKey || ''}" \\
+    -e WEBUI_AUTH=False -e DEFAULT_MODELS=google/gemini-2.5-flash-lite \\
     -v open-webui:/app/backend/data ghcr.io/open-webui/open-webui:main
-for i in $(seq 1 60); do
-    curl -sf -o /dev/null --max-time 3 http://127.0.0.1:8080/health && break
-    sleep 3
-done
-sed -i 's|proxy_pass http://127.0.0.1:18789;|proxy_pass http://127.0.0.1:8080;|' /etc/nginx/sites-available/openclaw
+sleep 60
+sed -i 's|18789;|8080;|' /etc/nginx/sites-available/openclaw
 nginx -t && systemctl reload nginx
-echo "=== done at $(date -u) ==="
 systemctl disable myclaw-webui-bootstrap.service
 WEBUISH
 chmod +x /usr/local/bin/myclaw-webui-bootstrap.sh
