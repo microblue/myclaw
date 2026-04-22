@@ -18,6 +18,16 @@ export interface DesktopRelease {
 
 const DESKTOP_RELEASES: DesktopRelease[] = [
     {
+        version: '1.4.3',
+        date: '2026-04-22',
+        changes: [
+            {
+                kind: 'highlight',
+                text: 'Maintenance release with assorted under-the-hood improvements and updated dependencies. See the GitHub release page for the full asset list (Windows, Linux x64/ARM64 AppImage / .deb / .rpm).'
+            }
+        ]
+    },
+    {
         version: '1.4.2',
         date: '2026-04-19',
         changes: [
