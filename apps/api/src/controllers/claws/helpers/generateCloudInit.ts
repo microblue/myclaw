@@ -394,45 +394,53 @@ for i in $(seq 1 30); do
     sleep 5
 done
 
-stage open-webui
-# Open WebUI is the customer-facing chat surface (the stock OpenClaw
-# Control UI is reachable at /openclaw/ for power users). Docker
-# install via the official one-liner; image pull adds ~600 MB to
-# provision time but the UX win is worth it. WEBUI_AUTH=False = no
-# sign-in screen on the subdomain (URL is already token-randomised);
-# OPENAI_API_BASE_URL points at the gateway's now-enabled OpenAI-compat
-# endpoint with the gateway token as bearer key.
-with_retry curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
-sh /tmp/get-docker.sh > /var/log/docker-install.log 2>&1 || true
-rm -f /tmp/get-docker.sh
-with_retry docker pull ghcr.io/open-webui/open-webui:main
+stage open-webui-deferred
+# Open WebUI install (docker + 600 MB image pull) is too slow to do
+# inline — it pushed bootstrap past the 20-min PROVISION_TIMEOUT_MS
+# rescue and got fresh claws falsely flipped to unreachable. So we
+# write a self-deleting systemd one-shot unit that runs AFTER bootstrap
+# completes; bootstrap itself just nginx-proxies / → 18789 (OpenClaw
+# stock UI, working immediately) and exits "ok". Once the unit's
+# pull+run+nginx-switch finishes (3-5 min later), refresh shows the
+# Open WebUI surface.
+cat > /usr/local/bin/myclaw-webui-bootstrap.sh << 'WEBUISH'
+#!/bin/bash
+set -eu
+exec >> /var/log/myclaw-webui-bootstrap.log 2>&1
+echo "=== myclaw-webui-bootstrap starting at $(date -u) ==="
+curl -fsSL https://get.docker.com | sh
+docker pull ghcr.io/open-webui/open-webui:main
 docker rm -f open-webui 2>/dev/null || true
 docker run -d --name open-webui --restart always \\
-    -p 127.0.0.1:8080:8080 \\
-    --add-host=host.docker.internal:host-gateway \\
+    -p 127.0.0.1:8080:8080 --add-host=host.docker.internal:host-gateway \\
     -e OPENAI_API_BASE_URL=http://host.docker.internal:18789/v1 \\
-    -e OPENAI_API_KEY="${gatewayToken}" \\
-    -e WEBUI_AUTH=False \\
-    -e DEFAULT_MODELS=openclaw/default \\
-    -e ENABLE_OLLAMA_API=False \\
-    -e WEBUI_NAME="myclaw" \\
-    -v open-webui:/app/backend/data \\
-    ghcr.io/open-webui/open-webui:main
-
-# Wait for Open WebUI's HTTP to answer (it does its own DB migration
-# + model fetching on first boot — can take 30-60 s).
+    -e OPENAI_API_KEY="${gatewayToken}" -e WEBUI_AUTH=False \\
+    -v open-webui:/app/backend/data ghcr.io/open-webui/open-webui:main
 for i in $(seq 1 60); do
-    if curl -sf -o /dev/null --max-time 3 http://127.0.0.1:8080/health 2>/dev/null; then
-        echo "[bootstrap] open-webui up after \${i}x 3s"
-        break
-    fi
+    curl -sf -o /dev/null --max-time 3 http://127.0.0.1:8080/health && break
     sleep 3
 done
+sed -i 's|proxy_pass http://127.0.0.1:18789;|proxy_pass http://127.0.0.1:8080;|' /etc/nginx/sites-available/openclaw
+nginx -t && systemctl reload nginx
+echo "=== done at $(date -u) ==="
+systemctl disable myclaw-webui-bootstrap.service
+WEBUISH
+chmod +x /usr/local/bin/myclaw-webui-bootstrap.sh
+cat > /etc/systemd/system/myclaw-webui-bootstrap.service << 'WEBUISVC'
+[Unit]
+After=network-online.target openclaw-gateway.service nginx.service
+Wants=network-online.target
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/myclaw-webui-bootstrap.sh
+[Install]
+WantedBy=multi-user.target
+WEBUISVC
+systemctl daemon-reload
+systemctl enable myclaw-webui-bootstrap.service
+# Kick it off in the background — don't block the rest of bootstrap.
+systemctl start --no-block myclaw-webui-bootstrap.service
 
-# nginx: / → Open WebUI (the new default chat); /openclaw/ → the
-# stock Control UI for power users / debugging; /v1/ stays on the
-# gateway too so external OpenAI-compat clients (curl, scripts)
-# can hit it directly.
 cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -452,7 +460,7 @@ server {
     server_name ${fullDomain};
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:18789;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
