@@ -48,9 +48,9 @@ export const CLAW_TYPES: ClawTypeEntry[] = [
     {
         id: 'hermes',
         name: 'Hermes Agent',
-        tagline: 'Delivery specialist',
-        description: 'Pre-wired for API orchestration and background jobs — no chat UI, runs headless.',
-        comingSoon: true,
+        tagline: 'Self-improving',
+        description: 'NousResearch Hermes Agent — built-in skills, learning loop, and a polished web chat. Needs ≥ 1 GB RAM.',
+        comingSoon: false,
         badgeClass: 'bg-amber-500/15 text-amber-600 dark:text-amber-300'
     },
     {

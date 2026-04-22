@@ -2,6 +2,7 @@ import type { ClawRuntime } from './types'
 
 import openclawRuntime from './openclaw'
 import picoclawRuntime from './picoclaw'
+import hermesRuntime from './hermes'
 
 // Registry of claw runtimes. Add a new ClawRuntime here to make the
 // type provisionable end-to-end — initiateClawPurchase, curated-plans,
@@ -10,7 +11,8 @@ import picoclawRuntime from './picoclaw'
 
 const runtimes: Record<string, ClawRuntime> = {
     [openclawRuntime.id]: openclawRuntime,
-    [picoclawRuntime.id]: picoclawRuntime
+    [picoclawRuntime.id]: picoclawRuntime,
+    [hermesRuntime.id]: hermesRuntime
 }
 
 export const DEFAULT_CLAW_TYPE = openclawRuntime.id
