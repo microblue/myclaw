@@ -178,6 +178,14 @@ If the first message is already a real task, skip the welcome and dive in.
 SOULEOF
 chown hermes:hermes /home/hermes/.hermes/SOUL.md
 
+stage hermes-gateway
+# Hermes ships its own systemd installer for the messaging gateway
+# (Telegram/Discord/cron tick/etc). Without --system the installer
+# would create a per-user unit that requires linger setup; with
+# --system + --run-as-user we get a top-level unit that auto-starts
+# at boot. Idempotent on re-runs (--force).
+hermes gateway install --system --run-as-user hermes --force 2>&1 | tail -3 || true
+
 stage hermes-service
 cat > /etc/systemd/system/hermes-web.service << 'SYSTEMD'
 [Unit]
