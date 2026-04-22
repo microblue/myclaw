@@ -1,0 +1,134 @@
+// myclaw.one platform release notes — what shipped to the website
+// itself, separate from /changelog (which tracks the OpenClaw runtime
+// version installed on each claw). Keep entries terse and
+// user-facing — link to GitHub release for the full commit log.
+
+export type PlatformReleaseChange = {
+    type: 'added' | 'fixed' | 'changed'
+    text: string
+}
+
+export type PlatformRelease = {
+    version: string
+    date: string // YYYY-MM-DD
+    headline: string
+    changes: PlatformReleaseChange[]
+    githubUrl?: string
+}
+
+const PLATFORM_RELEASES: PlatformRelease[] = [
+    {
+        version: 'v1.3',
+        date: '2026-04-21',
+        headline: 'PicoClaw GA + provision hardening',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.3',
+        changes: [
+            {
+                type: 'added',
+                text: "PicoClaw is live — a sub-10 MB Go runtime that boots on the smallest VPS tier (Lightsail nano, $5/mo). Pick it from the wizard's claw type step."
+            },
+            {
+                type: 'added',
+                text: 'One-click sign-in to the PicoClaw launcher: Open chat drops you into the on-box UI authenticated, no token paste.'
+            },
+            {
+                type: 'added',
+                text: 'Per-runtime visual badge on dashboard tiles + detail header (OpenClaw blue, PicoClaw emerald) so the type is recognisable at a glance.'
+            },
+            {
+                type: 'added',
+                text: 'Logs tab now tails the right systemd unit per claw type — PicoClaw users see launcher logs, not an empty screen.'
+            },
+            {
+                type: 'fixed',
+                text: 'Cloud-init no longer trips Lightsail’s 16 KB userData ceiling: stripped comments, measured against the base64-encoded length AWS actually checks.'
+            },
+            {
+                type: 'fixed',
+                text: 'Stuck-claw rescue: the 20-min provision timeout now probes the public subdomain before declaring a claw unreachable, so a healthy-but-late-finishing claw is no longer murdered at the deadline.'
+            },
+            {
+                type: 'fixed',
+                text: 'DNS race during provision: no more spurious Cloudflare 81058 (“identical record exists”) when the self-heal beat the main create.'
+            },
+            {
+                type: 'fixed',
+                text: 'Faster provisioning — once the claw’s gateway answers, the dashboard flips to running in seconds instead of minutes.'
+            },
+            {
+                type: 'fixed',
+                text: 'Google / GitHub sign-in works again on local dev (switched to popup; redirect-flow broke under modern third-party-storage rules).'
+            },
+            {
+                type: 'changed',
+                text: 'Admin: claw owner reassignment moved from the per-claw detail banner into a clickable owner column on the admin claws list.'
+            }
+        ]
+    },
+    {
+        version: 'v1.2',
+        date: '2026-04-20',
+        headline: 'DNS hardening, admin cleanup, navigation refactor',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.2',
+        changes: [
+            {
+                type: 'added',
+                text: 'Admin settings tab: rotate the platform OpenRouter API key + default model from the UI, no env-var redeploy needed.'
+            },
+            {
+                type: 'added',
+                text: 'Hourly DNS reconciler sweeps Cloudflare for orphan records left behind by failed provisions.'
+            },
+            {
+                type: 'fixed',
+                text: 'Cloudflare DNS create / update / delete now retries with exponential backoff on transient 5xx — a single network blip no longer leaves a claw stranded with NXDOMAIN.'
+            },
+            {
+                type: 'fixed',
+                text: 'WebSocket upgrade headers added to the prod /api/ proxy — terminal + live logs work end-to-end without flapping.'
+            },
+            {
+                type: 'changed',
+                text: 'Admin page slimmed from 12 mostly-empty tabs to 6 with real signal each.'
+            },
+            {
+                type: 'changed',
+                text: 'Top-bar nav refactor: Dashboard button always visible, redundant items folded into the user dropdown.'
+            }
+        ]
+    },
+    {
+        version: 'v1.1',
+        date: '2026-04-19',
+        headline: 'Desktop app changelog, version surfacing, SSH cleanup',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.1',
+        changes: [
+            {
+                type: 'added',
+                text: 'Dedicated /desktop/changelog page — release-by-release notes for the Mac/Windows desktop app.'
+            },
+            {
+                type: 'added',
+                text: 'Footer auto-renders the running platform version, so it’s always clear what build you’re looking at.'
+            },
+            {
+                type: 'changed',
+                text: 'Removed the SSH keys management UI — root password + auto-provisioned access cover every real workflow we’ve seen, and the extra UI was a footgun.'
+            }
+        ]
+    },
+    {
+        version: 'v1.0',
+        date: '2026-04-19',
+        headline: 'First tagged release',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.0',
+        changes: [
+            {
+                type: 'added',
+                text: 'Pre-snapshot baseline of myclaw.one as of the v1.0 cut. Earlier history is in the git log; v1.x is what the public site ships.'
+            }
+        ]
+    }
+]
+
+export default PLATFORM_RELEASES

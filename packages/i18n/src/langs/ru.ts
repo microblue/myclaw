@@ -253,6 +253,7 @@ const ru: Translations = {
         faq: 'Вопросы',
         blog: 'Блог',
         changelog: 'Список изменений',
+        whatsNew: 'Что нового',
         compare: 'Полное сравнение',
         legalAndMore: 'Прочее',
         affiliateProgram: 'Партнёрская программа',

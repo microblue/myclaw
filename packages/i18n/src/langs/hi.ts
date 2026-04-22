@@ -255,6 +255,7 @@ const hi: Translations = {
         faq: 'प्रश्न',
         blog: 'ब्लॉग',
         changelog: 'परिवर्तन लॉग',
+        whatsNew: 'नया क्या है',
         compare: 'पूर्ण तुलना',
         legalAndMore: 'अन्य',
         affiliateProgram: 'एफिलिएट प्रोग्राम',

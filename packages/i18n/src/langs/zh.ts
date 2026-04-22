@@ -245,6 +245,7 @@ const zh: Translations = {
         faq: '问题',
         blog: '博客',
         changelog: '更新日志',
+        whatsNew: '更新日志',
         compare: '完整对比',
         legalAndMore: '其他',
         affiliateProgram: '联盟计划',

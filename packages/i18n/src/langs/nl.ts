@@ -256,6 +256,7 @@ const nl: Translations = {
         faq: 'Vragen',
         blog: 'Blog',
         changelog: 'Changelog',
+        whatsNew: 'Wat is nieuw',
         compare: 'Volledige vergelijking',
         legalAndMore: 'Overig',
         affiliateProgram: 'Partnerprogramma',

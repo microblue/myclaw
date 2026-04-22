@@ -18,6 +18,7 @@ const ROUTES = {
     TERMS: `/${PATHS.TERMS}`,
     PRIVACY: `/${PATHS.PRIVACY}`,
     CHANGELOG: `/${PATHS.CHANGELOG}`,
+    WHATS_NEW: `/${PATHS.WHATS_NEW}`,
     BLOG: `/${PATHS.BLOG}`,
     BLOG_POST: `/${PATHS.BLOG}/:slug`,
     AFFILIATE: `/${PATHS.AFFILIATE}`,

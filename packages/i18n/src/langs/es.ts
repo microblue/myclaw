@@ -257,6 +257,7 @@ const es: Translations = {
         faq: 'Preguntas',
         blog: 'Blog',
         changelog: 'Historial de cambios',
+        whatsNew: 'Novedades',
         compare: 'Comparación completa',
         legalAndMore: 'Otros',
         affiliateProgram: 'Programa de afiliados',

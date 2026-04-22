@@ -259,6 +259,7 @@ const it: Translations = {
         faq: 'Domande',
         blog: 'Blog',
         changelog: 'Changelog',
+        whatsNew: 'Novità',
         compare: 'Confronto completo',
         legalAndMore: 'Altro',
         affiliateProgram: 'Programma di affiliazione',

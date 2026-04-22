@@ -250,6 +250,7 @@ const en = {
         faq: 'Questions',
         blog: 'Blog',
         changelog: 'Changelog',
+        whatsNew: "What's new",
         compare: 'Full Comparison',
         legalAndMore: 'Others',
         affiliateProgram: 'Affiliate Program',

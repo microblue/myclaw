@@ -250,6 +250,7 @@ const ar: Translations = {
         faq: 'أسئلة',
         blog: 'المدونة',
         changelog: 'سجل التغييرات',
+        whatsNew: 'ما الجديد',
         compare: 'مقارنة كاملة',
         legalAndMore: 'أخرى',
         affiliateProgram: 'برنامج الإحالة',

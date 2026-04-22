@@ -255,6 +255,7 @@ const pl: Translations = {
         faq: 'Pytania',
         blog: 'Blog',
         changelog: 'Lista zmian',
+        whatsNew: 'Co nowego',
         compare: 'Pełne porównanie',
         legalAndMore: 'Inne',
         affiliateProgram: 'Program partnerski',

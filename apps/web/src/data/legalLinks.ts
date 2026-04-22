@@ -9,6 +9,11 @@ const getLegalLinks = (): FooterLink[] => [
     { label: t('footer.privacyPolicy'), href: ROUTES.PRIVACY },
     { label: t('footer.termsOfService'), href: ROUTES.TERMS },
     { label: t('footer.compare'), href: ROUTES.COMPARE },
+    // Platform release notes (myclaw.one itself). Kept above the
+    // OpenClaw runtime changelog because most users care about
+    // "what changed on the website I'm logged into" before "what
+    // changed in the runtime on my VPS".
+    { label: t('footer.whatsNew'), href: ROUTES.WHATS_NEW },
     { label: t('footer.changelog'), href: ROUTES.CHANGELOG },
     { label: t('footer.getInTouch'), href: `mailto:${SUPPORT_EMAIL}` }
 ]

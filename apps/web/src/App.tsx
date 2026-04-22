@@ -27,6 +27,7 @@ const Terms = lazy(() => import('@/pages/Terms'))
 const Privacy = lazy(() => import('@/pages/Privacy'))
 const Changelog = lazy(() => import('@/pages/Changelog'))
 const DesktopChangelog = lazy(() => import('@/pages/DesktopChangelog'))
+const WhatsNew = lazy(() => import('@/pages/WhatsNew'))
 const Blog = lazy(() => import('@/pages/Blog'))
 const BlogPost = lazy(() => import('@/pages/BlogPost'))
 const AffiliateProgram = lazy(() => import('@/pages/AffiliateProgram'))
@@ -64,6 +65,10 @@ const App: FC = (): ReactNode => {
                         <Route
                             path={ROUTES.CHANGELOG}
                             element={<Changelog />}
+                        />
+                        <Route
+                            path={ROUTES.WHATS_NEW}
+                            element={<WhatsNew />}
                         />
                         <Route path={ROUTES.BLOG} element={<Blog />} />
                         <Route path={ROUTES.BLOG_POST} element={<BlogPost />} />

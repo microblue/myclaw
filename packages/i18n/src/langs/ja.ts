@@ -255,6 +255,7 @@ const ja: Translations = {
         faq: '質問',
         blog: 'ブログ',
         changelog: '変更履歴',
+        whatsNew: '新着情報',
         compare: '完全比較',
         legalAndMore: 'その他',
         affiliateProgram: 'アフィリエイトプログラム',

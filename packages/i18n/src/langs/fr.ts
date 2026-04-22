@@ -257,6 +257,7 @@ const fr: Translations = {
         faq: 'Questions',
         blog: 'Blog',
         changelog: 'Journal des modifications',
+        whatsNew: 'Nouveautés',
         compare: 'Comparaison complète',
         legalAndMore: 'Autres',
         affiliateProgram: "Programme d'affiliation",

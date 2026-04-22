@@ -252,6 +252,7 @@ const tr: Translations = {
         faq: 'Sorular',
         blog: 'Blog',
         changelog: 'Değişiklik Günlüğü',
+        whatsNew: 'Yenilikler',
         compare: 'Tam Karşılaştırma',
         legalAndMore: 'Diğer',
         affiliateProgram: 'Ortaklık Programı',

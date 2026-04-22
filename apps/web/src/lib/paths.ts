@@ -16,6 +16,7 @@ const PATHS = {
     TERMS: 'terms',
     PRIVACY: 'privacy',
     CHANGELOG: 'changelog',
+    WHATS_NEW: 'whats-new',
     BLOG: 'blog',
     AFFILIATE: 'affiliate',
     AFFILIATE_PROGRAM: 'affiliate-program',
