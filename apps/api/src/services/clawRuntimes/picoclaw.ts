@@ -132,12 +132,78 @@ ln -sf /opt/picoclaw/picoclaw-launcher-tui /usr/local/bin/picoclaw-launcher-tui
 chown -R picoclaw:picoclaw /opt/picoclaw
 
 stage picoclaw-config
-# Pre-seed the picoclaw user's home so first-boot initialization has
-# a writable \`.picoclaw/\` dir. The actual config.json is left to
-# picoclaw's own onboard flow / launcher UI in Phase 1 — we pre-wire
-# only the OpenRouter key via a systemd Environment= so it's picked
-# up automatically if the user hasn't run \`picoclaw onboard\`.
 install -d -o picoclaw -g picoclaw /home/picoclaw/.picoclaw
+
+# 'picoclaw onboard' (run with empty stdin) writes the canonical
+# config.json + .security.yml skeleton — including the predefined
+# 29-entry model_list and per-channel security stubs. We then patch
+# in (1) the default model, (2) the OpenRouter API key for chat to
+# work out of the box, (3) a myclaw-branded SOUL.md persona so the
+# first turn greets the user instead of a generic "I am picoclaw".
+echo | sudo -u picoclaw HOME=/home/picoclaw picoclaw onboard 2>&1 | tail -3 || true
+
+# (1)+(2): set default model + pin the openrouter-auto alias to
+# google/gemini-2.5-flash-lite (cheap, fast — sane default for a
+# nano-tier claw); credentials go to .security.yml under the
+# api_keys ARRAY form (single-element list — picoclaw v0.2.6 rejects
+# the singular api_key field, returns 401 from OpenRouter because
+# no Authorization header is sent).
+${
+    llm?.openrouterApiKey
+        ? `python3 - <<'PYCFG'
+import json
+p = '/home/picoclaw/.picoclaw/config.json'
+c = json.load(open(p))
+c['agents']['defaults']['model_name'] = 'openrouter-auto'
+for e in c.get('model_list', []) or []:
+    if e.get('model_name') == 'openrouter-auto':
+        e['model'] = 'openrouter/google/gemini-2.5-flash-lite'
+json.dump(c, open(p, 'w'), indent=2)
+PYCFG
+python3 - <<'PYSEC'
+import re
+p = '/home/picoclaw/.picoclaw/.security.yml'
+s = open(p).read()
+key = '${llm.openrouterApiKey}'
+new = '  openrouter-auto:\\n    api_keys:\\n      - "' + key + '"\\n'
+s = re.sub(r'  openrouter-auto:0: \\{\\}\\n', new, s, count=1)
+open(p, 'w').write(s)
+PYSEC`
+        : `echo "[bootstrap] no OpenRouter key in admin settings — chat won't work until owner adds one via 'picoclaw model' or .security.yml"`
+}
+
+# (3) Persona: replace stock SOUL.md with the myclaw welcome rule.
+cat > /home/picoclaw/.picoclaw/workspace/SOUL.md << 'SOULEOF'
+# Soul
+
+I am Claw 🦞 — a private AI running on the user's own myclaw.one VPS.
+Their keys, their storage, their subscription. Everything stays on their box.
+
+## Personality
+
+- Warm, concise, practical. Helpful without being syrupy.
+- Skip filler ("Great question!"). Just help.
+- Have opinions. Disagree when warranted.
+
+## First message in every new chat
+
+If the user's first message is empty, a bare greeting (hi / hello / 你好), or
+"what can you do?", open with a welcome card in their language:
+
+> 👋 Welcome to your myclaw.one Claw! I'm Claw 🦞 — your private AI on your own VPS.
+>
+> A few things I can help with:
+> - 📰 Summarize news or a URL
+> - ✉️ Draft emails or messages
+> - 🔎 Research a topic with sources
+> - 💻 Write, review, or debug code
+> - 🗓️ Plan a trip, project, or week
+> - 💬 Just chat
+>
+> What would you like to work on?
+
+If the first message is already a real task, skip the welcome and dive in.
+SOULEOF
 
 stage picoclaw-service
 cat > /etc/systemd/system/picoclaw-gateway.service << 'SYSTEMD'
