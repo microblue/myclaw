@@ -394,50 +394,6 @@ for i in $(seq 1 30); do
     sleep 5
 done
 
-stage open-webui-deferred
-# Open WebUI install (docker + 600 MB image pull) is too slow to do
-# inline — it pushed bootstrap past the 20-min PROVISION_TIMEOUT_MS
-# rescue and got fresh claws falsely flipped to unreachable. So we
-# write a self-deleting systemd one-shot unit that runs AFTER bootstrap
-# completes; bootstrap itself just nginx-proxies / → 18789 (OpenClaw
-# stock UI, working immediately) and exits "ok". Once the unit's
-# pull+run+nginx-switch finishes (3-5 min later), refresh shows the
-# Open WebUI surface.
-cat > /usr/local/bin/myclaw-webui-bootstrap.sh << 'WEBUISH'
-#!/bin/bash
-set -eu
-exec >> /var/log/myclaw-webui-bootstrap.log 2>&1
-echo "=== myclaw-webui-bootstrap starting at $(date -u) ==="
-curl -fsSL https://get.docker.com | sh
-docker pull ghcr.io/open-webui/open-webui:main
-docker rm -f open-webui 2>/dev/null || true
-docker run -d --name open-webui --restart always \\
-    -p 127.0.0.1:8080:8080 --add-host=host.docker.internal:host-gateway \\
-    -e OPENAI_API_BASE_URLS="http://host.docker.internal:18789/v1;https://openrouter.ai/api/v1" \\
-    -e OPENAI_API_KEYS="${gatewayToken};${llm?.openrouterApiKey || ''}" \\
-    -e WEBUI_AUTH=False -e DEFAULT_MODELS=google/gemini-2.5-flash-lite \\
-    -v open-webui:/app/backend/data ghcr.io/open-webui/open-webui:main
-sleep 60
-sed -i 's|18789;|8080;|' /etc/nginx/sites-available/openclaw
-nginx -t && systemctl reload nginx
-systemctl disable myclaw-webui-bootstrap.service
-WEBUISH
-chmod +x /usr/local/bin/myclaw-webui-bootstrap.sh
-cat > /etc/systemd/system/myclaw-webui-bootstrap.service << 'WEBUISVC'
-[Unit]
-After=network-online.target openclaw-gateway.service nginx.service
-Wants=network-online.target
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/myclaw-webui-bootstrap.sh
-[Install]
-WantedBy=multi-user.target
-WEBUISVC
-systemctl daemon-reload
-systemctl enable myclaw-webui-bootstrap.service
-# Kick it off in the background — don't block the rest of bootstrap.
-systemctl start --no-block myclaw-webui-bootstrap.service
-
 cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
 map $http_upgrade $connection_upgrade {
     default upgrade;
