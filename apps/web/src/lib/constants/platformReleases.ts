@@ -18,6 +18,22 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.6',
+        date: '2026-04-22',
+        headline: 'Desktop v1.4.3 + footer version fix',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.6',
+        changes: [
+            {
+                type: 'changed',
+                text: 'Desktop download links + /desktop/changelog point at v1.4.3.'
+            },
+            {
+                type: 'fixed',
+                text: 'Footer + What\'s new now show the actual current platform tag — the deploy script wasn\'t fetching new tags so git-describe was stuck one release behind.'
+            }
+        ]
+    },
+    {
         version: 'v1.5',
         date: '2026-04-22',
         headline: 'PicoClaw + Hermes Agent open-and-chat, background recovery, faster provision',
