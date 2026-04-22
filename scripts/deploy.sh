@@ -7,7 +7,10 @@ START=$(date +%s)
 trap 'echo "==> FAILED after $(( $(date +%s) - START ))s (sha $(git rev-parse --short HEAD 2>/dev/null || echo ?))"' ERR
 
 echo "==> pull latest"
-git fetch --prune origin
+# --tags so the web build's `git describe --tags` sees the latest
+# release tag (footer + /whats-new were stuck on v1.4 after v1.5
+# was tagged because plain --prune didn't fetch new tags).
+git fetch --prune --tags origin
 git reset --hard origin/main
 SHA=$(git rev-parse --short HEAD)
 echo "    at $SHA"
