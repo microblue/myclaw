@@ -22,7 +22,7 @@ import {
     VideoModal,
     JsonLd
 } from '@/components'
-import { getBaseDomain, SCROLL_SECTIONS } from '@/lib'
+import { getBaseDomain, ROUTES, SCROLL_SECTIONS } from '@/lib'
 import {
     TWITTER_URL,
     FACEBOOK_URL,
@@ -155,7 +155,11 @@ const Landing: FC = (): ReactNode => {
             href: '#comparison',
             id: 'comparison'
         },
-        { label: t('landing.faqTitle'), href: '#faq', id: 'faq' }
+        { label: t('landing.faqTitle'), href: '#faq', id: 'faq' },
+        // Full-page nav (not an in-page anchor) — landing visitors get
+        // a visible entry point to the platform release notes instead
+        // of having to dig through the footer.
+        { label: t('footer.whatsNew'), href: ROUTES.WHATS_NEW, id: 'whats-new' }
     ]
 
     return (

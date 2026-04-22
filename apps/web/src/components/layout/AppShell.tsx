@@ -19,7 +19,8 @@ import {
     ShieldCheckIcon,
     ListIcon,
     XIcon,
-    HouseIcon
+    HouseIcon,
+    SparkleIcon
 } from '@phosphor-icons/react'
 
 type NavItem = {
@@ -233,6 +234,27 @@ const TopBar: FC<{
                 >
                     <HouseIcon className='h-4 w-4' />
                     <span className='hidden sm:inline'>Home</span>
+                </Button>
+                {/* Persistent entry point to platform release notes —
+                    footer + dropdown were too buried (users said they
+                    couldn't find /whats-new). Sparkle + the live
+                    appVersion makes it act as both a "look, we shipped
+                    something" indicator and a quick anchor to the
+                    relevant page. */}
+                <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={() => navigate(ROUTES.WHATS_NEW)}
+                    className='text-muted-foreground hover:text-foreground hidden gap-1.5 sm:inline-flex'
+                    aria-label="What's new"
+                >
+                    <SparkleIcon className='h-4 w-4' />
+                    <span className='hidden sm:inline'>What&apos;s new</span>
+                    {appVersion && (
+                        <span className='text-muted-foreground/70 hidden font-mono text-xs md:inline'>
+                            {appVersion}
+                        </span>
+                    )}
                 </Button>
                 {pageActions}
                 <UserDropdown
