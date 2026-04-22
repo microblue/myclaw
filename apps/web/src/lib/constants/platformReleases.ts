@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.7',
+        date: '2026-04-22',
+        headline: 'Landing badge actually says v1.4.3',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.7',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'Landing hero badge + stats column now show desktop v1.4.3 — the i18n strings (landing.badge / landing.statsVersion across 14 languages) were missed in v1.6 and stayed on v1.4.2.'
+            }
+        ]
+    },
+    {
         version: 'v1.6',
         date: '2026-04-22',
         headline: 'Desktop v1.4.3 + footer version fix',
