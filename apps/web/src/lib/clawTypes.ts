@@ -30,14 +30,6 @@ export const CLAW_TYPES: ClawTypeEntry[] = [
         badgeClass: 'bg-blue-500/15 text-blue-600 dark:text-blue-300'
     },
     {
-        id: 'zeroclaw',
-        name: 'ZeroClaw',
-        tagline: 'Barebones kernel',
-        description: 'Minimal footprint, no built-in tools. For users who want to ship their own agent on top of the runtime.',
-        comingSoon: true,
-        badgeClass: 'bg-slate-500/15 text-slate-600 dark:text-slate-300'
-    },
-    {
         id: 'picoclaw',
         name: 'PicoClaw',
         tagline: 'Tiny & fast',
@@ -52,14 +44,6 @@ export const CLAW_TYPES: ClawTypeEntry[] = [
         description: 'NousResearch Hermes Agent — built-in skills, learning loop, and a polished web chat. Needs ≥ 1 GB RAM.',
         comingSoon: false,
         badgeClass: 'bg-amber-500/15 text-amber-600 dark:text-amber-300'
-    },
-    {
-        id: 'nanoclaw',
-        name: 'NanoClaw',
-        tagline: 'Edge-ready',
-        description: 'Optimised for edge runtimes and tiny VPSes. Lean plugin set, 24/7 always-on budget.',
-        comingSoon: true,
-        badgeClass: 'bg-violet-500/15 text-violet-600 dark:text-violet-300'
     }
 ]
 
