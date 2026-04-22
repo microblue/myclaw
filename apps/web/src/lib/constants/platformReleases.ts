@@ -18,6 +18,54 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.5',
+        date: '2026-04-22',
+        headline: 'PicoClaw + Hermes Agent open-and-chat, background recovery, faster provision',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.5',
+        changes: [
+            {
+                type: 'added',
+                text: 'PicoClaw open-and-chat: cloud-init pre-seeds the OpenRouter key, default model (google/gemini-2.5-flash-lite) and a myclaw-branded SOUL.md persona, so first-time users land in the launcher with a working chat and a welcome card.'
+            },
+            {
+                type: 'added',
+                text: 'Hermes Agent now ships as a third provisionable claw type — Hermes dashboard at /, OpenRouter preconfigured, gateway running as a systemd service from boot.'
+            },
+            {
+                type: 'added',
+                text: '"What\'s new" page (/whats-new) surfaced in the landing top nav and the logged-in dashboard header.'
+            },
+            {
+                type: 'added',
+                text: 'Background sync scheduler: stuck claws recover on their own — no need to refresh the dashboard for a healthy claw to flip from "configuring" to "running".'
+            },
+            {
+                type: 'fixed',
+                text: 'PicoClaw "Open chat" no longer 409s — the launcher requires an explicit password setup before login; cloud-init now seeds it.'
+            },
+            {
+                type: 'fixed',
+                text: 'PicoClaw + Hermes provision time cut by ~3-4 minutes (lower poll interval, fewer consecutive-OK requirements before flipping to running).'
+            },
+            {
+                type: 'changed',
+                text: 'Wizard claw type picker shows only deployable types (OpenClaw / PicoClaw / Hermes Agent). ZeroClaw and NanoClaw placeholders removed for now.'
+            }
+        ]
+    },
+    {
+        version: 'v1.4',
+        date: '2026-04-22',
+        headline: "What's new page + visible release notes link",
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.4',
+        changes: [
+            {
+                type: 'added',
+                text: 'Dedicated /whats-new page listing every platform release. Linked from landing footer and the user dropdown.'
+            }
+        ]
+    },
+    {
         version: 'v1.3',
         date: '2026-04-21',
         headline: 'PicoClaw GA + provision hardening',
