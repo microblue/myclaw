@@ -182,7 +182,7 @@ const it: Translations = {
         statsLocally: 'Funziona localmente',
         statsZero: 'Zero',
         statsZeroConfig: 'Zero configurazione',
-        statsVersion: 'v1.4.2',
+        statsVersion: 'v1.4.3',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',

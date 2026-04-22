@@ -95,7 +95,7 @@ const ar: Translations = {
         pageTitle: 'MyClaw Desktop',
         heroTitle1: 'MyClaw Desktop.',
         heroTitle2: 'متوفر الآن.',
-        badge: 'v1.4.2 تم الإصدار',
+        badge: 'v1.4.3 تم الإصدار',
         comingSoon: 'قريباً',
         description:
             'عميل سطح مكتب قوي لإدارة نسخ OpenClaw. نشر ومراقبة والتحكم — مباشرة من جهازك. مجاني للتنزيل.',
@@ -181,7 +181,7 @@ const ar: Translations = {
         statsLocally: 'يعمل محلياً',
         statsZero: 'صفر',
         statsZeroConfig: 'بدون إعداد',
-        statsVersion: 'v1.4.2',
+        statsVersion: 'v1.4.3',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',

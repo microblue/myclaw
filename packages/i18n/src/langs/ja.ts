@@ -181,7 +181,7 @@ const ja: Translations = {
         statsLocally: 'ローカルで動作',
         statsZero: 'ゼロ',
         statsZeroConfig: '設定不要',
-        statsVersion: 'v1.4.2',
+        statsVersion: 'v1.4.3',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',

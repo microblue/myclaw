@@ -95,7 +95,7 @@ const de: Translations = {
         pageTitle: 'MyClaw Desktop',
         heroTitle1: 'MyClaw Desktop.',
         heroTitle2: 'Jetzt verfügbar.',
-        badge: 'v1.4.2 veröffentlicht',
+        badge: 'v1.4.3 veröffentlicht',
         comingSoon: 'Demnächst',
         description:
             'Ein leistungsstarker Desktop-Client zur Verwaltung Ihrer OpenClaw-Instanzen. Bereitstellen, überwachen und steuern — direkt von Ihrem Gerät. Kostenlos herunterladen.',
@@ -182,7 +182,7 @@ const de: Translations = {
         statsLocally: 'Läuft lokal',
         statsZero: 'Null',
         statsZeroConfig: 'Null Konfiguration',
-        statsVersion: 'v1.4.2',
+        statsVersion: 'v1.4.3',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',
