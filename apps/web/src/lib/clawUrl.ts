@@ -18,16 +18,18 @@ export const buildClawChatUrl = (claw: Claw): string | null => {
     if (!claw.subdomain) return null
     const base = `https://${claw.subdomain}.myclaw.one`
     const clawType = claw.clawType || 'openclaw'
-    if (clawType === 'openclaw' && claw.gatewayToken) {
-        return `${base}/?token=${encodeURIComponent(claw.gatewayToken)}`
-    }
     if (clawType === 'picoclaw' && claw.gatewayToken) {
         // /sso is a tiny HTML page nginx serves on the picoclaw box —
-        // it POSTs the token to /api/auth/login (sets the auth cookie)
-        // and then redirects to /, dropping the user straight into
-        // the launcher UI authenticated.
+        // it POSTs the gateway token to /api/auth/login as the password
+        // (sets the auth cookie) and then redirects to /, dropping the
+        // user straight into the launcher UI authenticated.
         return `${base}/sso?token=${encodeURIComponent(claw.gatewayToken)}`
     }
+    // OpenClaw now serves Open WebUI at / (with WEBUI_AUTH=False, no
+    // sign-in page on the subdomain). The old `?token=` was for the
+    // OpenClaw stock Control UI's auto-auth — no longer used by the
+    // primary path. Power users can still hit /openclaw/ for the
+    // stock UI; that path keeps working with ?token= manually if needed.
     return `${base}/`
 }
 

@@ -43,7 +43,17 @@ const generateCloudInit = (
                 allowedOrigins: ['*'],
                 dangerouslyDisableDeviceAuth: true
             },
-            trustedProxies: ['127.0.0.1', '::1']
+            trustedProxies: ['127.0.0.1', '::1'],
+            // Open WebUI is wired in as the default chat UI for OpenClaw
+            // claws (replaces the stock Control UI). It speaks generic
+            // OpenAI to OpenClaw's gateway, and that endpoint is OFF by
+            // default — flip it on so /v1/models + /v1/chat/completions
+            // become reachable. Verified live on cosmic-dune 2026-04-22.
+            http: {
+                endpoints: {
+                    chatCompletions: { enabled: true }
+                }
+            }
         },
         channels: {
             // Every channel carries `enabled: true` explicitly so
@@ -384,7 +394,45 @@ for i in $(seq 1 30); do
     sleep 5
 done
 
-# nginx reverse proxy → OpenClaw gateway
+stage open-webui
+# Open WebUI is the customer-facing chat surface (the stock OpenClaw
+# Control UI is reachable at /openclaw/ for power users). Docker
+# install via the official one-liner; image pull adds ~600 MB to
+# provision time but the UX win is worth it. WEBUI_AUTH=False = no
+# sign-in screen on the subdomain (URL is already token-randomised);
+# OPENAI_API_BASE_URL points at the gateway's now-enabled OpenAI-compat
+# endpoint with the gateway token as bearer key.
+with_retry curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
+sh /tmp/get-docker.sh > /var/log/docker-install.log 2>&1 || true
+rm -f /tmp/get-docker.sh
+with_retry docker pull ghcr.io/open-webui/open-webui:main
+docker rm -f open-webui 2>/dev/null || true
+docker run -d --name open-webui --restart always \\
+    -p 127.0.0.1:8080:8080 \\
+    --add-host=host.docker.internal:host-gateway \\
+    -e OPENAI_API_BASE_URL=http://host.docker.internal:18789/v1 \\
+    -e OPENAI_API_KEY="${gatewayToken}" \\
+    -e WEBUI_AUTH=False \\
+    -e DEFAULT_MODELS=openclaw/default \\
+    -e ENABLE_OLLAMA_API=False \\
+    -e WEBUI_NAME="myclaw" \\
+    -v open-webui:/app/backend/data \\
+    ghcr.io/open-webui/open-webui:main
+
+# Wait for Open WebUI's HTTP to answer (it does its own DB migration
+# + model fetching on first boot — can take 30-60 s).
+for i in $(seq 1 60); do
+    if curl -sf -o /dev/null --max-time 3 http://127.0.0.1:8080/health 2>/dev/null; then
+        echo "[bootstrap] open-webui up after \${i}x 3s"
+        break
+    fi
+    sleep 3
+done
+
+# nginx: / → Open WebUI (the new default chat); /openclaw/ → the
+# stock Control UI for power users / debugging; /v1/ stays on the
+# gateway too so external OpenAI-compat clients (curl, scripts)
+# can hit it directly.
 cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -404,7 +452,7 @@ server {
     server_name ${fullDomain};
 
     location / {
-        proxy_pass http://127.0.0.1:18789;
+        proxy_pass http://127.0.0.1:8080;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
