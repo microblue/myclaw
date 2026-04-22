@@ -250,6 +250,26 @@ for i in $(seq 1 30); do
     sleep 5
 done
 
+stage launcher-password
+# PicoClaw v0.2.6 requires a password to be SET via /api/auth/setup
+# before /api/auth/login will accept anything — without this, the
+# Open-chat /sso flow returns 409 "password has not been set" (seen on
+# k6e35wpr 2026-04-22). We pre-set the launcher password to the
+# gatewayToken (same value already passed via PICOCLAW_LAUNCHER_TOKEN
+# env), so the dashboard's one-click SSO works on first open.
+# auth/status reports {initialized:false} when no password set; once
+# we POST setup, it flips to true and login starts working.
+for i in $(seq 1 10); do
+    if curl -sf --max-time 3 -X POST -H 'Content-Type: application/json' \\
+        http://127.0.0.1:${GATEWAY_PORT}/api/auth/setup \\
+        -d "{\\"password\\":\\"${gatewayToken}\\",\\"confirm\\":\\"${gatewayToken}\\"}" \\
+        > /dev/null 2>&1; then
+        echo "[bootstrap] launcher password set on attempt \${i}"
+        break
+    fi
+    sleep 2
+done
+
 cat > /etc/nginx/sites-available/picoclaw << 'NGINXEOF'
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -275,7 +295,7 @@ server {
     # the user to copy-paste the token into the launcher login form.
     location = /sso {
         default_type text/html;
-        return 200 '<!doctype html><meta charset="utf-8"><title>Signing in…</title><body style="font-family:system-ui;padding:2rem">Signing you in…</body><script>const t=new URLSearchParams(location.search).get("token");if(!t){document.body.innerText="Missing token.";}else{fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:t}),credentials:"same-origin"}).then(r=>{if(r.ok){location.replace("/")}else{document.body.innerText="Login failed: "+r.status}}).catch(e=>{document.body.innerText=String(e)})}</script>';
+        return 200 '<!doctype html><meta charset="utf-8"><title>Signing in…</title><body style="font-family:system-ui;padding:2rem">Signing you in…</body><script>const t=new URLSearchParams(location.search).get("token");if(!t){document.body.innerText="Missing token.";}else{fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:t}),credentials:"same-origin"}).then(r=>{if(r.ok){location.replace("/")}else{document.body.innerText="Login failed: "+r.status}}).catch(e=>{document.body.innerText=String(e)})}</script>';
     }
 
     location / {
