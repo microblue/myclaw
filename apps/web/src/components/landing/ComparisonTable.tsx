@@ -43,13 +43,16 @@ const ComparisonTable: FC<ComparisonTableProps> = ({
                                 <th className='px-6 py-4'>
                                     <div className='flex items-center justify-center gap-2'>
                                         <img
-                                            src='/assets/myclaw-logo-light.png'
+                                            src='/myclaw-logo.svg'
                                             alt={t('common.brandName')}
-                                            className='h-6'
+                                            className='h-6 w-6'
                                             loading='lazy'
-                                            width={120}
+                                            width={24}
                                             height={24}
                                         />
+                                        <span className='font-clash text-foreground text-base font-bold'>
+                                            {t('common.brandName')}
+                                        </span>
 
                                         {logoSuffix && (
                                             <span className='font-clash text-foreground translate-y-px text-sm font-bold'>

@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.8',
+        date: '2026-04-23',
+        headline: 'Comparison table logo no longer a broken image',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.8',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'Landing "How We\'re Different" table header now shows the MyClaw.One logo + wordmark — the old src pointed at /assets/myclaw-logo-light.png, which never existed in the web public dir, so the header rendered a broken image icon.'
+            }
+        ]
+    },
+    {
         version: 'v1.7',
         date: '2026-04-22',
         headline: 'Landing badge actually says v1.4.3',
