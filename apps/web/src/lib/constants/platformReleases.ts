@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.9',
+        date: '2026-04-23',
+        headline: 'Desktop v1.4.4 — reset your OpenClaw data on demand',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.9',
+        changes: [
+            {
+                type: 'changed',
+                text: 'Desktop download links + /desktop/changelog + landing badge / statsVersion (14 languages) all point at v1.4.4, which adds an opt-in "reset ~/.openclaw" from the app menu and from the Windows installer.'
+            }
+        ]
+    },
+    {
         version: 'v1.8',
         date: '2026-04-23',
         headline: 'Comparison table logo no longer a broken image',

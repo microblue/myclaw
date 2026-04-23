@@ -18,6 +18,24 @@ export interface DesktopRelease {
 
 const DESKTOP_RELEASES: DesktopRelease[] = [
     {
+        version: '1.4.4',
+        date: '2026-04-23',
+        changes: [
+            {
+                kind: 'highlight',
+                text: 'Reset your OpenClaw data from the app menu — wipes `~/.openclaw` (config, memory, skills) with a confirmation dialog on macOS, Linux and Windows. Useful when an agent\u2019s state is corrupt or you just want a clean slate.'
+            },
+            {
+                kind: 'highlight',
+                text: 'Opt-in reset during Windows install/uninstall — a new wizard page lets you wipe `~/.openclaw` when upgrading or removing the app. Unchecked by default; your data stays put unless you ask.'
+            },
+            {
+                kind: 'fix',
+                text: 'Windows installer: fixed three NSIS regressions from the reset feature (`FileFunc.nsh` include, page function scoping, `${isUpdated}` evaluation) so the installer builds and runs cleanly.'
+            }
+        ]
+    },
+    {
         version: '1.4.3',
         date: '2026-04-22',
         changes: [

@@ -182,7 +182,7 @@ const tr: Translations = {
         statsLocally: 'Yerel Çalışır',
         statsZero: 'Sıfır',
         statsZeroConfig: 'Sıfır Yapılandırma',
-        statsVersion: 'v1.4.3',
+        statsVersion: 'v1.4.4',
         statsLatest: 'Latest Version',
         statsWindows: 'Win',
         statsPlatformWindows: 'Windows',
