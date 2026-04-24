@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.10',
+        date: '2026-04-24',
+        headline: 'Desktop product split off to desktop.myclaw.one',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.10',
+        changes: [
+            {
+                type: 'changed',
+                text: 'Desktop landing, download buttons and changelog have moved to their own site at desktop.myclaw.one. The top-nav "Desktop" toggle now links out, and /desktop + /desktop/changelog on myclaw.one fall through to 404. Main site stays focused on the cloud product.'
+            }
+        ]
+    },
+    {
         version: 'v1.9',
         date: '2026-04-23',
         headline: 'Desktop v1.4.4 — reset your OpenClaw data on demand',

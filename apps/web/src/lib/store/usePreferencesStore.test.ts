@@ -1,5 +1,5 @@
 import { usePreferencesStore } from '@/lib/store'
-import { CHAT_SIDEBAR_VIEW_MODE, PRODUCT } from '@/lib/constants'
+import { CHAT_SIDEBAR_VIEW_MODE } from '@/lib/constants'
 
 describe('usePreferencesStore', () => {
     beforeEach(() => {
@@ -9,8 +9,7 @@ describe('usePreferencesStore', () => {
             theme: 'dark',
             language: 'en',
             openLinksWindowed: false,
-            chatSidebarView: CHAT_SIDEBAR_VIEW_MODE.TREE,
-            product: PRODUCT.CLOUD
+            chatSidebarView: CHAT_SIDEBAR_VIEW_MODE.TREE
         })
     })
 
@@ -21,7 +20,6 @@ describe('usePreferencesStore', () => {
         expect(state.theme).toBe('dark')
         expect(state.language).toBe('en')
         expect(state.chatSidebarView).toBe(CHAT_SIDEBAR_VIEW_MODE.TREE)
-        expect(state.product).toBe(PRODUCT.CLOUD)
     })
 
     it('toggles admin mode', () => {
@@ -46,11 +44,6 @@ describe('usePreferencesStore', () => {
         expect(usePreferencesStore.getState().chatSidebarView).toBe(
             CHAT_SIDEBAR_VIEW_MODE.LIST
         )
-    })
-
-    it('changes product', () => {
-        usePreferencesStore.getState().setProduct(PRODUCT.GO)
-        expect(usePreferencesStore.getState().product).toBe(PRODUCT.GO)
     })
 
     it('toggles openLinksWindowed', () => {

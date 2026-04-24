@@ -32,8 +32,7 @@ import {
     TUTORIAL_URL
 } from '@/lib/links'
 import { usePlans, GITHUB_REPO_URL } from '@/hooks'
-import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { PRODUCT } from '@/lib/constants'
+import { useUIStore } from '@/lib/store'
 import {
     ShieldCheckIcon,
     GlobeIcon,
@@ -86,8 +85,6 @@ const getFaqs = (): Faq[] => [
 const Landing: FC = (): ReactNode => {
     const { hash } = useLocation()
     const { phBannerVisible } = useUIStore()
-    const setProduct = usePreferencesStore((s) => s.setProduct)
-    useEffect(() => setProduct(PRODUCT.CLOUD), [setProduct])
     const showTutorialBadge = true
     const [videoOpen, setVideoOpen] = useState(false)
     const {

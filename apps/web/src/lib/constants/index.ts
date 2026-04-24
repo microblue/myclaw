@@ -17,7 +17,6 @@ import LANGUAGES from '@/lib/constants/languages'
 import LOGIN_LOADING_METHOD from '@/lib/constants/loginLoadingMethod'
 import OAUTH_PROVIDER from '@/lib/constants/oauthProvider'
 import PLAYGROUND_NODE_TYPE from '@/lib/constants/playgroundNodeType'
-import PRODUCT from '@/lib/constants/product'
 import RELEASES from '@/lib/constants/releases'
 import ROUTES from '@/lib/constants/routes'
 import SCROLL_SECTIONS from '@/lib/constants/scrollSections'
@@ -45,7 +44,6 @@ export {
     LOGIN_LOADING_METHOD,
     OAUTH_PROVIDER,
     PLAYGROUND_NODE_TYPE,
-    PRODUCT,
     RELEASES,
     ROUTES,
     SCROLL_SECTIONS,

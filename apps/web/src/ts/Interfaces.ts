@@ -35,7 +35,6 @@ import type {
     TerminalStatus,
     ToastType,
     UserRole,
-    Product,
     ChangelogFeatureType,
     CopiedFieldType
 } from '@/ts/Types'
@@ -342,8 +341,6 @@ export interface PreferencesState {
     setOpenLinksWindowed: (value: boolean) => void
     chatSidebarView: ChatSidebarViewMode
     setChatSidebarView: (view: ChatSidebarViewMode) => void
-    product: Product
-    setProduct: (product: Product) => void
     affiliatePeriod: AffiliatePeriod
     setAffiliatePeriod: (period: AffiliatePeriod) => void
 }
@@ -682,21 +679,6 @@ export interface CreateSSHKeyModalProps {
 export interface GeneratedKeyPair {
     publicKey: string
     privateKey: string
-}
-
-export interface GoWaitlistFormProps {
-    user: User | null
-    authLoading: boolean
-    hasJoined: boolean
-    isJoining: boolean
-    isCheckingStatus: boolean
-    waitlistEmail: string
-    isValidEmail: boolean
-    onWaitlistEmailChange: (value: string) => void
-    onJoinWaitlist: (email: string) => void
-    onEmailSubmit: (e: React.FormEvent) => void
-    loggedInClassName?: string
-    guestClassName?: string
 }
 
 export interface SSHKeyUploadFormProps {
@@ -1240,17 +1222,6 @@ export interface HeroTitleProps {
 export interface DemoPreviewSectionProps {
     previewRef: RefObject<HTMLDivElement>
     previewScale: MotionValue<number>
-}
-
-export interface MacosDesktopPreviewProps {
-    previewRef: RefObject<HTMLDivElement>
-    previewScale: MotionValue<number>
-}
-
-export interface GoPricingCardProps {
-    price: string
-    label: string
-    features: string[]
 }
 
 export interface SelfHostButtonProps {

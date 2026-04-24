@@ -20,7 +20,6 @@ export type {
     ChatSidebarViewMode,
     UserRole,
     TranscriberFunction,
-    Product,
     ChangelogFeatureType
 } from '@/ts/Types'
 
@@ -135,8 +134,6 @@ export type {
     HeroBadgeProps,
     HeroTitleProps,
     DemoPreviewSectionProps,
-    MacosDesktopPreviewProps,
-    GoPricingCardProps,
     LandingCTAProps,
     VideoModalProps,
     PricingSectionProps,

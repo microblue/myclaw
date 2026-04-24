@@ -13,7 +13,6 @@ const routeImportMap: Record<string, () => Promise<unknown>> = {
     [ROUTES.TERMS]: () => import('@/pages/Terms'),
     [ROUTES.PRIVACY]: () => import('@/pages/Privacy'),
     [ROUTES.CHANGELOG]: () => import('@/pages/Changelog'),
-    [ROUTES.DESKTOP_CHANGELOG]: () => import('@/pages/DesktopChangelog'),
     [ROUTES.WHATS_NEW]: () => import('@/pages/WhatsNew'),
     [ROUTES.BLOG]: () => import('@/pages/Blog'),
     [ROUTES.COMPARE]: () => import('@/pages/Compare')

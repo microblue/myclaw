@@ -1,7 +1,5 @@
 const PATHS = {
     HOME: '/',
-    GO: 'desktop',
-    DESKTOP_CHANGELOG: 'desktop/changelog',
     LOGIN: 'login',
     CLAWS: 'claws',
     CLAW_DETAIL: 'claw',

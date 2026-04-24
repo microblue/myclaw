@@ -8,7 +8,6 @@ import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
 import { useThemeEffect, useLanguageEffect, useRefer } from '@/hooks'
 
-import Desktop from '@/pages/Desktop'
 import Landing from '@/pages/Landing'
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
@@ -26,7 +25,6 @@ const License = lazy(() => import('@/pages/License'))
 const Terms = lazy(() => import('@/pages/Terms'))
 const Privacy = lazy(() => import('@/pages/Privacy'))
 const Changelog = lazy(() => import('@/pages/Changelog'))
-const DesktopChangelog = lazy(() => import('@/pages/DesktopChangelog'))
 const WhatsNew = lazy(() => import('@/pages/WhatsNew'))
 const Blog = lazy(() => import('@/pages/Blog'))
 const BlogPost = lazy(() => import('@/pages/BlogPost'))
@@ -54,11 +52,6 @@ const App: FC = (): ReactNode => {
                 >
                     <Routes>
                         <Route path={ROUTES.HOME} element={<Landing />} />
-                        <Route path={ROUTES.GO} element={<Desktop />} />
-                        <Route
-                            path={ROUTES.DESKTOP_CHANGELOG}
-                            element={<DesktopChangelog />}
-                        />
                         <Route path={ROUTES.LOGIN} element={<Login />} />
                         <Route path={ROUTES.TERMS} element={<Terms />} />
                         <Route path={ROUTES.PRIVACY} element={<Privacy />} />

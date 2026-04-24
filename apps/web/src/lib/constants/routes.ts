@@ -2,8 +2,6 @@ import PATHS from '@/lib/paths'
 
 const ROUTES = {
     HOME: PATHS.HOME,
-    GO: `/${PATHS.GO}`,
-    DESKTOP_CHANGELOG: `/${PATHS.DESKTOP_CHANGELOG}`,
     LOGIN: `/${PATHS.LOGIN}`,
     CLAWS: `/${PATHS.CLAWS}`,
     CLAW_DETAIL: `/${PATHS.CLAW_DETAIL}/:id`,

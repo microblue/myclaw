@@ -34,8 +34,6 @@ const usePreferencesStore = create<PreferencesState>()(
             setOpenLinksWindowed: (value) => set({ openLinksWindowed: value }),
             chatSidebarView: CHAT_SIDEBAR_VIEW_MODE.TREE,
             setChatSidebarView: (view) => set({ chatSidebarView: view }),
-            product: 'cloud',
-            setProduct: (product) => set({ product }),
             affiliatePeriod: AFFILIATE_PERIOD.ALL,
             setAffiliatePeriod: (period) => set({ affiliatePeriod: period })
         }),
@@ -58,9 +56,6 @@ const usePreferencesStore = create<PreferencesState>()(
                 if (version < 5) {
                     state.chatSidebarView =
                         state.chatSidebarView || CHAT_SIDEBAR_VIEW_MODE.TREE
-                }
-                if (version < 6) {
-                    state.product = state.product || 'cloud'
                 }
                 if (version < 7) {
                     state.affiliatePeriod =

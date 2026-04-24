@@ -3,38 +3,24 @@ import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { ROUTES } from '@/lib'
-import { usePreferencesStore } from '@/lib/store'
-import { PRODUCT } from '@/lib/constants'
+
+const DESKTOP_SITE_URL = 'https://desktop.myclaw.one'
 
 const ProductSwitcher: FC = (): ReactNode => {
-    const product = usePreferencesStore((s) => s.product)
-    const setProduct = usePreferencesStore((s) => s.setProduct)
-    const isDesktopProduct = product === PRODUCT.GO
-
     return (
         <div className='bg-foreground/5 border-border flex items-center gap-0.5 rounded-lg border p-0.5'>
             <Link
                 to={ROUTES.HOME}
-                onClick={() => setProduct(PRODUCT.CLOUD)}
-                className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                    !isDesktopProduct
-                        ? 'bg-foreground text-background shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className='bg-foreground text-background rounded-md px-3 py-1 text-xs font-medium shadow-sm transition'
             >
                 {t('nav.cloud')}
             </Link>
-            <Link
-                to={ROUTES.GO}
-                onClick={() => setProduct(PRODUCT.GO)}
-                className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                    isDesktopProduct
-                        ? 'bg-foreground text-background shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground'
-                }`}
+            <a
+                href={DESKTOP_SITE_URL}
+                className='text-muted-foreground hover:text-foreground rounded-md px-3 py-1 text-xs font-medium transition'
             >
                 {t('nav.desktop')}
-            </Link>
+            </a>
         </div>
     )
 }

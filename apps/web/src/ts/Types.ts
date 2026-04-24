@@ -25,7 +25,6 @@ import type {
     LOGIN_LOADING_METHOD,
     OAUTH_PROVIDER,
     PLAYGROUND_NODE_TYPE,
-    PRODUCT,
     ROUTES,
     SSH_KEY_MODAL_MODE,
     TERMINAL_STATUS,
@@ -101,8 +100,6 @@ export type ClawFileType = (typeof clawFileType)[keyof typeof clawFileType]
 
 export type ChatSidebarViewMode =
     (typeof CHAT_SIDEBAR_VIEW_MODE)[keyof typeof CHAT_SIDEBAR_VIEW_MODE]
-
-export type Product = (typeof PRODUCT)[keyof typeof PRODUCT]
 
 export type TerminalStatus =
     (typeof TERMINAL_STATUS)[keyof typeof TERMINAL_STATUS]

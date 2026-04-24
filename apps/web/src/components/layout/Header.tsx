@@ -67,8 +67,7 @@ const Header: FC<HeaderProps> = ({
         cachedProfile?.email ||
         ''
 
-    const isLandingPage =
-        location.pathname === ROUTES.HOME || location.pathname === ROUTES.GO
+    const isLandingPage = location.pathname === ROUTES.HOME
 
     return (
         <Fragment>
