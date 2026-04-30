@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.15',
+        date: '2026-04-30',
+        headline: 'New cloud claws stay up — kill the openclaw 12-min self-restart loop',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.15',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'On a fresh claw, "Open chat" intermittently failed for the first hour or so because openclaw\'s gateway was restarting itself every ~12 minutes. Each internal config write (channel health state, lastTouchedAt re-stamp via stampConfigVersion) was hitting the reload watcher with no rule for `meta.*` and falling through to a full restart, and each restart re-staged plugin runtime deps and pegged the event loop for ~30-60s. Cloud-init now seeds `gateway.reload.mode: "off"` so the watcher dispatch returns early before queueRestart — internal writes still persist, but no longer bounce the process. Trade-off: admin-ui-driven config changes (key rotations, model swaps) need a manual gateway restart to take effect; this is fine for our deployment shape and avoids the restart-loop footgun. ma4mzhe7 incident, 2026-04-30.'
+            }
+        ]
+    },
+    {
         version: 'v1.14',
         date: '2026-04-29',
         headline: 'Cloud claws now provision through Caddy — bootstrap fits Lightsail again',

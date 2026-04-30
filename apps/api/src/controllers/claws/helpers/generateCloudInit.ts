@@ -31,6 +31,23 @@ const generateCloudInit = (
         },
         gateway: {
             mode: 'local',
+            // Disable openclaw's config-watcher reload pipeline. openclaw
+            // periodically rewrites its own config (every config write
+            // re-stamps `meta.lastTouchedAt` via stampConfigVersion in
+            // io-*.js) but the watcher does not de-dup self-writes, so
+            // every internal write hits matchRule(), falls through with
+            // no rule for `meta.*`, and sets restartGateway=true — a
+            // 12-min self-restart loop on a fresh claw, with each cycle
+            // re-running plugin runtime-deps install and saturating the
+            // event loop for ~30-60s. With mode=off the watcher's
+            // dispatch returns early before queueRestart, so internal
+            // writes (admin UI key rotations, channel health state, etc.)
+            // simply persist without bouncing the process. Trade-off:
+            // admin-ui-driven config changes need a manual restart to
+            // take effect — acceptable for our deployment shape.
+            // ma4mzhe7 incident 2026-04-30 — see config-reload-*.js,
+            // BASE_RELOAD_RULES has no entry for `meta`.
+            reload: { mode: 'off' },
             auth: {
                 mode: 'token',
                 token: gatewayToken

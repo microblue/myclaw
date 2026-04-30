@@ -134,6 +134,16 @@ describe('generateCloudInit', () => {
         expect(output).toContain('"host": "gateway"')
     })
 
+    // ma4mzhe7 incident 2026-04-30: with default reload mode (`hybrid`)
+    // openclaw's own writes to meta.lastTouchedAt fall through
+    // BASE_RELOAD_RULES with no match → restartGateway=true →
+    // gateway SIGTERMs itself every ~12 minutes, each restart
+    // re-stages plugin runtime deps and pegs the event loop.
+    it('disables openclaw config-watcher reload to break the self-restart loop', () => {
+        expect(output).toContain('"reload"')
+        expect(output).toMatch(/"reload":\s*\{[^}]*"mode":\s*"off"/s)
+    })
+
     it('logs a bootstrap start banner', () => {
         expect(output).toContain('openclaw bootstrap starting')
     })
