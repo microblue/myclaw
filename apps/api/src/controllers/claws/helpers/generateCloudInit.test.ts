@@ -156,15 +156,25 @@ describe('generateCloudInit', () => {
         expect(output).toContain('"bootstrapSeededAt"')
     })
 
-    // These three shapes are what openclaw's first-boot normalizer
-    // would otherwise add, triggering a file rewrite + self-restart
-    // cycle. Writing them ourselves keeps first boot a single pass.
-    it('includes `enabled: true` on every channel so the normalizer no-ops', () => {
+    // v1.16: channels ship disabled by default. The unconfigured
+    // health-monitor restart loop was eating ~8s of event-loop time
+    // every 15 minutes per channel — see the `channels:` block in
+    // generateCloudInit.ts. Users explicitly enable + configure a
+    // channel from the admin UI.
+    it('ships all channels disabled by default', () => {
         expect(output).toContain('"whatsapp"')
-        // Count occurrences of "enabled": true — 5 channels + 2 plugin
-        // entries (openrouter + browser) + browser block = 8 minimum.
-        const enabledMatches = output.match(/"enabled":\s*true/g) || []
-        expect(enabledMatches.length).toBeGreaterThanOrEqual(8)
+        expect(output).toContain('"telegram"')
+        expect(output).toContain('"discord"')
+        expect(output).toContain('"slack"')
+        expect(output).toContain('"signal"')
+        // No channel should be enabled. Slice the channels block from
+        // the rendered config and assert no `enabled: true` lives in it.
+        const start = output.indexOf('"channels"')
+        const end = output.indexOf('"commands"', start)
+        expect(start).toBeGreaterThan(-1)
+        expect(end).toBeGreaterThan(start)
+        const channelsBlock = output.slice(start, end)
+        expect(channelsBlock).not.toMatch(/"enabled":\s*true/)
     })
 
     it('includes a `plugins.entries` block for built-in plugins', () => {

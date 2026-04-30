@@ -73,16 +73,22 @@ const generateCloudInit = (
             }
         },
         channels: {
-            // Every channel carries `enabled: true` explicitly so
-            // openclaw's first-boot normalizer doesn't add it and
-            // immediately rewrite the file (which triggers its own
-            // config-watcher → SIGTERM → systemd restart cycle, 2-3
-            // minutes of delay for every new user).
-            whatsapp: { dmPolicy: 'open', allowFrom: ['*'], enabled: true },
-            telegram: { dmPolicy: 'open', allowFrom: ['*'], enabled: true },
-            discord: { enabled: true },
-            slack: { enabled: true },
-            signal: { dmPolicy: 'open', allowFrom: ['*'], enabled: true }
+            // All channels ship disabled by default. openclaw's
+            // health-monitor tries to restart any channel marked
+            // `enabled: true` every ~15 minutes and the unconfigured
+            // restart attempt itself does ~8s of synchronous work
+            // (TLS probe, plugin re-init), causing periodic event-loop
+            // stalls and admin-UI hangs (ma4mzhe7 incident 2026-04-30).
+            // Users explicitly enable a channel from the admin UI when
+            // they configure its credentials. Was `enabled: true` in
+            // v1.5+ to dodge first-boot normalizer rewrites; that
+            // workaround is obsolete now that v1.15's gateway.reload.mode
+            // = "off" makes any rewrite a no-op.
+            whatsapp: { dmPolicy: 'open', allowFrom: ['*'], enabled: false },
+            telegram: { dmPolicy: 'open', allowFrom: ['*'], enabled: false },
+            discord: { enabled: false },
+            slack: { enabled: false },
+            signal: { dmPolicy: 'open', allowFrom: ['*'], enabled: false }
         },
         commands: {
             restart: true,

@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.16',
+        date: '2026-04-30',
+        headline: 'Quieter idle claw — channels ship disabled, no more 15-min event-loop stalls',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.16',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'Cloud-init was seeding every channel (whatsapp / telegram / discord / slack / signal) as `enabled: true` — a v1.5 workaround to dodge openclaw\'s first-boot normalizer rewrite. openclaw\'s health-monitor then woke each unconfigured channel every ~15 minutes and each restart attempt did ~8 seconds of synchronous TLS-probe + plugin-init work, which still showed up as event-loop stalls in the gateway diagnostics. Channels now ship `enabled: false`; users flip them on from the admin UI when they configure credentials. The original normalizer-rewrite concern is moot now that v1.15\'s `gateway.reload.mode: "off"` makes any internal rewrite a no-op. ma4mzhe7 incident, 2026-04-30.'
+            }
+        ]
+    },
+    {
         version: 'v1.15',
         date: '2026-04-30',
         headline: 'New cloud claws stay up — kill the openclaw 12-min self-restart loop',
