@@ -293,21 +293,39 @@ stage node-exporter
 # gateway token (same secret the Control UI uses), so the api can fetch
 # https://<sub>.${domain}/metrics with the token in the Authorization
 # header. Disabled-collectors keeps the surface to just what we render.
-NE_VERSION=1.8.2
-NE_ARCH=$(dpkg --print-architecture)
-case "$NE_ARCH" in
-    amd64|arm64) NE_PKG="node_exporter-$NE_VERSION.linux-$NE_ARCH" ;;
-    *) NE_PKG="" ;;
-esac
-if [ -n "$NE_PKG" ]; then
+#
+# Whole stage is wrapped in a subshell + soft-fail || , so if any step
+# (github download, tarball extract, systemd start) fails, bootstrap
+# keeps marching to nginx + certbot. The user can still chat with the
+# claw — Overview just shows "metrics unavailable". An aborted bootstrap
+# here would leave the claw with no SSL and the api would mark it
+# unreachable after the 20 min provision timeout (incident:
+# silent-moth, 2026-04-30).
+(
+    NE_VERSION=1.8.2
+    NE_ARCH=$(dpkg --print-architecture)
+    case "$NE_ARCH" in
+        amd64|arm64) NE_PKG="node_exporter-$NE_VERSION.linux-$NE_ARCH" ;;
+        *)
+            echo "[bootstrap] node_exporter has no prebuilt for $NE_ARCH; skipping"
+            exit 0
+            ;;
+    esac
     if ! id node_exporter >/dev/null 2>&1; then
         useradd -r -s /usr/sbin/nologin node_exporter
     fi
     mkdir -p /opt/node_exporter
-    with_retry curl -fsSL -o /tmp/node_exporter.tgz "https://github.com/prometheus/node_exporter/releases/download/v$NE_VERSION/$NE_PKG.tar.gz"
+    # -4 forces IPv4 — Lightsail's IPv6 route to github.com sometimes
+    # blackholes on first boot, and the curl default of "happy eyeballs"
+    # then takes ~20s+ to fall back to v4. -fsSL still follows redirects.
+    with_retry curl -4 -fsSL -o /tmp/node_exporter.tgz "https://github.com/prometheus/node_exporter/releases/download/v$NE_VERSION/$NE_PKG.tar.gz"
     tar -xzf /tmp/node_exporter.tgz -C /tmp/
     install -o node_exporter -g node_exporter -m 0755 "/tmp/$NE_PKG/node_exporter" /opt/node_exporter/node_exporter
     rm -rf /tmp/node_exporter.tgz "/tmp/$NE_PKG"
+    # systemd treats $X in Exec lines as env-var refs and passes
+    # unrecognized ones through verbatim per the docs — but real-world
+    # versions sometimes warn or strip, so escape with $$ to emit a
+    # literal $ regardless. Same goes for any future $ in this unit.
     cat > /etc/systemd/system/node_exporter.service << 'NESVC'
 [Unit]
 Description=Prometheus node_exporter
@@ -317,7 +335,7 @@ After=network.target
 Type=simple
 User=node_exporter
 Group=node_exporter
-ExecStart=/opt/node_exporter/node_exporter --web.listen-address=127.0.0.1:9100 --collector.disable-defaults --collector.cpu --collector.meminfo --collector.filesystem --collector.loadavg --collector.uname --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($|/)
+ExecStart=/opt/node_exporter/node_exporter --web.listen-address=127.0.0.1:9100 --collector.disable-defaults --collector.cpu --collector.meminfo --collector.filesystem --collector.loadavg --collector.uname --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($$|/)
 Restart=always
 RestartSec=10
 
@@ -327,9 +345,7 @@ NESVC
     systemctl daemon-reload
     systemctl enable node_exporter
     systemctl start node_exporter
-else
-    echo "[bootstrap] node_exporter has no prebuilt for $NE_ARCH; Overview metrics will read 'unavailable' on this claw"
-fi
+) || echo "[bootstrap] node_exporter setup failed; Overview metrics will read 'unavailable' on this claw"
 
 stage openclaw-config
 mkdir -p /home/openclaw/.openclaw/agents/main/agent

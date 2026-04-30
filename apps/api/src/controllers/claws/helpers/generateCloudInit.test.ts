@@ -91,6 +91,37 @@ describe('generateCloudInit', () => {
         expect(output).toContain('proxy_pass http://127.0.0.1:9100/metrics')
     })
 
+    // silent-moth incident (2026-04-30): an unhandled failure inside
+    // the node-exporter stage tripped `set -eu` and aborted the whole
+    // bootstrap, so nginx + certbot never ran and the api flagged
+    // the claw `unreachable`. Stage must be non-fatal: subshell so a
+    // single failure stays inside, plus `||` to keep set -e happy.
+    it('node-exporter stage is non-fatal so a download / start failure does not abort bootstrap', () => {
+        // grab the slice from `stage node-exporter` to just before the
+        // next stage and assert the soft-fail tail is in there
+        const start = output.indexOf('stage node-exporter')
+        const end = output.indexOf('stage openclaw-config')
+        expect(start).toBeGreaterThan(-1)
+        expect(end).toBeGreaterThan(start)
+        const block = output.slice(start, end)
+        // subshell is open at start, closed by `) ||`
+        expect(block).toMatch(/\)\s*\|\|\s*echo/)
+        // certbot stage must come after node-exporter so a failure
+        // here cannot starve SSL issuance
+        const certbotIdx = output.indexOf('stage certbot')
+        expect(certbotIdx).toBeGreaterThan(end)
+    })
+
+    it('escapes the literal $ in the node_exporter systemd ExecStart so systemd does not try to expand it', () => {
+        // `--collector.filesystem.mount-points-exclude=...($$|/)` —
+        // systemd treats $X as env-var refs in Exec lines; the regex
+        // we want is literal `($|/)`, so the unit file must encode it
+        // as `($$|/)`.
+        expect(output).toContain('mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($$|/)')
+        // and the unescaped form must NOT be present
+        expect(output).not.toContain('mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($|/)')
+    })
+
     it('includes openclaw config JSON with tools defaults', () => {
         expect(output).toContain('"profile": "full"')
         expect(output).toContain('"host": "gateway"')

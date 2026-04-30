@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.13',
+        date: '2026-04-29',
+        headline: 'New cloud claws no longer brick on a node_exporter download hiccup',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.13',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'v1.12 added a node_exporter install step that ran inside the bootstrap script under set -eu — so a transient github.com download failure (or a systemd unit parse hiccup) aborted the whole bootstrap before certbot, leaving the claw stuck on "unreachable" with no SSL. Stage is now wrapped in a subshell + soft-fail, and the systemd unit escapes the regex $ as $$ so older systemd versions do not try to expand it. Worst case a new claw still finishes provisioning with chat working; the Overview tab just reads "metrics unavailable".'
+            }
+        ]
+    },
+    {
         version: 'v1.12',
         date: '2026-04-29',
         headline: 'Live CPU / Memory / Disk tiles on the instance Overview',
