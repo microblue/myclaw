@@ -44,6 +44,7 @@ const API_PATHS = {
                 `/claws/${id}/diagnostics/bootstrap-log`,
             REPAIR: (id: string) => `/claws/${id}/diagnostics/repair`
         },
+        METRICS: (id: string) => `/claws/${id}/metrics`,
         VERSION: (id: string) => `/claws/${id}/version`,
         VERSIONS: (id: string) => `/claws/${id}/versions`,
         INSTALL_VERSION: (id: string) => `/claws/${id}/install-version`,

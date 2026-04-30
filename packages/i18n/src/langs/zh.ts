@@ -452,6 +452,8 @@ const zh: Translations = {
         agentNameInvalid: '代理名称只能包含字母、数字和连字符!',
         agentNameDuplicate: '已存在同名的代理!',
         diagnosticsFetched: '诊断信息获取成功.',
+        metricsFetched: '指标获取成功。',
+        failedToGetMetrics: '获取实例指标失败！',
         logsFetched: '日志获取成功.',
         filesFetched: '文件获取成功.',
         fileFetched: '文件获取成功.',

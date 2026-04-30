@@ -496,6 +496,8 @@ const de: Translations = {
             'Agentenname darf nur Buchstaben, Zahlen und Bindestriche enthalten!',
         agentNameDuplicate: 'Ein Agent mit diesem Namen existiert bereits!',
         diagnosticsFetched: 'Diagnose erfolgreich abgerufen.',
+        metricsFetched: 'Metriken erfolgreich abgerufen.',
+        failedToGetMetrics: 'Metriken der Instanz konnten nicht abgerufen werden!',
         logsFetched: 'Logs erfolgreich abgerufen.',
         filesFetched: 'Dateien erfolgreich abgerufen.',
         fileFetched: 'Datei erfolgreich abgerufen.',

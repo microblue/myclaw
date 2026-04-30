@@ -30,6 +30,7 @@ export type {
     AIModelOption,
     Claw,
     ClawEnvVarsResponse,
+    ClawMetricsResponse,
     ClawAgent,
     ClawAvatarProps,
     ClawAgentsResponse,

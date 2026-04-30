@@ -481,6 +481,8 @@ const ja: Translations = {
             'エージェント名は英字、数字、ハイフンのみ使用できます!',
         agentNameDuplicate: 'この名前のエージェントは既に存在します!',
         diagnosticsFetched: '診断情報を取得しました.',
+        metricsFetched: 'メトリクスの取得に成功しました。',
+        failedToGetMetrics: 'インスタンスのメトリクス取得に失敗しました！',
         logsFetched: 'ログを取得しました.',
         filesFetched: 'ファイルを取得しました.',
         fileFetched: 'ファイルを取得しました.',

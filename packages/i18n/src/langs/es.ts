@@ -494,6 +494,8 @@ const es: Translations = {
             'El nombre del agente solo puede contener letras, números y guiones!',
         agentNameDuplicate: 'Ya existe un agente con este nombre!',
         diagnosticsFetched: 'Diagnósticos obtenidos exitosamente.',
+        metricsFetched: 'Métricas obtenidas exitosamente.',
+        failedToGetMetrics: '¡No se pudieron obtener las métricas de la instancia!',
         logsFetched: 'Registros obtenidos exitosamente.',
         filesFetched: 'Archivos obtenidos exitosamente.',
         fileFetched: 'Archivo obtenido exitosamente.',

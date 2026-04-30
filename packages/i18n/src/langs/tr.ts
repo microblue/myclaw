@@ -469,6 +469,8 @@ const tr: Translations = {
         agentNameInvalid: 'Ajan adı yalnızca harf, rakam ve tire içermelidir!',
         agentNameDuplicate: 'Bu isimde bir ajan zaten var!',
         diagnosticsFetched: 'Tanılama başarıyla getirildi.',
+        metricsFetched: 'Metrikler başarıyla getirildi.',
+        failedToGetMetrics: 'Örneğin metrikleri alınamadı!',
         logsFetched: 'Günlükler başarıyla getirildi.',
         filesFetched: 'Dosyalar başarıyla getirildi.',
         fileFetched: 'Dosya başarıyla getirildi.',

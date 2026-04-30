@@ -18,6 +18,22 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.12',
+        date: '2026-04-29',
+        headline: 'Live CPU / Memory / Disk tiles on the instance Overview',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.12',
+        changes: [
+            {
+                type: 'added',
+                text: 'Instance Overview tab now shows live CPU usage, memory usage, and root-disk usage with progress bars + bytes-used/total subtitles, refreshing every 5 seconds while the claw is running. CPU% is computed from a 1-second sampling window so the value reflects current load, not since-boot average.'
+            },
+            {
+                type: 'changed',
+                text: 'New cloud claws ship with a Prometheus node_exporter on a loopback :9100, and an nginx /metrics route gated by the gateway token. Old claws (provisioned before v1.12) display "metrics unavailable — recreate to enable" on the Overview.'
+            }
+        ]
+    },
+    {
         version: 'v1.11',
         date: '2026-04-29',
         headline: 'New cloud claws can upgrade themselves from the WebUI',

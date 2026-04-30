@@ -485,6 +485,8 @@ const pl: Translations = {
             'Nazwa agenta może zawierać tylko litery, cyfry i myślniki !',
         agentNameDuplicate: 'Agent o tej nazwie już istnieje !',
         diagnosticsFetched: 'Diagnostyka pobrana pomyślnie.',
+        metricsFetched: 'Metryki pobrane pomyślnie.',
+        failedToGetMetrics: 'Nie udało się pobrać metryk instancji!',
         logsFetched: 'Logi pobrane pomyślnie.',
         filesFetched: 'Pliki pobrane pomyślnie.',
         fileFetched: 'Plik pobrany pomyślnie.',

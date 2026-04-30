@@ -494,6 +494,8 @@ const it: Translations = {
             "Il nome dell'agente deve contenere solo lettere, numeri e trattini!",
         agentNameDuplicate: 'Un agente con questo nome esiste già!',
         diagnosticsFetched: 'Diagnostica recuperata con successo.',
+        metricsFetched: 'Metriche recuperate con successo.',
+        failedToGetMetrics: 'Impossibile recuperare le metriche dall\'istanza!',
         logsFetched: 'Log recuperati con successo.',
         filesFetched: 'File recuperati con successo.',
         fileFetched: 'File recuperato con successo.',

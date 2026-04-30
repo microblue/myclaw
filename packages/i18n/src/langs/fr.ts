@@ -504,6 +504,8 @@ const fr: Translations = {
             "Le nom de l\'agent ne doit contenir que des lettres, des chiffres et des tirets !",
         agentNameDuplicate: 'Un agent avec ce nom existe déjà !',
         diagnosticsFetched: 'Diagnostics récupérés avec succès.',
+        metricsFetched: 'Métriques récupérées avec succès.',
+        failedToGetMetrics: 'Impossible de récupérer les métriques de l\'instance !',
         logsFetched: 'Journaux récupérés avec succès.',
         filesFetched: 'Fichiers récupérés avec succès.',
         fileFetched: 'Fichier récupéré avec succès.',

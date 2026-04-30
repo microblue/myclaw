@@ -469,6 +469,8 @@ const en = {
             'Agent name must only contain letters, numbers, and dashes!',
         agentNameDuplicate: 'An agent with this name already exists!',
         diagnosticsFetched: 'Diagnostics fetched successfully.',
+        metricsFetched: 'Metrics fetched successfully.',
+        failedToGetMetrics: 'Failed to fetch metrics from the instance!',
         logsFetched: 'Logs fetched successfully.',
         filesFetched: 'Files fetched successfully.',
         fileFetched: 'File fetched successfully.',

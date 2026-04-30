@@ -13,6 +13,7 @@ import type {
     ClawHubSkillActionData,
     ClawHubUpdateData,
     ClawHubUpdatesResponse,
+    ClawMetricsResponse,
     ClawSkillsResponse,
     ClawVersionResponse,
     ClawVersionsResponse,
@@ -78,6 +79,8 @@ const claws = {
         client.post<DiagnosticsStatusResponse>(
             API_PATHS.CLAWS.DIAGNOSTICS.STATUS(id)
         ),
+    getClawMetrics: (id: string) =>
+        client.get<ClawMetricsResponse>(API_PATHS.CLAWS.METRICS(id)),
     getClawLogs: (id: string) =>
         client.post<DiagnosticsLogsResponse>(
             API_PATHS.CLAWS.DIAGNOSTICS.LOGS(id)

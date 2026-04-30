@@ -482,6 +482,8 @@ const nl: Translations = {
             'Agentnaam mag alleen letters, cijfers en koppeltekens bevatten!',
         agentNameDuplicate: 'Er bestaat al een agent met deze naam!',
         diagnosticsFetched: 'Diagnostiek succesvol opgehaald.',
+        metricsFetched: 'Metrics succesvol opgehaald.',
+        failedToGetMetrics: 'Metrics van de instance ophalen mislukt!',
         logsFetched: 'Logs succesvol opgehaald.',
         filesFetched: 'Bestanden succesvol opgehaald.',
         fileFetched: 'Bestand succesvol opgehaald.',

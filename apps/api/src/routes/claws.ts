@@ -14,6 +14,7 @@ import {
     cancelDeletion,
     hardDeleteClaw,
     getClawDiagnostics,
+    getClawMetrics,
     getClawLogs,
     repairClaw,
     listClawFiles,
@@ -70,6 +71,7 @@ app.post('/:id/restart', restartClaw)
 app.post('/:id/cancel-deletion', cancelDeletion)
 app.post('/:id/hard-delete', adminOnly, hardDeleteClaw)
 app.post('/:id/diagnostics/status', getClawDiagnostics)
+app.get('/:id/metrics', getClawMetrics)
 app.post('/:id/diagnostics/logs', getClawLogs)
 app.post('/:id/diagnostics/bootstrap-log', getClawBootstrapLog)
 app.post('/:id/diagnostics/repair', adminOnly, repairClaw)

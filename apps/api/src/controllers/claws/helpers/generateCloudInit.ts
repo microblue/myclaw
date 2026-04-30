@@ -287,6 +287,50 @@ else
     with_retry apt-get install -y chromium || with_retry apt-get install -y chromium-browser || true
 fi
 
+stage node-exporter
+# Prometheus node_exporter feeds the Overview tab's CPU/Memory/Disk tiles.
+# Listens loopback-only on :9100; nginx exposes /metrics gated by the
+# gateway token (same secret the Control UI uses), so the api can fetch
+# https://<sub>.${domain}/metrics with the token in the Authorization
+# header. Disabled-collectors keeps the surface to just what we render.
+NE_VERSION=1.8.2
+NE_ARCH=$(dpkg --print-architecture)
+case "$NE_ARCH" in
+    amd64|arm64) NE_PKG="node_exporter-$NE_VERSION.linux-$NE_ARCH" ;;
+    *) NE_PKG="" ;;
+esac
+if [ -n "$NE_PKG" ]; then
+    if ! id node_exporter >/dev/null 2>&1; then
+        useradd -r -s /usr/sbin/nologin node_exporter
+    fi
+    mkdir -p /opt/node_exporter
+    with_retry curl -fsSL -o /tmp/node_exporter.tgz "https://github.com/prometheus/node_exporter/releases/download/v$NE_VERSION/$NE_PKG.tar.gz"
+    tar -xzf /tmp/node_exporter.tgz -C /tmp/
+    install -o node_exporter -g node_exporter -m 0755 "/tmp/$NE_PKG/node_exporter" /opt/node_exporter/node_exporter
+    rm -rf /tmp/node_exporter.tgz "/tmp/$NE_PKG"
+    cat > /etc/systemd/system/node_exporter.service << 'NESVC'
+[Unit]
+Description=Prometheus node_exporter
+After=network.target
+
+[Service]
+Type=simple
+User=node_exporter
+Group=node_exporter
+ExecStart=/opt/node_exporter/node_exporter --web.listen-address=127.0.0.1:9100 --collector.disable-defaults --collector.cpu --collector.meminfo --collector.filesystem --collector.loadavg --collector.uname --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($|/)
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+NESVC
+    systemctl daemon-reload
+    systemctl enable node_exporter
+    systemctl start node_exporter
+else
+    echo "[bootstrap] node_exporter has no prebuilt for $NE_ARCH; Overview metrics will read 'unavailable' on this claw"
+fi
+
 stage openclaw-config
 mkdir -p /home/openclaw/.openclaw/agents/main/agent
 cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
@@ -423,6 +467,19 @@ server {
     listen 80;
     listen [::]:80;
     server_name ${fullDomain};
+
+    # node_exporter for Overview tab metrics. Bearer-token gated by the
+    # claw's gateway token — same secret the Control UI WebSocket uses,
+    # held by the api. Loopback-only on :9100 so direct access is impossible.
+    location = /metrics {
+        if ($http_authorization != "Bearer ${gatewayToken}") {
+            return 401;
+        }
+        proxy_pass http://127.0.0.1:9100/metrics;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 
     location / {
         proxy_pass http://127.0.0.1:18789;

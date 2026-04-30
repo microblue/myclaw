@@ -477,6 +477,8 @@ const ru: Translations = {
             'Имя агента может содержать только буквы, цифры и дефисы!',
         agentNameDuplicate: 'Агент с таким именем уже существует!',
         diagnosticsFetched: 'Диагностика успешно загружена.',
+        metricsFetched: 'Метрики успешно получены.',
+        failedToGetMetrics: 'Не удалось получить метрики экземпляра!',
         logsFetched: 'Логи успешно загружены.',
         filesFetched: 'Файлы успешно загружены.',
         fileFetched: 'Файл успешно загружен.',

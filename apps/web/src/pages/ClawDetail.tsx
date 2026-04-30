@@ -14,6 +14,7 @@ import useRestartClaw from '@/hooks/useClaws/useRestartClaw'
 import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
 import AppShell from '@/components/layout/AppShell'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
+import ClawMetricsTiles from '@/components/dashboard/ClawMetricsTiles'
 import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
 import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
@@ -289,6 +290,11 @@ const LogsTab: FC<{ claw: Claw }> = ({ claw }) => {
 
 const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
     <div className='space-y-6'>
+        <ClawMetricsTiles
+            clawId={claw.id}
+            enabled={claw.status === clawStatus.running}
+        />
+
         <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
             <StatCard label='Provider' value={claw.provider || '—'} />
             <StatCard

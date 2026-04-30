@@ -465,6 +465,8 @@ const ar: Translations = {
             'يجب أن يحتوي اسم الوكيل على حروف وأرقام وشرطات فقط !',
         agentNameDuplicate: 'يوجد وكيل بهذا الاسم بالفعل !',
         diagnosticsFetched: 'تم جلب التشخيصات بنجاح.',
+        metricsFetched: 'تم جلب المقاييس بنجاح.',
+        failedToGetMetrics: 'فشل جلب مقاييس النسخة!',
         logsFetched: 'تم جلب السجلات بنجاح.',
         filesFetched: 'تم جلب الملفات بنجاح.',
         fileFetched: 'تم جلب الملف بنجاح.',

@@ -487,6 +487,8 @@ const pt: Translations = {
             'O nome do agente deve conter apenas letras, números e hifens!',
         agentNameDuplicate: 'Um agente com este nome já existe!',
         diagnosticsFetched: 'Diagnósticos obtidos com sucesso.',
+        metricsFetched: 'Métricas obtidas com sucesso.',
+        failedToGetMetrics: 'Falha ao obter métricas da instância!',
         logsFetched: 'Logs obtidos com sucesso.',
         filesFetched: 'Arquivos obtidos com sucesso.',
         fileFetched: 'Arquivo obtido com sucesso.',

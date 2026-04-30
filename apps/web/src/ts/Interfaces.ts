@@ -845,6 +845,35 @@ export interface DiagnosticsStatusResponse {
     memory: string
 }
 
+export type ClawMetricsResponse =
+    | {
+          available: false
+          reason:
+              | 'claw_not_provisioned'
+              | 'metrics_endpoint_unreachable'
+              | 'metrics_unauthorized'
+              | 'metrics_parse_error'
+      }
+    | {
+          available: true
+          sampledAt: string
+          cpu: { usagePct: number; cores: number }
+          memory: {
+              totalBytes: number
+              availableBytes: number
+              usedBytes: number
+              usedPct: number
+          }
+          disk: {
+              mountpoint: string
+              totalBytes: number
+              availableBytes: number
+              usedBytes: number
+              usedPct: number
+          }
+          loadAvg: { one: number; five: number; fifteen: number }
+      }
+
 export interface DiagnosticsLogsResponse {
     logs: string
 }

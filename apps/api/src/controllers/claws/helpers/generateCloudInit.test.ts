@@ -75,6 +75,22 @@ describe('generateCloudInit', () => {
         expect(installIdx).toBeGreaterThan(userIdx)
     })
 
+    // Overview tab's CPU / Memory / Disk tiles are sourced from a
+    // node_exporter on each claw, gated through nginx by the gateway
+    // token. See generateCloudInit.ts (`stage node-exporter`) for full
+    // background.
+    it('installs node_exporter and exposes /metrics gated by the gateway token', () => {
+        expect(output).toContain('stage node-exporter')
+        expect(output).toContain('useradd -r -s /usr/sbin/nologin node_exporter')
+        expect(output).toContain('/opt/node_exporter/node_exporter')
+        expect(output).toContain('--web.listen-address=127.0.0.1:9100')
+        expect(output).toContain('systemctl enable node_exporter')
+        // nginx /metrics location with Bearer-token check on gatewayToken
+        expect(output).toContain('location = /metrics')
+        expect(output).toContain('Bearer tok_abc123')
+        expect(output).toContain('proxy_pass http://127.0.0.1:9100/metrics')
+    })
+
     it('includes openclaw config JSON with tools defaults', () => {
         expect(output).toContain('"profile": "full"')
         expect(output).toContain('"host": "gateway"')
