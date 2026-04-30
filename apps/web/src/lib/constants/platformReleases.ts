@@ -18,6 +18,22 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.11',
+        date: '2026-04-29',
+        headline: 'New cloud claws can upgrade themselves from the WebUI',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.11',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'Click "Update" in a fresh claw\'s Control UI now actually upgrades the runtime. Old provisioning installed OpenClaw under /usr/lib/node_modules (root-owned) while the gateway ran as the unprivileged openclaw user, so npm\'s self-update flow hit EACCES inside its own install dir. New claws install under /opt/openclaw owned end-to-end by the openclaw user. Existing claws keep the old layout.'
+            },
+            {
+                type: 'changed',
+                text: 'Bootstrap pinned OpenClaw version bumped to 2026.4.27.'
+            }
+        ]
+    },
+    {
         version: 'v1.10',
         date: '2026-04-24',
         headline: 'Desktop product split off to desktop.myclaw.one',

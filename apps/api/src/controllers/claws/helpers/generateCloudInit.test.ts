@@ -60,6 +60,21 @@ describe('generateCloudInit', () => {
         expect(output).toContain('useradd -r -m -d /home/openclaw')
     })
 
+    // The WebUI Update button needs the gateway (running as openclaw)
+    // to own its own install prefix end-to-end — otherwise npm's
+    // mkdtemp + symlink-swap hits EACCES inside /usr/lib/node_modules.
+    // See generateCloudInit.ts for full background.
+    it('installs openclaw under /opt/openclaw owned by the openclaw user', () => {
+        expect(output).toContain('chown -R openclaw:openclaw /opt/openclaw')
+        expect(output).toContain('sudo -u openclaw -H npm config set prefix /opt/openclaw')
+        expect(output).toContain('ExecStart=/opt/openclaw/bin/openclaw gateway')
+        // openclaw-user stage must run first so the install can sudo -u into it
+        const userIdx = output.indexOf('stage openclaw-user')
+        const installIdx = output.indexOf('stage openclaw-install')
+        expect(userIdx).toBeGreaterThan(-1)
+        expect(installIdx).toBeGreaterThan(userIdx)
+    })
+
     it('includes openclaw config JSON with tools defaults', () => {
         expect(output).toContain('"profile": "full"')
         expect(output).toContain('"host": "gateway"')
@@ -95,7 +110,7 @@ describe('generateCloudInit', () => {
 
     it('includes a pre-populated `meta` block matching the pinned openclaw version', () => {
         expect(output).toContain('"meta"')
-        expect(output).toContain('"lastTouchedVersion": "2026.4.19-beta.2"')
+        expect(output).toContain('"lastTouchedVersion": "2026.4.27"')
         expect(output).toContain('"lastTouchedAt"')
     })
 
@@ -155,7 +170,7 @@ describe('generateCloudInit', () => {
             expect(output).toMatch(/^with_retry\(\)\s*\{/m)
             expect(output).toContain('with_retry apt-get update')
             expect(output).toContain('with_retry apt-get install -y curl')
-            expect(output).toContain('with_retry npm install -g')
+            expect(output).toContain('with_retry sudo -u openclaw -H npm install -g')
         })
 
         it('picks Chrome build by dpkg architecture, falls back to chromium', () => {

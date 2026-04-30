@@ -137,7 +137,7 @@ const generateCloudInit = (
     // first time it touches the config for any other reason (a user
     // config change, a plugin toggle, etc.), which is fine.
     config.meta = {
-        lastTouchedVersion: '2026.4.19-beta.2',
+        lastTouchedVersion: '2026.4.27',
         lastTouchedAt: '2026-04-01T00:00:00.000Z'
     }
 
@@ -229,25 +229,37 @@ echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.co
 with_retry apt-get update
 with_retry apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates gnupg git dnsutils nodejs
 
+stage openclaw-user
+# Create the unprivileged user *before* installing openclaw. The
+# gateway runs as this user (see systemd unit below) and self-update
+# from the WebUI needs the user to own its own install prefix end-to-end —
+# pre-2026-04-29 claws had openclaw at /usr/lib/node_modules (root-owned)
+# but the gateway running as openclaw, so the WebUI Update button died
+# with EACCES at the staging step.
+if ! id openclaw >/dev/null 2>&1; then
+    useradd -r -m -d /home/openclaw -s /bin/bash openclaw
+fi
+echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
+
 stage openclaw-install
-# Pinned openclaw version. NOT @latest and NOT 2026.4.14/4.15 stable —
-# those carry a regression (openclaw/openclaw #67575, #67698, #66833)
-# where every OpenRouter turn returns \`payloads=0\`, so first chat on
-# a fresh claw looks stuck. 2026.4.19-beta.2 is the first build that
-# parses OpenRouter stream deltas correctly again. Bump this line once
-# a stable ≥2026.4.19 ships.
+# Pinned version, not @latest, so a registry-side push doesn't silently
+# change what new claws boot with. Bump after smoke-testing the new
+# version's WebUI Update flow on a staging claw.
+#
+# Installed under /opt/openclaw owned by the openclaw user (see above)
+# so npm self-update via the WebUI can mkdtemp + rename + symlink-swap
+# inside its own prefix without root.
 #
 # --prefer-offline: if npm already has tarballs cached, skip the HEAD
 #   check round-trips (typically saves 10–30s on cold boots).
 # --no-audit / --no-fund: cosmetic output; skip the registry round-trip
 #   for vulnerability scan we'd ignore anyway on a single-package install.
-with_retry npm install -g --prefer-offline --no-audit --no-fund openclaw@2026.4.19-beta.2
-
-stage openclaw-user
-if ! id openclaw >/dev/null 2>&1; then
-    useradd -r -m -d /home/openclaw -s /bin/bash openclaw
-fi
-echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
+mkdir -p /opt/openclaw
+chown -R openclaw:openclaw /opt/openclaw
+sudo -u openclaw -H npm config set prefix /opt/openclaw
+with_retry sudo -u openclaw -H npm install -g --prefer-offline --no-audit --no-fund openclaw@2026.4.27
+echo 'export PATH=/opt/openclaw/bin:$PATH' > /etc/profile.d/openclaw.sh
+chmod 644 /etc/profile.d/openclaw.sh
 
 stage chrome
 # Architecture-aware Chrome install — we used to hard-code amd64 which
@@ -357,7 +369,7 @@ Group=openclaw
 WorkingDirectory=/home/openclaw
 Environment=HOME=/home/openclaw
 Environment=NODE_ENV=production
-${llm?.openrouterApiKey ? `Environment=OPENROUTER_API_KEY=${llm.openrouterApiKey}\n` : ''}ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
+${llm?.openrouterApiKey ? `Environment=OPENROUTER_API_KEY=${llm.openrouterApiKey}\n` : ''}ExecStart=/opt/openclaw/bin/openclaw gateway --port 18789 --bind loopback
 Restart=always
 RestartSec=10
 StartLimitIntervalSec=0
