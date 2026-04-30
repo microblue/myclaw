@@ -26,10 +26,12 @@ describe('generateCloudInit', () => {
 
     it('installs required packages', () => {
         expect(output).toContain('curl')
-        expect(output).toContain('nginx')
-        expect(output).toContain('certbot')
+        expect(output).toContain('caddy')
         expect(output).toContain('ufw')
         expect(output).toContain('git')
+        // nginx + certbot were replaced by caddy in v1.14
+        expect(output).not.toContain('nginx')
+        expect(output).not.toContain('certbot')
     })
 
     it('sets up systemd service', () => {
@@ -37,8 +39,8 @@ describe('generateCloudInit', () => {
         expect(output).toContain('systemctl enable openclaw-gateway')
     })
 
-    it('configures nginx reverse proxy', () => {
-        expect(output).toContain('proxy_pass http://127.0.0.1:18789')
+    it('configures caddy reverse proxy to the gateway', () => {
+        expect(output).toContain('reverse_proxy 127.0.0.1:18789')
     })
 
     it('enables firewall rules', () => {
@@ -47,9 +49,11 @@ describe('generateCloudInit', () => {
         expect(output).toContain('ufw allow 443/tcp')
     })
 
-    it('sets up certbot SSL', () => {
-        expect(output).toContain('certbot --nginx')
-        expect(output).toContain('certbot renew')
+    it('configures caddy auto-https with an email for ACME', () => {
+        // Caddy auto-issues + auto-renews Let's Encrypt certs as long
+        // as a global `email` is set. No certbot needed.
+        expect(output).toMatch(/email ssl@[\w.]+/)
+        expect(output).toContain('systemctl enable caddy')
     })
 
     it('includes swap setup', () => {
@@ -85,10 +89,13 @@ describe('generateCloudInit', () => {
         expect(output).toContain('/opt/node_exporter/node_exporter')
         expect(output).toContain('--web.listen-address=127.0.0.1:9100')
         expect(output).toContain('systemctl enable node_exporter')
-        // nginx /metrics location with Bearer-token check on gatewayToken
-        expect(output).toContain('location = /metrics')
-        expect(output).toContain('Bearer tok_abc123')
-        expect(output).toContain('proxy_pass http://127.0.0.1:9100/metrics')
+        // Caddy: first matcher requires path AND exact Bearer header
+        // before reverse_proxy to node_exporter. Anything else on
+        // /metrics falls through to a 401.
+        expect(output).toContain('path /metrics')
+        expect(output).toContain('header Authorization "Bearer tok_abc123"')
+        expect(output).toContain('reverse_proxy 127.0.0.1:9100')
+        expect(output).toContain('respond 401')
     })
 
     // silent-moth incident (2026-04-30): an unhandled failure inside
@@ -106,10 +113,10 @@ describe('generateCloudInit', () => {
         const block = output.slice(start, end)
         // subshell is open at start, closed by `) ||`
         expect(block).toMatch(/\)\s*\|\|\s*echo/)
-        // certbot stage must come after node-exporter so a failure
-        // here cannot starve SSL issuance
-        const certbotIdx = output.indexOf('stage certbot')
-        expect(certbotIdx).toBeGreaterThan(end)
+        // caddy stage must come after node-exporter so a failure here
+        // cannot starve SSL issuance / reverse-proxy startup
+        const caddyIdx = output.indexOf('stage caddy')
+        expect(caddyIdx).toBeGreaterThan(end)
     })
 
     it('escapes the literal $ in the node_exporter systemd ExecStart so systemd does not try to expand it', () => {
@@ -231,16 +238,16 @@ describe('generateCloudInit', () => {
             expect(output).toContain('status=ok')
             expect(output).toContain('status=failed')
             expect(output).toContain('stage openclaw-install')
-            expect(output).toContain('stage certbot')
+            expect(output).toContain('stage caddy')
         })
 
-        it('firewall opens 22/80/443 before gateway + nginx start', () => {
+        it('firewall opens 22/80/443 before gateway + caddy start', () => {
             const fwIdx = output.indexOf('ufw allow 22/tcp')
             const gwIdx = output.indexOf('systemctl start openclaw-gateway')
-            const nginxIdx = output.indexOf('systemctl reload nginx')
+            const caddyIdx = output.indexOf('systemctl restart caddy')
             expect(fwIdx).toBeGreaterThan(-1)
             expect(gwIdx).toBeGreaterThan(fwIdx)
-            expect(nginxIdx).toBeGreaterThan(fwIdx)
+            expect(caddyIdx).toBeGreaterThan(fwIdx)
         })
 
         it('gateway health poll is passive — no forced restart inside the loop', () => {
@@ -250,7 +257,7 @@ describe('generateCloudInit', () => {
             // gateway startup. Ensure we don't reintroduce it.
             const pollSection = output.slice(
                 output.indexOf('systemctl start openclaw-gateway'),
-                output.indexOf('# nginx reverse proxy')
+                output.indexOf('stage dns-wait')
             )
             expect(pollSection).not.toMatch(
                 /systemctl restart openclaw-gateway/
@@ -267,6 +274,17 @@ describe('generateCloudInit', () => {
             expect(output).not.toContain('Homebrew')
             expect(output).not.toContain('install-brew.sh')
             expect(output).not.toContain('brew-install.log')
+        })
+
+        // silent-hare incident (2026-04-29): cloud-init crossed 16384
+        // bytes after base64, AWS Lightsail rejected the createServer
+        // call before allocating an IP — DB row stranded as
+        // ip=NULL/provider_server_id=NULL/status=unreachable. Any future
+        // bloat of this script must fail in CI, not in the field.
+        it('rendered output stays under the AWS Lightsail userData base64 cap', () => {
+            const b64Bytes = Buffer.from(output, 'utf8').toString('base64')
+                .length
+            expect(b64Bytes).toBeLessThan(16384)
         })
     })
 })

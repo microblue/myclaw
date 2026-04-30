@@ -141,7 +141,11 @@ const generateCloudInit = (
         lastTouchedAt: '2026-04-01T00:00:00.000Z'
     }
 
-    const configJson = JSON.stringify(config, null, 2)
+    // 1-space indent (vs 2) shaves ~250 bytes off the rendered cloud-init
+    // — Lightsail's userData cap is 16 KB after base64, and we were going
+    // over with 2-space pretty print. Tests still pass because non-zero
+    // indent keeps the `": "` separator they grep for.
+    const configJson = JSON.stringify(config, null, 1)
 
     // Root password injected via printf %s to survive any shell
     // metacharacters in the generated password.
@@ -219,15 +223,21 @@ fi
 
 stage apt-base
 export DEBIAN_FRONTEND=noninteractive
-# Single apt-get update covering both the base repos and (after the
-# NodeSource repo is added below) the NodeSource apt source — we add
-# the NodeSource file first, then update, to save a redundant pass.
+# Add NodeSource (for node 22) and Caddy (cloudsmith stable) before
+# the single apt-get update so we pay one round-trip, not three.
+# Caddy replaces nginx + certbot here — its on-by-default automatic
+# HTTPS via ACME means no certbot retry loop, and its Caddyfile is
+# ~10 lines vs nginx's 40+. Net: smaller cloud-init, fewer moving
+# parts to fail during bootstrap.
 mkdir -p /etc/apt/keyrings
 with_retry curl -fsSL -o /etc/apt/keyrings/nodesource.gpg.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
 gpg --dearmor --batch --yes -o /etc/apt/keyrings/nodesource.gpg /etc/apt/keyrings/nodesource.gpg.key
 echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
+with_retry curl -fsSL -o /etc/apt/keyrings/caddy.gpg.key https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+gpg --dearmor --batch --yes -o /etc/apt/keyrings/caddy.gpg /etc/apt/keyrings/caddy.gpg.key
+echo "deb [signed-by=/etc/apt/keyrings/caddy.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" > /etc/apt/sources.list.d/caddy.list
 with_retry apt-get update
-with_retry apt-get install -y curl nginx certbot python3-certbot-nginx ufw ca-certificates gnupg git dnsutils nodejs
+with_retry apt-get install -y curl caddy ufw ca-certificates gnupg git dnsutils nodejs
 
 stage openclaw-user
 # Create the unprivileged user *before* installing openclaw. The
@@ -466,72 +476,13 @@ for i in $(seq 1 30); do
     sleep 5
 done
 
-cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    '' close;
-}
-
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name _;
-    return 444;
-}
-
-server {
-    listen 80;
-    listen [::]:80;
-    server_name ${fullDomain};
-
-    # node_exporter for Overview tab metrics. Bearer-token gated by the
-    # claw's gateway token — same secret the Control UI WebSocket uses,
-    # held by the api. Loopback-only on :9100 so direct access is impossible.
-    location = /metrics {
-        if ($http_authorization != "Bearer ${gatewayToken}") {
-            return 401;
-        }
-        proxy_pass http://127.0.0.1:9100/metrics;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-
-    location / {
-        proxy_pass http://127.0.0.1:18789;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-        proxy_read_timeout 86400;
-        proxy_send_timeout 86400;
-    }
-}
-NGINXEOF
-
-ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-mkdir -p /etc/systemd/system/nginx.service.d
-cat > /etc/systemd/system/nginx.service.d/override.conf << 'NGINXOVERRIDE'
-[Service]
-Restart=always
-RestartSec=5
-NGINXOVERRIDE
-systemctl daemon-reload
-nginx -t && systemctl reload nginx
-systemctl enable nginx
-
 stage dns-wait
-# DNS is written by the control-plane's provisionClawServer as soon
-# as the provider hands us a real IP — normally that lands in
-# Cloudflare within a second or two, and 1.1.1.1 picks it up on the
-# next TTL tick (60s). We poll up to 30x2s = 60s. If DNS never
-# shows up in that window, fall through to certbot anyway; the
-# certbot retry loop below absorbs brief delays.
+# DNS is written by the control-plane's provisionClawServer as soon as
+# the provider hands us a real IP. We give it ~1 minute to show up at
+# 1.1.1.1 before handing off to caddy — caddy's ACME flow has its own
+# exponential backoff (up to ~3 days), so a slow propagation still
+# resolves; the DNS wait is just to avoid burning the first attempt
+# while the record is still being written.
 echo "[bootstrap] waiting for DNS record for ${fullDomain}"
 for i in $(seq 1 30); do
     if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
@@ -541,35 +492,35 @@ for i in $(seq 1 30); do
     sleep 2
 done
 
-stage certbot
-# Certbot retry loop. A single-shot call silently leaves nginx
-# without a :443 listener if Let's Encrypt couldn't reach us
-# (DNS still propagating, transient HTTP-01 failure, etc.), so
-# retry a few times before giving up. After each failure we bounce
-# nginx to clear any half-applied state.
-cert_ok=0
-for attempt in 1 2 3 4; do
-    echo "[bootstrap] certbot attempt $attempt"
-    if certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@${domain} --redirect; then
-        cert_ok=1
-        echo "[bootstrap] certbot attempt $attempt succeeded"
-        break
-    fi
-    echo "[bootstrap] certbot attempt $attempt failed, sleeping 20s"
-    systemctl reload nginx 2>/dev/null || true
-    sleep 20
-done
-if [ "$cert_ok" -ne 1 ]; then
-    echo "[bootstrap] ERROR: certbot exhausted retries; :443 is not available."
-    echo "status=failed stage=certbot at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
-    # Don't exit 1 — the VPS is otherwise healthy and the user can
-    # manually re-run certbot once DNS sorts itself out. The sync
-    # loop will flip the claw to \`unreachable\` after its timeout so
-    # the dashboard surfaces the failure state.
-fi
+stage caddy
+# Caddy auto-issues + auto-renews Let's Encrypt certs and reverse_proxy
+# is WebSocket-aware by default, so the gateway terminal + live logs
+# work end-to-end without explicit Upgrade/Connection headers. /metrics
+# is gated by an exact Bearer-token match — first @metricsAuthed
+# matcher wins and proxies to node_exporter on :9100, otherwise the
+# fall-through @metrics matcher returns 401.
+cat > /etc/caddy/Caddyfile << 'CADDYEOF'
+{
+    email ssl@${domain}
+}
 
-echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
-chmod 644 /etc/cron.d/certbot-renew
+${fullDomain} {
+    @metricsAuthed {
+        path /metrics
+        header Authorization "Bearer ${gatewayToken}"
+    }
+    handle @metricsAuthed {
+        reverse_proxy 127.0.0.1:9100
+    }
+    @metrics path /metrics
+    handle @metrics {
+        respond 401
+    }
+    reverse_proxy 127.0.0.1:18789
+}
+CADDYEOF
+systemctl enable caddy
+systemctl restart caddy
 
 # Success marker. Everything reaching this point succeeded; the trap
 # handler on failure rewrites this file with status=failed + stage.

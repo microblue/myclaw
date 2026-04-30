@@ -18,6 +18,22 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.14',
+        date: '2026-04-29',
+        headline: 'Cloud claws now provision through Caddy — bootstrap fits Lightsail again',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.14',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'New cloud claws were silently rejected by AWS Lightsail before any IP was allocated — the cloud-init bootstrap had crossed Lightsail\'s 16 KB userData ceiling (after base64) by ~380 bytes, so the DB row stranded as "unreachable" with no provider_server_id. Bootstrap now ships Caddy in place of nginx + certbot: ~10-line Caddyfile with built-in automatic HTTPS, no certbot retry loop. Net script size dropped from 16.8 KB to 14.0 KB base64, ~2.4 KB headroom for future additions. Existing cloud claws keep their nginx + certbot setup; this affects only newly-provisioned ones.'
+            },
+            {
+                type: 'changed',
+                text: 'Added a regression test that fails CI if cloud-init ever crosses the Lightsail userData cap again, so this footgun cannot reach production unnoticed.'
+            }
+        ]
+    },
+    {
         version: 'v1.13',
         date: '2026-04-29',
         headline: 'New cloud claws no longer brick on a node_exporter download hiccup',
