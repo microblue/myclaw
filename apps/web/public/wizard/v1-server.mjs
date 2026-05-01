@@ -8,7 +8,6 @@
 
 import http from 'node:http'
 import { spawn } from 'node:child_process'
-import { writeFile } from 'node:fs/promises'
 
 const PORT = 18790
 const HOST = '127.0.0.1'
@@ -145,7 +144,7 @@ const readBody = (req) => new Promise((resolve, reject) => {
     req.on('data', c => { data += c.toString() })
     req.on('end', () => {
         if (!data) return resolve(null)
-        try { resolve(JSON.parse(data)) } catch (e) { reject(new Error('invalid JSON body')) }
+        try { resolve(JSON.parse(data)) } catch { reject(new Error('invalid JSON body')) }
     })
     req.on('error', reject)
 })
