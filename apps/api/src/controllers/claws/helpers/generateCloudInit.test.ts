@@ -156,25 +156,23 @@ describe('generateCloudInit', () => {
         expect(output).toContain('"bootstrapSeededAt"')
     })
 
-    // v1.16: channels ship disabled by default. The unconfigured
-    // health-monitor restart loop was eating ~8s of event-loop time
-    // every 15 minutes per channel — see the `channels:` block in
-    // generateCloudInit.ts. Users explicitly enable + configure a
-    // channel from the admin UI.
-    it('ships all channels disabled by default', () => {
-        expect(output).toContain('"whatsapp"')
-        expect(output).toContain('"telegram"')
-        expect(output).toContain('"discord"')
-        expect(output).toContain('"slack"')
-        expect(output).toContain('"signal"')
-        // No channel should be enabled. Slice the channels block from
-        // the rendered config and assert no `enabled: true` lives in it.
+    // v1.17 reverts v1.16: channels must ship `enabled: true`.
+    // openclaw's Control UI hides `enabled: false` channels from the
+    // channels tab — disabled-by-default would mean users can't see
+    // them to configure credentials. The 8s/15min health-monitor
+    // spike that v1.16 was trying to suppress is cosmetic only.
+    it('ships all built-in channels enabled so Control UI surfaces them', () => {
         const start = output.indexOf('"channels"')
         const end = output.indexOf('"commands"', start)
         expect(start).toBeGreaterThan(-1)
         expect(end).toBeGreaterThan(start)
         const channelsBlock = output.slice(start, end)
-        expect(channelsBlock).not.toMatch(/"enabled":\s*true/)
+        for (const ch of ['whatsapp', 'telegram', 'discord', 'slack', 'signal']) {
+            expect(channelsBlock).toContain(`"${ch}"`)
+        }
+        // 5 channels × 1 `"enabled": true` each
+        const enabledMatches = channelsBlock.match(/"enabled":\s*true/g) || []
+        expect(enabledMatches.length).toBe(5)
     })
 
     it('includes a `plugins.entries` block for built-in plugins', () => {

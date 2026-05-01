@@ -73,22 +73,19 @@ const generateCloudInit = (
             }
         },
         channels: {
-            // All channels ship disabled by default. openclaw's
-            // health-monitor tries to restart any channel marked
-            // `enabled: true` every ~15 minutes and the unconfigured
-            // restart attempt itself does ~8s of synchronous work
-            // (TLS probe, plugin re-init), causing periodic event-loop
-            // stalls and admin-UI hangs (ma4mzhe7 incident 2026-04-30).
-            // Users explicitly enable a channel from the admin UI when
-            // they configure its credentials. Was `enabled: true` in
-            // v1.5+ to dodge first-boot normalizer rewrites; that
-            // workaround is obsolete now that v1.15's gateway.reload.mode
-            // = "off" makes any rewrite a no-op.
-            whatsapp: { dmPolicy: 'open', allowFrom: ['*'], enabled: false },
-            telegram: { dmPolicy: 'open', allowFrom: ['*'], enabled: false },
-            discord: { enabled: false },
-            slack: { enabled: false },
-            signal: { dmPolicy: 'open', allowFrom: ['*'], enabled: false }
+            // Channels ship enabled. openclaw's Control UI hides any
+            // channel with `enabled: false` from the channels tab — so
+            // disabling them by default removes them from the list and
+            // users can't even see them to configure credentials. The
+            // 8s/15min health-monitor restart spike that v1.16 tried to
+            // suppress was a cosmetic event-loop blip with no chat
+            // impact, so visibility wins (v1.16 reverted in v1.17,
+            // ma4mzhe7 UX incident 2026-05-01).
+            whatsapp: { dmPolicy: 'open', allowFrom: ['*'], enabled: true },
+            telegram: { dmPolicy: 'open', allowFrom: ['*'], enabled: true },
+            discord: { enabled: true },
+            slack: { enabled: true },
+            signal: { dmPolicy: 'open', allowFrom: ['*'], enabled: true }
         },
         commands: {
             restart: true,

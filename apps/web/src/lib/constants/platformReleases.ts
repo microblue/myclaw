@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.17',
+        date: '2026-05-01',
+        headline: "Channels are visible again — reverting v1.16's disabled-by-default",
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.17',
+        changes: [
+            {
+                type: 'fixed',
+                text: "v1.16 shipped channels (whatsapp/telegram/discord/slack/signal) as `enabled: false` to suppress an 8s/15min health-monitor event-loop spike, but openclaw's Control UI hides `enabled: false` channels from the channels tab — so users couldn't even see them to configure credentials (channels would briefly flash on first render then disappear once the channels.status response came back). Reverted to `enabled: true`. The 8s spike was cosmetic — chat works fine through it — so visibility wins. ma4mzhe7 UX incident, 2026-05-01."
+            }
+        ]
+    },
+    {
         version: 'v1.16',
         date: '2026-04-30',
         headline: 'Quieter idle claw — channels ship disabled, no more 15-min event-loop stalls',
