@@ -8,10 +8,12 @@
 
 import http from 'node:http'
 import { spawn } from 'node:child_process'
+import { readFile } from 'node:fs/promises'
 
 const PORT = 18790
 const HOST = '127.0.0.1'
 const OPENCLAW = '/opt/openclaw/bin/openclaw'
+const CONFIG_PATH = '/home/openclaw/.openclaw/openclaw.json'
 const ENV_DROPIN = '/etc/systemd/system/openclaw-gateway.service.d/wizard-env.conf'
 
 const exec = (cmd, args, opts = {}) => new Promise((resolve, reject) => {
@@ -37,9 +39,8 @@ const configPatch = async (patch) => {
 }
 
 const configGet = async () => {
-    const out = await exec(OPENCLAW, ['config', 'get', '--json'])
-    const parsed = JSON.parse(out)
-    return parsed.parsed || {}
+    const raw = await readFile(CONFIG_PATH, 'utf8')
+    return JSON.parse(raw)
 }
 
 const restartGateway = async () => {
@@ -68,7 +69,7 @@ const handlers = {
         return {
             model: {
                 primary: cfg.agents?.defaults?.model?.primary || null,
-                hasOpenRouterKey: Boolean(process.env.OPENROUTER_API_KEY) || (await dropinHasKey())
+                hasOpenRouterKey: await gatewayHasOpenrouterKey()
             },
             telegram: {
                 configured: Boolean(tg.botToken),
@@ -130,9 +131,12 @@ const handlers = {
     }
 }
 
-const dropinHasKey = async () => {
+// systemctl show is read-only and merges values from the main unit and
+// every drop-in, so it's the one source of truth for "does the gateway
+// see an OPENROUTER_API_KEY at boot?".
+const gatewayHasOpenrouterKey = async () => {
     try {
-        const out = await exec('cat', [ENV_DROPIN])
+        const out = await exec('systemctl', ['show', 'openclaw-gateway', '--property=Environment', '--value'])
         return /OPENROUTER_API_KEY=\S+/.test(out)
     } catch { return false }
 }
