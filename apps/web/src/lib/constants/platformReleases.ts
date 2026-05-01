@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.18',
+        date: '2026-04-30',
+        headline: 'New 2-minute setup wizard at /myclaw/ — pick a model + connect a channel without touching the CLI',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.18',
+        changes: [
+            {
+                type: 'added',
+                text: 'Every fresh claw now exposes a guided setup page at https://<your-claw>/myclaw/ that handles the three things 90% of new users do first: pick a default model (5 OpenRouter presets + bring-your-own-key), connect Telegram (bot token + allowed user IDs), and install the WeChat plugin (Tencent\'s official openclaw-weixin). The wizard talks to a tiny localhost-only Node shim that writes openclaw config + bounces the gateway, so users never have to SSH or open a terminal. The full Control UI is still one click away for advanced configuration.'
+            }
+        ]
+    },
+    {
         version: 'v1.17',
         date: '2026-05-01',
         headline: "Channels are visible again — reverting v1.16's disabled-by-default",

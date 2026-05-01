@@ -236,6 +236,60 @@ describe('generateCloudInit', () => {
         })
     })
 
+    // v1.18 — setup wizard SPA at /myclaw/ on each claw, fronted by
+    // Caddy. Static HTML + a Node shim on loopback:18790. Cloud-init
+    // pulls both files from the platform web app at provision time.
+    describe('setup wizard (/myclaw/)', () => {
+        it('downloads the wizard SPA and shim from the platform web app', () => {
+            expect(output).toContain('https://myclaw.one/wizard/v1.html')
+            expect(output).toContain('https://myclaw.one/wizard/v1-server.mjs')
+            expect(output).toContain('/var/www/myclaw/index.html')
+            expect(output).toContain('/opt/myclaw-wizard/server.mjs')
+        })
+
+        it('writes a myclaw-wizard systemd unit running the shim as openclaw', () => {
+            expect(output).toContain('myclaw-wizard.service')
+            expect(output).toContain('ExecStart=/usr/bin/node /opt/myclaw-wizard/server.mjs')
+            expect(output).toContain('User=openclaw')
+            expect(output).toContain('systemctl enable myclaw-wizard')
+            expect(output).toContain('systemctl start myclaw-wizard')
+        })
+
+        it('pre-creates the gateway systemd drop-in dir so the wizard can write OPENROUTER_API_KEY overrides', () => {
+            expect(output).toContain(
+                'mkdir -p /etc/systemd/system/openclaw-gateway.service.d'
+            )
+        })
+
+        it('wizard stage is non-fatal so a download failure does not abort bootstrap', () => {
+            const start = output.indexOf('stage wizard')
+            const end = output.indexOf('stage caddy')
+            expect(start).toBeGreaterThan(-1)
+            expect(end).toBeGreaterThan(start)
+            const block = output.slice(start, end)
+            expect(block).toMatch(/\)\s*\|\|\s*echo/)
+        })
+
+        it('Caddy routes /myclaw/api/* to the shim and /myclaw/* to static files, before falling through to the gateway', () => {
+            expect(output).toContain('@wizardApi path /myclaw/api/*')
+            expect(output).toContain('reverse_proxy 127.0.0.1:18790')
+            expect(output).toContain('@wizardStatic path /myclaw /myclaw/*')
+            expect(output).toContain('root * /var/www')
+            expect(output).toContain('file_server')
+            // Order matters in the Caddyfile — named-matcher handles run
+            // top-down, so the api matcher must come before the static
+            // matcher (otherwise /myclaw/api/* would be served as a
+            // file-not-found from /var/www), and both must come before
+            // the catch-all gateway reverse_proxy.
+            const apiIdx = output.indexOf('@wizardApi')
+            const staticIdx = output.indexOf('@wizardStatic')
+            const gwIdx = output.indexOf('reverse_proxy 127.0.0.1:18789')
+            expect(apiIdx).toBeGreaterThan(-1)
+            expect(staticIdx).toBeGreaterThan(apiIdx)
+            expect(gwIdx).toBeGreaterThan(staticIdx)
+        })
+    })
+
     // ── Robustness harness ──
     describe('robustness hardening', () => {
         it('defines a with_retry helper and routes network fetches through it', () => {

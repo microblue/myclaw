@@ -512,13 +512,54 @@ for i in $(seq 1 30); do
     sleep 2
 done
 
+stage wizard
+# Setup wizard — a simpler-than-Control-UI page at /myclaw/ that walks
+# new users through model + telegram + wechat in 3 clicks. Static HTML
+# + a tiny Node shim (server.mjs) running on loopback:18790, both
+# fetched from the platform web app at provision time so we can iterate
+# on the wizard without re-rendering every claw's cloud-init. Soft-fail
+# like node_exporter — wizard is optional, claw works without it.
+mkdir -p /etc/systemd/system/openclaw-gateway.service.d
+(
+    mkdir -p /var/www/myclaw /opt/myclaw-wizard
+    with_retry curl -fsSL -o /var/www/myclaw/index.html https://myclaw.one/wizard/v1.html
+    with_retry curl -fsSL -o /opt/myclaw-wizard/server.mjs https://myclaw.one/wizard/v1-server.mjs
+    chown -R openclaw:openclaw /opt/myclaw-wizard
+    cat > /etc/systemd/system/myclaw-wizard.service << 'WSVC'
+[Unit]
+Description=Claw Setup Wizard
+After=network.target openclaw-gateway.service
+
+[Service]
+Type=simple
+User=openclaw
+Group=openclaw
+WorkingDirectory=/home/openclaw
+Environment=HOME=/home/openclaw
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node /opt/myclaw-wizard/server.mjs
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/myclaw-wizard.log
+StandardError=append:/var/log/myclaw-wizard.log
+
+[Install]
+WantedBy=multi-user.target
+WSVC
+    systemctl daemon-reload
+    systemctl enable myclaw-wizard
+    systemctl start myclaw-wizard
+) || echo "[bootstrap] wizard setup failed; /myclaw/ will 404 on this claw — Control UI at / still works"
+
 stage caddy
 # Caddy auto-issues + auto-renews Let's Encrypt certs and reverse_proxy
 # is WebSocket-aware by default, so the gateway terminal + live logs
 # work end-to-end without explicit Upgrade/Connection headers. /metrics
 # is gated by an exact Bearer-token match — first @metricsAuthed
 # matcher wins and proxies to node_exporter on :9100, otherwise the
-# fall-through @metrics matcher returns 401.
+# fall-through @metrics matcher returns 401. /myclaw/api/* goes to the
+# wizard shim, /myclaw/* serves the wizard SPA from disk, everything
+# else falls through to the gateway / Control UI.
 cat > /etc/caddy/Caddyfile << 'CADDYEOF'
 {
     email ssl@${domain}
@@ -535,6 +576,15 @@ ${fullDomain} {
     @metrics path /metrics
     handle @metrics {
         respond 401
+    }
+    @wizardApi path /myclaw/api/*
+    handle @wizardApi {
+        reverse_proxy 127.0.0.1:18790
+    }
+    @wizardStatic path /myclaw /myclaw/*
+    handle @wizardStatic {
+        root * /var/www
+        file_server
     }
     reverse_proxy 127.0.0.1:18789
 }
