@@ -43,11 +43,41 @@ function captureToken() {
   if (m) {
     sessionStorage.setItem(TOKEN_KEY, decodeURIComponent(m[1]))
     history.replaceState(null, '', location.pathname + location.search + '#/')
+    return sessionStorage.getItem(TOKEN_KEY)
   }
-  return sessionStorage.getItem(TOKEN_KEY)
+  const stored = sessionStorage.getItem(TOKEN_KEY)
+  if (stored) return stored
+  // Last resort: same-origin Control UI stashes the gateway token in
+  // sessionStorage under `openclaw.control.token.v1:wss://<host>` once
+  // the user has signed in there. If they're already in the Control UI
+  // tab, picking up that value lets the wizard skip the paste-token
+  // dance.
+  const wsKey = 'openclaw.control.token.v1:wss://' + location.host
+  const inherited = sessionStorage.getItem(wsKey)
+  if (inherited) {
+    sessionStorage.setItem(TOKEN_KEY, inherited)
+    return inherited
+  }
+  return null
 }
 
-const token = captureToken()
+let token = captureToken()
+
+function adoptToken(value) {
+  const trimmed = (value || '').trim()
+  if (!trimmed) return false
+  sessionStorage.setItem(TOKEN_KEY, trimmed)
+  token = trimmed
+  refreshStatus()
+  return true
+}
+
+function logout() {
+  sessionStorage.removeItem(TOKEN_KEY)
+  token = null
+  state.status = null
+  render()
+}
 const app = document.getElementById('app')
 const footer = document.getElementById('footer')
 let state = { status: null, busy: false, error: null, wechatQr: null, wechatStatus: 'idle' }
@@ -91,11 +121,24 @@ window.addEventListener('hashchange', render)
 
 function pageNoAuth() {
   return `
-    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 text-center">
-      <div class="text-4xl mb-3">&#128274;</div>
-      <h2 class="text-lg font-semibold mb-2">This page needs the dashboard link</h2>
-      <p class="text-slate-400 text-sm mb-4">For security, the setup wizard only opens via the tokenized link from your myclaw.one dashboard. Open your claw's detail page and click <strong>Easy Setup</strong>.</p>
-      <a href="https://myclaw.one/dashboard" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-lg">Go to dashboard</a>
+    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">&#128274;</span>
+        <h2 class="text-lg font-semibold">Sign in</h2>
+      </div>
+      <p class="text-slate-400 text-sm mb-4">Paste your <strong>gateway token</strong> below to unlock setup. The token is the same value the OpenClaw Control UI asks for.</p>
+      <form id="tokenForm" class="space-y-3">
+        <input type="password" name="token" required autofocus placeholder="gateway token (64 hex chars)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono" />
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg">Unlock</button>
+      </form>
+      <details class="mt-5 text-xs text-slate-500">
+        <summary class="cursor-pointer hover:text-slate-300">Where do I find the token?</summary>
+        <ul class="mt-2 space-y-1 pl-4 list-disc">
+          <li>Easiest: open <a href="https://myclaw.one/claws" class="text-sky-400 hover:underline">myclaw.one/claws</a>, pick this claw, click <strong>Easy Setup</strong> &mdash; you'll arrive here pre-signed-in.</li>
+          <li>Already signed into the Control UI in another tab on this domain? Refresh this page &mdash; the wizard will pick up that session.</li>
+          <li>SSH: <code class="bg-slate-900 px-1 rounded">cat /home/openclaw/.openclaw/openclaw.json</code> &rarr; <code class="bg-slate-900 px-1 rounded">gateway.auth.token</code>.</li>
+        </ul>
+      </details>
     </div>
   `
 }
@@ -228,6 +271,8 @@ function render() {
   if (!token) {
     app.innerHTML = pageNoAuth()
     footer.innerHTML = ''
+    const tokenForm = document.getElementById('tokenForm')
+    if (tokenForm) tokenForm.addEventListener('submit', onTokenSubmit)
     return
   }
   const hash = location.hash || '#/'
@@ -241,7 +286,11 @@ function render() {
     ? `<div class="mb-4 p-3 bg-rose-900/40 border border-rose-700 rounded-lg text-sm text-rose-200">${state.error}</div>`
     : ''
   app.innerHTML = banner + html
-  footer.innerHTML = `<a href="/#token=${encodeURIComponent(token)}" class="hover:text-slate-300">Open OpenClaw Web Control &rarr;</a>`
+  footer.innerHTML = `
+    <a href="/index.html#token=${encodeURIComponent(token)}" class="hover:text-slate-300">Open OpenClaw Web Control &rarr;</a>
+    <span class="mx-2 text-slate-700">|</span>
+    <a href="#" id="logoutLink" class="hover:text-slate-300">Sign out</a>
+  `
 
   app.querySelectorAll('[data-nav]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.nav))
@@ -253,6 +302,18 @@ function render() {
   if (telegramForm) telegramForm.addEventListener('submit', onTelegramSubmit)
   const wechatStartBtn = document.getElementById('wechatStartBtn')
   if (wechatStartBtn) wechatStartBtn.addEventListener('click', onWechatStart)
+  const logoutLink = document.getElementById('logoutLink')
+  if (logoutLink) logoutLink.addEventListener('click', (e) => { e.preventDefault(); logout() })
+}
+
+function onTokenSubmit(e) {
+  e.preventDefault()
+  const fd = new FormData(e.target)
+  const value = (fd.get('token') || '').toString()
+  if (!adoptToken(value)) {
+    state.error = 'Token cannot be empty'
+    render()
+  }
 }
 
 // ── Handlers ────────────────────────────────────────

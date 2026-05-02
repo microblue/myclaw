@@ -18,7 +18,7 @@ import ClawMetricsTiles from '@/components/dashboard/ClawMetricsTiles'
 import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
 import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
-import { buildClawChatUrl, chatEntryHint } from '@/lib/clawUrl'
+import { buildClawChatUrl, buildClawWizardUrl, chatEntryHint } from '@/lib/clawUrl'
 import { useState } from 'react'
 import { ArrowSquareOutIcon } from '@phosphor-icons/react'
 
@@ -56,6 +56,15 @@ const ClawDetail: FC = () => {
         const url = claw ? buildClawChatUrl(claw) : null
         if (!url) {
             toast.error('This instance has no subdomain yet.')
+            return
+        }
+        window.open(url, '_blank', 'noopener')
+    }
+
+    const openWizard = () => {
+        const url = claw ? buildClawWizardUrl(claw) : null
+        if (!url) {
+            toast.error('Easy Setup is only available for OpenClaw instances.')
             return
         }
         window.open(url, '_blank', 'noopener')
@@ -122,6 +131,19 @@ const ClawDetail: FC = () => {
     const actionBar = (
         <div className='flex flex-wrap items-center gap-2'>
             <Button
+                onClick={openWizard}
+                disabled={
+                    !isRunning ||
+                    !claw.subdomain ||
+                    (claw.clawType || 'openclaw') !== 'openclaw' ||
+                    !claw.gatewayToken
+                }
+            >
+                <ArrowSquareOutIcon className='mr-1.5 h-4 w-4' weight='bold' />
+                Easy Setup
+            </Button>
+            <Button
+                variant='outline'
                 onClick={openSubdomain}
                 disabled={!isRunning || !claw.subdomain}
             >
