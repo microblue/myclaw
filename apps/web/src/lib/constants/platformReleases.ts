@@ -18,6 +18,30 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.21.2',
+        date: '2026-05-02',
+        headline: 'Easy Setup polish — Step 1 / Step 2 big titles, bigger status icons, China Mainland Only badge on WeChat',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.21.2',
+        changes: [
+            {
+                type: 'changed',
+                text: '"Step 1 · Pick a model" and "Step 2 · Channels Setting" are now real h2 section headings (text-2xl/3xl) above their respective cards instead of small uppercase tags inside them. Cleaner two-step framing at first glance.'
+            },
+            {
+                type: 'changed',
+                text: 'Status badges on the home cards bumped from 28×28px to 56×56px. The connected state shows a thicker SVG check (no longer a tiny `&check;`); the not-yet-connected state now shows a clear "broken link" icon in rose instead of an ambiguous amber dot. The pending/checking state keeps its slate dots.'
+            },
+            {
+                type: 'added',
+                text: 'The "Connect WeChat" home card and the WeChat scan page both show a 🇨🇳 China Mainland Only pill in rose so users outside the region understand the channel won\'t be reachable for them — Tencent\'s ilink endpoints are mainland-only.'
+            },
+            {
+                type: 'changed',
+                text: 'Initial config-load now blocks the page with the same centered-spinner overlay used by save ("Reading your config…"), instead of showing a small inline strip plus disabled cards. Removes the awkward half-rendered state on first paint and prevents accidental clicks on cards that are still resolving their status.'
+            }
+        ]
+    },
+    {
         version: 'v1.21.1',
         date: '2026-05-02',
         headline: 'Easy Setup polish — fixed WeChat QR rendering, added save spinner, redesigned the home page',

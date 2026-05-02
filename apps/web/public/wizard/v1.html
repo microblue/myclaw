@@ -193,40 +193,42 @@ function pageNoAuth() {
 function pageHome() {
   const s = state.status
   const pending = s === null
-  const statusBadge = (ok) => pending
-    ? '<span class="inline-flex w-7 h-7 rounded-full bg-slate-700 text-slate-400 items-center justify-center text-base">&hellip;</span>'
-    : ok
-      ? '<span class="inline-flex w-7 h-7 rounded-full bg-emerald-500/15 text-emerald-400 items-center justify-center text-lg font-bold">&check;</span>'
-      : '<span class="inline-flex w-7 h-7 rounded-full bg-amber-500/15 text-amber-400 items-center justify-center text-base">&middot;</span>'
-  const sectionHeading = (label) => `<h3 class="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-3 mt-8 first:mt-0">${label}</h3>`
-  const stepCard = (id, stepLabel, title, subtitle, ok) => `
+  const checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M5 13l4 4L19 7"/></svg>'
+  const unlinkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 4.54 7.1"/><path d="M8 12h3"/><path d="M2 2l20 20"/></svg>'
+  const dotsSvg = '<span class="text-2xl leading-none">&hellip;</span>'
+
+  const statusBadge = (ok) => {
+    if (pending) return `<span class="inline-flex w-14 h-14 rounded-full bg-slate-700 text-slate-400 items-center justify-center shrink-0">${dotsSvg}</span>`
+    if (ok) return `<span class="inline-flex w-14 h-14 rounded-full bg-emerald-500/15 text-emerald-400 items-center justify-center shrink-0">${checkSvg}</span>`
+    return `<span class="inline-flex w-14 h-14 rounded-full bg-rose-500/10 text-rose-400 items-center justify-center shrink-0" title="Not connected">${unlinkSvg}</span>`
+  }
+
+  const sectionTitle = (text) => `<h2 class="text-2xl sm:text-3xl font-semibold text-slate-100 mt-12 mb-5 first:mt-0">${text}</h2>`
+
+  const stepCard = (id, title, subtitle, ok) => `
     <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-6 flex items-center justify-between border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-5">
         ${statusBadge(ok)}
         <div>
-          <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-0.5">${stepLabel}</div>
-          <div class="text-lg font-semibold text-slate-100">${title}</div>
+          <div class="text-xl font-semibold text-slate-100">${title}</div>
           <div class="text-sm text-slate-400 mt-1">${subtitle}</div>
         </div>
       </div>
       <span class="text-slate-500 text-xl">&rarr;</span>
     </button>`
-  const channelCard = (id, title, subtitle, ok) => `
-    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-5 flex flex-col gap-3 border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
+
+  const channelCard = (id, title, subtitle, ok, badge) => `
+    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card relative w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-5 flex flex-col gap-4 border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
+      ${badge ? `<span class="absolute top-3 right-3 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-full px-2.5 py-1">${badge}</span>` : ''}
       <div class="flex items-center justify-between">
         ${statusBadge(ok)}
         <span class="text-slate-500 text-xl">&rarr;</span>
       </div>
       <div>
-        <div class="text-base font-semibold text-slate-100">${title}</div>
+        <div class="text-lg font-semibold text-slate-100">${title}</div>
         <div class="text-sm text-slate-400 mt-1">${subtitle}</div>
       </div>
     </button>`
-  const loadingStrip = state.loading ? `
-    <div class="mb-4 bg-slate-800/60 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-400 flex items-center gap-3">
-      <span class="inline-block w-4 h-4 border-2 border-slate-600 border-t-sky-400 rounded-full animate-spin"></span>
-      <span>Reading your setup&hellip;</span>
-    </div>` : ''
 
   const modelOk = !pending && !!s.model?.primary && !!s.model?.hasOpenRouterKey
   const modelSubtitle = pending
@@ -241,12 +243,13 @@ function pageHome() {
     ? 'Checking&hellip;'
     : (s.wechat?.connected ? 'Account connected' : (s.wechat?.installed ? 'Plugin ready — scan QR to bind' : 'Plugin not installed'))
 
-  return `${loadingStrip}
-    ${stepCard('model', 'Step 1', 'Pick a model', modelSubtitle, modelOk)}
-    ${sectionHeading('Channels')}
+  return `
+    ${sectionTitle('Step 1 &middot; Pick a model')}
+    ${stepCard('model', 'Pick a model', modelSubtitle, modelOk)}
+    ${sectionTitle('Step 2 &middot; Channels Setting')}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      ${channelCard('telegram', 'Connect Telegram', tgSubtitle, tgOk)}
-      ${channelCard('wechat', 'Connect WeChat', wxSubtitle, wxOk)}
+      ${channelCard('telegram', 'Connect Telegram', tgSubtitle, tgOk, null)}
+      ${channelCard('wechat', 'Connect WeChat', wxSubtitle, wxOk, '&#127464;&#127475; China Mainland Only')}
     </div>`
 }
 
@@ -368,6 +371,7 @@ function pageWechat() {
     <div class="mb-6">
       <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back to setup</a>
     </div>
+    <div class="mb-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-full px-3 py-1.5">&#127464;&#127475; China Mainland Only</div>
     <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Connect WeChat</h2>
     <p class="text-base text-slate-400 mb-6">${state.wechatStatus === 'fetching' ? 'Fetching QR code from WeChat&hellip;' : (state.wechatStatus === 'error' ? 'Failed to fetch QR. Click below to retry.' : 'Click below to start a login session.')}</p>
     <button id="wechatStartBtn" ${state.busy ? 'disabled' : ''} class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg">
@@ -380,12 +384,22 @@ function pageWechat() {
 
 const overlay = document.getElementById('overlay')
 function renderOverlay() {
+  const initialLoading = state.loading && !state.status && token
   if (state.saving) {
     overlay.innerHTML = `
       <div class="flex flex-col items-center gap-4 px-6 text-center max-w-sm">
         <span class="inline-block w-14 h-14 border-4 border-slate-700 border-t-emerald-400 rounded-full animate-spin"></span>
         <div class="text-lg font-semibold text-slate-100">Saving config &amp; restarting OpenClaw gateway</div>
         <div class="text-sm text-slate-400">This usually takes ~15 seconds. Please wait&hellip;</div>
+      </div>`
+    overlay.classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+  } else if (initialLoading) {
+    overlay.innerHTML = `
+      <div class="flex flex-col items-center gap-4 px-6 text-center max-w-sm">
+        <span class="inline-block w-14 h-14 border-4 border-slate-700 border-t-sky-400 rounded-full animate-spin"></span>
+        <div class="text-lg font-semibold text-slate-100">Reading your config&hellip;</div>
+        <div class="text-sm text-slate-400">Talking to your claw — this takes a second or two.</div>
       </div>`
     overlay.classList.remove('hidden')
     document.body.style.overflow = 'hidden'
