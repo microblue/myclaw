@@ -18,6 +18,18 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.21.3',
+        date: '2026-05-02',
+        headline: 'Easy Setup: WeChat connector removed',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.21.3',
+        changes: [
+            {
+                type: 'changed',
+                text: 'Pulled the Connect WeChat card off the home page and removed the WeChat scan flow entirely. WeChat connection still happens at the OpenClaw runtime level via the openclaw-weixin plugin (CLI: `openclaw channels login --channel openclaw-weixin`); it just isn\'t exposed in the wizard. Shim no longer talks to Tencent\'s ilink endpoints, no longer needs the qrcodejs CDN script, and connects to the gateway with operator.read scope only.'
+            }
+        ]
+    },
+    {
         version: 'v1.21.2',
         date: '2026-05-02',
         headline: 'Easy Setup polish — Step 1 / Step 2 big titles, bigger status icons, China Mainland Only badge on WeChat',

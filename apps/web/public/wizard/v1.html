@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Claw Easy Setup</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- qrcodejs renders the WeChat QR client-side. Tencent's
-     qrcode_img_content field is a URL (not a base64 image), so we encode
-     that URL into a QR for the user to scan with their phone. -->
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1/qrcode.min.js"></script>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
   .card { transition: all 0.15s ease; }
@@ -89,7 +85,7 @@ function logout() {
 }
 const app = document.getElementById('app')
 const footer = document.getElementById('footer')
-let state = { status: null, busy: false, saving: false, error: null, loading: false, wechatQr: null, wechatStatus: 'idle', orCatalog: null }
+let state = { status: null, busy: false, saving: false, error: null, loading: false, orCatalog: null }
 
 const OR_CATALOG_KEY = 'myclaw.wizard.orCatalog.v1'
 const OR_CATALOG_TTL_MS = 86400_000
@@ -217,9 +213,8 @@ function pageHome() {
       <span class="text-slate-500 text-xl">&rarr;</span>
     </button>`
 
-  const channelCard = (id, title, subtitle, ok, badge) => `
-    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card relative w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-5 flex flex-col gap-4 border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
-      ${badge ? `<span class="absolute top-3 right-3 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-full px-2.5 py-1">${badge}</span>` : ''}
+  const channelCard = (id, title, subtitle, ok) => `
+    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-5 flex flex-col gap-4 border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
       <div class="flex items-center justify-between">
         ${statusBadge(ok)}
         <span class="text-slate-500 text-xl">&rarr;</span>
@@ -238,18 +233,13 @@ function pageHome() {
   const tgSubtitle = pending
     ? 'Checking&hellip;'
     : (s.telegram?.connected ? 'Bot connected' : (s.telegram?.configured ? 'Configured, not yet running' : 'Not connected'))
-  const wxOk = !pending && !!s.wechat?.connected
-  const wxSubtitle = pending
-    ? 'Checking&hellip;'
-    : (s.wechat?.connected ? 'Account connected' : (s.wechat?.installed ? 'Plugin ready — scan QR to bind' : 'Plugin not installed'))
 
   return `
     ${sectionTitle('Step 1 &middot; Pick a model')}
     ${stepCard('model', 'Pick a model', modelSubtitle, modelOk)}
     ${sectionTitle('Step 2 &middot; Channels Setting')}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      ${channelCard('telegram', 'Connect Telegram', tgSubtitle, tgOk, null)}
-      ${channelCard('wechat', 'Connect WeChat', wxSubtitle, wxOk, '&#127464;&#127475; China Mainland Only')}
+      ${channelCard('telegram', 'Connect Telegram', tgSubtitle, tgOk)}
     </div>`
 }
 
@@ -336,50 +326,6 @@ function pageTelegram() {
   `
 }
 
-function pageWechat() {
-  const s = state.status || {}
-  if (s.wechat?.connected) {
-    return `
-      <div class="mb-4">
-        <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
-      </div>
-      <div class="bg-emerald-900/30 border border-emerald-700 rounded-xl p-6 text-center">
-        <div class="text-4xl mb-2">&check;</div>
-        <h2 class="text-lg font-semibold mb-1">WeChat connected</h2>
-        <p class="text-sm text-slate-400">Send a message to your bound account to test it.</p>
-      </div>
-    `
-  }
-  if (state.wechatQr) {
-    const qrStatus = s.wechat?.qrSession?.status
-    const footer = qrStatus === 'scaned'
-      ? '<p class="text-xs text-emerald-400 text-center">&check; Scanned — confirm on your phone to finish</p>'
-      : '<p class="text-xs text-slate-500 text-center">Waiting for scan&hellip; (refreshes every 3s)</p>'
-    return `
-      <div class="mb-4">
-        <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
-      </div>
-      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Scan with WeChat</h2>
-      <p class="text-base text-slate-400 mb-6">Open WeChat on your phone &rarr; tap <strong>+</strong> &rarr; <strong>Scan</strong>, then point at the code below.</p>
-      <div class="bg-white p-6 rounded-lg flex items-center justify-center mb-4">
-        <div id="qrTarget" class="w-64 h-64"></div>
-      </div>
-      ${footer}
-    `
-  }
-  return `
-    <div class="mb-6">
-      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back to setup</a>
-    </div>
-    <div class="mb-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-full px-3 py-1.5">&#127464;&#127475; China Mainland Only</div>
-    <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Connect WeChat</h2>
-    <p class="text-base text-slate-400 mb-6">${state.wechatStatus === 'fetching' ? 'Fetching QR code from WeChat&hellip;' : (state.wechatStatus === 'error' ? 'Failed to fetch QR. Click below to retry.' : 'Click below to start a login session.')}</p>
-    <button id="wechatStartBtn" ${state.busy ? 'disabled' : ''} class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg">
-      ${state.busy ? 'Loading QR&hellip;' : 'Show QR'}
-    </button>
-  `
-}
-
 // ── Render + bind ────────────────────────────────────
 
 const overlay = document.getElementById('overlay')
@@ -423,7 +369,6 @@ function render() {
   let html
   if (hash === '#/model') html = pageModel()
   else if (hash === '#/telegram') html = pageTelegram()
-  else if (hash === '#/wechat') html = pageWechat()
   else html = pageHome()
 
   const banner = state.error
@@ -444,24 +389,8 @@ function render() {
   if (modelForm) modelForm.addEventListener('submit', onModelSubmit)
   const telegramForm = document.getElementById('telegramForm')
   if (telegramForm) telegramForm.addEventListener('submit', onTelegramSubmit)
-  const wechatStartBtn = document.getElementById('wechatStartBtn')
-  if (wechatStartBtn) wechatStartBtn.addEventListener('click', onWechatStart)
   const logoutLink = document.getElementById('logoutLink')
   if (logoutLink) logoutLink.addEventListener('click', (e) => { e.preventDefault(); logout() })
-
-  // Tencent gives us a URL in `qrcode_img_content`; render it into a QR
-  // image in-browser. qrcodejs appends a canvas + img to the target,
-  // so clear first to avoid stacking on re-render.
-  const qrTarget = document.getElementById('qrTarget')
-  if (qrTarget && state.wechatQr && typeof QRCode !== 'undefined') {
-    qrTarget.innerHTML = ''
-    new QRCode(qrTarget, {
-      text: state.wechatQr,
-      width: 256,
-      height: 256,
-      correctLevel: QRCode.CorrectLevel.M
-    })
-  }
 }
 
 function onTokenSubmit(e) {
@@ -518,51 +447,6 @@ async function onTelegramSubmit(e) {
   } finally {
     setSaving(false)
   }
-}
-
-async function onWechatStart() {
-  state.error = null
-  state.wechatStatus = 'fetching'
-  setBusy(true)
-  try {
-    const res = await api('/wechat/start', { method: 'POST' })
-    state.wechatQr = res.qr
-    state.wechatStatus = 'ready'
-    pollWechat()
-  } catch (err) {
-    state.error = err.message
-    state.wechatStatus = 'error'
-  } finally {
-    setBusy(false)
-  }
-}
-
-let wechatPollTimer = null
-function pollWechat() {
-  clearTimeout(wechatPollTimer)
-  wechatPollTimer = setTimeout(async () => {
-    try {
-      await refreshStatus()
-      const w = state.status?.wechat
-      const qr = w?.qrSession
-      if (w?.connected) {
-        state.wechatQr = null
-        state.wechatStatus = 'idle'
-        render()
-        return
-      }
-      if (qr?.status === 'expired' || qr?.status === 'error') {
-        state.wechatQr = null
-        state.wechatStatus = qr.status
-        state.error = qr.error || (qr.status === 'expired' ? 'QR expired — click Show QR again' : 'WeChat login failed')
-        render()
-        return
-      }
-      pollWechat()
-    } catch {
-      pollWechat()
-    }
-  }, 3000)
 }
 
 // ── Boot ────────────────────────────────────────────
