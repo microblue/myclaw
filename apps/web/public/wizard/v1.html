@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Claw Setup Wizard</title>
+<title>Claw Easy Setup</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
@@ -17,16 +17,14 @@
   <header class="mb-8 flex items-center gap-3">
     <span class="text-3xl">&#129438;</span>
     <div>
-      <h1 class="text-xl font-semibold">Claw Setup</h1>
+      <h1 class="text-xl font-semibold">Claw Easy Setup</h1>
       <p class="text-sm text-slate-400">Two-minute setup for your private AI</p>
     </div>
   </header>
 
   <main id="app"></main>
 
-  <footer class="mt-10 text-center text-xs text-slate-500">
-    <a href="/" class="hover:text-slate-300">Advanced settings (full Control UI) &rarr;</a>
-  </footer>
+  <footer class="mt-10 text-center text-xs text-slate-500" id="footer"></footer>
 </div>
 
 <script>
@@ -38,13 +36,29 @@ const PRESET_MODELS = [
   { ref: 'openrouter/auto', label: 'Auto-route', hint: 'OpenRouter picks per request' }
 ]
 
+const TOKEN_KEY = 'myclaw.wizard.token.v1'
+
+function captureToken() {
+  const m = location.hash.match(/[#&]t=([^&]+)/)
+  if (m) {
+    sessionStorage.setItem(TOKEN_KEY, decodeURIComponent(m[1]))
+    history.replaceState(null, '', location.pathname + location.search + '#/')
+  }
+  return sessionStorage.getItem(TOKEN_KEY)
+}
+
+const token = captureToken()
 const app = document.getElementById('app')
-let state = { status: null, busy: false, error: null }
+const footer = document.getElementById('footer')
+let state = { status: null, busy: false, error: null, wechatQr: null, wechatStatus: 'idle' }
 
 async function api(path, opts = {}) {
   const r = await fetch('/myclaw/api' + path, {
     method: opts.method || 'GET',
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      ...(token ? { authorization: 'Bearer ' + token } : {})
+    },
     body: opts.body ? JSON.stringify(opts.body) : undefined
   })
   const text = await r.text()
@@ -75,6 +89,17 @@ window.addEventListener('hashchange', render)
 
 // ── Pages ────────────────────────────────────────────
 
+function pageNoAuth() {
+  return `
+    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 text-center">
+      <div class="text-4xl mb-3">&#128274;</div>
+      <h2 class="text-lg font-semibold mb-2">This page needs the dashboard link</h2>
+      <p class="text-slate-400 text-sm mb-4">For security, the setup wizard only opens via the tokenized link from your myclaw.one dashboard. Open your claw's detail page and click <strong>Easy Setup</strong>.</p>
+      <a href="https://myclaw.one/dashboard" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-lg">Go to dashboard</a>
+    </div>
+  `
+}
+
 function pageHome() {
   const s = state.status || {}
   const card = (id, title, subtitle, ok) => `
@@ -90,11 +115,10 @@ function pageHome() {
     </button>`
   return `
     <div class="space-y-3">
-      ${card('model', 'Pick a model', s.model?.primary || 'Not configured', !!s.model?.primary)}
-      ${card('telegram', 'Connect Telegram', s.telegram?.connected ? 'Bot connected' : 'Not connected', !!s.telegram?.connected)}
-      ${card('wechat', 'Connect WeChat', s.wechat?.connected ? 'Account connected' : (s.wechat?.installed ? 'Plugin installed, not connected' : 'Plugin not installed'), !!s.wechat?.connected)}
+      ${card('model', 'Pick a model', s.model?.primary || 'Not configured', !!s.model?.primary && !!s.model?.hasOpenRouterKey)}
+      ${card('telegram', 'Connect Telegram', s.telegram?.connected ? 'Bot connected' : (s.telegram?.configured ? 'Bot configured (not yet running)' : 'Not connected'), !!s.telegram?.connected)}
+      ${card('wechat', 'Connect WeChat', s.wechat?.connected ? 'Account connected' : (s.wechat?.installed ? 'Plugin ready, scan QR to bind' : 'Plugin not installed'), !!s.wechat?.connected)}
     </div>
-    ${s.allDone ? `<div class="mt-6 p-4 bg-emerald-900/40 border border-emerald-700 rounded-lg text-sm">All set! <a href="/" class="underline">Open Control UI &rarr;</a></div>` : ''}
   `
 }
 
@@ -120,7 +144,7 @@ function pageModel() {
     <form id="modelForm" class="space-y-2">
       ${radios}
       <div class="pt-3">
-        <label class="block text-sm text-slate-300 mb-1">OpenRouter API key ${hasKey ? '<span class="text-xs text-slate-500">(leave blank to keep current)</span>' : '<span class="text-xs text-rose-400">(required for first setup)</span>'}</label>
+        <label class="block text-sm text-slate-300 mb-1">OpenRouter API key ${hasKey ? '<span class="text-xs text-slate-500">(leave blank to keep current)</span>' : '<span class="text-xs text-rose-400">(required)</span>'}</label>
         <input type="password" name="apiKey" placeholder="sk-or-v1-&hellip;" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono" />
         <a href="https://openrouter.ai/keys" target="_blank" class="text-xs text-sky-400 hover:underline">Get a key &rarr;</a>
       </div>
@@ -139,7 +163,7 @@ function pageTelegram() {
     </div>
     <h2 class="text-lg font-semibold mb-1">Connect Telegram</h2>
     <ol class="text-sm text-slate-400 list-decimal pl-5 mb-4 space-y-1">
-      <li>Open <a href="https://t.me/BotFather" target="_blank" class="text-sky-400 hover:underline">@BotFather</a> on Telegram and send <code class="bg-slate-800 px-1 rounded">/newbot</code>. Copy the token it gives you.</li>
+      <li>Open <a href="https://t.me/BotFather" target="_blank" class="text-sky-400 hover:underline">@BotFather</a> on Telegram, send <code class="bg-slate-800 px-1 rounded">/newbot</code>, copy the token.</li>
       <li>Find your Telegram numeric ID via <a href="https://t.me/userinfobot" target="_blank" class="text-sky-400 hover:underline">@userinfobot</a>.</li>
     </ol>
     <form id="telegramForm" class="space-y-3">
@@ -161,30 +185,29 @@ function pageTelegram() {
 
 function pageWechat() {
   const s = state.status || {}
-  const w = s.wechat || {}
-  if (!w.installed) {
+  if (s.wechat?.connected) {
     return `
       <div class="mb-4">
         <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
       </div>
-      <h2 class="text-lg font-semibold mb-1">Install WeChat plugin</h2>
-      <p class="text-sm text-slate-400 mb-4">Uses Tencent's official OpenClaw plugin (<a href="https://github.com/Tencent/openclaw-weixin" target="_blank" class="text-sky-400 hover:underline">openclaw-weixin</a>). Takes 30-60s to download.</p>
-      <button id="wechatInstallBtn" ${state.busy ? 'disabled' : ''} class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg">
-        ${state.busy ? 'Installing&hellip;' : 'Install WeChat plugin'}
-      </button>
+      <div class="bg-emerald-900/30 border border-emerald-700 rounded-xl p-6 text-center">
+        <div class="text-4xl mb-2">&check;</div>
+        <h2 class="text-lg font-semibold mb-1">WeChat connected</h2>
+        <p class="text-sm text-slate-400">Send a message to your bound account to test it.</p>
+      </div>
     `
   }
-  if (w.qr) {
+  if (state.wechatQr) {
     return `
       <div class="mb-4">
         <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
       </div>
       <h2 class="text-lg font-semibold mb-1">Scan with WeChat</h2>
-      <p class="text-sm text-slate-400 mb-4">Open WeChat on your phone, tap the + icon, choose Scan, and point at the QR below.</p>
+      <p class="text-sm text-slate-400 mb-4">Open WeChat on your phone &rarr; tap <strong>+</strong> &rarr; <strong>Scan</strong>, then point at the code below.</p>
       <div class="bg-white p-6 rounded-lg flex items-center justify-center mb-4">
-        <img src="${w.qr}" alt="WeChat QR" class="max-w-xs" />
+        <img src="${state.wechatQr}" alt="WeChat QR" class="max-w-xs" />
       </div>
-      <p class="text-xs text-slate-500 text-center">Polling for confirmation&hellip;</p>
+      <p class="text-xs text-slate-500 text-center">Waiting for confirmation&hellip; (refreshes every 3s)</p>
     `
   }
   return `
@@ -192,39 +215,33 @@ function pageWechat() {
       <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
     </div>
     <h2 class="text-lg font-semibold mb-1">Connect WeChat</h2>
-    <p class="text-sm text-slate-400 mb-4">${w.connected ? 'Already connected. Click below to re-bind.' : 'Plugin is installed. Click below to start a login session.'}</p>
-    <button id="wechatLoginBtn" ${state.busy ? 'disabled' : ''} class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg">
-      ${state.busy ? 'Starting&hellip;' : 'Start login (show QR)'}
+    <p class="text-sm text-slate-400 mb-4">${state.wechatStatus === 'fetching' ? 'Fetching QR code from WeChat&hellip;' : (state.wechatStatus === 'error' ? 'Failed to fetch QR. Click below to retry.' : 'Click below to start a login session.')}</p>
+    <button id="wechatStartBtn" ${state.busy ? 'disabled' : ''} class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg">
+      ${state.busy ? 'Loading QR&hellip;' : 'Show QR'}
     </button>
-  `
-}
-
-function pageDone() {
-  return `
-    <div class="text-center py-8">
-      <div class="text-6xl mb-4">&#127881;</div>
-      <h2 class="text-2xl font-semibold mb-2">All set!</h2>
-      <p class="text-slate-400 mb-6">Your claw is configured. Send a message from any of your connected channels (or open the chat below) to test it.</p>
-      <a href="/" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-lg">Open Control UI</a>
-    </div>
   `
 }
 
 // ── Render + bind ────────────────────────────────────
 
 function render() {
+  if (!token) {
+    app.innerHTML = pageNoAuth()
+    footer.innerHTML = ''
+    return
+  }
   const hash = location.hash || '#/'
   let html
   if (hash === '#/model') html = pageModel()
   else if (hash === '#/telegram') html = pageTelegram()
   else if (hash === '#/wechat') html = pageWechat()
-  else if (hash === '#/done') html = pageDone()
   else html = pageHome()
 
   const banner = state.error
     ? `<div class="mb-4 p-3 bg-rose-900/40 border border-rose-700 rounded-lg text-sm text-rose-200">${state.error}</div>`
     : ''
   app.innerHTML = banner + html
+  footer.innerHTML = `<a href="/#token=${encodeURIComponent(token)}" class="hover:text-slate-300">Open OpenClaw Web Control &rarr;</a>`
 
   app.querySelectorAll('[data-nav]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.nav))
@@ -234,10 +251,8 @@ function render() {
   if (modelForm) modelForm.addEventListener('submit', onModelSubmit)
   const telegramForm = document.getElementById('telegramForm')
   if (telegramForm) telegramForm.addEventListener('submit', onTelegramSubmit)
-  const wechatInstall = document.getElementById('wechatInstallBtn')
-  if (wechatInstall) wechatInstall.addEventListener('click', onWechatInstall)
-  const wechatLogin = document.getElementById('wechatLoginBtn')
-  if (wechatLogin) wechatLogin.addEventListener('click', onWechatLogin)
+  const wechatStartBtn = document.getElementById('wechatStartBtn')
+  if (wechatStartBtn) wechatStartBtn.addEventListener('click', onWechatStart)
 }
 
 // ── Handlers ────────────────────────────────────────
@@ -264,13 +279,13 @@ async function onModelSubmit(e) {
 async function onTelegramSubmit(e) {
   e.preventDefault()
   const fd = new FormData(e.target)
-  const token = (fd.get('token') || '').toString().trim()
+  const tok = (fd.get('token') || '').toString().trim()
   const allowedUsers = (fd.get('allowedUsers') || '').toString().split(',').map(s => s.trim()).filter(Boolean)
-  if (!token || allowedUsers.length === 0) { state.error = 'Token and at least one user ID required'; render(); return }
+  if (!tok || allowedUsers.length === 0) { state.error = 'Token and at least one user ID required'; render(); return }
   state.error = null
   setBusy(true)
   try {
-    await api('/telegram', { method: 'POST', body: { token, allowedUsers } })
+    await api('/telegram', { method: 'POST', body: { token: tok, allowedUsers } })
     await refreshStatus()
     navigate('#/')
   } catch (err) {
@@ -280,28 +295,18 @@ async function onTelegramSubmit(e) {
   }
 }
 
-async function onWechatInstall() {
+async function onWechatStart() {
   state.error = null
+  state.wechatStatus = 'fetching'
   setBusy(true)
   try {
-    await api('/wechat/install', { method: 'POST' })
-    await refreshStatus()
-  } catch (err) {
-    state.error = err.message
-  } finally {
-    setBusy(false)
-  }
-}
-
-async function onWechatLogin() {
-  state.error = null
-  setBusy(true)
-  try {
-    await api('/wechat/login', { method: 'POST' })
-    await refreshStatus()
+    const res = await api('/wechat/start', { method: 'POST' })
+    state.wechatQr = res.qr
+    state.wechatStatus = 'ready'
     pollWechat()
   } catch (err) {
     state.error = err.message
+    state.wechatStatus = 'error'
   } finally {
     setBusy(false)
   }
@@ -314,8 +319,12 @@ function pollWechat() {
     try {
       await refreshStatus()
       const w = state.status?.wechat
-      if (w?.connected) navigate('#/done')
-      else if (w?.qr) pollWechat()
+      if (w?.connected) {
+        state.wechatQr = null
+        render()
+      } else {
+        pollWechat()
+      }
     } catch {
       pollWechat()
     }
@@ -324,7 +333,11 @@ function pollWechat() {
 
 // ── Boot ────────────────────────────────────────────
 
-refreshStatus()
+if (token) {
+  refreshStatus()
+} else {
+  render()
+}
 </script>
 </body>
 </html>

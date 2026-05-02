@@ -18,6 +18,26 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.19',
+        date: '2026-05-01',
+        headline: 'Easy Setup is now the default landing page — WeChat works out of the box, wizard is bearer-auth protected',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.19',
+        changes: [
+            {
+                type: 'changed',
+                text: 'Opening your claw\'s root domain (https://<your-claw>/) now lands on the Easy Setup wizard instead of the OpenClaw Control UI. Caddy 302-redirects / → /myclaw/, with WebSocket upgrade requests excluded from the redirect so the Control UI\'s gateway WS still works after click-through. Click the "Open OpenClaw Web Control" link in the wizard footer to reach the full Control UI (the link carries the gateway token in the URL hash, so you go straight to chat without re-authenticating).'
+            },
+            {
+                type: 'added',
+                text: 'WeChat is now pre-installed in cloud-init via Tencent\'s official openclaw-weixin plugin. The wizard\'s WeChat page now shows a real QR code inline — click "Show QR", scan with WeChat on your phone, and the wizard polls until the bind completes. No more "install plugin first" detour. (The QR is fetched by spawning openclaw\'s `channels login` subprocess and scraping the data URL from its stdout, then keeping the subprocess alive to handle the long-poll → save flow.)'
+            },
+            {
+                type: 'fixed',
+                text: 'The wizard now requires a bearer token for every API call. The dashboard hands you a tokenized link (/myclaw/#t=<gateway_token>) which the wizard SPA captures into sessionStorage and attaches to every fetch as Authorization: Bearer <…>. Direct visits to /myclaw/ without the token show a "use the dashboard link" landing page instead of letting anyone with the URL change your model or write Telegram credentials.'
+            }
+        ]
+    },
+    {
         version: 'v1.18',
         date: '2026-04-30',
         headline: 'New 2-minute setup wizard at /myclaw/ — pick a model + connect a channel without touching the CLI',

@@ -290,6 +290,53 @@ describe('generateCloudInit', () => {
         })
     })
 
+    // v1.19 — root path redirects to /myclaw/ so the easy-setup wizard
+    // is the default landing experience for fresh claws. WeChat plugin
+    // is pre-installed so the wizard's WeChat page can show a QR scan
+    // inline without making the user click "install" first.
+    describe('easy-setup default landing (/myclaw/)', () => {
+        it('seeds the openclaw-weixin plugin entry as enabled in openclaw.json', () => {
+            expect(output).toContain('"openclaw-weixin"')
+            // sit alongside openrouter + browser entries
+            const start = output.indexOf('"plugins"')
+            const end = output.indexOf('"meta"', start)
+            expect(end).toBeGreaterThan(start)
+            const block = output.slice(start, end)
+            expect(block).toContain('"openclaw-weixin"')
+            expect(block).toMatch(/"openclaw-weixin":\s*\{[^}]*"enabled":\s*true/s)
+        })
+
+        it('pre-installs the Tencent openclaw-weixin plugin in cloud-init', () => {
+            expect(output).toContain('stage wechat-install')
+            expect(output).toContain('plugins install @tencent-weixin/openclaw-weixin')
+            // installs as the openclaw user so it lands in the openclaw
+            // user's npm prefix + extensions dir (otherwise it would go
+            // under root and the gateway couldn't load it)
+            expect(output).toMatch(/sudo\s+-u\s+openclaw\s+-H\s+\/opt\/openclaw\/bin\/openclaw\s+plugins\s+install/)
+        })
+
+        it('wechat-install stage is non-fatal so a network blip doesnt abort bootstrap', () => {
+            const start = output.indexOf('stage wechat-install')
+            const end = output.indexOf('stage firewall')
+            expect(start).toBeGreaterThan(-1)
+            expect(end).toBeGreaterThan(start)
+            const block = output.slice(start, end)
+            expect(block).toMatch(/\)\s*\|\|\s*echo/)
+        })
+
+        it('Caddy 302-redirects domain root (/) to /myclaw/, but only for non-WebSocket requests', () => {
+            expect(output).toContain('@rootRedirect')
+            expect(output).toContain('not header Upgrade *websocket*')
+            expect(output).toContain('redir @rootRedirect /myclaw/ 302')
+            // The redirect must be before the catch-all reverse_proxy,
+            // otherwise / falls through to gateway and never redirects.
+            const redirIdx = output.indexOf('redir @rootRedirect')
+            const gwIdx = output.indexOf('reverse_proxy 127.0.0.1:18789')
+            expect(redirIdx).toBeGreaterThan(-1)
+            expect(gwIdx).toBeGreaterThan(redirIdx)
+        })
+    })
+
     // ── Robustness harness ──
     describe('robustness hardening', () => {
         it('defines a with_retry helper and routes network fetches through it', () => {
