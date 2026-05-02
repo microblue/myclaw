@@ -20,7 +20,7 @@ const PLATFORM_RELEASES: PlatformRelease[] = [
     {
         version: 'v1.21',
         date: '2026-05-02',
-        headline: 'Easy Setup\'s model picker now lists every OpenRouter model — not just five presets',
+        headline: 'Pick any OpenRouter model in Easy Setup; WeChat QR now appears in seconds, not 8 minutes',
         githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.21',
         changes: [
             {
@@ -30,6 +30,10 @@ const PLATFORM_RELEASES: PlatformRelease[] = [
             {
                 type: 'fixed',
                 text: 'If your claw\'s currently configured model isn\'t one of the five presets, the wizard now pre-fills it into the custom-ref input instead of showing all radios unchecked. Cleaner display of your existing setup; saving without changing anything no longer overwrites your model with a blank.'
+            },
+            {
+                type: 'fixed',
+                text: 'WeChat "Show QR" used to spawn `openclaw channels login --channel openclaw-weixin` as a subprocess, which cold-started for ~5 minutes (jiti TS JIT compile of 40+ runtime deps) plus ~3 minutes of one-time `npm install` to provision plugin-runtime-deps — well past the wizard\'s 30-second timeout, and `child.kill()` left a 414 MB grandchild process tree leaking on every retry. The shim now talks directly to Tencent\'s ilink endpoints (POST /ilink/bot/get_bot_qrcode, GET /ilink/bot/get_qrcode_status long-poll) — same protocol the openclaw-weixin plugin uses internally. Fresh QR appears in ~1 second on first click. On confirmation, the shim writes the account JSON to ~/.openclaw/state/openclaw-weixin/accounts/<id>.json (matching the plugin\'s saveWeixinAccount shape) and calls channels.start over the gateway WS so the running gateway picks it up — no gateway restart, no zombie subprocesses.'
             }
         ]
     },

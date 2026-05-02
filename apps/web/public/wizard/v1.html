@@ -309,6 +309,10 @@ function pageWechat() {
     `
   }
   if (state.wechatQr) {
+    const qrStatus = s.wechat?.qrSession?.status
+    const footer = qrStatus === 'scaned'
+      ? '<p class="text-xs text-emerald-400 text-center">&check; Scanned — confirm on your phone to finish</p>'
+      : '<p class="text-xs text-slate-500 text-center">Waiting for scan&hellip; (refreshes every 3s)</p>'
     return `
       <div class="mb-4">
         <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
@@ -318,7 +322,7 @@ function pageWechat() {
       <div class="bg-white p-6 rounded-lg flex items-center justify-center mb-4">
         <img src="${state.wechatQr}" alt="WeChat QR" class="max-w-xs" />
       </div>
-      <p class="text-xs text-slate-500 text-center">Waiting for confirmation&hellip; (refreshes every 3s)</p>
+      ${footer}
     `
   }
   return `
@@ -454,12 +458,21 @@ function pollWechat() {
     try {
       await refreshStatus()
       const w = state.status?.wechat
+      const qr = w?.qrSession
       if (w?.connected) {
         state.wechatQr = null
+        state.wechatStatus = 'idle'
         render()
-      } else {
-        pollWechat()
+        return
       }
+      if (qr?.status === 'expired' || qr?.status === 'error') {
+        state.wechatQr = null
+        state.wechatStatus = qr.status
+        state.error = qr.error || (qr.status === 'expired' ? 'QR expired — click Show QR again' : 'WeChat login failed')
+        render()
+        return
+      }
+      pollWechat()
     } catch {
       pollWechat()
     }
