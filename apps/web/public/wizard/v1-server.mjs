@@ -18,6 +18,7 @@ import { readFile } from 'node:fs/promises'
 const PORT = 18790
 const HOST = '127.0.0.1'
 const OPENCLAW = '/opt/openclaw/bin/openclaw'
+const GATEWAY_WS = 'ws://127.0.0.1:18789/'
 const CONFIG_PATH = '/home/openclaw/.openclaw/openclaw.json'
 const ENV_DROPIN = '/etc/systemd/system/openclaw-gateway.service.d/wizard-env.conf'
 
@@ -34,9 +35,65 @@ const exec = (cmd, args, opts = {}) => new Promise((resolve, reject) => {
     if (opts.input) { p.stdin.end(opts.input) }
 })
 
-const openclawCall = async (method) => {
-    const out = await exec(OPENCLAW, ['gateway', 'call', method, '--json'])
-    return JSON.parse(out)
+// Talk to the gateway directly over WebSocket instead of `openclaw gateway
+// call`. The CLI spends ~12s on every invocation re-loading 40+ plugins via
+// jiti TS JIT — fatal for `/status` interactivity. A direct WS round-trip
+// (handshake + hello-ok + method) settles in ~600ms on loopback. We declare
+// `client.id: gateway-client`, `mode: backend` which lets the gateway skip
+// device pairing for trusted same-process loopback calls (see
+// docs/gateway/protocol.md).
+const gatewayWsCall = async (method, params = {}) => {
+    const token = await expectedToken()
+    if (!token) throw new Error('gateway token unavailable')
+    return await new Promise((resolve, reject) => {
+        const ws = new WebSocket(GATEWAY_WS)
+        let helloRcv = false
+        let id = 0
+        const next = () => 'r' + (++id)
+        const timer = setTimeout(() => {
+            try { ws.close() } catch { /* noop */ }
+            reject(new Error(`gateway ${method} timed out after 5s`))
+        }, 5000)
+        const finish = (err, val) => {
+            clearTimeout(timer)
+            try { ws.close() } catch { /* noop */ }
+            if (err) reject(err)
+            else resolve(val)
+        }
+        ws.onerror = () => finish(new Error('gateway WS connection failed'))
+        ws.onmessage = (ev) => {
+            let msg
+            try { msg = JSON.parse(ev.data) } catch { return }
+            if (msg.type === 'event' && msg.event === 'connect.challenge') {
+                ws.send(JSON.stringify({
+                    type: 'req',
+                    id: next(),
+                    method: 'connect',
+                    params: {
+                        minProtocol: 3,
+                        maxProtocol: 3,
+                        client: { id: 'gateway-client', version: 'wizard', platform: 'linux', mode: 'backend' },
+                        role: 'operator',
+                        scopes: ['operator.read'],
+                        caps: [],
+                        commands: [],
+                        permissions: {},
+                        auth: { token }
+                    }
+                }))
+                return
+            }
+            if (msg.type !== 'res') return
+            if (!helloRcv) {
+                helloRcv = true
+                if (!msg.ok) return finish(new Error(`gateway connect failed: ${JSON.stringify(msg.payload).slice(0, 200)}`))
+                ws.send(JSON.stringify({ type: 'req', id: next(), method, params }))
+                return
+            }
+            if (!msg.ok) return finish(new Error(`gateway ${method} failed: ${JSON.stringify(msg.payload).slice(0, 200)}`))
+            finish(null, msg.payload)
+        }
+    })
 }
 
 const configPatch = async (patch) => {
@@ -141,7 +198,7 @@ const startWechatLogin = async () => {
 const handlers = {
     async 'GET /status'() {
         const cfg = await configGet()
-        const liveStatus = await openclawCall('channels.status').catch(() => ({}))
+        const liveStatus = await gatewayWsCall('channels.status', {}).catch(() => ({}))
         const channels = liveStatus.channels || {}
         const tg = cfg.channels?.telegram || {}
         const wxEntry = cfg.plugins?.entries?.['openclaw-weixin']

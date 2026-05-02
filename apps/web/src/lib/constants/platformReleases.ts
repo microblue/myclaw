@@ -18,6 +18,22 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.20',
+        date: '2026-05-02',
+        headline: 'Easy Setup loads in under a second — wizard now hits the gateway directly over WebSocket',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.20',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'Opening Easy Setup used to sit on a blank page for ~12 seconds before any cards appeared. The wizard\'s shim was running `openclaw gateway call channels.status` every page load, and the openclaw CLI re-loads 40+ plugins via jiti TS JIT on every invocation — about 12s of pure cold-start cost that the user just ate, every time. The shim now opens a direct WebSocket connection to the gateway on loopback (declaring itself as a `gateway-client` backend so it skips device pairing), runs the same `channels.status` RPC, and closes — round-trip is ~600ms. About a 20x speedup.'
+            },
+            {
+                type: 'changed',
+                text: 'The wizard SPA now paints the home cards immediately on load instead of blocking on the status fetch. While live channel state is on the wire, you see all three cards (Pick a model / Connect Telegram / Connect WeChat) in a placeholder state with a small "Reading your setup…" spinner above them, then they fill in with real status the instant data arrives.'
+            }
+        ]
+    },
+    {
         version: 'v1.19',
         date: '2026-05-01',
         headline: 'Easy Setup is now the default landing page — WeChat works out of the box, wizard is bearer-auth protected',
