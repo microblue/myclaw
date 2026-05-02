@@ -213,18 +213,6 @@ function pageHome() {
       <span class="text-slate-500 text-xl">&rarr;</span>
     </button>`
 
-  const channelCard = (id, title, subtitle, ok) => `
-    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-5 flex flex-col gap-4 border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
-      <div class="flex items-center justify-between">
-        ${statusBadge(ok)}
-        <span class="text-slate-500 text-xl">&rarr;</span>
-      </div>
-      <div>
-        <div class="text-lg font-semibold text-slate-100">${title}</div>
-        <div class="text-sm text-slate-400 mt-1">${subtitle}</div>
-      </div>
-    </button>`
-
   const modelOk = !pending && !!s.model?.primary && !!s.model?.hasOpenRouterKey
   const modelSubtitle = pending
     ? 'Checking&hellip;'
@@ -237,10 +225,8 @@ function pageHome() {
   return `
     ${sectionTitle('Step 1 &middot; Pick a model')}
     ${stepCard('model', 'Pick a model', modelSubtitle, modelOk)}
-    ${sectionTitle('Step 2 &middot; Channels Setting')}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      ${channelCard('telegram', 'Connect Telegram', tgSubtitle, tgOk)}
-    </div>`
+    ${sectionTitle('Step 2 &middot; Connect Telegram')}
+    ${stepCard('telegram', 'Connect Telegram', tgSubtitle, tgOk)}`
 }
 
 function escapeHtml(s) {
