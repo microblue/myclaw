@@ -18,6 +18,22 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.21',
+        date: '2026-05-02',
+        headline: 'Easy Setup\'s model picker now lists every OpenRouter model — not just five presets',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.21',
+        changes: [
+            {
+                type: 'changed',
+                text: 'The wizard\'s "Pick a model" step still shows five quick-pick presets at the top (DeepSeek, Claude Sonnet, GPT-5, Gemini, Auto-route), but now also includes a custom-ref input below them with autocomplete sourced from openrouter.ai\'s public model catalog (~300 models). Type a name to filter, paste any "openrouter/<provider>/<model>" ref, or browse the full list at openrouter.ai/models. The catalog is fetched on first wizard visit and cached in your browser for 24h, so subsequent visits don\'t re-hit the network. If the catalog fetch fails (offline / rate-limited), the input still works — the openclaw gateway accepts any well-formed ref.'
+            },
+            {
+                type: 'fixed',
+                text: 'If your claw\'s currently configured model isn\'t one of the five presets, the wizard now pre-fills it into the custom-ref input instead of showing all radios unchecked. Cleaner display of your existing setup; saving without changing anything no longer overwrites your model with a blank.'
+            }
+        ]
+    },
+    {
         version: 'v1.20',
         date: '2026-05-02',
         headline: 'Easy Setup loads in under a second — wizard now hits the gateway directly over WebSocket',

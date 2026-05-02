@@ -80,7 +80,39 @@ function logout() {
 }
 const app = document.getElementById('app')
 const footer = document.getElementById('footer')
-let state = { status: null, busy: false, error: null, loading: false, wechatQr: null, wechatStatus: 'idle' }
+let state = { status: null, busy: false, error: null, loading: false, wechatQr: null, wechatStatus: 'idle', orCatalog: null }
+
+const OR_CATALOG_KEY = 'myclaw.wizard.orCatalog.v1'
+const OR_CATALOG_TTL_MS = 86400_000
+
+async function loadOrCatalog() {
+  try {
+    const raw = localStorage.getItem(OR_CATALOG_KEY)
+    if (raw) {
+      const cached = JSON.parse(raw)
+      if (cached && Date.now() - cached.ts < OR_CATALOG_TTL_MS && Array.isArray(cached.models)) {
+        state.orCatalog = cached.models
+        if (location.hash === '#/model') render()
+        return
+      }
+    }
+  } catch { /* corrupt cache, refetch */ }
+  try {
+    const r = await fetch('https://openrouter.ai/api/v1/models')
+    if (!r.ok) return
+    const data = await r.json()
+    const models = (data.data || [])
+      .map(m => ({ id: 'openrouter/' + (m.id || ''), name: m.name || m.id || '' }))
+      .filter(m => m.id && m.name)
+      .sort((a, b) => a.name.localeCompare(b.name))
+    if (models.length === 0) return
+    state.orCatalog = models
+    try {
+      localStorage.setItem(OR_CATALOG_KEY, JSON.stringify({ ts: Date.now(), models }))
+    } catch { /* quota exceeded — fine, just don't cache */ }
+    if (location.hash === '#/model') render()
+  } catch { /* network error — fine, presets still work */ }
+}
 
 async function api(path, opts = {}) {
   const r = await fetch('/myclaw/api' + path, {
@@ -179,10 +211,15 @@ function pageHome() {
   return `${loadingStrip}<div class="space-y-3">${cards}</div>`
 }
 
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+}
+
 function pageModel() {
   const s = state.status || {}
   const current = s.model?.primary || ''
   const hasKey = s.model?.hasOpenRouterKey
+  const isPreset = PRESET_MODELS.some(m => m.ref === current)
   const radios = PRESET_MODELS.map(m => `
     <label class="card flex items-start gap-3 p-3 bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer border border-slate-700">
       <input type="radio" name="model" value="${m.ref}" ${m.ref === current ? 'checked' : ''} class="mt-1" />
@@ -192,6 +229,17 @@ function pageModel() {
         <div class="text-xs text-slate-500 font-mono mt-1">${m.ref}</div>
       </div>
     </label>`).join('')
+  const customDefault = !isPreset && current ? current : ''
+  const catalog = state.orCatalog || []
+  // Most browsers cap useful datalist render at a few hundred entries; the
+  // openrouter catalog is ~300, well within budget. Fallback if fetch failed:
+  // the input still accepts any pasted ref.
+  const catalogOptions = catalog
+    .map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`)
+    .join('')
+  const catalogHint = catalog.length > 0
+    ? `${catalog.length} models — type to filter`
+    : 'Catalog unavailable; paste any openrouter/&lt;provider&gt;/&lt;model&gt; ref'
   return `
     <div class="mb-4">
       <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
@@ -200,6 +248,12 @@ function pageModel() {
     <p class="text-sm text-slate-400 mb-4">All models are routed through OpenRouter. ${hasKey ? 'Your API key is already saved.' : 'Add your OpenRouter key below.'}</p>
     <form id="modelForm" class="space-y-2">
       ${radios}
+      <div class="pt-3 border-t border-slate-700">
+        <label class="block text-sm text-slate-300 mb-1 mt-3">Or any other OpenRouter model <span class="text-xs text-slate-500">(${catalogHint})</span></label>
+        <input type="text" name="customModel" list="orCatalogList" value="${escapeHtml(customDefault)}" autocomplete="off" placeholder="openrouter/anthropic/claude-opus-4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono" />
+        <datalist id="orCatalogList">${catalogOptions}</datalist>
+        <p class="text-xs text-slate-500 mt-1">Leave blank to use the preset above. Browse all at <a href="https://openrouter.ai/models" target="_blank" class="text-sky-400 hover:underline">openrouter.ai/models &rarr;</a></p>
+      </div>
       <div class="pt-3">
         <label class="block text-sm text-slate-300 mb-1">OpenRouter API key ${hasKey ? '<span class="text-xs text-slate-500">(leave blank to keep current)</span>' : '<span class="text-xs text-rose-400">(required)</span>'}</label>
         <input type="password" name="apiKey" placeholder="sk-or-v1-&hellip;" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono" />
@@ -335,9 +389,15 @@ function onTokenSubmit(e) {
 async function onModelSubmit(e) {
   e.preventDefault()
   const fd = new FormData(e.target)
-  const model = fd.get('model')
+  const custom = (fd.get('customModel') || '').toString().trim()
+  const model = custom || fd.get('model')
   const apiKey = (fd.get('apiKey') || '').toString().trim()
-  if (!model) { state.error = 'Pick a model'; render(); return }
+  if (!model) { state.error = 'Pick a model or paste a custom ref'; render(); return }
+  if (custom && !custom.startsWith('openrouter/')) {
+    state.error = 'Custom model ref must start with "openrouter/" (e.g. openrouter/anthropic/claude-opus-4)'
+    render()
+    return
+  }
   state.error = null
   setBusy(true)
   try {
@@ -410,6 +470,7 @@ function pollWechat() {
 
 if (token) {
   refreshStatus()
+  loadOrCatalog()
 } else {
   render()
 }
