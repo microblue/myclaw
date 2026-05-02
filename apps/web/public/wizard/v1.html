@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Claw Easy Setup</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- qrcodejs renders the WeChat QR client-side. Tencent's
+     qrcode_img_content field is a URL (not a base64 image), so we encode
+     that URL into a QR for the user to scan with their phone. -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1/qrcode.min.js"></script>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
   .card { transition: all 0.15s ease; }
@@ -13,12 +17,12 @@
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100 min-h-screen">
 
-<div class="max-w-2xl mx-auto px-4 py-8 sm:py-12">
-  <header class="mb-8 flex items-center gap-3">
-    <span class="text-3xl">&#129438;</span>
+<div class="max-w-3xl mx-auto px-4 py-10 sm:py-16">
+  <header class="mb-10 flex items-center gap-4">
+    <span class="text-5xl">&#129438;</span>
     <div>
-      <h1 class="text-xl font-semibold">Claw Easy Setup</h1>
-      <p class="text-sm text-slate-400">Two-minute setup for your private AI</p>
+      <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">Claw Easy Setup</h1>
+      <p class="text-base text-slate-400 mt-1">Two-minute setup for your private AI</p>
     </div>
   </header>
 
@@ -26,6 +30,11 @@
 
   <footer class="mt-10 text-center text-xs text-slate-500" id="footer"></footer>
 </div>
+
+<!-- Save overlay: covers the whole viewport while we're posting + restarting
+     the gateway, blocking clicks on every input/button underneath. Toggled
+     from render() based on state.busy. -->
+<div id="overlay" class="hidden fixed inset-0 z-50 bg-slate-900/85 backdrop-blur-sm flex items-center justify-center" aria-live="polite" aria-busy="true"></div>
 
 <script>
 const PRESET_MODELS = [
@@ -80,7 +89,7 @@ function logout() {
 }
 const app = document.getElementById('app')
 const footer = document.getElementById('footer')
-let state = { status: null, busy: false, error: null, loading: false, wechatQr: null, wechatStatus: 'idle', orCatalog: null }
+let state = { status: null, busy: false, saving: false, error: null, loading: false, wechatQr: null, wechatStatus: 'idle', orCatalog: null }
 
 const OR_CATALOG_KEY = 'myclaw.wizard.orCatalog.v1'
 const OR_CATALOG_TTL_MS = 86400_000
@@ -146,6 +155,7 @@ async function refreshStatus() {
 }
 
 function setBusy(b) { state.busy = b; render() }
+function setSaving(b) { state.saving = b; state.busy = b; render() }
 
 function navigate(hash) {
   if (location.hash !== hash) location.hash = hash
@@ -183,32 +193,61 @@ function pageNoAuth() {
 function pageHome() {
   const s = state.status
   const pending = s === null
-  const card = (id, title, subtitle, ok) => `
-    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-xl p-5 flex items-center justify-between border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
-      <div>
-        <div class="font-medium flex items-center gap-2">
-          <span class="${pending ? 'text-slate-500' : (ok ? 'text-emerald-400' : 'text-amber-400')}">${pending ? '&hellip;' : (ok ? '&check;' : '&hellip;')}</span>
-          <span>${title}</span>
+  const statusBadge = (ok) => pending
+    ? '<span class="inline-flex w-7 h-7 rounded-full bg-slate-700 text-slate-400 items-center justify-center text-base">&hellip;</span>'
+    : ok
+      ? '<span class="inline-flex w-7 h-7 rounded-full bg-emerald-500/15 text-emerald-400 items-center justify-center text-lg font-bold">&check;</span>'
+      : '<span class="inline-flex w-7 h-7 rounded-full bg-amber-500/15 text-amber-400 items-center justify-center text-base">&middot;</span>'
+  const sectionHeading = (label) => `<h3 class="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-3 mt-8 first:mt-0">${label}</h3>`
+  const stepCard = (id, stepLabel, title, subtitle, ok) => `
+    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-6 flex items-center justify-between border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
+      <div class="flex items-center gap-4">
+        ${statusBadge(ok)}
+        <div>
+          <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-0.5">${stepLabel}</div>
+          <div class="text-lg font-semibold text-slate-100">${title}</div>
+          <div class="text-sm text-slate-400 mt-1">${subtitle}</div>
         </div>
+      </div>
+      <span class="text-slate-500 text-xl">&rarr;</span>
+    </button>`
+  const channelCard = (id, title, subtitle, ok) => `
+    <button data-nav="#/${id}" ${pending ? 'disabled' : ''} class="card w-full text-left bg-slate-800 hover:bg-slate-700 rounded-2xl p-5 flex flex-col gap-3 border border-slate-700 ${pending ? 'opacity-70 cursor-wait' : ''}">
+      <div class="flex items-center justify-between">
+        ${statusBadge(ok)}
+        <span class="text-slate-500 text-xl">&rarr;</span>
+      </div>
+      <div>
+        <div class="text-base font-semibold text-slate-100">${title}</div>
         <div class="text-sm text-slate-400 mt-1">${subtitle}</div>
       </div>
-      <span class="text-slate-500">&rarr;</span>
     </button>`
   const loadingStrip = state.loading ? `
-    <div class="mb-3 bg-slate-800/60 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 flex items-center gap-2">
-      <span class="inline-block w-3 h-3 border-2 border-slate-600 border-t-sky-400 rounded-full animate-spin"></span>
+    <div class="mb-4 bg-slate-800/60 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-400 flex items-center gap-3">
+      <span class="inline-block w-4 h-4 border-2 border-slate-600 border-t-sky-400 rounded-full animate-spin"></span>
       <span>Reading your setup&hellip;</span>
     </div>` : ''
-  const cards = pending ? `
-      ${card('model', 'Pick a model', 'Checking&hellip;', false)}
-      ${card('telegram', 'Connect Telegram', 'Checking&hellip;', false)}
-      ${card('wechat', 'Connect WeChat', 'Checking&hellip;', false)}
-    ` : `
-      ${card('model', 'Pick a model', s.model?.primary || 'Not configured', !!s.model?.primary && !!s.model?.hasOpenRouterKey)}
-      ${card('telegram', 'Connect Telegram', s.telegram?.connected ? 'Bot connected' : (s.telegram?.configured ? 'Bot configured (not yet running)' : 'Not connected'), !!s.telegram?.connected)}
-      ${card('wechat', 'Connect WeChat', s.wechat?.connected ? 'Account connected' : (s.wechat?.installed ? 'Plugin ready, scan QR to bind' : 'Plugin not installed'), !!s.wechat?.connected)}
-    `
-  return `${loadingStrip}<div class="space-y-3">${cards}</div>`
+
+  const modelOk = !pending && !!s.model?.primary && !!s.model?.hasOpenRouterKey
+  const modelSubtitle = pending
+    ? 'Checking&hellip;'
+    : (s.model?.primary || 'Not configured')
+  const tgOk = !pending && !!s.telegram?.connected
+  const tgSubtitle = pending
+    ? 'Checking&hellip;'
+    : (s.telegram?.connected ? 'Bot connected' : (s.telegram?.configured ? 'Configured, not yet running' : 'Not connected'))
+  const wxOk = !pending && !!s.wechat?.connected
+  const wxSubtitle = pending
+    ? 'Checking&hellip;'
+    : (s.wechat?.connected ? 'Account connected' : (s.wechat?.installed ? 'Plugin ready — scan QR to bind' : 'Plugin not installed'))
+
+  return `${loadingStrip}
+    ${stepCard('model', 'Step 1', 'Pick a model', modelSubtitle, modelOk)}
+    ${sectionHeading('Channels')}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      ${channelCard('telegram', 'Connect Telegram', tgSubtitle, tgOk)}
+      ${channelCard('wechat', 'Connect WeChat', wxSubtitle, wxOk)}
+    </div>`
 }
 
 function escapeHtml(s) {
@@ -241,11 +280,11 @@ function pageModel() {
     ? `${catalog.length} models — type to filter`
     : 'Catalog unavailable; paste any openrouter/&lt;provider&gt;/&lt;model&gt; ref'
   return `
-    <div class="mb-4">
-      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
+    <div class="mb-6">
+      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back to setup</a>
     </div>
-    <h2 class="text-lg font-semibold mb-1">Pick a model</h2>
-    <p class="text-sm text-slate-400 mb-4">All models are routed through OpenRouter. ${hasKey ? 'Your API key is already saved.' : 'Add your OpenRouter key below.'}</p>
+    <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Pick a model</h2>
+    <p class="text-base text-slate-400 mb-6">All models are routed through OpenRouter. ${hasKey ? 'Your API key is already saved.' : 'Add your OpenRouter key below.'}</p>
     <form id="modelForm" class="space-y-2">
       ${radios}
       <div class="pt-3 border-t border-slate-700">
@@ -269,11 +308,11 @@ function pageModel() {
 function pageTelegram() {
   const s = state.status || {}
   return `
-    <div class="mb-4">
-      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
+    <div class="mb-6">
+      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back to setup</a>
     </div>
-    <h2 class="text-lg font-semibold mb-1">Connect Telegram</h2>
-    <ol class="text-sm text-slate-400 list-decimal pl-5 mb-4 space-y-1">
+    <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Connect Telegram</h2>
+    <ol class="text-base text-slate-400 list-decimal pl-5 mb-6 space-y-2">
       <li>Open <a href="https://t.me/BotFather" target="_blank" class="text-sky-400 hover:underline">@BotFather</a> on Telegram, send <code class="bg-slate-800 px-1 rounded">/newbot</code>, copy the token.</li>
       <li>Find your Telegram numeric ID via <a href="https://t.me/userinfobot" target="_blank" class="text-sky-400 hover:underline">@userinfobot</a>.</li>
     </ol>
@@ -317,20 +356,20 @@ function pageWechat() {
       <div class="mb-4">
         <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
       </div>
-      <h2 class="text-lg font-semibold mb-1">Scan with WeChat</h2>
-      <p class="text-sm text-slate-400 mb-4">Open WeChat on your phone &rarr; tap <strong>+</strong> &rarr; <strong>Scan</strong>, then point at the code below.</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Scan with WeChat</h2>
+      <p class="text-base text-slate-400 mb-6">Open WeChat on your phone &rarr; tap <strong>+</strong> &rarr; <strong>Scan</strong>, then point at the code below.</p>
       <div class="bg-white p-6 rounded-lg flex items-center justify-center mb-4">
-        <img src="${state.wechatQr}" alt="WeChat QR" class="max-w-xs" />
+        <div id="qrTarget" class="w-64 h-64"></div>
       </div>
       ${footer}
     `
   }
   return `
-    <div class="mb-4">
-      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back</a>
+    <div class="mb-6">
+      <a href="#/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back to setup</a>
     </div>
-    <h2 class="text-lg font-semibold mb-1">Connect WeChat</h2>
-    <p class="text-sm text-slate-400 mb-4">${state.wechatStatus === 'fetching' ? 'Fetching QR code from WeChat&hellip;' : (state.wechatStatus === 'error' ? 'Failed to fetch QR. Click below to retry.' : 'Click below to start a login session.')}</p>
+    <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Connect WeChat</h2>
+    <p class="text-base text-slate-400 mb-6">${state.wechatStatus === 'fetching' ? 'Fetching QR code from WeChat&hellip;' : (state.wechatStatus === 'error' ? 'Failed to fetch QR. Click below to retry.' : 'Click below to start a login session.')}</p>
     <button id="wechatStartBtn" ${state.busy ? 'disabled' : ''} class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg">
       ${state.busy ? 'Loading QR&hellip;' : 'Show QR'}
     </button>
@@ -339,7 +378,26 @@ function pageWechat() {
 
 // ── Render + bind ────────────────────────────────────
 
+const overlay = document.getElementById('overlay')
+function renderOverlay() {
+  if (state.saving) {
+    overlay.innerHTML = `
+      <div class="flex flex-col items-center gap-4 px-6 text-center max-w-sm">
+        <span class="inline-block w-14 h-14 border-4 border-slate-700 border-t-emerald-400 rounded-full animate-spin"></span>
+        <div class="text-lg font-semibold text-slate-100">Saving config &amp; restarting OpenClaw gateway</div>
+        <div class="text-sm text-slate-400">This usually takes ~15 seconds. Please wait&hellip;</div>
+      </div>`
+    overlay.classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+  } else {
+    overlay.innerHTML = ''
+    overlay.classList.add('hidden')
+    document.body.style.overflow = ''
+  }
+}
+
 function render() {
+  renderOverlay()
   if (!token) {
     app.innerHTML = pageNoAuth()
     footer.innerHTML = ''
@@ -376,6 +434,20 @@ function render() {
   if (wechatStartBtn) wechatStartBtn.addEventListener('click', onWechatStart)
   const logoutLink = document.getElementById('logoutLink')
   if (logoutLink) logoutLink.addEventListener('click', (e) => { e.preventDefault(); logout() })
+
+  // Tencent gives us a URL in `qrcode_img_content`; render it into a QR
+  // image in-browser. qrcodejs appends a canvas + img to the target,
+  // so clear first to avoid stacking on re-render.
+  const qrTarget = document.getElementById('qrTarget')
+  if (qrTarget && state.wechatQr && typeof QRCode !== 'undefined') {
+    qrTarget.innerHTML = ''
+    new QRCode(qrTarget, {
+      text: state.wechatQr,
+      width: 256,
+      height: 256,
+      correctLevel: QRCode.CorrectLevel.M
+    })
+  }
 }
 
 function onTokenSubmit(e) {
@@ -403,7 +475,7 @@ async function onModelSubmit(e) {
     return
   }
   state.error = null
-  setBusy(true)
+  setSaving(true)
   try {
     await api('/model', { method: 'POST', body: { model, apiKey: apiKey || undefined } })
     await refreshStatus()
@@ -411,7 +483,7 @@ async function onModelSubmit(e) {
   } catch (err) {
     state.error = err.message
   } finally {
-    setBusy(false)
+    setSaving(false)
   }
 }
 
@@ -422,7 +494,7 @@ async function onTelegramSubmit(e) {
   const allowedUsers = (fd.get('allowedUsers') || '').toString().split(',').map(s => s.trim()).filter(Boolean)
   if (!tok || allowedUsers.length === 0) { state.error = 'Token and at least one user ID required'; render(); return }
   state.error = null
-  setBusy(true)
+  setSaving(true)
   try {
     await api('/telegram', { method: 'POST', body: { token: tok, allowedUsers } })
     await refreshStatus()
@@ -430,7 +502,7 @@ async function onTelegramSubmit(e) {
   } catch (err) {
     state.error = err.message
   } finally {
-    setBusy(false)
+    setSaving(false)
   }
 }
 

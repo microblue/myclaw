@@ -18,6 +18,26 @@ export type PlatformRelease = {
 
 const PLATFORM_RELEASES: PlatformRelease[] = [
     {
+        version: 'v1.21.1',
+        date: '2026-05-02',
+        headline: 'Easy Setup polish — fixed WeChat QR rendering, added save spinner, redesigned the home page',
+        githubUrl: 'https://github.com/microblue/myclaw/releases/tag/v1.21.1',
+        changes: [
+            {
+                type: 'fixed',
+                text: 'The WeChat QR was rendering as a broken image. Tencent\'s qrcode_img_content field is a URL (e.g. https://liteapp.weixin.qq.com/q/...), not a base64 PNG, so the openclaw-weixin plugin\'s CLI path generates the QR client-side from that URL. The wizard SPA now does the same — added qrcodejs (~13KB CDN) and renders the QR into a 256×256 canvas in the page. Same scan flow as before, just an actual scannable code instead of a 404 image.'
+            },
+            {
+                type: 'added',
+                text: 'When you click "Save & restart gateway" (model or Telegram), a full-screen overlay now appears with a centered spinner and "Saving config & restarting OpenClaw gateway. This usually takes ~15 seconds. Please wait…" — blocks accidental clicks during the bounce window so you can\'t double-submit or navigate mid-restart. Goes away the moment /status confirms the gateway is back.'
+            },
+            {
+                type: 'changed',
+                text: 'Home page redesigned for a more polished feel: larger header, bigger typography, more breathing room. "Pick a model" is now a full-width Step 1 card. "Connect Telegram" and "Connect WeChat" sit side-by-side under a "Channels" section heading instead of stacking vertically. Subpage headings (Pick a model / Connect Telegram / Connect WeChat / Scan with WeChat) all bumped to match.'
+            }
+        ]
+    },
+    {
         version: 'v1.21',
         date: '2026-05-02',
         headline: 'Pick any OpenRouter model in Easy Setup; WeChat QR now appears in seconds, not 8 minutes',
