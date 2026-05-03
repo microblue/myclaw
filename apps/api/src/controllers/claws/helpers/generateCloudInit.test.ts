@@ -291,32 +291,21 @@ describe('generateCloudInit', () => {
     })
 
     // v1.19 — root path redirects to /myclaw/ so the easy-setup wizard
-    // is the default landing experience for fresh claws. WeChat plugin
-    // is pre-installed so the wizard's WeChat page can show a QR scan
-    // inline without making the user click "install" first.
+    // is the default landing experience for fresh claws. GreatLove
+    // plugin is pre-installed from a tarball served by the SPA at
+    // /downloads/greatlove-openclaw-plugin-<version>.tgz.
     describe('easy-setup default landing (/myclaw/)', () => {
-        it('seeds the openclaw-weixin plugin entry as enabled in openclaw.json', () => {
-            expect(output).toContain('"openclaw-weixin"')
-            // sit alongside openrouter + browser entries
-            const start = output.indexOf('"plugins"')
-            const end = output.indexOf('"meta"', start)
-            expect(end).toBeGreaterThan(start)
-            const block = output.slice(start, end)
-            expect(block).toContain('"openclaw-weixin"')
-            expect(block).toMatch(/"openclaw-weixin":\s*\{[^}]*"enabled":\s*true/s)
-        })
-
-        it('pre-installs the Tencent openclaw-weixin plugin in cloud-init', () => {
-            expect(output).toContain('stage wechat-install')
-            expect(output).toContain('plugins install @tencent-weixin/openclaw-weixin')
+        it('pre-installs the GreatLove channel plugin from the SPA-served tarball', () => {
+            expect(output).toContain('stage greatlove-install')
+            expect(output).toContain('https://myclaw.one/downloads/greatlove-openclaw-plugin-1.0.0.tgz')
             // installs as the openclaw user so it lands in the openclaw
             // user's npm prefix + extensions dir (otherwise it would go
             // under root and the gateway couldn't load it)
             expect(output).toMatch(/sudo\s+-u\s+openclaw\s+-H\s+\/opt\/openclaw\/bin\/openclaw\s+plugins\s+install/)
         })
 
-        it('wechat-install stage is non-fatal so a network blip doesnt abort bootstrap', () => {
-            const start = output.indexOf('stage wechat-install')
+        it('greatlove-install stage is non-fatal so a network blip doesnt abort bootstrap', () => {
+            const start = output.indexOf('stage greatlove-install')
             const end = output.indexOf('stage firewall')
             expect(start).toBeGreaterThan(-1)
             expect(end).toBeGreaterThan(start)

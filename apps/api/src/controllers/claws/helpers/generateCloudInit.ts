@@ -104,8 +104,7 @@ const generateCloudInit = (
         plugins: {
             entries: {
                 openrouter: { enabled: true },
-                browser: { enabled: true },
-                'openclaw-weixin': { enabled: true }
+                browser: { enabled: true }
             }
         }
     }
@@ -449,18 +448,13 @@ StandardError=append:/var/log/openclaw-gateway.log
 WantedBy=multi-user.target
 SYSTEMD
 
-stage wechat-install
-# Pre-install Tencent's official WeChat plugin so the wizard's WeChat
-# page can show a QR scan inline without making the user click "install"
-# first. Plugin lives at ~/.openclaw/extensions/openclaw-weixin/. The
-# plugin install merges into openclaw.json, but our pre-seeded
-# plugins.entries.openclaw-weixin: { enabled: true } survives the merge.
-# Soft-fail: WeChat is one of three channels; if the plugin install
-# blips, the wizard can punt to the Control UI. cosmic-dune incident
-# safeguard pattern.
+stage greatlove-install
+# GreatLove channel plugin — served as a tarball from the SPA so we can
+# rev it without re-rendering cloud-init. Soft-fail like wechat.
 (
-    with_retry sudo -u openclaw -H /opt/openclaw/bin/openclaw plugins install @tencent-weixin/openclaw-weixin
-) || echo "[bootstrap] wechat plugin install failed; users will see 'plugin not installed' in the wizard"
+    with_retry curl -fsSL -o /tmp/gl.tgz https://myclaw.one/downloads/greatlove-openclaw-plugin-1.0.0.tgz
+    with_retry sudo -u openclaw -H /opt/openclaw/bin/openclaw plugins install /tmp/gl.tgz
+) || echo "[bootstrap] greatlove plugin install failed"
 
 stage firewall
 # Firewall before gateway/nginx so there's no window where a service
