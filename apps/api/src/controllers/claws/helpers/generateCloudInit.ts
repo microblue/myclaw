@@ -158,7 +158,7 @@ const generateCloudInit = (
     // first time it touches the config for any other reason (a user
     // config change, a plugin toggle, etc.), which is fine.
     config.meta = {
-        lastTouchedVersion: '2026.4.27',
+        lastTouchedVersion: '2026.4.11',
         lastTouchedAt: '2026-04-01T00:00:00.000Z'
     }
 
@@ -288,7 +288,7 @@ stage openclaw-install
 mkdir -p /opt/openclaw
 chown -R openclaw:openclaw /opt/openclaw
 sudo -u openclaw -H npm config set prefix /opt/openclaw
-with_retry sudo -u openclaw -H npm install -g --prefer-offline --no-audit --no-fund openclaw@2026.4.27
+with_retry sudo -u openclaw -H npm install -g --prefer-offline --no-audit --no-fund openclaw@2026.4.11
 echo 'export PATH=/opt/openclaw/bin:$PATH' > /etc/profile.d/openclaw.sh
 chmod 644 /etc/profile.d/openclaw.sh
 

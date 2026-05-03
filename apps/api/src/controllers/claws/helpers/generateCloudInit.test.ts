@@ -182,7 +182,7 @@ describe('generateCloudInit', () => {
 
     it('includes a pre-populated `meta` block matching the pinned openclaw version', () => {
         expect(output).toContain('"meta"')
-        expect(output).toContain('"lastTouchedVersion": "2026.4.27"')
+        expect(output).toContain('"lastTouchedVersion": "2026.4.11"')
         expect(output).toContain('"lastTouchedAt"')
     })
 
