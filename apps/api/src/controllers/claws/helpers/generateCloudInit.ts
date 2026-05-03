@@ -541,6 +541,12 @@ WSVC
     systemctl daemon-reload
     systemctl enable myclaw-wizard
     systemctl start myclaw-wizard
+    # Wait for shim to actually bind 18790 before letting Caddy take
+    # traffic — Type=simple returns as soon as ExecStart fires, which
+    # is ~500ms before node binds the socket. Without this, a request
+    # arriving in that window 502s and the SPA shows "Reading your
+    # config…" stuck forever.
+    for i in $(seq 1 20); do ss -tln | grep -q :18790 && break; sleep 1; done
 ) || echo "[bootstrap] wizard setup failed; /myclaw/ will 404 on this claw — Control UI at / still works"
 
 stage caddy
@@ -571,7 +577,9 @@ ${fullDomain} {
     }
     @wizardApi path /myclaw/api/*
     handle @wizardApi {
-        reverse_proxy 127.0.0.1:18790
+        reverse_proxy 127.0.0.1:18790 {
+            lb_try_duration 10s
+        }
     }
     @wizardStatic path /myclaw /myclaw/*
     handle @wizardStatic {
