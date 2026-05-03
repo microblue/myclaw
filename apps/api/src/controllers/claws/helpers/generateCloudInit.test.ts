@@ -400,10 +400,26 @@ describe('generateCloudInit', () => {
         // call before allocating an IP — DB row stranded as
         // ip=NULL/provider_server_id=NULL/status=unreachable. Any future
         // bloat of this script must fail in CI, not in the field.
-        it('rendered output stays under the AWS Lightsail userData base64 cap', () => {
-            const b64Bytes = Buffer.from(output, 'utf8').toString('base64')
-                .length
-            expect(b64Bytes).toBeLessThan(16384)
+        //
+        // Test below renders with REALISTIC-size inputs (64-char hex
+        // gateway token + ~80-char OpenRouter key) instead of the parent
+        // suite's `tok_abc123` short fixture — the old fixture under-
+        // counted by ~700 base64 bytes and let an over-cap script slip
+        // through CI repeatedly. We also enforce a 256-byte safety
+        // buffer below the hard 16384 cap so we get a CI signal *before*
+        // a real provisioning rejects.
+        it('rendered output stays under the AWS Lightsail userData base64 cap with realistic inputs', () => {
+            const realToken = 'a'.repeat(64)
+            const realOrKey = 'sk-or-v1-' + 'x'.repeat(64)
+            const realistic = generateCloudInit(
+                'PlaceholderRoot123!@#',
+                'sample-test',
+                'myclaw.one',
+                realToken,
+                { openrouterApiKey: realOrKey, defaultModel: 'openrouter/anthropic/claude-sonnet-4.6' }
+            )
+            const b64Bytes = Buffer.from(realistic, 'utf8').toString('base64').length
+            expect(b64Bytes).toBeLessThan(16384 - 256)
         })
     })
 })
