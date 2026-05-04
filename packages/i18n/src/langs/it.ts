@@ -2250,11 +2250,6 @@ clawName: 'Nome',
         voiceListening: 'In ascolto...',
         voiceTapToSpeak: "Tocca l'orb per iniziare"
     },
-    announcement: {
-        title: 'Avviso di Servizio',
-        message:
-            "A causa dell'elevata domanda, il deployment di Claw è temporaneamente non disponibile. I claw esistenti funzionano normalmente."
-    },
     productHunt: {
         liveOn: 'Live su',
         productHunt: 'Product Hunt',

@@ -124,6 +124,8 @@ const API_PATHS = {
         ACTIVATION_CODE_BATCHES: '/admin/activation-codes/batches',
         ACTIVATION_CODE_BATCH_EXPORT: (batchId: string) =>
             `/admin/activation-codes/batches/${batchId}/export`,
+        VOID_ACTIVATION_CODE_BATCH: (batchId: string) =>
+            `/admin/activation-codes/batches/${batchId}/void-unused`,
         VOID_ACTIVATION_CODE: (id: string) =>
             `/admin/activation-codes/${id}/void`
     },

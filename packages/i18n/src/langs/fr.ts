@@ -2283,11 +2283,6 @@ clawName: 'Nom',
         voiceListening: 'Écoute en cours...',
         voiceTapToSpeak: "Appuyez sur l\'orbe pour commencer"
     },
-    announcement: {
-        title: 'Avis de service',
-        message:
-            'En raison de la forte demande, le déploiement de Claw est temporairement indisponible. Les claws existants fonctionnent normalement.'
-    },
     productHunt: {
         liveOn: 'En direct sur',
         productHunt: 'Product Hunt',

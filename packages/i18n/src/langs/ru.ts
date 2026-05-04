@@ -2198,11 +2198,6 @@ clawName: 'Имя',
         voiceListening: 'Слушаю...',
         voiceTapToSpeak: 'Нажмите на сферу, чтобы начать'
     },
-    announcement: {
-        title: 'Уведомление о сервисе',
-        message:
-            'Из-за высокого спроса развёртывания {{providers}} временно недоступны. Существующие клоу работают нормально.'
-    },
     productHunt: {
         liveOn: 'Мы на',
         productHunt: 'Product Hunt',

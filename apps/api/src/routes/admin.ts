@@ -21,8 +21,10 @@ import {
     reassignAdminClaw,
     createActivationCodeBatch,
     getAdminActivationCodes,
+    getAdminActivationCodeBatches,
     exportActivationCodeBatch,
-    voidActivationCode
+    voidActivationCode,
+    voidActivationCodeBatch
 } from '@/controllers/admin'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -47,10 +49,15 @@ app.get('/emails', getAdminEmails)
 app.get('/settings', getAdminSettings)
 app.put('/settings/:key', updateAdminSetting)
 app.get('/activation-codes', getAdminActivationCodes)
+app.get('/activation-codes/batches', getAdminActivationCodeBatches)
 app.post('/activation-codes/batches', createActivationCodeBatch)
 app.get(
     '/activation-codes/batches/:batchId/export',
     exportActivationCodeBatch
+)
+app.put(
+    '/activation-codes/batches/:batchId/void-unused',
+    voidActivationCodeBatch
 )
 app.put('/activation-codes/:id/void', voidActivationCode)
 

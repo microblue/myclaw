@@ -2228,11 +2228,6 @@ clawName: 'Naam',
         voiceListening: 'Luisteren...',
         voiceTapToSpeak: 'Tik op de bol om te beginnen'
     },
-    announcement: {
-        title: 'Servicemelding',
-        message:
-            'Door hoge vraag is Claw-deployment tijdelijk niet beschikbaar. Bestaande claws draaien normaal.'
-    },
     productHunt: {
         liveOn: 'Live op',
         productHunt: 'Product Hunt',

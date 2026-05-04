@@ -1,6 +1,6 @@
 import type { FC, FormEvent, ReactNode } from 'react'
 
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -8,7 +8,6 @@ import { useAuth } from '@/lib/auth'
 import { useNetworkStatus } from '@/hooks'
 import { ROUTES } from '@/lib'
 import {
-    AnnouncementBanner,
     Logo,
     NetworkStatus,
     PageBackground,
@@ -98,10 +97,7 @@ const Login: FC = (): ReactNode => {
             {isOffline ? (
                 <NetworkStatus />
             ) : (
-                <Fragment>
-                    <ProductHuntBanner />
-                    {!isLocal && <AnnouncementBanner />}
-                </Fragment>
+                <ProductHuntBanner />
             )}
             <div className='flex min-h-screen items-center justify-center px-4'>
                 <PageTitle

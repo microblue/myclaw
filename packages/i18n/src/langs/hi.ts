@@ -2194,11 +2194,6 @@ clawName: 'नाम',
         voiceListening: 'सुन रहा है...',
         voiceTapToSpeak: 'शुरू करने के लिए ऑर्ब को टैप करें'
     },
-    announcement: {
-        title: 'सेवा सूचना',
-        message:
-            'उच्च मांग के कारण, Claw डिप्लॉयमेंट अस्थायी रूप से अनुपलब्ध है. मौजूदा क्लॉज़ सामान्य रूप से चल रहे हैं.'
-    },
     productHunt: {
         liveOn: 'लाइव है',
         productHunt: 'Product Hunt',

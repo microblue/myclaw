@@ -2219,11 +2219,6 @@ clawName: 'Nazwa',
         voiceListening: 'Słucham...',
         voiceTapToSpeak: 'Dotknij kulę, aby zacząć'
     },
-    announcement: {
-        title: 'Informacja o usłudze',
-        message:
-            'Ze względu na duże zapotrzebowanie, wdrożenie Claw jest tymczasowo niedostępne. Istniejące claws działają normalnie.'
-    },
     productHunt: {
         liveOn: 'Na żywo na',
         productHunt: 'Product Hunt',

@@ -87,16 +87,7 @@ const Landing: FC = (): ReactNode => {
     const { phBannerVisible } = useUIStore()
     const showTutorialBadge = true
     const [videoOpen, setVideoOpen] = useState(false)
-    const {
-        plans: hetznerPlans,
-        isLoading: hetznerLoading,
-        atCapacity: hetznerAtCapacity
-    } = usePlans()
-
-    const announcementVisible =
-        !phBannerVisible &&
-        !hetznerLoading &&
-        (!hetznerPlans?.length || hetznerAtCapacity)
+    const { plans: hetznerPlans, isLoading: hetznerLoading } = usePlans()
 
     const allDoneLoading = !hetznerLoading
 
@@ -216,7 +207,7 @@ const Landing: FC = (): ReactNode => {
 
             <main>
                 <section
-                    className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : announcementVisible ? 'pt-44' : 'pt-32'}`}
+                    className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : 'pt-32'}`}
                 >
                     <div className='landing-grid pointer-events-none absolute inset-0' />
 

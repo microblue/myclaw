@@ -2231,11 +2231,6 @@ clawName: 'Nome',
         voiceListening: 'Ouvindo...',
         voiceTapToSpeak: 'Toque no orbe para começar'
     },
-    announcement: {
-        title: 'Aviso de Serviço',
-        message:
-            'Devido à alta demanda, a implantação de Claw está temporariamente indisponível. Claws existentes estão funcionando normalmente.'
-    },
     productHunt: {
         liveOn: 'Ao vivo no',
         productHunt: 'Product Hunt',

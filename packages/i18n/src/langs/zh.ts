@@ -2031,11 +2031,6 @@ const zh: Translations = {
         voiceListening: '正在监听...',
         voiceTapToSpeak: '点击圆球开始'
     },
-    announcement: {
-        title: '服务通知',
-        message:
-            '由于需求量大，{{providers}} 部署暂时不可用。现有 Claws 运行正常。'
-    },
     productHunt: {
         liveOn: '已上线',
         productHunt: 'Product Hunt',

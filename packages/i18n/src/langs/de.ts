@@ -2256,11 +2256,6 @@ clawName: 'Name',
         voiceListening: 'Zuhören...',
         voiceTapToSpeak: 'Tippe auf die Kugel zum Starten'
     },
-    announcement: {
-        title: 'Servicehinweis',
-        message:
-            'Aufgrund hoher Nachfrage ist die Claw-Bereitstellung vorübergehend nicht verfügbar. Bestehende Claws laufen normal.'
-    },
     productHunt: {
         liveOn: 'Live auf',
         productHunt: 'Product Hunt',

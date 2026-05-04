@@ -8,7 +8,6 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile, useRoutePrefetch } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
-import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
 import Logo from '@/components/layout/Logo'
 import ProductHuntBanner from '@/components/layout/ProductHuntBanner'
 import ProductSwitcher from '@/components/layout/ProductSwitcher'
@@ -80,7 +79,6 @@ const Header: FC<HeaderProps> = ({
                           : 'border-b border-transparent bg-transparent'
                 }`}
             >
-                <AnnouncementBanner />
                 <ProductHuntBanner />
                 <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
                     <div className='flex items-center gap-3'>

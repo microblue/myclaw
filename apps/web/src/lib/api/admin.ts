@@ -176,6 +176,29 @@ const admin = {
             API_PATHS.ADMIN.VOID_ACTIVATION_CODE(id),
             {}
         ),
+    listAdminActivationCodeBatches: () =>
+        client.get<{
+            items: Array<{
+                batchId: string
+                partnerName: string | null
+                planId: string
+                provider: string
+                region: string
+                tierLabel: string | null
+                validityMonths: number | null
+                expiresAt: string | null
+                createdAt: string
+                total: number
+                unused: number
+                redeemed: number
+                voided: number
+            }>
+        }>(API_PATHS.ADMIN.ACTIVATION_CODE_BATCHES),
+    voidActivationCodeBatch: (batchId: string) =>
+        client.put<{ batchId: string; voided: number }>(
+            API_PATHS.ADMIN.VOID_ACTIVATION_CODE_BATCH(batchId),
+            {}
+        ),
     // CSV export needs the auth token AND a blob response, neither of
     // which the JSON RequestClient handles. Drop to raw fetch, then
     // trigger a Blob URL download in the browser.

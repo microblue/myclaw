@@ -2175,11 +2175,6 @@ clawName: '名前',
         voiceListening: '聞いています...',
         voiceTapToSpeak: 'オーブをタップして開始'
     },
-    announcement: {
-        title: 'サービスのお知らせ',
-        message:
-            '需要が高いため、Clawのデプロイは一時的に利用できません。既存のClawは正常に稼働しています。'
-    },
     productHunt: {
         liveOn: '公開中',
         productHunt: 'Product Hunt',

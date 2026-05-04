@@ -1,5 +1,4 @@
 import {
-    AnnouncementBanner,
     BetaBadge,
     Footer,
     Header,
@@ -84,7 +83,6 @@ export {
     AffiliatePaymentHistory,
     AffiliatePeriodSelector,
     AffiliateStatsGrid,
-    AnnouncementBanner,
     ActionButton,
     BetaBadge,
     BlogCard,

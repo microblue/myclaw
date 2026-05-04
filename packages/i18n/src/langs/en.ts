@@ -2171,11 +2171,6 @@ const en = {
         voiceListening: 'Listening...',
         voiceTapToSpeak: 'Tap the orb to start'
     },
-    announcement: {
-        title: 'Service Notice',
-        message:
-            'Due to high demand, Claw deployment is temporarily unavailable. Existing claws are running normally.'
-    },
     productHunt: {
         liveOn: 'Live on',
         productHunt: 'Product Hunt',

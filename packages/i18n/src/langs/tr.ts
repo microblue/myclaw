@@ -2205,11 +2205,6 @@ clawName: 'Ad',
         voiceListening: 'Dinleniyor...',
         voiceTapToSpeak: 'Başlamak için küreye dokunun'
     },
-    announcement: {
-        title: 'Hizmet Bildirimi',
-        message:
-            "Yoğun talep nedeniyle {{providers}} dağıtımları geçici olarak kullanılamıyor. Mevcut claw'lar normal çalışıyor."
-    },
     productHunt: {
         liveOn: 'Yayında',
         productHunt: 'Product Hunt',

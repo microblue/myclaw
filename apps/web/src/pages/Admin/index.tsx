@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type { AdminEntitySelection } from '@/ts/Interfaces'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
@@ -27,9 +27,12 @@ import {
     ChartLineUpIcon,
     CreditCardIcon,
     GearIcon,
-    KeyIcon
+    KeyIcon,
+    SidebarSimpleIcon
 } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
+
+const SIDEBAR_PREF_KEY = 'admin-sidebar-collapsed'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 import { UsersTab } from '@/pages/Admin/tabs'
 
@@ -60,6 +63,16 @@ const Admin: FC = (): ReactNode => {
         useState<AdminEntitySelection | null>(null)
     const isAdmin = profile?.role === userRole.admin
     const { data: stats } = useAdminStats()
+
+    // Persist sidebar collapsed state across reloads. Default = expanded.
+    // We read once on mount (synchronous localStorage is fine in the SPA).
+    const [collapsed, setCollapsed] = useState<boolean>(() => {
+        if (typeof window === 'undefined') return false
+        return window.localStorage.getItem(SIDEBAR_PREF_KEY) === '1'
+    })
+    useEffect(() => {
+        window.localStorage.setItem(SIDEBAR_PREF_KEY, collapsed ? '1' : '0')
+    }, [collapsed])
 
     const setActiveTab = (tab: string) => {
         setSearchParams({ tab })
@@ -142,11 +155,46 @@ const Admin: FC = (): ReactNode => {
                         </div>
                     </Fragment>
                 ) : (
-                    <div className='grid gap-6 md:grid-cols-[200px_1fr]'>
+                    <div
+                        className={`grid gap-6 ${
+                            collapsed
+                                ? 'md:grid-cols-[56px_1fr]'
+                                : 'md:grid-cols-[200px_1fr]'
+                        }`}
+                    >
                         <aside>
-                            <h1 className='mb-4 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
-                                Admin console
-                            </h1>
+                            <div
+                                className={`mb-4 flex items-center ${
+                                    collapsed
+                                        ? 'justify-center'
+                                        : 'justify-between px-2'
+                                }`}
+                            >
+                                {!collapsed && (
+                                    <h1 className='text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
+                                        Admin
+                                    </h1>
+                                )}
+                                <button
+                                    type='button'
+                                    onClick={() =>
+                                        setCollapsed((prev) => !prev)
+                                    }
+                                    className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground rounded-md p-1.5 transition-colors'
+                                    title={
+                                        collapsed
+                                            ? 'Expand sidebar'
+                                            : 'Collapse sidebar'
+                                    }
+                                    aria-label={
+                                        collapsed
+                                            ? 'Expand sidebar'
+                                            : 'Collapse sidebar'
+                                    }
+                                >
+                                    <SidebarSimpleIcon className='h-4 w-4' />
+                                </button>
+                            </div>
                             <nav className='flex flex-col gap-0.5'>
                                 {sections.map((section) => {
                                     const isActive = activeTab === section.key
@@ -158,27 +206,43 @@ const Admin: FC = (): ReactNode => {
                                                 setActiveTab(section.key)
                                             }
                                             disabled={isActive}
-                                            className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                                            title={
+                                                collapsed
+                                                    ? section.label
+                                                    : undefined
+                                            }
+                                            className={`flex items-center gap-2 rounded-md text-left text-sm transition-colors ${
+                                                collapsed
+                                                    ? 'justify-center p-2'
+                                                    : 'justify-between px-3 py-2'
+                                            } ${
                                                 isActive
                                                     ? 'bg-foreground/10 text-foreground font-medium'
                                                     : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
                                             }`}
                                         >
-                                            <span className='flex items-center gap-2'>
+                                            <span
+                                                className={
+                                                    collapsed
+                                                        ? ''
+                                                        : 'flex items-center gap-2'
+                                                }
+                                            >
                                                 <section.icon className='h-4 w-4 shrink-0' />
-                                                {section.label}
+                                                {!collapsed && section.label}
                                             </span>
-                                            {section.count !== undefined && (
-                                                <span
-                                                    className={`text-xs ${
-                                                        isActive
-                                                            ? 'text-foreground/70'
-                                                            : 'text-muted-foreground/70'
-                                                    }`}
-                                                >
-                                                    {section.count}
-                                                </span>
-                                            )}
+                                            {!collapsed &&
+                                                section.count !== undefined && (
+                                                    <span
+                                                        className={`text-xs ${
+                                                            isActive
+                                                                ? 'text-foreground/70'
+                                                                : 'text-muted-foreground/70'
+                                                        }`}
+                                                    >
+                                                        {section.count}
+                                                    </span>
+                                                )}
                                         </button>
                                     )
                                 })}

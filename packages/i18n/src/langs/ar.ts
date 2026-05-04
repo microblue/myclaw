@@ -2119,11 +2119,6 @@ clawName: 'الاسم',
         voiceListening: 'جارٍ الاستماع...',
         voiceTapToSpeak: 'انقر على الكرة للبدء'
     },
-    announcement: {
-        title: 'إشعار الخدمة',
-        message:
-            'بسبب الطلب المرتفع، نشر Claw غير متاح مؤقتاً. المخالب الموجودة تعمل بشكل طبيعي.'
-    },
     productHunt: {
         liveOn: 'متاح على',
         productHunt: 'Product Hunt',
