@@ -192,9 +192,9 @@ mkdir -p /var/lib/openclaw-bootstrap
 BOOTSTRAP_STATE=/var/lib/openclaw-bootstrap/state
 stage() {
     echo "stage=$1 at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
-    echo "[bootstrap] >>> $1"
+    echo "[oc] >>> $1"
 }
-trap 'rc=$?; [ $rc -ne 0 ] && { echo "status=failed stage=$(awk -F= "/^stage=/{print \\$2}" "$BOOTSTRAP_STATE" 2>/dev/null) exitCode=$rc at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"; echo "[bootstrap] !!! FAILED (rc=$rc, stage=$(awk -F= \\"/^stage=/{print \\\\\\$2}\\" "$BOOTSTRAP_STATE" 2>/dev/null))"; }' EXIT
+trap 'rc=$?; [ $rc -ne 0 ] && { S=$(awk -F= "/^stage=/{print \\$2}" "$BOOTSTRAP_STATE" 2>/dev/null); echo "status=failed stage=$S rc=$rc" > "$BOOTSTRAP_STATE"; echo "[oc] FAILED stage=$S rc=$rc"; }' EXIT
 
 # Retry any command up to 5 times with exponential backoff. Every
 # external resource fetch (apt, npm, curl, dpkg) goes through this —
@@ -205,10 +205,10 @@ with_retry() {
     while true; do
         if "$@"; then return 0; fi
         if [ $i -ge $attempts ]; then
-            echo "[bootstrap] retry exhausted ($attempts attempts): $*"
+            echo "[oc] retry exhausted ($attempts): $*"
             return 1
         fi
-        echo "[bootstrap] attempt $i/$attempts failed, sleeping \${delay}s: $*"
+        echo "[oc] attempt $i/$attempts failed, sleep \${delay}s: $*"
         sleep $delay
         delay=$((delay * 2))
         i=$((i + 1))
@@ -266,9 +266,7 @@ stage openclaw-user
 # pre-2026-04-29 claws had openclaw at /usr/lib/node_modules (root-owned)
 # but the gateway running as openclaw, so the WebUI Update button died
 # with EACCES at the staging step.
-if ! id openclaw >/dev/null 2>&1; then
-    useradd -r -m -d /home/openclaw -s /bin/bash openclaw
-fi
+id openclaw >/dev/null 2>&1 || useradd -r -m -d /home/openclaw -s /bin/bash openclaw
 echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
 stage openclaw-install
@@ -313,7 +311,7 @@ if [ -n "$CHROME_URL" ]; then
     dpkg -i /tmp/google-chrome.deb || with_retry apt-get install -f -y
     rm -f /tmp/google-chrome.deb
 else
-    echo "[bootstrap] no Chrome .deb for $CHROME_ARCH; installing chromium from apt"
+    echo "[oc] no Chrome .deb for $CHROME_ARCH; installing chromium from apt"
     with_retry apt-get install -y chromium || with_retry apt-get install -y chromium-browser || true
 fi
 
@@ -337,13 +335,11 @@ stage node-exporter
     case "$NE_ARCH" in
         amd64|arm64) NE_PKG="node_exporter-$NE_VERSION.linux-$NE_ARCH" ;;
         *)
-            echo "[bootstrap] node_exporter has no prebuilt for $NE_ARCH; skipping"
+            echo "[oc] node_exporter has no prebuilt for $NE_ARCH; skipping"
             exit 0
             ;;
     esac
-    if ! id node_exporter >/dev/null 2>&1; then
-        useradd -r -s /usr/sbin/nologin node_exporter
-    fi
+    id node_exporter >/dev/null 2>&1 || useradd -r -s /usr/sbin/nologin node_exporter
     mkdir -p /opt/node_exporter
     # -4 forces IPv4 — Lightsail's IPv6 route to github.com sometimes
     # blackholes on first boot, and the curl default of "happy eyeballs"
@@ -375,7 +371,7 @@ NESVC
     systemctl daemon-reload
     systemctl enable node_exporter
     systemctl start node_exporter
-) || echo "[bootstrap] node_exporter setup failed; Overview metrics will read 'unavailable' on this claw"
+) || echo "[oc] node_exporter setup failed; Overview metrics will read 'unavailable' on this claw"
 
 stage openclaw-config
 mkdir -p /home/openclaw/.openclaw/agents/main/agent
@@ -448,13 +444,23 @@ StandardError=append:/var/log/openclaw-gateway.log
 WantedBy=multi-user.target
 SYSTEMD
 
+stage version-watcher
+# WebUI Update writes a new openclaw under /opt/openclaw/lib/node_modules
+# but can't restart the gateway itself — gateway.reload.mode=off above
+# breaks the 12-min self-restart loop AND its update.run -> restart
+# path. A systemd path-unit watching package.json bridges the gap. The
+# install script lives on the platform web app so we can iterate on the
+# unit definitions without re-rendering this cloud-init (which is at
+# ~99% of Lightsail's 16KB userData base64 cap).
+(curl -fsSL https://myclaw.one/oc-watcher.sh|bash) || echo "[oc] watcher install failed"
+
 stage greatlove-install
 # GreatLove channel plugin — served as a tarball from the SPA so we can
 # rev it without re-rendering cloud-init. Soft-fail like wechat.
 (
     with_retry curl -fsSL -o /tmp/gl.tgz https://myclaw.one/downloads/greatlove-openclaw-plugin-1.0.0.tgz
     with_retry sudo -u openclaw -H /opt/openclaw/bin/openclaw plugins install /tmp/gl.tgz
-) || echo "[bootstrap] greatlove plugin install failed"
+) || echo "[oc] greatlove plugin install failed"
 
 stage firewall
 # Firewall before gateway/nginx so there's no window where a service
@@ -476,7 +482,7 @@ systemctl start openclaw-gateway
 # with a healthy-but-slow gateway startup.
 for i in $(seq 1 30); do
     if curl -sf -o /dev/null http://127.0.0.1:18789; then
-        echo "[bootstrap] gateway up after \${i}x 5s"
+        echo "[oc] gateway up after \${i}x 5s"
         break
     fi
     sleep 5
@@ -489,10 +495,10 @@ stage dns-wait
 # exponential backoff (up to ~3 days), so a slow propagation still
 # resolves; the DNS wait is just to avoid burning the first attempt
 # while the record is still being written.
-echo "[bootstrap] waiting for DNS record for ${fullDomain}"
+echo "[oc] waiting for DNS record for ${fullDomain}"
 for i in $(seq 1 30); do
     if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
-        echo "[bootstrap] DNS resolved after \${i}x 2s"
+        echo "[oc] DNS resolved after \${i}x 2s"
         break
     fi
     sleep 2
@@ -541,7 +547,7 @@ WSVC
     # arriving in that window 502s and the SPA shows "Reading your
     # config…" stuck forever.
     for i in $(seq 1 20); do ss -tln | grep -q :18790 && break; sleep 1; done
-) || echo "[bootstrap] wizard setup failed; /myclaw/ will 404 on this claw — Control UI at / still works"
+) || echo "[oc] wizard setup failed; /myclaw/ will 404 on this claw — Control UI at / still works"
 
 stage caddy
 # Caddy auto-issues + auto-renews Let's Encrypt certs and reverse_proxy
