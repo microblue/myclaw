@@ -18,6 +18,8 @@ import type {
 import type { AdminAnalyticsRange } from '@/ts/Types'
 
 import { apiPaths as API_PATHS } from '@openclaw/shared'
+import { getCachedToken } from '@/lib/firebase'
+import Envs from '@/lib/Envs'
 import { client } from '@/lib/api/client'
 import buildAdminPaginatedQuery from '@/lib/api/buildAdminPaginatedQuery'
 
@@ -173,7 +175,29 @@ const admin = {
         client.put<{ id: string; status: string }>(
             API_PATHS.ADMIN.VOID_ACTIVATION_CODE(id),
             {}
-        )
+        ),
+    // CSV export needs the auth token AND a blob response, neither of
+    // which the JSON RequestClient handles. Drop to raw fetch, then
+    // trigger a Blob URL download in the browser.
+    downloadActivationCodeBatchCsv: async (batchId: string): Promise<void> => {
+        const token = await getCachedToken()
+        const url = `${Envs.VITE_API_URL}${API_PATHS.ADMIN.ACTIVATION_CODE_BATCH_EXPORT(batchId)}`
+        const res = await fetch(url, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        })
+        if (!res.ok) {
+            throw new Error(`Export failed: ${res.status}`)
+        }
+        const blob = await res.blob()
+        const objectUrl = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = objectUrl
+        a.download = `activation-codes-${batchId}.csv`
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(objectUrl)
+    }
 }
 
 export default admin

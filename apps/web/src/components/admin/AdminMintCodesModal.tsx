@@ -161,10 +161,7 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
                     : null,
                 count: s.count
             })
-            const exportUrl = `/admin/activation-codes/batches/${result.batchId}/export`
-            const a = document.createElement('a')
-            a.href = exportUrl
-            a.click()
+            await api.downloadActivationCodeBatchCsv(result.batchId)
             toast.success(`Minted ${result.count} codes.`)
             onSuccess()
             onClose()

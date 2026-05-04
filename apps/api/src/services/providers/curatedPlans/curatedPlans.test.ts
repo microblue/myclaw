@@ -6,10 +6,10 @@ import digitalocean from './digitalocean'
 import { getCuratedPlanIds } from './index'
 
 describe('curated plan whitelists', () => {
-    it('each provider exposes 12 curated plan ids', () => {
-        expect(hetzner).toHaveLength(12)
-        expect(lightsail).toHaveLength(12)
-        expect(digitalocean).toHaveLength(12)
+    it('each provider exposes 4 curated plan ids (one per memory tier)', () => {
+        expect(hetzner).toHaveLength(4)
+        expect(lightsail).toHaveLength(4)
+        expect(digitalocean).toHaveLength(4)
     })
 
     it('each list has no duplicates', () => {
