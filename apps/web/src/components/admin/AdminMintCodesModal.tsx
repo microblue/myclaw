@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api } from '@/lib'
 import {
     Button,
@@ -11,7 +11,12 @@ import {
     Input,
     Label
 } from '@/components/ui'
-import { useToast, useProviderLocations } from '@/hooks'
+import {
+    useToast,
+    useProviderLocations,
+    useProviderPlans,
+    useProviderAvailability
+} from '@/hooks'
 
 interface Props {
     open: boolean
@@ -19,11 +24,29 @@ interface Props {
     onSuccess: () => void
 }
 
+const formatPlanLabel = (p: {
+    id: string
+    name: string
+    cpu: number
+    memory: number
+    disk: number
+    priceMonthly: number
+}): string => {
+    const price = `$${p.priceMonthly.toFixed(2)}/mo`
+    return `${p.id} — ${p.cpu} vCPU · ${p.memory} GB RAM · ${p.disk} GB · ${price}`
+}
+
+const deriveTierLabel = (p: {
+    cpu: number
+    memory: number
+}): string => `${p.cpu} vCPU · ${p.memory} GB`
+
 const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
     const [provider, setProvider] = useState('hetzner')
     const [planId, setPlanId] = useState('')
     const [region, setRegion] = useState('')
     const [tierLabel, setTierLabel] = useState('')
+    const [tierLabelEdited, setTierLabelEdited] = useState(false)
     const [partnerName, setPartnerName] = useState('')
     const [count, setCount] = useState(10)
     const [validityMonths, setValidityMonths] = useState<string>('12')
@@ -31,24 +54,64 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
     const [submitting, setSubmitting] = useState(false)
     const toast = useToast()
 
+    const { plans, isLoading: loadingPlans } = useProviderPlans(
+        provider || null
+    )
     const { locations, isLoading: loadingLocations } = useProviderLocations(
         provider || null
     )
+    const { availability: planAvailability } = useProviderAvailability(
+        provider || null
+    )
 
-    // Reset region when the provider changes (a region from one provider
-    // generally won't exist on another).
+    const selectedPlan = useMemo(
+        () => plans.find((p) => p.id === planId) || null,
+        [plans, planId]
+    )
+
+    // Region availability for the selected plan. The plan-availability map
+    // is `{ [planId]: locationId[] }` — empty array or missing means "all".
+    const eligibleLocations = useMemo(() => {
+        const enabled = locations.filter((l) => !l.disabled)
+        if (!planId) return enabled
+        const allowed = planAvailability[planId]
+        if (!allowed || allowed.length === 0) return enabled
+        return enabled.filter((l) => allowed.includes(l.id))
+    }, [locations, planAvailability, planId])
+
+    // Reset plan + region whenever the provider changes; the IDs aren't
+    // shared across providers and a stale planId would silently fail
+    // server-side validation.
     useEffect(() => {
+        setPlanId('')
         setRegion('')
-    }, [provider])
+        if (!tierLabelEdited) setTierLabel('')
+    }, [provider, tierLabelEdited])
+
+    // Drop region the moment it stops being valid for the chosen plan, so
+    // the dropdown never shows a value the user can't actually mint.
+    useEffect(() => {
+        if (region && !eligibleLocations.find((l) => l.id === region))
+            setRegion('')
+    }, [region, eligibleLocations])
+
+    // Auto-fill tier label from the picked plan unless the admin has typed
+    // their own. Resetting `tierLabelEdited` is not needed — once they edit
+    // it once, we stop auto-filling for the lifetime of the modal.
+    useEffect(() => {
+        if (tierLabelEdited) return
+        if (selectedPlan) setTierLabel(deriveTierLabel(selectedPlan))
+        else setTierLabel('')
+    }, [selectedPlan, tierLabelEdited])
 
     const handleSubmit = async () => {
-        if (!planId.trim() || !region || count < 1) return
+        if (!planId || !region || count < 1) return
         setSubmitting(true)
         try {
             const months = validityMonths === '' ? null : Number(validityMonths)
             const result = await api.createActivationCodeBatch({
                 provider,
-                planId: planId.trim(),
+                planId,
                 region,
                 tierLabel: tierLabel.trim() || null,
                 partnerName: partnerName.trim() || null,
@@ -80,29 +143,40 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
                     <DialogTitle>Mint activation codes</DialogTitle>
                 </DialogHeader>
                 <div className='space-y-4 py-4'>
-                    <div className='grid grid-cols-2 gap-3'>
-                        <div className='space-y-1.5'>
-                            <Label htmlFor='mint-provider'>Provider</Label>
-                            <select
-                                id='mint-provider'
-                                value={provider}
-                                onChange={(e) => setProvider(e.target.value)}
-                                className='border-input bg-background w-full rounded-md border px-3 py-2 text-sm'
-                            >
-                                <option value='hetzner'>hetzner</option>
-                                <option value='lightsail'>lightsail</option>
-                                <option value='digitalocean'>digitalocean</option>
-                            </select>
-                        </div>
-                        <div className='space-y-1.5'>
-                            <Label htmlFor='mint-plan'>Plan ID</Label>
-                            <Input
-                                id='mint-plan'
-                                placeholder='cpx21'
-                                value={planId}
-                                onChange={(e) => setPlanId(e.target.value)}
-                            />
-                        </div>
+                    <div className='space-y-1.5'>
+                        <Label htmlFor='mint-provider'>Provider</Label>
+                        <select
+                            id='mint-provider'
+                            value={provider}
+                            onChange={(e) => setProvider(e.target.value)}
+                            className='border-input bg-background w-full rounded-md border px-3 py-2 text-sm'
+                        >
+                            <option value='hetzner'>hetzner</option>
+                            <option value='lightsail'>lightsail</option>
+                            <option value='digitalocean'>digitalocean</option>
+                        </select>
+                    </div>
+
+                    <div className='space-y-1.5'>
+                        <Label htmlFor='mint-plan'>Plan</Label>
+                        <select
+                            id='mint-plan'
+                            value={planId}
+                            onChange={(e) => setPlanId(e.target.value)}
+                            disabled={loadingPlans}
+                            className='border-input bg-background w-full rounded-md border px-3 py-2 text-sm disabled:opacity-50'
+                        >
+                            <option value=''>
+                                {loadingPlans ? 'Loading plans…' : 'Select a plan'}
+                            </option>
+                            {plans
+                                .filter((p) => !p.disabled)
+                                .map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                        {formatPlanLabel(p)}
+                                    </option>
+                                ))}
+                        </select>
                     </div>
 
                     <div className='space-y-1.5'>
@@ -111,21 +185,23 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
                             id='mint-region'
                             value={region}
                             onChange={(e) => setRegion(e.target.value)}
-                            disabled={loadingLocations}
+                            disabled={loadingLocations || !planId}
                             className='border-input bg-background w-full rounded-md border px-3 py-2 text-sm disabled:opacity-50'
                         >
                             <option value=''>
-                                {loadingLocations
-                                    ? 'Loading regions…'
-                                    : 'Select a region'}
+                                {!planId
+                                    ? 'Pick a plan first'
+                                    : loadingLocations
+                                      ? 'Loading regions…'
+                                      : eligibleLocations.length === 0
+                                        ? 'No regions for this plan'
+                                        : 'Select a region'}
                             </option>
-                            {locations
-                                .filter((l) => !l.disabled)
-                                .map((l) => (
-                                    <option key={l.id} value={l.id}>
-                                        {l.id} — {l.name} ({l.country})
-                                    </option>
-                                ))}
+                            {eligibleLocations.map((l) => (
+                                <option key={l.id} value={l.id}>
+                                    {l.id} — {l.name} ({l.country})
+                                </option>
+                            ))}
                         </select>
                         <p className='text-muted-foreground text-xs'>
                             Locked at mint time — every code in this batch
@@ -137,13 +213,19 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
 
                     <div className='space-y-1.5'>
                         <Label htmlFor='mint-tier'>
-                            Tier label (optional)
+                            Tier label{' '}
+                            <span className='text-muted-foreground text-xs font-normal'>
+                                (auto-filled from plan)
+                            </span>
                         </Label>
                         <Input
                             id='mint-tier'
                             placeholder='Pro · 4 GB'
                             value={tierLabel}
-                            onChange={(e) => setTierLabel(e.target.value)}
+                            onChange={(e) => {
+                                setTierLabel(e.target.value)
+                                setTierLabelEdited(true)
+                            }}
                         />
                     </div>
 
@@ -211,10 +293,7 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
                     <Button
                         onClick={handleSubmit}
                         disabled={
-                            !planId.trim() ||
-                            !region ||
-                            count < 1 ||
-                            submitting
+                            !planId || !region || count < 1 || submitting
                         }
                     >
                         {submitting ? 'Minting…' : `Mint ${count} codes`}
