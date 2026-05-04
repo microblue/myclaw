@@ -19,13 +19,7 @@ import {
     AdminSettingsTab,
     AdminActivationCodesTab
 } from '@/components/admin'
-import {
-    Skeleton,
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger
-} from '@/components/ui'
+import { Skeleton } from '@/components/ui'
 import {
     UsersIcon,
     HardDrivesIcon,
@@ -35,6 +29,7 @@ import {
     GearIcon,
     KeyIcon
 } from '@phosphor-icons/react'
+import type { Icon } from '@phosphor-icons/react'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 import { UsersTab } from '@/pages/Admin/tabs'
 
@@ -75,6 +70,54 @@ const Admin: FC = (): ReactNode => {
 
     const isPageLoading = authLoading || isProfileLoading
 
+    const sections: {
+        key: string
+        icon: Icon
+        label: string
+        count?: number
+    }[] = [
+        {
+            key: ADMIN_TABS.ANALYTICS,
+            icon: ChartLineUpIcon,
+            label: t('admin.analyticsTab')
+        },
+        {
+            key: ADMIN_TABS.USERS,
+            icon: UsersIcon,
+            label: t('admin.usersTab'),
+            count: stats?.users
+        },
+        {
+            key: ADMIN_TABS.CLAWS,
+            icon: HardDrivesIcon,
+            label: t('admin.clawsTab'),
+            count: stats?.claws
+        },
+        {
+            key: ADMIN_TABS.REFERRALS,
+            icon: HandshakeIcon,
+            label: t('admin.referralsTab'),
+            count: stats?.referrals
+        },
+        {
+            key: ADMIN_TABS.BILLING,
+            icon: CreditCardIcon,
+            label: t('admin.billingTab'),
+            count: stats?.billing
+        },
+        {
+            key: ADMIN_TABS.CODES,
+            icon: KeyIcon,
+            label: 'Activation codes'
+        },
+        {
+            key: ADMIN_TABS.SETTINGS,
+            icon: GearIcon,
+            label: 'Settings'
+        }
+    ]
+    const activeSection = sections.find((s) => s.key === activeTab)
+
     return (
         <AppShell>
             <PageTitle
@@ -83,18 +126,12 @@ const Admin: FC = (): ReactNode => {
                 noIndex
             />
 
-            <main className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
+            <div className='mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8'>
                 {isPageLoading ? (
                     <Fragment>
                         <div className='mb-2 space-y-2'>
                             <Skeleton className='h-8 w-48' />
                             <Skeleton className='h-5 w-72' />
-                        </div>
-                        <div className='mb-6 flex flex-wrap gap-1'>
-                            <Skeleton className='h-9 w-24 rounded-lg' />
-                            <Skeleton className='h-9 w-20 rounded-lg' />
-                            <Skeleton className='h-9 w-28 rounded-lg' />
-                            <Skeleton className='h-9 w-24 rounded-lg' />
                         </div>
                         <div className='border-border bg-foreground/5 rounded-xl border p-4 sm:p-8'>
                             <div className='space-y-1.5'>
@@ -105,130 +142,93 @@ const Admin: FC = (): ReactNode => {
                         </div>
                     </Fragment>
                 ) : (
-                    <Fragment>
-                        <PageHeader
-                            title={t('admin.title')}
-                            description={t('admin.description')}
-                        />
-
-                        <TooltipProvider delayDuration={200}>
-                            <div className='mb-6 flex flex-wrap gap-1'>
-                                {[
-                                    {
-                                        key: ADMIN_TABS.ANALYTICS,
-                                        icon: ChartLineUpIcon,
-                                        label: t('admin.analyticsTab'),
-                                        count: undefined,
-                                        showLabel: true
-                                    },
-                                    {
-                                        key: ADMIN_TABS.USERS,
-                                        icon: UsersIcon,
-                                        label: t('admin.usersTab'),
-                                        count: stats?.users
-                                    },
-                                    {
-                                        key: ADMIN_TABS.CLAWS,
-                                        icon: HardDrivesIcon,
-                                        label: t('admin.clawsTab'),
-                                        count: stats?.claws
-                                    },
-                                    {
-                                        key: ADMIN_TABS.REFERRALS,
-                                        icon: HandshakeIcon,
-                                        label: t('admin.referralsTab'),
-                                        count: stats?.referrals
-                                    },
-                                    {
-                                        key: ADMIN_TABS.BILLING,
-                                        icon: CreditCardIcon,
-                                        label: t('admin.billingTab'),
-                                        count: stats?.billing
-                                    },
-                                    {
-                                        key: ADMIN_TABS.CODES,
-                                        icon: KeyIcon,
-                                        label: 'Codes',
-                                        showLabel: true
-                                    },
-                                    {
-                                        key: ADMIN_TABS.SETTINGS,
-                                        icon: GearIcon,
-                                        label: 'Settings',
-                                        showLabel: true
-                                    }
-                                ].map((tab) => {
-                                    const isActive = activeTab === tab.key
+                    <div className='grid gap-6 md:grid-cols-[200px_1fr]'>
+                        <aside>
+                            <h1 className='mb-4 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
+                                Admin console
+                            </h1>
+                            <nav className='flex flex-col gap-0.5'>
+                                {sections.map((section) => {
+                                    const isActive = activeTab === section.key
                                     return (
-                                        <Tooltip key={tab.key}>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    onClick={() =>
-                                                        !isActive &&
-                                                        setActiveTab(tab.key)
-                                                    }
-                                                    disabled={isActive}
-                                                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                                        <button
+                                            key={section.key}
+                                            onClick={() =>
+                                                !isActive &&
+                                                setActiveTab(section.key)
+                                            }
+                                            disabled={isActive}
+                                            className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                                                isActive
+                                                    ? 'bg-foreground/10 text-foreground font-medium'
+                                                    : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
+                                            }`}
+                                        >
+                                            <span className='flex items-center gap-2'>
+                                                <section.icon className='h-4 w-4 shrink-0' />
+                                                {section.label}
+                                            </span>
+                                            {section.count !== undefined && (
+                                                <span
+                                                    className={`text-xs ${
                                                         isActive
-                                                            ? 'bg-foreground/10 text-foreground cursor-default'
-                                                            : 'text-muted-foreground hover:text-foreground'
+                                                            ? 'text-foreground/70'
+                                                            : 'text-muted-foreground/70'
                                                     }`}
                                                 >
-                                                    <tab.icon className='h-4 w-4' />
-                                                    {tab.count !== undefined ? (
-                                                        <span className='text-muted-foreground text-xs'>
-                                                            {tab.count}
-                                                        </span>
-                                                    ) : tab.showLabel ? (
-                                                        <span className='text-xs'>
-                                                            {tab.label}
-                                                        </span>
-                                                    ) : null}
-                                                </button>
-                                            </TooltipTrigger>
-                                            {!isActive && (
-                                                <TooltipContent>
-                                                    {tab.label}
-                                                </TooltipContent>
+                                                    {section.count}
+                                                </span>
                                             )}
-                                        </Tooltip>
+                                        </button>
                                     )
                                 })}
-                            </div>
-                        </TooltipProvider>
+                            </nav>
+                        </aside>
 
-                        <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-8'>
-                            {activeTab === ADMIN_TABS.CLAWS && (
-                                <AdminClawsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
+                        <section>
+                            {activeSection && (
+                                <div className='mb-4'>
+                                    <PageHeader
+                                        title={activeSection.label}
+                                        description={t('admin.description')}
+                                    />
+                                </div>
                             )}
-                            {activeTab === ADMIN_TABS.REFERRALS && (
-                                <AdminReferralsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.BILLING && (
-                                <AdminBillingTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.ANALYTICS && (
-                                <AdminAnalyticsTab />
-                            )}
-                            {activeTab === ADMIN_TABS.USERS && (
-                                <UsersTab onSelectEntity={setSelectedEntity} />
-                            )}
-                            {activeTab === ADMIN_TABS.CODES && (
-                                <AdminActivationCodesTab />
-                            )}
-                            {activeTab === ADMIN_TABS.SETTINGS && (
-                                <AdminSettingsTab />
-                            )}
-                        </div>
-                    </Fragment>
+                            <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-6'>
+                                {activeTab === ADMIN_TABS.CLAWS && (
+                                    <AdminClawsTab
+                                        onSelectEntity={setSelectedEntity}
+                                    />
+                                )}
+                                {activeTab === ADMIN_TABS.REFERRALS && (
+                                    <AdminReferralsTab
+                                        onSelectEntity={setSelectedEntity}
+                                    />
+                                )}
+                                {activeTab === ADMIN_TABS.BILLING && (
+                                    <AdminBillingTab
+                                        onSelectEntity={setSelectedEntity}
+                                    />
+                                )}
+                                {activeTab === ADMIN_TABS.ANALYTICS && (
+                                    <AdminAnalyticsTab />
+                                )}
+                                {activeTab === ADMIN_TABS.USERS && (
+                                    <UsersTab
+                                        onSelectEntity={setSelectedEntity}
+                                    />
+                                )}
+                                {activeTab === ADMIN_TABS.CODES && (
+                                    <AdminActivationCodesTab />
+                                )}
+                                {activeTab === ADMIN_TABS.SETTINGS && (
+                                    <AdminSettingsTab />
+                                )}
+                            </div>
+                        </section>
+                    </div>
                 )}
-            </main>
+            </div>
 
             <AdminDetailModal
                 entity={selectedEntity}
