@@ -47,7 +47,7 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
                 <p className='text-muted-foreground max-w-md text-sm'>
                     Deploy your first Claw to get started. It takes a few minutes — you can pause or delete it anytime.
                 </p>
-                <Button onClick={() => navigate(ROUTES.NEW_CLAW)} size='lg'>
+                <Button onClick={() => navigate(ROUTES.REDEEM_CODE)} size='lg'>
                     Deploy your first Claw
                 </Button>
             </div>
@@ -65,7 +65,7 @@ const ClawsListView: FC<Props> = ({ claws, displayName }) => {
                         You have {claws.length} {claws.length === 1 ? 'Claw' : 'Claws'}.
                     </p>
                 </div>
-                <Button onClick={() => navigate(ROUTES.NEW_CLAW)}>
+                <Button onClick={() => navigate(ROUTES.REDEEM_CODE)}>
                     Deploy new
                 </Button>
             </div>
