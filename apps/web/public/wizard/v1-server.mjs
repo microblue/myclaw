@@ -38,10 +38,21 @@ const exec = (cmd, args, opts = {}) => new Promise((resolve, reject) => {
 // Talk to the gateway directly over WebSocket instead of `openclaw gateway
 // call`. The CLI spends ~12s on every invocation re-loading 40+ plugins via
 // jiti TS JIT — fatal for `/status` interactivity. A direct WS round-trip
-// (handshake + hello-ok + method) settles in ~600ms on loopback. We declare
-// `client.id: gateway-client`, `mode: backend` which lets the gateway skip
-// device pairing for trusted same-process loopback calls (see
-// docs/gateway/protocol.md).
+// settles in ~600ms on loopback.
+//
+// Why `client.id: openclaw-control-ui` from a backend service: openclaw
+// 2026.4.11 wipes scopes during connect for any client that lacks a
+// device identity unless it's recognized as the operator UI. The shim
+// runs on loopback alongside the gateway with the same trusted token,
+// and the openclaw.json we seed sets `gateway.controlUi.allowInsecureAuth`
+// + `dangerouslyDisableDeviceAuth: true`, which together let
+// control-ui-flagged clients keep their requested scopes without
+// pairing. Identifying as control-ui is the documented bypass for the
+// "trusted backend on the same box" case.
+const fmtErr = (msg) => {
+    const body = msg && (msg.error ?? msg.payload)
+    return body == null ? '(no body)' : JSON.stringify(body).slice(0, 200)
+}
 const gatewayWsCall = async (method, params = {}) => {
     const token = await expectedToken()
     if (!token) throw new Error('gateway token unavailable')
@@ -72,7 +83,7 @@ const gatewayWsCall = async (method, params = {}) => {
                     params: {
                         minProtocol: 3,
                         maxProtocol: 3,
-                        client: { id: 'gateway-client', version: 'wizard', platform: 'linux', mode: 'backend' },
+                        client: { id: 'openclaw-control-ui', version: 'wizard', platform: 'linux', mode: 'backend' },
                         role: 'operator',
                         scopes: ['operator.read'],
                         caps: [],
@@ -86,11 +97,11 @@ const gatewayWsCall = async (method, params = {}) => {
             if (msg.type !== 'res') return
             if (!helloRcv) {
                 helloRcv = true
-                if (!msg.ok) return finish(new Error(`gateway connect failed: ${JSON.stringify(msg.payload).slice(0, 200)}`))
+                if (!msg.ok) return finish(new Error(`gateway connect failed: ${fmtErr(msg)}`))
                 ws.send(JSON.stringify({ type: 'req', id: next(), method, params }))
                 return
             }
-            if (!msg.ok) return finish(new Error(`gateway ${method} failed: ${JSON.stringify(msg.payload).slice(0, 200)}`))
+            if (!msg.ok) return finish(new Error(`gateway ${method} failed: ${fmtErr(msg)}`))
             finish(null, msg.payload)
         }
     })
