@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, index } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, integer, index } from 'drizzle-orm/pg-core'
 import users from '@/db/schema/users'
 import sshKeys from '@/db/schema/sshKeys'
 
@@ -6,7 +6,7 @@ const pendingClaws = pgTable(
     'pending_claws',
     {
         id: text('id').primaryKey(),
-        userId: text('user_id')
+        userId: uuid('user_id')
             .notNull()
             .references(() => users.id, { onDelete: 'cascade' }),
         checkoutId: text('checkout_id').notNull().unique(),

@@ -6,21 +6,20 @@ import { cors } from 'hono/cors'
 import { compress } from 'hono/compress'
 import { logger } from 'hono/logger'
 import { bodyLimit } from 'hono/body-limit'
-import { verifyToken } from '@/services/firebase'
-import { eq, sql } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
-import { authMethod, externalUrls, userRole } from '@openclaw/shared'
+import { externalUrls, userRole } from '@openclaw/shared'
 import { environment } from '@/lib/constants'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import { browseSkills } from '@/services/clawhub'
+import { verifyJwt } from '@/services/supabase'
 
 import {
     adminRoutes,
     affiliateRoutes,
     aiRoutes,
-    authRoutes,
     clawsRoutes,
     cronRoutes,
     plansRoutes,
@@ -28,7 +27,8 @@ import {
     sshKeysRoutes,
     usersRoutes,
     waitlistRoutes,
-    webhooksRoutes
+    webhooksRoutes,
+    installReportsRoutes
 } from '@/routes'
 
 const app = new Hono<HonoEnv>()
@@ -67,12 +67,12 @@ app.use('*', async (c, next) => {
 
 app.get('/', (c) => ok(c, null, t('api.healthOk')))
 
-app.route('/auth', authRoutes)
 app.route('/cron', cronRoutes)
 app.route('/plans', plansRoutes)
 app.route('/providers', providersRoutes)
 app.route('/waitlist', waitlistRoutes)
 app.route('/webhooks', webhooksRoutes)
+app.route('/install-reports', installReportsRoutes)
 app.get('/clawhub/skills', async (c) => {
     try {
         const result = await browseSkills({
@@ -107,104 +107,44 @@ setInterval(() => {
     }
 }, AUTH_CACHE_CLEANUP_INTERVAL)
 
+// Supabase JWT verification. The on_auth_user_created trigger creates
+// the public.users row at signup, so by the time a request lands here
+// the profile row is guaranteed to exist (or auth.getUser returned null).
 app.use('/*', async (c, next) => {
     try {
         const authHeader = c.req.header('Authorization')
         if (!authHeader?.startsWith('Bearer ')) {
             return fail(c, t('api.unauthorized'), 401)
         }
-
         const token = authHeader.slice(7)
 
-        const cachedAuth = authCache.get(token)
-        if (cachedAuth && Date.now() < cachedAuth.expiry) {
-            c.set('userId', cachedAuth.data.userId)
-            c.set('isAdmin', cachedAuth.data.isAdmin)
+        const cached = authCache.get(token)
+        if (cached && Date.now() < cached.expiry) {
+            c.set('userId', cached.data.userId)
+            c.set('isAdmin', cached.data.isAdmin)
             return next()
         }
 
-        const decoded = await verifyToken(token)
+        const user = await verifyJwt(token)
+        if (!user) return fail(c, t('api.invalidToken'), 401)
 
-        if (!decoded) return fail(c, t('api.invalidToken'), 401)
-
-        const signInProvider = decoded.firebase?.sign_in_provider
-        const resolvedAuthMethod =
-            signInProvider === 'google.com'
-                ? authMethod.google
-                : signInProvider === 'github.com'
-                  ? authMethod.github
-                  : authMethod.email
-
-        // First check by Firebase UID
-        let existingUser = await db
-            .select({ id: users.id, role: users.role })
+        const profile = await db
+            .select({ role: users.role })
             .from(users)
-            .where(eq(users.id, decoded.uid))
+            .where(eq(users.id, user.id))
             .then((rows) => rows[0])
 
-        // If not found by UID, check by email (handles different auth providers for same email)
-        if (!existingUser && decoded.email) {
-            existingUser = await db
-                .select({ id: users.id, role: users.role })
-                .from(users)
-                .where(eq(users.email, decoded.email))
-                .then((rows) => rows[0])
-
-            // If found by email, update the user's ID to the new Firebase UID
-            if (existingUser) {
-                await db
-                    .update(users)
-                    .set({
-                        id: decoded.uid,
-                        authMethods: sql`CASE
-                            WHEN ${resolvedAuthMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
-                            THEN COALESCE(${users.authMethods}, '{}')
-                            ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${resolvedAuthMethod})
-                        END`
-                    })
-                    .where(eq(users.id, existingUser.id))
-            }
-        }
-
-        if (existingUser && existingUser.id === decoded.uid) {
-            await db
-                .update(users)
-                .set({
-                    ...(decoded.email ? { email: decoded.email } : {}),
-                    authMethods: sql`CASE
-                        WHEN ${resolvedAuthMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
-                        THEN COALESCE(${users.authMethods}, '{}')
-                        ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${resolvedAuthMethod})
-                    END`
-                })
-                .where(eq(users.id, decoded.uid))
-        } 
-        
-        else if (!existingUser && decoded.email) {
-            await db
-                .insert(users)
-                .values({
-                    id: decoded.uid,
-                    email: decoded.email,
-                    authMethods: [resolvedAuthMethod]
-                })
-        }
-        
-        else return fail(c, t('api.unauthorized'), 401)
-
-        const admin = existingUser?.role === userRole.admin
+        const isAdmin = profile?.role === userRole.admin
 
         authCache.set(token, {
-            data: { userId: decoded.uid, isAdmin: admin },
+            data: { userId: user.id, isAdmin },
             expiry: Date.now() + AUTH_CACHE_TTL
         })
 
-        c.set('userId', decoded.uid)
-        c.set('isAdmin', admin)
+        c.set('userId', user.id)
+        c.set('isAdmin', isAdmin)
         return next()
-    } 
-    
-    catch (error) {
+    } catch (error) {
         console.error('authMiddleware', error)
         return fail(c, t('api.internalServerError'), 500)
     }

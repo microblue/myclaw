@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { asc, count, desc, ilike, or, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws, users } from '@/db/schema'
+import { claws, authUsers } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -55,10 +55,10 @@ const getAdminClaws = withErrorHandler(
                 deletionScheduledAt: claws.deletionScheduledAt,
                 createdAt: claws.createdAt,
                 userId: claws.userId,
-                ownerEmail: users.email
+                ownerEmail: authUsers.email
             })
             .from(claws)
-            .leftJoin(users, sql`${claws.userId} = ${users.id}`)
+            .leftJoin(authUsers, sql`${claws.userId} = ${authUsers.id}`)
             .where(whereClause)
             .orderBy(
                 sort === 'oldest' ? asc(claws.createdAt) : desc(claws.createdAt)

@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { asc, count, desc, ilike, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { sshKeys, users } from '@/db/schema'
+import { sshKeys, authUsers } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -43,10 +43,10 @@ const getAdminSSHKeys = withErrorHandler(
                 fingerprint: sshKeys.fingerprint,
                 createdAt: sshKeys.createdAt,
                 userId: sshKeys.userId,
-                ownerEmail: users.email
+                ownerEmail: authUsers.email
             })
             .from(sshKeys)
-            .leftJoin(users, sql`${sshKeys.userId} = ${users.id}`)
+            .leftJoin(authUsers, sql`${sshKeys.userId} = ${authUsers.id}`)
             .where(whereClause)
             .orderBy(
                 sort === 'oldest'

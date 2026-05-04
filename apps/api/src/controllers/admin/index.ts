@@ -21,6 +21,8 @@ import getAdminActivationCodeBatches from '@/controllers/admin/getAdminActivatio
 import exportActivationCodeBatch from '@/controllers/admin/exportActivationCodeBatch'
 import voidActivationCode from '@/controllers/admin/voidActivationCode'
 import voidActivationCodeBatch from '@/controllers/admin/voidActivationCodeBatch'
+import getAdminInstallReports from '@/controllers/admin/getAdminInstallReports'
+import getAdminInstallReportDetail from '@/controllers/admin/getAdminInstallReportDetail'
 
 export {
     getAdminAnalytics,
@@ -45,5 +47,7 @@ export {
     getAdminActivationCodeBatches,
     exportActivationCodeBatch,
     voidActivationCode,
-    voidActivationCodeBatch
+    voidActivationCodeBatch,
+    getAdminInstallReports,
+    getAdminInstallReportDetail
 }

@@ -2,8 +2,6 @@ import type { HonoEnv } from '@/ts/Types'
 
 import { Hono } from 'hono'
 import {
-    connectAuthMethod,
-    disconnectAuthMethod,
     getCurrentUser,
     getBillingHistory,
     getOrderInvoice,
@@ -22,7 +20,5 @@ app.get('/me/billing/:orderId/invoice', getOrderInvoice)
 app.post('/me/billing/portal', getCustomerPortal)
 app.put('/me', updateUserProfile)
 app.post('/me/license/checkout', purchaseLicense)
-app.post('/me/auth/:method', connectAuthMethod)
-app.delete('/me/auth/:method', disconnectAuthMethod)
 
 export default app

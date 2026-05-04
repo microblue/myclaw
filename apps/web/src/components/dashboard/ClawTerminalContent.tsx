@@ -5,7 +5,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { t } from '@openclaw/i18n'
-import { getCachedToken } from '@/lib/firebase'
+import { getCachedToken } from '@/lib/supabase'
 import {
     CircleNotchIcon,
     TerminalWindowIcon,

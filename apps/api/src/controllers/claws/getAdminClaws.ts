@@ -3,7 +3,7 @@ import type { BillingPeriod } from '@/ts/Interfaces'
 
 import { desc } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws, users, volumes } from '@/db/schema'
+import { claws, authUsers, volumes } from '@/db/schema'
 import { sanitizeClaw, syncClawServers } from '@/controllers/claws/helpers'
 import { subscriptions } from '@/lib/polar'
 import { ok } from '@/lib/response'
@@ -16,7 +16,7 @@ const getAdminClaws = withErrorHandler('getAdminClaws')(async (
     const [allClaws, allVolumes, allUsers] = await Promise.all([
         db.select().from(claws).orderBy(desc(claws.createdAt)),
         db.select().from(volumes),
-        db.select({ id: users.id, email: users.email }).from(users)
+        db.select({ id: authUsers.id, email: authUsers.email }).from(authUsers)
     ])
 
     const userMap = new Map(allUsers.map((u) => [u.id, u.email]))

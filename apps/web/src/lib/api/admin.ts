@@ -4,6 +4,8 @@ import type {
     AdminClawsResponse,
     AdminEmailListItem,
     AdminExportListItem,
+    AdminInstallReportDetail,
+    AdminInstallReportListItem,
     AdminPaginatedResponse,
     AdminPendingClawListItem,
     AdminReferralListItem,
@@ -18,7 +20,7 @@ import type {
 import type { AdminAnalyticsRange } from '@/ts/Types'
 
 import { apiPaths as API_PATHS } from '@openclaw/shared'
-import { getCachedToken } from '@/lib/firebase'
+import { getCachedToken } from '@/lib/supabase'
 import Envs from '@/lib/Envs'
 import { client } from '@/lib/api/client'
 import buildAdminPaginatedQuery from '@/lib/api/buildAdminPaginatedQuery'
@@ -220,7 +222,20 @@ const admin = {
         a.click()
         a.remove()
         URL.revokeObjectURL(objectUrl)
-    }
+    },
+    listAdminInstallReports: (
+        page: number = 1,
+        limit: number = 20,
+        search?: string,
+        phase?: string
+    ) =>
+        client.get<AdminPaginatedResponse<AdminInstallReportListItem>>(
+            `${API_PATHS.ADMIN.INSTALL_REPORTS}?${buildAdminPaginatedQuery({ page, limit, search, phase })}`
+        ),
+    getAdminInstallReport: (id: string) =>
+        client.get<{ report: AdminInstallReportDetail }>(
+            API_PATHS.ADMIN.INSTALL_REPORT(id)
+        )
 }
 
 export default admin

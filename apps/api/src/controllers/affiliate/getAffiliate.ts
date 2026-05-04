@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and, gte, count, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { users, referrals, referralPayments } from '@/db/schema'
+import { authUsers, referrals, referralPayments } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
@@ -44,14 +44,14 @@ const getAffiliate = async (c: AuthenticatedContext) => {
         const paymentRows = await db
             .select({
                 id: referralPayments.id,
-                referredEmail: users.email,
+                referredEmail: authUsers.email,
                 amount: referralPayments.amount,
                 type: referralPayments.type,
                 createdAt: referralPayments.createdAt
             })
             .from(referralPayments)
             .innerJoin(referrals, eq(referralPayments.referralId, referrals.id))
-            .innerJoin(users, eq(referrals.referredUserId, users.id))
+            .innerJoin(authUsers, eq(referrals.referredUserId, authUsers.id))
             .where(and(...paymentConditions))
             .orderBy(sql`${referralPayments.createdAt} DESC`)
 

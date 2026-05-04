@@ -5,7 +5,7 @@ import type {
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
-import { getCachedToken } from '@/lib/firebase'
+import { getCachedToken } from '@/lib/supabase'
 import { useUIStore } from '@/lib/store'
 import { TOAST_TYPE } from '@/lib/constants'
 import Envs from '@/lib/Envs'

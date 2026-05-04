@@ -1,39 +1,20 @@
 import type { FC, ReactNode } from 'react'
-import type { User } from 'firebase/auth'
-import type {
-    AuthProviderProps,
-    CachedProfile,
-    ElectronWindow,
-    FirebaseErrorLike,
-    OAuthWindowResult
-} from '@/ts/Interfaces'
+import type { User } from '@supabase/supabase-js'
+import type { AuthProviderProps, CachedProfile } from '@/ts/Interfaces'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-    GoogleAuthProvider,
-    GithubAuthProvider,
-    onAuthStateChanged,
-    signInWithCustomToken,
-    getRedirectResult,
-    linkWithPopup,
-    unlink,
-    signOut as firebaseSignOut
-} from 'firebase/auth'
-import { t } from '@openclaw/i18n'
-import { auth, AUTH_STORAGE_KEY, PROFILE_CACHE_KEY } from '@/lib/firebase'
+import { supabase } from '@/lib/supabase'
 import { api } from '@/lib'
 import AuthContext from '@/lib/auth/AuthContext'
-import STORAGE_KEYS from '@/lib/storageKeys'
 import {
     PROFILE_QUERY_KEY,
     CLAWS_QUERY_KEY,
     USER_STATS_QUERY_KEY
 } from '@/hooks'
-import readCachedProfile from '@/lib/auth/AuthProvider/readCachedProfile'
-import handleCredentialConflict from '@/lib/auth/AuthProvider/handleCredentialConflict'
-import signInWithGoogleFn from '@/lib/auth/AuthProvider/signInWithGoogle'
-import signInWithGithubFn from '@/lib/auth/AuthProvider/signInWithGithub'
+import readCachedProfile, {
+    PROFILE_CACHE_KEY
+} from '@/lib/auth/AuthProvider/readCachedProfile'
 
 const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     const queryClient = useQueryClient()
@@ -80,43 +61,21 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     }, [])
 
     useEffect(() => {
-        getRedirectResult(auth).catch(async (error) => {
-            const firebaseError = error as FirebaseErrorLike
-            if (
-                firebaseError.code ===
-                'auth/account-exists-with-different-credential'
-            ) {
-                const googleCred = GoogleAuthProvider.credentialFromError(
-                    error as Parameters<
-                        typeof GoogleAuthProvider.credentialFromError
-                    >[0]
-                )
-                if (googleCred) {
-                    await handleCredentialConflict(googleCred, 'google.com')
-                    return
-                }
-                const githubCred = GithubAuthProvider.credentialFromError(
-                    error as Parameters<
-                        typeof GithubAuthProvider.credentialFromError
-                    >[0]
-                )
-                if (githubCred) {
-                    await handleCredentialConflict(githubCred, 'github.com')
-                    return
-                }
-            }
-            console.error('getRedirectResult', error)
+        // Hydrate from existing session and subscribe to auth changes.
+        // supabase-js persists the session in localStorage, so on a hard
+        // reload we get an immediate user without a network round-trip.
+        supabase.auth.getSession().then(({ data }) => {
+            setUser(data.session?.user ?? null)
+            setLoading(false)
         })
-    }, [])
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            setUser(user)
+        const {
+            data: { subscription }
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            setUser(session?.user ?? null)
             setLoading(false)
 
-            if (user) {
-                localStorage.setItem(AUTH_STORAGE_KEY, 'true')
-
+            if (session?.user) {
                 const cached = readCachedProfile()
                 if (cached) {
                     setCachedProfile(cached)
@@ -127,7 +86,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 fetchedRef.current = true
 
                 try {
-                    const [_profile] = await Promise.all([
+                    await Promise.all([
                         queryClient.fetchQuery({
                             queryKey: PROFILE_QUERY_KEY,
                             queryFn: api.getProfile,
@@ -143,103 +102,24 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                         })
                     ])
                 } catch {
-                    await firebaseSignOut(auth)
+                    await supabase.auth.signOut()
                 }
             } else {
                 fetchedRef.current = false
-                localStorage.removeItem(AUTH_STORAGE_KEY)
                 localStorage.removeItem(PROFILE_CACHE_KEY)
-                localStorage.removeItem(STORAGE_KEYS.OTP_SENT_AT)
                 setCachedProfile(null)
                 queryClient.clear()
             }
         })
-        return unsubscribe
+        return () => subscription.unsubscribe()
     }, [queryClient])
 
-    const sendOtp = useCallback(async (email: string) => {
-        await api.sendOtp(email)
-    }, [])
-
-    const verifyOtp = useCallback(async (email: string, code: string) => {
-        const { customToken } = await api.verifyOtp(email, code)
-        await signInWithCustomToken(auth, customToken)
-    }, [])
-
-    const resolveConflict = useCallback(handleCredentialConflict, [])
-
-    const electronOAuth = useCallback(
-        async (providerUrl: string, callbackPrefix: string) => {
-            const electronAPI = (window as unknown as ElectronWindow)
-                .electronAPI
-            const result = (await electronAPI!.invoke(
-                'oauth-window',
-                providerUrl,
-                callbackPrefix,
-                t('auth.signIn')
-            )) as OAuthWindowResult
-            return result
-        },
-        []
-    )
-
-    const signInWithGoogle = useCallback(
-        () => signInWithGoogleFn(resolveConflict, electronOAuth),
-        [resolveConflict, electronOAuth]
-    )
-
-    const signInWithGithub = useCallback(
-        () => signInWithGithubFn(resolveConflict, electronOAuth),
-        [resolveConflict, electronOAuth]
-    )
-
-    const linkGoogle = useCallback(async () => {
-        if (!user) return
-        const result = await linkWithPopup(user, new GoogleAuthProvider())
-        const linked = result.user.providerData.find(
-            (p) => p.providerId === 'google.com'
-        )
-        if (
-            linked?.email &&
-            user.email &&
-            linked.email.toLowerCase() !== user.email.toLowerCase()
-        ) {
-            await unlink(result.user, 'google.com')
-            throw new Error(t('account.providerEmailMismatch'))
-        }
-    }, [user])
-
-    const linkGithub = useCallback(async () => {
-        if (!user) return
-        const result = await linkWithPopup(user, new GithubAuthProvider())
-        const linked = result.user.providerData.find(
-            (p) => p.providerId === 'github.com'
-        )
-        if (
-            linked?.email &&
-            user.email &&
-            linked.email.toLowerCase() !== user.email.toLowerCase()
-        ) {
-            await unlink(result.user, 'github.com')
-            throw new Error(t('account.providerEmailMismatch'))
-        }
-    }, [user])
-
-    const unlinkGoogle = useCallback(async () => {
-        if (!user) return
-        await unlink(user, 'google.com')
-    }, [user])
-
-    const unlinkGithub = useCallback(async () => {
-        if (!user) return
-        await unlink(user, 'github.com')
-    }, [user])
-
     const signOut = useCallback(async () => {
-        await firebaseSignOut(auth)
+        await supabase.auth.signOut()
     }, [])
 
     const isLocal =
+        typeof document !== 'undefined' &&
         document.documentElement.getAttribute('data-electron') === 'true'
 
     return (
@@ -249,14 +129,6 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 loading,
                 cachedProfile,
                 updateCachedProfile,
-                sendOtp,
-                verifyOtp,
-                signInWithGoogle,
-                signInWithGithub,
-                linkGoogle,
-                linkGithub,
-                unlinkGoogle,
-                unlinkGithub,
                 signOut,
                 isLocal
             }}

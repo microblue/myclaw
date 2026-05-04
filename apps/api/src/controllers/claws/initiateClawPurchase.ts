@@ -5,7 +5,7 @@ import crypto from 'crypto'
 import { eq, and, count, lt } from 'drizzle-orm'
 import { inputValidation, billingInterval } from '@openclaw/shared'
 import { db } from '@/db'
-import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
+import { users, authUsers, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
 import {
     generatePassword,
@@ -251,7 +251,19 @@ const initiateClawPurchase = withErrorHandler(
             .select({ value: count() })
             .from(claws)
             .where(eq(claws.userId, userId)),
-        db.select().from(users).where(eq(users.id, userId)).limit(1),
+        db
+            .select({
+                id: users.id,
+                email: authUsers.email,
+                name: users.name,
+                polarCustomerId: users.polarCustomerId,
+                hasLicense: users.hasLicense,
+                role: users.role
+            })
+            .from(users)
+            .innerJoin(authUsers, eq(authUsers.id, users.id))
+            .where(eq(users.id, userId))
+            .limit(1),
         sshKeyId
             ? db
                   .select()
@@ -273,17 +285,19 @@ const initiateClawPurchase = withErrorHandler(
         )
     }
 
-    if (!userResult[0]) return fail(c, t('api.userNotFound'), 404)
+    if (!userResult[0] || !userResult[0].email)
+        return fail(c, t('api.userNotFound'), 404)
 
     if (sshKeyId && (!sshKeyResult || !sshKeyResult[0])) {
         return fail(c, t('api.sshKeyNotFound'), 404)
     }
 
+    const userEmail = userResult[0].email
     let polarCustomerId = userResult[0].polarCustomerId
 
     if (!polarCustomerId) {
         const customer = await customers.getOrCreate({
-            email: userResult[0].email,
+            email: userEmail,
             name: userResult[0].name || undefined,
             externalId: userId
         })
@@ -299,7 +313,7 @@ const initiateClawPurchase = withErrorHandler(
 
     const checkout = await checkouts.create({
         productId,
-        customerEmail: userResult[0].email,
+        customerEmail: userEmail,
         customerId: polarCustomerId,
         metadata: {
             pendingClawId: pendingId,

@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { asc, count, desc, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { volumes, users } from '@/db/schema'
+import { volumes, authUsers } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -30,10 +30,10 @@ const getAdminVolumes = withErrorHandler(
                 status: volumes.status,
                 createdAt: volumes.createdAt,
                 userId: volumes.userId,
-                ownerEmail: users.email
+                ownerEmail: authUsers.email
             })
             .from(volumes)
-            .leftJoin(users, sql`${volumes.userId} = ${users.id}`)
+            .leftJoin(authUsers, sql`${volumes.userId} = ${authUsers.id}`)
             .orderBy(
                 sort === 'oldest'
                     ? asc(volumes.createdAt)

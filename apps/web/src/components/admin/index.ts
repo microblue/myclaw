@@ -4,6 +4,7 @@ import AdminBillingTab from '@/components/admin/AdminBillingTab'
 import AdminClawsTab from '@/components/admin/AdminClawsTab'
 import AdminDetailField from '@/components/admin/AdminDetailField'
 import AdminDetailModal from '@/components/admin/AdminDetailModal'
+import AdminInstallReportsTab from '@/components/admin/AdminInstallReportsTab'
 import AdminOwnerLink from '@/components/admin/AdminOwnerLink'
 import AdminReferralDetailView from '@/components/admin/AdminReferralDetailView'
 import AdminReferralsTab from '@/components/admin/AdminReferralsTab'
@@ -21,6 +22,7 @@ export {
     AdminClawsTab,
     AdminDetailField,
     AdminDetailModal,
+    AdminInstallReportsTab,
     AdminOwnerLink,
     AdminReferralDetailView,
     AdminReferralsTab,

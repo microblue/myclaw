@@ -1,5 +1,4 @@
-import {
-    pgTable,
+import { pgTable, uuid,
     text,
     timestamp,
     integer,
@@ -12,7 +11,7 @@ const sshKeys = pgTable(
     'ssh_keys',
     {
         id: text('id').primaryKey(),
-        userId: text('user_id')
+        userId: uuid('user_id')
             .notNull()
             .references(() => users.id, { onDelete: 'cascade' }),
         name: text('name').notNull(),

@@ -24,7 +24,9 @@ import {
     getAdminActivationCodeBatches,
     exportActivationCodeBatch,
     voidActivationCode,
-    voidActivationCodeBatch
+    voidActivationCodeBatch,
+    getAdminInstallReports,
+    getAdminInstallReportDetail
 } from '@/controllers/admin'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -60,5 +62,7 @@ app.put(
     voidActivationCodeBatch
 )
 app.put('/activation-codes/:id/void', voidActivationCode)
+app.get('/install-reports', getAdminInstallReports)
+app.get('/install-reports/:id', getAdminInstallReportDetail)
 
 export default app

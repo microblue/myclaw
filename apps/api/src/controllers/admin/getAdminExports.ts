@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { asc, count, desc, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { clawExports, users, claws } from '@/db/schema'
+import { clawExports, authUsers, claws } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -28,11 +28,11 @@ const getAdminExports = withErrorHandler(
                 createdAt: clawExports.createdAt,
                 userId: clawExports.userId,
                 clawId: clawExports.clawId,
-                ownerEmail: users.email,
+                ownerEmail: authUsers.email,
                 clawName: claws.name
             })
             .from(clawExports)
-            .leftJoin(users, sql`${clawExports.userId} = ${users.id}`)
+            .leftJoin(authUsers, sql`${clawExports.userId} = ${authUsers.id}`)
             .leftJoin(claws, sql`${clawExports.clawId} = ${claws.id}`)
             .orderBy(
                 sort === 'oldest'

@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { asc, count, desc, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { emails, users } from '@/db/schema'
+import { emails, authUsers } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -27,10 +27,10 @@ const getAdminEmails = withErrorHandler(
                 feature: emails.feature,
                 sentAt: emails.sentAt,
                 userId: emails.userId,
-                ownerEmail: users.email
+                ownerEmail: authUsers.email
             })
             .from(emails)
-            .leftJoin(users, sql`${emails.userId} = ${users.id}`)
+            .leftJoin(authUsers, sql`${emails.userId} = ${authUsers.id}`)
             .orderBy(
                 sort === 'oldest' ? asc(emails.sentAt) : desc(emails.sentAt)
             )

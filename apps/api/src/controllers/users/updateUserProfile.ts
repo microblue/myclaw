@@ -27,7 +27,6 @@ const updateUserProfile = async (c: AuthenticatedContext) => {
             .where(eq(users.id, userId))
             .returning({
                 id: users.id,
-                email: users.email,
                 name: users.name,
                 role: users.role,
                 createdAt: users.createdAt

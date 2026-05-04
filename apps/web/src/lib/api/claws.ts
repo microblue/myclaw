@@ -43,7 +43,7 @@ import type {
 } from '@/ts/Interfaces'
 
 import { apiPaths as API_PATHS } from '@openclaw/shared'
-import { getCachedToken } from '@/lib/firebase'
+import { getCachedToken } from '@/lib/supabase'
 import { client, BASE_URL } from '@/lib/api/client'
 import getReferralHeaders from '@/lib/api/getReferralHeaders'
 

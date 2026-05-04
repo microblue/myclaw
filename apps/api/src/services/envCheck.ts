@@ -41,18 +41,19 @@ const RULES: EnvRule[] = [
         hint: 'postgres://user:pw@host:port/db'
     },
     {
-        key: 'FIREBASE_PROJECT_ID',
-        hint: 'Firebase Console → Project settings → Project ID'
+        key: 'SUPABASE_URL',
+        shape: /^https:\/\/[a-z0-9]+\.supabase\.co$/,
+        hint: 'Supabase Dashboard → Project Settings → API → Project URL'
     },
     {
-        key: 'FIREBASE_CLIENT_EMAIL',
-        shape: /@.+\.iam\.gserviceaccount\.com$/,
-        hint: 'service-account email from the Firebase Admin SDK JSON'
+        key: 'SUPABASE_PUB_KEY',
+        shape: /^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+        hint: 'Supabase Dashboard → Project Settings → API → anon public key (JWT)'
     },
     {
-        key: 'FIREBASE_PRIVATE_KEY',
-        shape: /BEGIN PRIVATE KEY/,
-        hint: 'full PEM block including -----BEGIN PRIVATE KEY-----'
+        key: 'SUPABASE_SECRET_KEY',
+        shape: /^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+        hint: 'Supabase Dashboard → Project Settings → API → service_role secret (JWT)'
     },
     {
         key: 'CLOUDFLARE_API_TOKEN',

@@ -127,11 +127,14 @@ const API_PATHS = {
         VOID_ACTIVATION_CODE_BATCH: (batchId: string) =>
             `/admin/activation-codes/batches/${batchId}/void-unused`,
         VOID_ACTIVATION_CODE: (id: string) =>
-            `/admin/activation-codes/${id}/void`
+            `/admin/activation-codes/${id}/void`,
+        INSTALL_REPORTS: '/admin/install-reports',
+        INSTALL_REPORT: (id: string) => `/admin/install-reports/${id}`
     },
     WEBHOOKS: {
         POLAR: '/webhooks/polar'
-    }
+    },
+    INSTALL_REPORTS: '/install-reports'
 } as const
 
 export default API_PATHS

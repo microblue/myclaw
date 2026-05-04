@@ -1,12 +1,13 @@
 import type { FC, FormEvent, ReactNode } from 'react'
 
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useNetworkStatus } from '@/hooks'
 import { ROUTES } from '@/lib'
+import { supabase } from '@/lib/supabase'
 import {
     Logo,
     NetworkStatus,
@@ -15,14 +16,12 @@ import {
     ProductHuntBanner
 } from '@/components'
 import { CircleNotchIcon } from '@phosphor-icons/react'
-import EmailStep from '@/pages/Login/EmailStep'
-import OtpCodeStep from '@/pages/Login/OtpCodeStep'
-import useOtpCooldown from '@/pages/Login/useOtpCooldown'
-import useOtpFlow from '@/pages/Login/useOtpFlow'
 
 const Login: FC = (): ReactNode => {
     const [email, setEmail] = useState('')
-    const [step, setStep] = useState<'email' | 'code'>('email')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState<string | null>(null)
+    const [submitting, setSubmitting] = useState(false)
     const { user, loading: authLoading, isLocal } = useAuth()
     const isOffline = useNetworkStatus()
     const navigate = useNavigate()
@@ -30,29 +29,6 @@ const Login: FC = (): ReactNode => {
     const planParam = searchParams.get('plan')
     const deployParam = searchParams.get('deploy')
     const providerParam = searchParams.get('provider')
-
-    const { cooldown, startCooldown } = useOtpCooldown()
-
-    const {
-        code,
-        codeError,
-        emailError,
-        loadingMethod,
-        isCodeComplete,
-        inputRefs,
-        handleSendOtp,
-        handleVerifyOtp,
-        handleCodeChange,
-        handleCodeKeyDown,
-        handleResend,
-        handleOAuth,
-        resetCode
-    } = useOtpFlow({
-        email,
-        cooldown,
-        startCooldown,
-        onCodeSent: () => setStep('code')
-    })
 
     const getRedirectUrl = () => {
         if (planParam) {
@@ -66,19 +42,37 @@ const Login: FC = (): ReactNode => {
     }
 
     useEffect(() => {
-        if (user) {
-            navigate(getRedirectUrl())
-        }
+        if (user) navigate(getRedirectUrl())
     }, [user, navigate])
 
-    const handleSubmit = (e: FormEvent) => {
+    // Single sign-in handler. signUp + immediate signIn would require an
+    // extra round-trip; using signInWithPassword and falling back to
+    // signUp if the user doesn't exist gives one form for both flows
+    // while the email-confirmation step is off.
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        handleSendOtp()
-    }
+        setError(null)
+        setSubmitting(true)
+        try {
+            const { error: signInError } =
+                await supabase.auth.signInWithPassword({ email, password })
 
-    const handleChangeEmail = () => {
-        setStep('email')
-        resetCode()
+            if (signInError) {
+                if (signInError.message.toLowerCase().includes('invalid')) {
+                    const { error: signUpError } = await supabase.auth.signUp({
+                        email,
+                        password
+                    })
+                    if (signUpError) throw signUpError
+                } else {
+                    throw signInError
+                }
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Sign-in failed')
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     if (authLoading || user) {
@@ -94,18 +88,10 @@ const Login: FC = (): ReactNode => {
         <div
             className={`bg-background text-foreground ${isLocal ? 'fixed inset-0 flex flex-col overflow-hidden' : 'relative min-h-screen'}`}
         >
-            {isOffline ? (
-                <NetworkStatus />
-            ) : (
-                <ProductHuntBanner />
-            )}
+            {isOffline ? <NetworkStatus /> : <ProductHuntBanner />}
             <div className='flex min-h-screen items-center justify-center px-4'>
                 <PageTitle
-                    title={
-                        step === 'email'
-                            ? t('auth.signIn')
-                            : t('auth.checkYourEmail')
-                    }
+                    title={t('auth.signIn')}
                     description={t('auth.signInDescription')}
                     noIndex
                 />
@@ -125,32 +111,48 @@ const Login: FC = (): ReactNode => {
                         </p>
                     </div>
 
-                    {step === 'email' ? (
-                        <EmailStep
-                            email={email}
-                            setEmail={setEmail}
-                            emailError={emailError}
-                            loadingMethod={loadingMethod}
-                            cooldown={cooldown}
-                            onSubmit={handleSubmit}
-                            onOAuth={handleOAuth}
+                    <form
+                        onSubmit={handleSubmit}
+                        className='space-y-4 rounded-xl border border-border bg-foreground/5 p-6 backdrop-blur-sm'
+                    >
+                        <input
+                            type='email'
+                            required
+                            placeholder='Email'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete='email'
+                            className='w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20'
                         />
-                    ) : (
-                        <OtpCodeStep
-                            email={email}
-                            code={code}
-                            codeError={codeError}
-                            isCodeComplete={isCodeComplete}
-                            loadingMethod={loadingMethod}
-                            cooldown={cooldown}
-                            inputRefs={inputRefs}
-                            onCodeChange={handleCodeChange}
-                            onCodeKeyDown={handleCodeKeyDown}
-                            onVerify={() => handleVerifyOtp(code.join(''))}
-                            onResend={handleResend}
-                            onChangeEmail={handleChangeEmail}
+                        <input
+                            type='password'
+                            required
+                            minLength={6}
+                            placeholder='Password'
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete='current-password'
+                            className='w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20'
                         />
-                    )}
+                        {error && (
+                            <p className='text-sm text-red-500'>{error}</p>
+                        )}
+                        <button
+                            type='submit'
+                            disabled={submitting || !email || !password}
+                            className='flex w-full items-center justify-center gap-2 rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50'
+                        >
+                            {submitting && (
+                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
+                            )}
+                            Sign in / Sign up
+                        </button>
+                        <p className='text-xs text-muted-foreground'>
+                            New here? Just enter a fresh email + password — an
+                            account is created automatically. Existing users:
+                            sign in. Forgot your password? <Link to='/forgot' className='underline'>Reset it</Link>.
+                        </p>
+                    </form>
                 </motion.div>
             </div>
         </div>

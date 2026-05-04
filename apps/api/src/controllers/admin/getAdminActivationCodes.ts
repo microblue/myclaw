@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { count, desc, eq, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { activationCodes, users, claws } from '@/db/schema'
+import { activationCodes, authUsers, claws } from '@/db/schema'
 import { ok } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
 
@@ -55,11 +55,11 @@ const getAdminActivationCodes = withErrorHandler(
                 redeemedAt: activationCodes.redeemedAt,
                 expiresAt: activationCodes.expiresAt,
                 createdAt: activationCodes.createdAt,
-                redeemedByEmail: users.email,
+                redeemedByEmail: authUsers.email,
                 redeemedClawName: claws.name
             })
             .from(activationCodes)
-            .leftJoin(users, eq(users.id, activationCodes.redeemedByUserId))
+            .leftJoin(authUsers, eq(authUsers.id, activationCodes.redeemedByUserId))
             .leftJoin(claws, eq(claws.id, activationCodes.redeemedClawId))
             .where(whereClause)
             .orderBy(desc(activationCodes.createdAt))

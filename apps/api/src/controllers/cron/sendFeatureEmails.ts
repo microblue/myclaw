@@ -4,7 +4,7 @@ import type { FeatureEmailKey } from '@/ts/Types'
 import crypto from 'crypto'
 import { eq, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { users, emails } from '@/db/schema'
+import { users, authUsers, emails } from '@/db/schema'
 import { getResend, FROM_EMAIL } from '@/services/resend'
 import FEATURE_EMAILS from '@/lib/featureEmails'
 import { ok, fail } from '@/lib/response'
@@ -83,8 +83,9 @@ const sendFeatureEmails = async (c: Context) => {
             if (!targetFeature) return fail(c, t('api.invalidFeatureKey'), 400)
 
             const pendingUsers = await db
-                .select({ id: users.id, email: users.email })
+                .select({ id: users.id, email: authUsers.email })
                 .from(users)
+                .innerJoin(authUsers, eq(authUsers.id, users.id))
                 .where(
                     sql`${users.id} NOT IN (
                         SELECT ${emails.userId} FROM ${emails}
@@ -96,6 +97,7 @@ const sendFeatureEmails = async (c: Context) => {
             let totalSent = 0
 
             for (const user of pendingUsers) {
+                if (!user.email) continue
                 const sent = await markAndSend(
                     resend,
                     user.id,
@@ -118,8 +120,9 @@ const sendFeatureEmails = async (c: Context) => {
         }
 
         const pendingUsers = await db
-            .select({ id: users.id, email: users.email })
+            .select({ id: users.id, email: authUsers.email })
             .from(users)
+            .innerJoin(authUsers, eq(authUsers.id, users.id))
             .where(
                 sql`(
                     SELECT COUNT(*) FROM ${emails}
@@ -131,6 +134,7 @@ const sendFeatureEmails = async (c: Context) => {
         let totalSent = 0
 
         for (const user of pendingUsers) {
+            if (!user.email) continue
             const sentEmails = await db
                 .select({ feature: emails.feature })
                 .from(emails)

@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { asc, count, desc, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { pendingClaws, users } from '@/db/schema'
+import { pendingClaws, authUsers } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -32,10 +32,10 @@ const getAdminPendingClaws = withErrorHandler(
                 createdAt: pendingClaws.createdAt,
                 expiresAt: pendingClaws.expiresAt,
                 userId: pendingClaws.userId,
-                ownerEmail: users.email
+                ownerEmail: authUsers.email
             })
             .from(pendingClaws)
-            .leftJoin(users, sql`${pendingClaws.userId} = ${users.id}`)
+            .leftJoin(authUsers, sql`${pendingClaws.userId} = ${authUsers.id}`)
             .orderBy(
                 sort === 'oldest'
                     ? asc(pendingClaws.createdAt)

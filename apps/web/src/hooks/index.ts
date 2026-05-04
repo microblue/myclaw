@@ -3,6 +3,8 @@ import {
     useAdminAnalytics,
     useAdminBillingList,
     useAdminClawsList,
+    useAdminInstallReport,
+    useAdminInstallReports,
     useAdminReferralsList,
     useAdminStats,
     useAdminUsers,
@@ -96,7 +98,6 @@ import useRoutePrefetch from '@/hooks/useRoutePrefetch'
 import useInfiniteScrollObserver from '@/hooks/useInfiniteScrollObserver'
 import usePaginationState from '@/hooks/usePaginationState'
 import useClawSettingsForm from '@/hooks/useClawSettingsForm'
-import useLinkedProvider from '@/hooks/useLinkedProvider'
 import useAgentNameValidation from '@/hooks/useAgentNameValidation'
 import createApiMutation from '@/hooks/createApiMutation'
 import useToast from '@/hooks/useToast'
@@ -107,6 +108,8 @@ export {
     useAdminAnalytics,
     useAdminBillingList,
     useAdminClawsList,
+    useAdminInstallReport,
+    useAdminInstallReports,
     useAdminReferralsList,
     useAdminStats,
     useAdminUsers,
@@ -174,7 +177,6 @@ export {
     useInfiniteScrollObserver,
     usePaginationState,
     useClawSettingsForm,
-    useLinkedProvider,
     useAgentNameValidation,
     createApiMutation,
     useToast,

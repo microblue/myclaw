@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws, users } from '@/db/schema'
+import { claws, users, authUsers } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -36,8 +36,9 @@ const reassignAdminClaw = withErrorHandler(
     if (!existingClaw) return fail(c, t('api.clawNotFound'), 404)
 
     const [newOwner] = await db
-        .select({ id: users.id, email: users.email })
+        .select({ id: users.id, email: authUsers.email })
         .from(users)
+        .innerJoin(authUsers, eq(authUsers.id, users.id))
         .where(eq(users.id, newUserId))
         .limit(1)
     if (!newOwner) return fail(c, t('api.userNotFound'), 404)

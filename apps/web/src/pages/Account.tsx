@@ -13,7 +13,6 @@ import {
     useProfile,
     useUpdateProfile,
     useUserStats,
-    useLinkedProvider,
     PROFILE_QUERY_KEY
 } from '@/hooks'
 import {
@@ -21,8 +20,7 @@ import {
     PageTitle,
     PageHeader,
     AccountProfileSection,
-    AccountSettingsSection,
-    ConnectedAccountsSection
+    AccountSettingsSection
 } from '@/components'
 import AppShell from '@/components/layout/AppShell'
 import { CircleNotchIcon } from '@phosphor-icons/react'
@@ -46,14 +44,6 @@ const Account: FC = (): ReactNode => {
 
     const { data: profile } = useProfile({ enabled: !!user })
     const { data: userStats } = useUserStats()
-
-    const {
-        linkingProvider,
-        unlinkingProvider,
-        providerBusy,
-        handleLinkProvider,
-        handleUnlinkProvider
-    } = useLinkedProvider()
 
     useEffect(() => {
         if (profile?.name) {
@@ -111,9 +101,7 @@ const Account: FC = (): ReactNode => {
 
     const email = user?.email || profile?.email || ''
 
-    const joinedDate = isLocal
-        ? profile?.createdAt
-        : user?.metadata?.creationTime
+    const joinedDate = isLocal ? profile?.createdAt : user?.created_at
 
     return (
         <AppShell>
@@ -185,15 +173,6 @@ const Account: FC = (): ReactNode => {
                                     </p>
                                 </div>
                             )}
-
-                            <ConnectedAccountsSection
-                                authMethods={profile?.authMethods}
-                                linkingProvider={linkingProvider}
-                                unlinkingProvider={unlinkingProvider}
-                                providerBusy={providerBusy}
-                                onLink={handleLinkProvider}
-                                onUnlink={handleUnlinkProvider}
-                            />
 
                             <AccountSettingsSection
                                 showLocal={false}

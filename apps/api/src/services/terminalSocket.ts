@@ -3,7 +3,7 @@ import type { ClientChannel } from 'ssh2'
 
 import { WebSocketServer, WebSocket } from 'ws'
 import { Client } from 'ssh2'
-import { verifyToken } from '@/services/firebase'
+import { verifyJwt } from '@/services/supabase'
 import { findUserClaw, isAdmin } from '@/controllers/claws/helpers'
 
 const setupTerminalSocket = (server: Server) => {
@@ -42,15 +42,15 @@ const setupTerminalSocket = (server: Server) => {
                 return
             }
 
-            const decoded = await verifyToken(token)
+            const user = await verifyJwt(token)
 
-            if (!decoded) {
+            if (!user) {
                 socket.destroy()
                 return
             }
 
-            const admin = await isAdmin(decoded.uid)
-            const claw = await findUserClaw(decoded.uid, clawId, admin)
+            const admin = await isAdmin(user.id)
+            const claw = await findUserClaw(user.id, clawId, admin)
 
             if (!claw || !claw.ip || !claw.rootPassword) {
                 socket.destroy()

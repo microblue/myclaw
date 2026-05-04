@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { users } from '@/db/schema'
+import { users, authUsers } from '@/db/schema'
 import { customers, checkouts } from '@/lib/polar'
 import { getEnvironment } from '@/lib/environment'
 import { ok, fail } from '@/lib/response'
@@ -15,16 +15,17 @@ const purchaseLicense = async (c: AuthenticatedContext) => {
         const user = await db
             .select({
                 id: users.id,
-                email: users.email,
+                email: authUsers.email,
                 name: users.name,
                 polarCustomerId: users.polarCustomerId,
                 hasLicense: users.hasLicense
             })
             .from(users)
+            .innerJoin(authUsers, eq(authUsers.id, users.id))
             .where(eq(users.id, userId))
             .limit(1)
 
-        if (!user[0]) return fail(c, t('api.userNotFound'), 404)
+        if (!user[0] || !user[0].email) return fail(c, t('api.userNotFound'), 404)
 
         if (user[0].hasLicense)
             return fail(c, t('api.licenseAlreadyPurchased'), 400)

@@ -7,7 +7,7 @@ import type {
     RefObject
 } from 'react'
 import type { MotionValue } from 'framer-motion'
-import type { User } from 'firebase/auth'
+import type { User } from '@supabase/supabase-js'
 import type { Node, Edge } from '@xyflow/react'
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query'
 import type { TranslationKey } from '@openclaw/i18n'
@@ -418,20 +418,10 @@ export interface CachedProfile {
     email: string
     name: string | null
     role: UserRole
-    authMethods: AuthMethod[]
     hasLicense: boolean
     referralCode: string | null
     referralCodeChanged: boolean
     createdAt: string
-}
-
-export interface VerifyOtpResponse {
-    customToken: string
-}
-
-export interface ResolveCredentialConflictData {
-    accessToken: string
-    providerId: string
 }
 
 export interface AuthContextType {
@@ -439,14 +429,6 @@ export interface AuthContextType {
     loading: boolean
     cachedProfile: CachedProfile | null
     updateCachedProfile: (data: Partial<CachedProfile>) => void
-    sendOtp: (email: string) => Promise<void>
-    verifyOtp: (email: string, code: string) => Promise<void>
-    signInWithGoogle: () => Promise<void>
-    signInWithGithub: () => Promise<void>
-    linkGoogle: () => Promise<void>
-    linkGithub: () => Promise<void>
-    unlinkGoogle: () => Promise<void>
-    unlinkGithub: () => Promise<void>
     signOut: () => Promise<void>
     isLocal?: boolean
 }
@@ -1775,12 +1757,6 @@ export interface ElectronWindow {
     electronAPI?: ElectronAPI
 }
 
-export interface OAuthWindowResult {
-    accessToken: string | null
-    idToken: string | null
-    code: string | null
-}
-
 export interface RenameClawMutationParams extends RenameClawData {
     id: string
 }
@@ -1837,10 +1813,6 @@ export interface EnvVar {
 export interface EnvVarValidationError {
     key: string | null
     value: string | null
-}
-
-export interface FirebaseErrorLike {
-    code?: string
 }
 
 export interface ErrorWithMessage {
@@ -2109,6 +2081,29 @@ export interface AdminWaitlistListItem {
     email: string
     userId: string | null
     createdAt: string
+}
+
+export interface AdminInstallReportListItem {
+    id: string
+    installId: string
+    desktopVersion: string
+    platform: string
+    arch: string
+    hostname: string
+    username: string
+    bootstrapPhase: string
+    errorMessage: string
+    createdAt: string
+}
+
+export interface AdminInstallReportDetail extends AdminInstallReportListItem {
+    osRelease: string
+    nodeVersion: string
+    errorStack: string | null
+    logs: string
+    envInfo: Record<string, unknown>
+    ip: string | null
+    userAgent: string | null
 }
 
 export interface AdminExportListItem {

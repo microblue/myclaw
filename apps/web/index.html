@@ -55,19 +55,6 @@
                     window.removeEventListener('click', loadAnalytics)
                     window.removeEventListener('touchstart', loadAnalytics)
 
-                    window.dataLayer = window.dataLayer || []
-                    function gtag() {
-                        dataLayer.push(arguments)
-                    }
-                    window.gtag = gtag
-                    gtag('js', new Date())
-                    gtag('config', 'G-27CKWLCQBH')
-                    var gs = document.createElement('script')
-                    gs.async = true
-                    gs.src =
-                        'https://www.googletagmanager.com/gtag/js?id=G-27CKWLCQBH'
-                    document.head.appendChild(gs)
-
                     var ds = document.createElement('script')
                     ds.defer = true
                     ds.setAttribute(

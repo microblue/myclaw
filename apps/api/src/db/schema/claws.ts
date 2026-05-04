@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, index } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, index } from 'drizzle-orm/pg-core'
 import users from '@/db/schema/users'
 import sshKeys from '@/db/schema/sshKeys'
 
@@ -6,7 +6,7 @@ const claws = pgTable(
     'claws',
     {
         id: text('id').primaryKey(),
-        userId: text('user_id')
+        userId: uuid('user_id')
             .notNull()
             .references(() => users.id, { onDelete: 'cascade' }),
         name: text('name').notNull(),

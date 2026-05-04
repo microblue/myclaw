@@ -1,8 +1,8 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
-import { asc, count, desc, ilike, or, sql } from 'drizzle-orm'
+import { asc, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { users, claws, sshKeys } from '@/db/schema'
+import { users, authUsers, claws, sshKeys } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -26,7 +26,7 @@ const getAdminUsers = withErrorHandler(
     if (search) {
         conditions.push(
             or(
-                ilike(users.email, `%${search}%`),
+                ilike(authUsers.email, `%${search}%`),
                 ilike(users.name, `%${search}%`)
             )
         )
@@ -55,19 +55,23 @@ const getAdminUsers = withErrorHandler(
             : undefined
 
     const [totalResult, userRows] = await Promise.all([
-        db.select({ count: count() }).from(users).where(whereClause),
+        db
+            .select({ count: count() })
+            .from(users)
+            .innerJoin(authUsers, eq(authUsers.id, users.id))
+            .where(whereClause),
         db
             .select({
                 id: users.id,
-                email: users.email,
+                email: authUsers.email,
                 name: users.name,
                 role: users.role,
-                authMethods: users.authMethods,
                 hasLicense: users.hasLicense,
                 referralCode: users.referralCode,
                 createdAt: users.createdAt
             })
             .from(users)
+            .innerJoin(authUsers, eq(authUsers.id, users.id))
             .where(whereClause)
             .orderBy(
                 sort === 'oldest' ? asc(users.createdAt) : desc(users.createdAt)

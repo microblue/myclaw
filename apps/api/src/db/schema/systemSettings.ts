@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core'
 
 // KV-style admin settings. Used for runtime-editable global config
 // the control plane reads when provisioning new claws — e.g. the
@@ -12,7 +12,7 @@ const systemSettings = pgTable('system_settings', {
     updatedAt: timestamp('updated_at', { withTimezone: true })
         .defaultNow()
         .notNull(),
-    updatedBy: text('updated_by')
+    updatedBy: uuid('updated_by')
 })
 
 export default systemSettings

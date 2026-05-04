@@ -17,7 +17,8 @@ import {
     AdminReferralsTab,
     AdminDetailModal,
     AdminSettingsTab,
-    AdminActivationCodesTab
+    AdminActivationCodesTab,
+    AdminInstallReportsTab
 } from '@/components/admin'
 import { Skeleton } from '@/components/ui'
 import {
@@ -28,6 +29,7 @@ import {
     CreditCardIcon,
     GearIcon,
     KeyIcon,
+    BugIcon,
     SidebarSimpleIcon
 } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
@@ -47,6 +49,7 @@ const ADMIN_TABS = {
     REFERRALS: 'referrals',
     BILLING: 'billing',
     CODES: 'codes',
+    INSTALL_REPORTS: 'install-reports',
     SETTINGS: 'settings'
 } as const
 
@@ -122,6 +125,11 @@ const Admin: FC = (): ReactNode => {
             key: ADMIN_TABS.CODES,
             icon: KeyIcon,
             label: 'Activation codes'
+        },
+        {
+            key: ADMIN_TABS.INSTALL_REPORTS,
+            icon: BugIcon,
+            label: 'Install reports'
         },
         {
             key: ADMIN_TABS.SETTINGS,
@@ -284,6 +292,9 @@ const Admin: FC = (): ReactNode => {
                                 )}
                                 {activeTab === ADMIN_TABS.CODES && (
                                     <AdminActivationCodesTab />
+                                )}
+                                {activeTab === ADMIN_TABS.INSTALL_REPORTS && (
+                                    <AdminInstallReportsTab />
                                 )}
                                 {activeTab === ADMIN_TABS.SETTINGS && (
                                     <AdminSettingsTab />

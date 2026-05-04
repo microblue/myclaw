@@ -3,7 +3,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { users, claws, sshKeys, volumes } from '@/db/schema'
+import { users, authUsers, claws, sshKeys, volumes } from '@/db/schema'
 import { orders } from '@/lib/polar'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
@@ -19,10 +19,9 @@ const getAdminUserDetail = withErrorHandler(
     const user = await db
         .select({
             id: users.id,
-            email: users.email,
+            email: authUsers.email,
             name: users.name,
             role: users.role,
-            authMethods: users.authMethods,
             hasLicense: users.hasLicense,
             polarCustomerId: users.polarCustomerId,
             referralCode: users.referralCode,
@@ -31,6 +30,7 @@ const getAdminUserDetail = withErrorHandler(
             createdAt: users.createdAt
         })
         .from(users)
+        .innerJoin(authUsers, eq(authUsers.id, users.id))
         .where(eq(users.id, userId))
         .limit(1)
 

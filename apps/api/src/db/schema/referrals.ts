@@ -1,14 +1,14 @@
-import { pgTable, text, timestamp, index, unique } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, index, unique } from 'drizzle-orm/pg-core'
 import users from '@/db/schema/users'
 
 const referrals = pgTable(
     'referrals',
     {
         id: text('id').primaryKey(),
-        referrerId: text('referrer_id')
+        referrerId: uuid('referrer_id')
             .notNull()
             .references(() => users.id, { onDelete: 'cascade' }),
-        referredUserId: text('referred_user_id')
+        referredUserId: uuid('referred_user_id')
             .notNull()
             .references(() => users.id, { onDelete: 'cascade' }),
         createdAt: timestamp('created_at', { withTimezone: true })

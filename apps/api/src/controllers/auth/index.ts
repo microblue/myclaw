@@ -1,5 +1,7 @@
-import resolveCredentialConflict from '@/controllers/auth/resolveCredentialConflict'
-import sendOtp from '@/controllers/auth/sendOtp'
-import verifyOtp from '@/controllers/auth/verifyOtp'
-
-export { resolveCredentialConflict, sendOtp, verifyOtp }
+// All Firebase-era auth controllers (sendOtp, verifyOtp,
+// resolveCredentialConflict) are gone — Supabase Auth handles signup +
+// login + password reset directly from the SPA via @supabase/supabase-js,
+// and the API only verifies the resulting JWT in middleware. Nothing to
+// re-export here yet; keeping the file so existing route imports surface
+// a clear error instead of a missing-module path.
+export {}

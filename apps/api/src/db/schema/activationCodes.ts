@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, index } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, integer, index } from 'drizzle-orm/pg-core'
 import users from '@/db/schema/users'
 
 const activationCodes = pgTable(
@@ -15,7 +15,7 @@ const activationCodes = pgTable(
         notes: text('notes'),
         validityMonths: integer('validity_months'),
         status: text('status').notNull().default('unused'),
-        redeemedByUserId: text('redeemed_by_user_id').references(
+        redeemedByUserId: uuid('redeemed_by_user_id').references(
             () => users.id,
             { onDelete: 'set null' }
         ),
@@ -25,7 +25,7 @@ const activationCodes = pgTable(
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()
             .notNull(),
-        createdByUserId: text('created_by_user_id').references(() => users.id, {
+        createdByUserId: uuid('created_by_user_id').references(() => users.id, {
             onDelete: 'set null'
         })
     },

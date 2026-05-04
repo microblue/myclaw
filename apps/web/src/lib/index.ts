@@ -18,7 +18,6 @@ import TRUNCATE_LENGTHS from '@/lib/truncateLengths'
 import fireConfetti from '@/lib/fireConfetti'
 import copyToClipboard from '@/lib/copyToClipboard'
 import generateRandomAgentName from '@/lib/generateRandomAgentName'
-import reportWebVitals from '@/lib/reportWebVitals'
 import { formatDate, formatCurrency } from '@/lib/formatters'
 import {
     tabs as PLAYGROUND_DETAIL_TABS,
@@ -45,7 +44,6 @@ export {
     fireConfetti,
     copyToClipboard,
     generateRandomAgentName,
-    reportWebVitals,
     formatDate,
     formatCurrency,
     PLAYGROUND_DETAIL_TABS,
