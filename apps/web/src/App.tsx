@@ -22,6 +22,15 @@ const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
 const Affiliate = lazy(() => import('@/pages/Affiliate'))
 const Admin = lazy(() => import('@/pages/Admin'))
+const MintCodesShell = lazy(() => import('@/pages/MintCodes/WizardShell'))
+const MintCodesStepProvider = lazy(
+    () => import('@/pages/MintCodes/StepProvider')
+)
+const MintCodesStepPlan = lazy(() => import('@/pages/MintCodes/StepPlan'))
+const MintCodesStepDetails = lazy(
+    () => import('@/pages/MintCodes/StepDetails')
+)
+const MintCodesStepReview = lazy(() => import('@/pages/MintCodes/StepReview'))
 const License = lazy(() => import('@/pages/License'))
 const Terms = lazy(() => import('@/pages/Terms'))
 const Privacy = lazy(() => import('@/pages/Privacy'))
@@ -149,6 +158,46 @@ const App: FC = (): ReactNode => {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route
+                            path={ROUTES.MINT_CODES}
+                            element={
+                                <ProtectedRoute>
+                                    <MintCodesShell />
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route index element={<MintCodesStepProvider />} />
+                        </Route>
+                        <Route
+                            path={ROUTES.MINT_CODES_PLAN}
+                            element={
+                                <ProtectedRoute>
+                                    <MintCodesShell />
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route index element={<MintCodesStepPlan />} />
+                        </Route>
+                        <Route
+                            path={ROUTES.MINT_CODES_DETAILS}
+                            element={
+                                <ProtectedRoute>
+                                    <MintCodesShell />
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route index element={<MintCodesStepDetails />} />
+                        </Route>
+                        <Route
+                            path={ROUTES.MINT_CODES_REVIEW}
+                            element={
+                                <ProtectedRoute>
+                                    <MintCodesShell />
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route index element={<MintCodesStepReview />} />
+                        </Route>
                         <Route
                             path={ROUTES.LICENSE}
                             element={

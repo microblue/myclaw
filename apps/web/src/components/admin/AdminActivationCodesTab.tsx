@@ -1,8 +1,9 @@
 import type { FC } from 'react'
 
 import { Fragment, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib'
+import { api, ROUTES } from '@/lib'
 import {
     Button,
     Card,
@@ -16,7 +17,6 @@ import {
 import { EmptyState, ErrorState } from '@/components'
 import { KeyIcon } from '@phosphor-icons/react'
 import AdminStatusBadge from '@/components/admin/AdminStatusBadge'
-import AdminMintCodesModal from '@/components/admin/AdminMintCodesModal'
 import { useToast } from '@/hooks'
 
 const ACTIVATION_CODES_QUERY_KEY = ['adminActivationCodes']
@@ -25,7 +25,7 @@ const AdminActivationCodesTab: FC = () => {
     const [status, setStatus] = useState('all')
     const [partner, setPartner] = useState('')
     const [batch, setBatch] = useState('')
-    const [mintOpen, setMintOpen] = useState(false)
+    const navigate = useNavigate()
     const toast = useToast()
 
     const { data, isLoading, isError, refetch } = useQuery({
@@ -52,7 +52,9 @@ const AdminActivationCodesTab: FC = () => {
         <Fragment>
             <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
                 <h3 className='text-xl font-semibold'>Activation codes</h3>
-                <Button onClick={() => setMintOpen(true)}>Mint batch</Button>
+                <Button onClick={() => navigate(ROUTES.MINT_CODES)}>
+                    Mint batch
+                </Button>
             </div>
 
             <div className='mb-4 grid gap-2 sm:grid-cols-3'>
@@ -145,11 +147,6 @@ const AdminActivationCodesTab: FC = () => {
                 </div>
             )}
 
-            <AdminMintCodesModal
-                open={mintOpen}
-                onClose={() => setMintOpen(false)}
-                onSuccess={() => refetch()}
-            />
         </Fragment>
     )
 }
