@@ -8,6 +8,7 @@ const activationCodes = pgTable(
         code: text('code').notNull().unique(),
         planId: text('plan_id').notNull(),
         provider: text('provider').notNull().default('hetzner'),
+        region: text('region').notNull(),
         tierLabel: text('tier_label'),
         partnerName: text('partner_name'),
         batchId: text('batch_id'),

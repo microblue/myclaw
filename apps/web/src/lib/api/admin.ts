@@ -133,6 +133,7 @@ const admin = {
                 code: string
                 planId: string
                 provider: string
+                region: string
                 tierLabel: string | null
                 partnerName: string | null
                 batchId: string | null
@@ -155,6 +156,7 @@ const admin = {
     createActivationCodeBatch: (data: {
         planId: string
         provider: string
+        region: string
         tierLabel?: string | null
         partnerName?: string | null
         notes?: string | null

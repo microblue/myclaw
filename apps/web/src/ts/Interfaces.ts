@@ -731,15 +731,15 @@ export interface PurchaseClawData {
     name: string
     clawType?: string  // 'openclaw' default; reserved: zeroclaw, picoclaw, hermes, nanoclaw
     planId?: string
-    location: string
+    location?: string  // Optional — omitted by the activation-code redeem flow (region is baked into the code)
     password?: string
     sshKeyId?: string
     volumeSize?: number
     priceMonthly?: number
     billingInterval?: 'month' | 'year'
     provider?: string  // Cloud provider ID: hetzner, lightsail, digitalocean, etc.
-    // When set, the API ignores planId/provider/priceMonthly and reads them
-    // from the activation code row instead. Used by the redeem-code flow.
+    // When set, the API ignores planId/provider/region/priceMonthly and reads
+    // them from the activation code row instead. Used by the redeem-code flow.
     activationCode?: string
 }
 
@@ -753,9 +753,9 @@ export interface ActivationCodePreview {
     valid: boolean
     planId?: string
     provider?: string
+    region?: string
     tierLabel?: string | null
     validityMonths?: number | null
-    locations?: { id: string; name: string }[]
     reason?: ActivationCodePreviewReason
 }
 

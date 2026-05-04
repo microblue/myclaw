@@ -23,7 +23,6 @@ interface RedeemArgs {
     code: string
     name?: string
     clawType: string
-    location: string
     password?: string
     sshKeyId?: string
     volumeSize?: number
@@ -35,13 +34,10 @@ const redeemActivationCode = async ({
     code,
     name: rawName,
     clawType,
-    location,
     password,
     sshKeyId,
     volumeSize
 }: RedeemArgs) => {
-    if (!location) return fail(c, t('api.missingRequiredFields'), 400)
-
     const trimmedCode = code.trim()
     if (!trimmedCode) return fail(c, 'Activation code is required.', 400)
 
@@ -63,8 +59,12 @@ const redeemActivationCode = async ({
     const provider = providerRegistry.getProvider(codeRow.provider)
     if (!provider) return fail(c, t('api.providerNotAvailable'), 400)
 
+    // Region was locked at mint time, but defend against the provider
+    // disabling it between mint and redeem (region retired, plan
+    // delisted in that location, etc.).
+    const region = codeRow.region
     const locations = await provider.getLocations()
-    const selectedLocation = locations.find((l) => l.id === location)
+    const selectedLocation = locations.find((l) => l.id === region)
     if (!selectedLocation || selectedLocation.disabled)
         return fail(c, t('api.invalidLocation'), 400)
 
@@ -73,7 +73,7 @@ const redeemActivationCode = async ({
     if (
         availableLocations &&
         availableLocations.length > 0 &&
-        !availableLocations.includes(location)
+        !availableLocations.includes(region)
     ) {
         return fail(c, t('api.planNotAvailableAtLocation'), 400)
     }
@@ -156,7 +156,7 @@ const redeemActivationCode = async ({
             clawType,
             status: clawStatus.creating,
             planId: codeRow.planId,
-            location,
+            location: region,
             provider: codeRow.provider,
             rootPassword: finalPassword,
             sshKeyId: sshKeyId || null,

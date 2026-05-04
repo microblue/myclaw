@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '@/lib'
 import {
     Button,
@@ -11,7 +11,7 @@ import {
     Input,
     Label
 } from '@/components/ui'
-import { useToast } from '@/hooks'
+import { useToast, useProviderLocations } from '@/hooks'
 
 interface Props {
     open: boolean
@@ -22,6 +22,7 @@ interface Props {
 const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
     const [provider, setProvider] = useState('hetzner')
     const [planId, setPlanId] = useState('')
+    const [region, setRegion] = useState('')
     const [tierLabel, setTierLabel] = useState('')
     const [partnerName, setPartnerName] = useState('')
     const [count, setCount] = useState(10)
@@ -30,14 +31,25 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
     const [submitting, setSubmitting] = useState(false)
     const toast = useToast()
 
+    const { locations, isLoading: loadingLocations } = useProviderLocations(
+        provider || null
+    )
+
+    // Reset region when the provider changes (a region from one provider
+    // generally won't exist on another).
+    useEffect(() => {
+        setRegion('')
+    }, [provider])
+
     const handleSubmit = async () => {
-        if (!planId.trim() || count < 1) return
+        if (!planId.trim() || !region || count < 1) return
         setSubmitting(true)
         try {
             const months = validityMonths === '' ? null : Number(validityMonths)
             const result = await api.createActivationCodeBatch({
                 provider,
                 planId: planId.trim(),
+                region,
                 tierLabel: tierLabel.trim() || null,
                 partnerName: partnerName.trim() || null,
                 validityMonths: months,
@@ -91,6 +103,36 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
                                 onChange={(e) => setPlanId(e.target.value)}
                             />
                         </div>
+                    </div>
+
+                    <div className='space-y-1.5'>
+                        <Label htmlFor='mint-region'>Region</Label>
+                        <select
+                            id='mint-region'
+                            value={region}
+                            onChange={(e) => setRegion(e.target.value)}
+                            disabled={loadingLocations}
+                            className='border-input bg-background w-full rounded-md border px-3 py-2 text-sm disabled:opacity-50'
+                        >
+                            <option value=''>
+                                {loadingLocations
+                                    ? 'Loading regions…'
+                                    : 'Select a region'}
+                            </option>
+                            {locations
+                                .filter((l) => !l.disabled)
+                                .map((l) => (
+                                    <option key={l.id} value={l.id}>
+                                        {l.id} — {l.name} ({l.country})
+                                    </option>
+                                ))}
+                        </select>
+                        <p className='text-muted-foreground text-xs'>
+                            Locked at mint time — every code in this batch
+                            deploys here. For users in China, Hetzner{' '}
+                            <code>sin</code> (Singapore) is the closest
+                            region.
+                        </p>
                     </div>
 
                     <div className='space-y-1.5'>
@@ -168,7 +210,12 @@ const AdminMintCodesModal: FC<Props> = ({ open, onClose, onSuccess }) => {
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        disabled={!planId.trim() || count < 1 || submitting}
+                        disabled={
+                            !planId.trim() ||
+                            !region ||
+                            count < 1 ||
+                            submitting
+                        }
                     >
                         {submitting ? 'Minting…' : `Mint ${count} codes`}
                     </Button>

@@ -10,6 +10,7 @@ import withErrorHandler from '@/lib/withErrorHandler'
 interface CreateBatchBody {
     planId?: string
     provider?: string
+    region?: string
     tierLabel?: string | null
     partnerName?: string | null
     notes?: string | null
@@ -45,6 +46,7 @@ const createActivationCodeBatch = withErrorHandler(
         .catch(() => ({}) as CreateBatchBody)
     const planId = String(body.planId || '').trim()
     const providerId = String(body.provider || 'hetzner').trim()
+    const region = String(body.region || '').trim()
     const partnerName = body.partnerName?.trim() || null
     const tierLabel = body.tierLabel?.trim() || null
     const notes = body.notes?.trim() || null
@@ -56,11 +58,30 @@ const createActivationCodeBatch = withErrorHandler(
     )
 
     if (!planId) return fail(c, 'planId is required.', 400)
+    if (!region) return fail(c, 'region is required.', 400)
     if (validityMonths != null && (!Number.isInteger(validityMonths) || validityMonths < 1))
         return fail(c, 'validityMonths must be a positive integer or null.', 400)
 
     const provider = providerRegistry.getProvider(providerId)
     if (!provider) return fail(c, 'Provider is not available.', 400)
+
+    // Region is locked at mint time, so validate it against the live provider
+    // catalog and the plan's availability map. A typo or a region that the
+    // partner can't actually deploy into would silently burn N codes.
+    const [locations, availability] = await Promise.all([
+        provider.getLocations(),
+        provider.getPlanAvailability()
+    ])
+    const matchedLocation = locations.find((l) => l.id === region)
+    if (!matchedLocation || matchedLocation.disabled)
+        return fail(c, `Region "${region}" is not a valid location for ${providerId}.`, 400)
+    const allowed = availability[planId]
+    if (allowed && allowed.length > 0 && !allowed.includes(region))
+        return fail(
+            c,
+            `Plan "${planId}" is not available in region "${region}".`,
+            400
+        )
 
     let expiresAt: Date | null = null
     if (body.expiresAt) {
@@ -78,6 +99,7 @@ const createActivationCodeBatch = withErrorHandler(
         code: mintCode(),
         planId,
         provider: providerId,
+        region,
         tierLabel,
         partnerName,
         batchId,

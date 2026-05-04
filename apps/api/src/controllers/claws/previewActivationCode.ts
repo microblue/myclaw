@@ -3,7 +3,6 @@ import type { AuthenticatedContext } from '@/ts/Types'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { activationCodes } from '@/db/schema'
-import { providerRegistry } from '@/services/providers'
 import { ok } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
 
@@ -37,31 +36,15 @@ const previewActivationCode = withErrorHandler('previewActivationCode')(
         if (row.expiresAt && row.expiresAt < new Date())
             return ok(c, { valid: false, reason: 'expired' as const }, '')
 
-        const provider = providerRegistry.getProvider(row.provider)
-        let locations: { id: string; name: string }[] = []
-        if (provider) {
-            const all = await provider.getLocations()
-            const availability = await provider.getPlanAvailability()
-            const allowed = availability[row.planId]
-            locations = all
-                .filter((l) => !l.disabled)
-                .filter((l) =>
-                    allowed && allowed.length > 0
-                        ? allowed.includes(l.id)
-                        : true
-                )
-                .map((l) => ({ id: l.id, name: l.name }))
-        }
-
         return ok(
             c,
             {
                 valid: true,
                 planId: row.planId,
                 provider: row.provider,
+                region: row.region,
                 tierLabel: row.tierLabel,
-                validityMonths: row.validityMonths,
-                locations
+                validityMonths: row.validityMonths
             },
             ''
         )

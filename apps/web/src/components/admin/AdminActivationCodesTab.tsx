@@ -109,6 +109,9 @@ const AdminActivationCodesTab: FC = () => {
                                         <p className='text-muted-foreground text-xs'>
                                             {row.tierLabel || row.planId} ·{' '}
                                             {row.provider}
+                                            {row.region
+                                                ? ` · ${row.region}`
+                                                : ''}
                                             {row.validityMonths != null
                                                 ? ` · ${row.validityMonths}mo`
                                                 : ' · perpetual'}

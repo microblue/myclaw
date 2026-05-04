@@ -105,7 +105,6 @@ const baseArgs = (override: Record<string, unknown> = {}) => ({
     code: 'GL-AAAA-BBBB-CCCC',
     name: 'my-claw',
     clawType: 'openclaw',
-    location: 'fsn1',
     ...override
 })
 
@@ -142,6 +141,7 @@ describe('redeemActivationCode', () => {
                 code: 'GL-AAAA-BBBB-CCCC',
                 planId: 'cpx21',
                 provider: 'hetzner',
+                region: 'fsn1',
                 status: 'redeemed',
                 validityMonths: null,
                 expiresAt: null
@@ -158,6 +158,7 @@ describe('redeemActivationCode', () => {
                 code: 'GL-AAAA-BBBB-CCCC',
                 planId: 'cpx21',
                 provider: 'hetzner',
+                region: 'fsn1',
                 status: 'voided',
                 validityMonths: null,
                 expiresAt: null
@@ -174,6 +175,7 @@ describe('redeemActivationCode', () => {
                 code: 'GL-AAAA-BBBB-CCCC',
                 planId: 'cpx21',
                 provider: 'hetzner',
+                region: 'fsn1',
                 status: 'unused',
                 validityMonths: null,
                 expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000)
@@ -190,6 +192,7 @@ describe('redeemActivationCode', () => {
                 code: 'GL-AAAA-BBBB-CCCC',
                 planId: 'cpx21',
                 provider: 'hetzner',
+                region: 'fsn1',
                 status: 'unused',
                 validityMonths: null,
                 expiresAt: null
@@ -215,6 +218,7 @@ describe('redeemActivationCode', () => {
                 code: 'GL-AAAA-BBBB-CCCC',
                 planId: 'cpx21',
                 provider: 'hetzner',
+                region: 'fsn1',
                 status: 'unused',
                 validityMonths: null,
                 expiresAt: null
@@ -236,6 +240,7 @@ describe('redeemActivationCode', () => {
                 code: 'GL-AAAA-BBBB-CCCC',
                 planId: 'cpx21',
                 provider: 'hetzner',
+                region: 'fsn1',
                 status: 'unused',
                 validityMonths: 12,
                 expiresAt: null

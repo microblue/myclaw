@@ -104,9 +104,10 @@ const initiateClawPurchase = withErrorHandler(
         return fail(c, t('api.clawTypeNotYetSupported'), 400)
     }
 
-    // Activation-code path skips Polar entirely. planId/provider/billing
-    // come from the code row, not the request body, so a malicious client
-    // can't override the partner's metadata.
+    // Activation-code path skips Polar entirely. planId/provider/region/
+    // billing all come from the code row, not the request body, so a
+    // malicious client can't override the partner's metadata. Region is
+    // also locked at mint time — the redemption UI is one-click.
     if (activationCode) {
         return await redeemActivationCode({
             c,
@@ -114,7 +115,6 @@ const initiateClawPurchase = withErrorHandler(
             code: activationCode,
             name: rawName,
             clawType,
-            location,
             password,
             sshKeyId,
             volumeSize

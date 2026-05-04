@@ -218,6 +218,13 @@
       "when": 1777920000000,
       "tag": "0030_activation_codes",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1778266800000,
+      "tag": "0031_activation_codes_region",
+      "breakpoints": true
     }
   ]
 }

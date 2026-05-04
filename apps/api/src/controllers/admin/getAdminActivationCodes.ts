@@ -43,6 +43,7 @@ const getAdminActivationCodes = withErrorHandler(
                 code: activationCodes.code,
                 planId: activationCodes.planId,
                 provider: activationCodes.provider,
+                region: activationCodes.region,
                 tierLabel: activationCodes.tierLabel,
                 partnerName: activationCodes.partnerName,
                 batchId: activationCodes.batchId,
