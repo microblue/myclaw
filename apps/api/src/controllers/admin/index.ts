@@ -15,6 +15,10 @@ import updateAdminUser from '@/controllers/admin/updateAdminUser'
 import getAdminSettings from '@/controllers/admin/getAdminSettings'
 import updateAdminSetting from '@/controllers/admin/updateAdminSetting'
 import reassignAdminClaw from '@/controllers/admin/reassignAdminClaw'
+import createActivationCodeBatch from '@/controllers/admin/createActivationCodeBatch'
+import getAdminActivationCodes from '@/controllers/admin/getAdminActivationCodes'
+import exportActivationCodeBatch from '@/controllers/admin/exportActivationCodeBatch'
+import voidActivationCode from '@/controllers/admin/voidActivationCode'
 
 export {
     getAdminAnalytics,
@@ -33,5 +37,9 @@ export {
     updateAdminUser,
     getAdminSettings,
     updateAdminSetting,
-    reassignAdminClaw
+    reassignAdminClaw,
+    createActivationCodeBatch,
+    getAdminActivationCodes,
+    exportActivationCodeBatch,
+    voidActivationCode
 }

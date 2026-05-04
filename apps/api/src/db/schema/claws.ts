@@ -28,6 +28,7 @@ const claws = pgTable(
         polarCustomerId: text('polar_customer_id'),
         subscriptionStatus: text('subscription_status').default('pending'),
         billingInterval: text('billing_interval'),
+        activationCodeId: text('activation_code_id'),
         deletionScheduledAt: timestamp('deletion_scheduled_at', {
             withTimezone: true
         }),

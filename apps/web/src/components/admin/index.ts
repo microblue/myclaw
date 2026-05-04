@@ -12,6 +12,8 @@ import AdminUserDetailView from '@/components/admin/AdminUserDetailView'
 import AdminUserFilters from '@/components/admin/AdminUserFilters'
 import AdminUserRow from '@/components/admin/AdminUserRow'
 import AdminSettingsTab from '@/components/admin/AdminSettingsTab'
+import AdminActivationCodesTab from '@/components/admin/AdminActivationCodesTab'
+import AdminMintCodesModal from '@/components/admin/AdminMintCodesModal'
 
 export {
     AdminAnalyticsTab,
@@ -27,5 +29,7 @@ export {
     AdminUserDetailView,
     AdminUserFilters,
     AdminUserRow,
-    AdminSettingsTab
+    AdminSettingsTab,
+    AdminActivationCodesTab,
+    AdminMintCodesModal
 }

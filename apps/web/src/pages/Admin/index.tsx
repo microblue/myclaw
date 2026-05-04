@@ -16,7 +16,8 @@ import {
     AdminClawsTab,
     AdminReferralsTab,
     AdminDetailModal,
-    AdminSettingsTab
+    AdminSettingsTab,
+    AdminActivationCodesTab
 } from '@/components/admin'
 import {
     Skeleton,
@@ -31,7 +32,8 @@ import {
     HandshakeIcon,
     ChartLineUpIcon,
     CreditCardIcon,
-    GearIcon
+    GearIcon,
+    KeyIcon
 } from '@phosphor-icons/react'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 import { UsersTab } from '@/pages/Admin/tabs'
@@ -46,6 +48,7 @@ const ADMIN_TABS = {
     CLAWS: 'claws',
     REFERRALS: 'referrals',
     BILLING: 'billing',
+    CODES: 'codes',
     SETTINGS: 'settings'
 } as const
 
@@ -143,6 +146,12 @@ const Admin: FC = (): ReactNode => {
                                         count: stats?.billing
                                     },
                                     {
+                                        key: ADMIN_TABS.CODES,
+                                        icon: KeyIcon,
+                                        label: 'Codes',
+                                        showLabel: true
+                                    },
+                                    {
                                         key: ADMIN_TABS.SETTINGS,
                                         icon: GearIcon,
                                         label: 'Settings',
@@ -209,6 +218,9 @@ const Admin: FC = (): ReactNode => {
                             )}
                             {activeTab === ADMIN_TABS.USERS && (
                                 <UsersTab onSelectEntity={setSelectedEntity} />
+                            )}
+                            {activeTab === ADMIN_TABS.CODES && (
+                                <AdminActivationCodesTab />
                             )}
                             {activeTab === ADMIN_TABS.SETTINGS && (
                                 <AdminSettingsTab />

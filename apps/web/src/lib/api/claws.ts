@@ -25,6 +25,7 @@ import type {
     DiagnosticsStatusResponse,
     GetAgentSkillsResponse,
     InstallClawVersionResponse,
+    ActivationCodePreview,
     PurchaseClawData,
     PurchaseClawResponse,
     ReadClawFileResponse,
@@ -58,6 +59,11 @@ const claws = {
         client.post<PurchaseClawResponse>(API_PATHS.CLAWS.PURCHASE, data, {
             headers: getReferralHeaders()
         }),
+    previewActivationCode: (code: string) =>
+        client.post<ActivationCodePreview>(
+            API_PATHS.CLAWS.ACTIVATION_CODE_PREVIEW,
+            { code }
+        ),
     suggestClawName: () =>
         client.get<{ name: string }>(API_PATHS.CLAWS.SUGGEST_NAME),
     startClaw: (id: string) => client.post<Claw>(API_PATHS.CLAWS.START(id)),

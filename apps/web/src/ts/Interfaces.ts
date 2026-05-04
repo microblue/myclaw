@@ -730,14 +730,33 @@ export interface AIModelOption {
 export interface PurchaseClawData {
     name: string
     clawType?: string  // 'openclaw' default; reserved: zeroclaw, picoclaw, hermes, nanoclaw
-    planId: string
+    planId?: string
     location: string
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    priceMonthly: number
+    priceMonthly?: number
     billingInterval?: 'month' | 'year'
     provider?: string  // Cloud provider ID: hetzner, lightsail, digitalocean, etc.
+    // When set, the API ignores planId/provider/priceMonthly and reads them
+    // from the activation code row instead. Used by the redeem-code flow.
+    activationCode?: string
+}
+
+export type ActivationCodePreviewReason =
+    | 'not_found'
+    | 'redeemed'
+    | 'voided'
+    | 'expired'
+
+export interface ActivationCodePreview {
+    valid: boolean
+    planId?: string
+    provider?: string
+    tierLabel?: string | null
+    validityMonths?: number | null
+    locations?: { id: string; name: string }[]
+    reason?: ActivationCodePreviewReason
 }
 
 export interface DeleteClawResponse {

@@ -24,6 +24,7 @@ const API_PATHS = {
         ADMIN: '/claws/admin',
         PURCHASE: '/claws/purchase',
         SUGGEST_NAME: '/claws/suggest-name',
+        ACTIVATION_CODE_PREVIEW: '/claws/activation-code/preview',
         byId: (id: string) => `/claws/${id}`,
         PENDING: (id: string) => `/claws/pending/${id}`,
         SYNC: (id: string) => `/claws/${id}/sync`,
@@ -118,7 +119,13 @@ const API_PATHS = {
         EXPORTS: '/admin/exports',
         EMAILS: '/admin/emails',
         SETTINGS: '/admin/settings',
-        UPDATE_SETTING: (key: string) => `/admin/settings/${key}`
+        UPDATE_SETTING: (key: string) => `/admin/settings/${key}`,
+        ACTIVATION_CODES: '/admin/activation-codes',
+        ACTIVATION_CODE_BATCHES: '/admin/activation-codes/batches',
+        ACTIVATION_CODE_BATCH_EXPORT: (batchId: string) =>
+            `/admin/activation-codes/batches/${batchId}/export`,
+        VOID_ACTIVATION_CODE: (id: string) =>
+            `/admin/activation-codes/${id}/void`
     },
     WEBHOOKS: {
         POLAR: '/webhooks/polar'

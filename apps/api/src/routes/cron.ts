@@ -2,7 +2,8 @@ import { Hono } from 'hono'
 import {
     generateBlogPost,
     sendFeatureEmails,
-    cleanupExpiredOtps
+    cleanupExpiredOtps,
+    cleanupExpiredClaws
 } from '@/controllers/cron'
 import { fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
@@ -21,5 +22,6 @@ app.use('*', async (c, next) => {
 app.get('/generate-blog-post', generateBlogPost)
 app.get('/send-feature-emails', sendFeatureEmails)
 app.get('/cleanup-expired-otps', cleanupExpiredOtps)
+app.get('/cleanup-expired-claws', cleanupExpiredClaws)
 
 export default app

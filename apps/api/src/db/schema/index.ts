@@ -11,6 +11,7 @@ import emails from '@/db/schema/emails'
 import waitlist from '@/db/schema/waitlist'
 import volumes from '@/db/schema/volumes'
 import systemSettings from '@/db/schema/systemSettings'
+import activationCodes from '@/db/schema/activationCodes'
 
 export {
     users,
@@ -25,5 +26,6 @@ export {
     emails,
     waitlist,
     volumes,
-    systemSettings
+    systemSettings,
+    activationCodes
 }

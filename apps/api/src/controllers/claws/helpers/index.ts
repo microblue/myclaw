@@ -39,6 +39,7 @@ import withClaw from '@/controllers/claws/helpers/withClaw'
 import SUPPORTED_CHANNELS from '@/controllers/claws/helpers/supportedChannels'
 import applySandboxOffDefaults from '@/controllers/claws/helpers/applySandboxOffDefaults'
 import withFeatureGatedConfigUpdate from '@/controllers/claws/helpers/withFeatureGatedConfigUpdate'
+import redeemActivationCode from '@/controllers/claws/helpers/redeemActivationCode'
 
 export {
     applyToolsDefaults,
@@ -81,5 +82,6 @@ export {
     withClaw,
     SUPPORTED_CHANNELS,
     applySandboxOffDefaults,
-    withFeatureGatedConfigUpdate
+    withFeatureGatedConfigUpdate,
+    redeemActivationCode
 }

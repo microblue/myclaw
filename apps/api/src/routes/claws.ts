@@ -52,7 +52,8 @@ import {
     getClawCredentials,
     cancelPendingClaw,
     suggestClawName,
-    getClawBootstrapLog
+    getClawBootstrapLog,
+    previewActivationCode
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -61,6 +62,7 @@ const app = new Hono<HonoEnv>()
 app.get('/', getClaws)
 app.get('/admin', adminOnly, getAdminClaws)
 app.get('/suggest-name', suggestClawName)
+app.post('/activation-code/preview', previewActivationCode)
 app.get('/:id', getClaw)
 app.post('/purchase', initiateClawPurchase)
 app.delete('/pending/:id', cancelPendingClaw)

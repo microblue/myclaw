@@ -491,14 +491,17 @@ export interface UpdateProfileBody {
 export interface InitiateClawPurchaseBody {
     name?: string
     clawType?: string  // 'openclaw' (default); reserved: zeroclaw, picoclaw, hermes, nanoclaw
-    planId: string
+    planId?: string
     location: string
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    priceMonthly: number
+    priceMonthly?: number
     billingInterval?: BillingInterval
     provider?: string  // Cloud provider ID: hetzner, lightsail, digitalocean, etc.
+    // When set, payment is skipped; planId/provider/billingInterval are read
+    // from the activation code row instead of the request body.
+    activationCode?: string
 }
 
 export interface CloudflareDNSRecord {

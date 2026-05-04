@@ -114,6 +114,63 @@ const admin = {
         client.put<{ userId: string; ownerEmail: string | null }>(
             API_PATHS.ADMIN.REASSIGN_CLAW_OWNER(clawId),
             { userId }
+        ),
+    listAdminActivationCodes: (
+        page: number = 1,
+        limit: number = 50,
+        filters: { status?: string; partner?: string; batch?: string } = {}
+    ) => {
+        const qs = new URLSearchParams({
+            page: String(page),
+            limit: String(limit)
+        })
+        if (filters.status) qs.set('status', filters.status)
+        if (filters.partner) qs.set('partner', filters.partner)
+        if (filters.batch) qs.set('batch', filters.batch)
+        return client.get<{
+            items: Array<{
+                id: string
+                code: string
+                planId: string
+                provider: string
+                tierLabel: string | null
+                partnerName: string | null
+                batchId: string | null
+                notes: string | null
+                validityMonths: number | null
+                status: string
+                redeemedByUserId: string | null
+                redeemedClawId: string | null
+                redeemedAt: string | null
+                expiresAt: string | null
+                createdAt: string
+                redeemedByEmail: string | null
+                redeemedClawName: string | null
+            }>
+            total: number
+            page: number
+            totalPages: number
+        }>(`${API_PATHS.ADMIN.ACTIVATION_CODES}?${qs.toString()}`)
+    },
+    createActivationCodeBatch: (data: {
+        planId: string
+        provider: string
+        tierLabel?: string | null
+        partnerName?: string | null
+        notes?: string | null
+        validityMonths?: number | null
+        expiresAt?: string | null
+        count: number
+    }) =>
+        client.post<{
+            batchId: string
+            count: number
+            codes: { id: string; code: string }[]
+        }>(API_PATHS.ADMIN.ACTIVATION_CODE_BATCHES, data),
+    voidActivationCode: (id: string) =>
+        client.put<{ id: string; status: string }>(
+            API_PATHS.ADMIN.VOID_ACTIVATION_CODE(id),
+            {}
         )
 }
 

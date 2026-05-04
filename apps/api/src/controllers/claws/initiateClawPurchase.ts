@@ -12,7 +12,8 @@ import {
     generateClawName,
     generateSlug,
     generateToken,
-    provisionClawServer
+    provisionClawServer,
+    redeemActivationCode
 } from '@/controllers/claws/helpers'
 import { clawStatus } from '@openclaw/shared'
 import { subscriptionStatus } from '@/lib/constants'
@@ -94,12 +95,30 @@ const initiateClawPurchase = withErrorHandler(
         volumeSize,
         priceMonthly,
         billingInterval: rawBillingInterval,
-        provider: requestedProvider
+        provider: requestedProvider,
+        activationCode
     } = await c.req.json<InitiateClawPurchaseBody>()
 
     const clawType = rawClawType || 'openclaw'
     if (!SUPPORTED_CLAW_TYPES.has(clawType)) {
         return fail(c, t('api.clawTypeNotYetSupported'), 400)
+    }
+
+    // Activation-code path skips Polar entirely. planId/provider/billing
+    // come from the code row, not the request body, so a malicious client
+    // can't override the partner's metadata.
+    if (activationCode) {
+        return await redeemActivationCode({
+            c,
+            userId,
+            code: activationCode,
+            name: rawName,
+            clawType,
+            location,
+            password,
+            sshKeyId,
+            volumeSize
+        })
     }
 
     const billingCycle =

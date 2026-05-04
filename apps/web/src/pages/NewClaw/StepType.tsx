@@ -59,7 +59,14 @@ const StepType: FC = () => {
                     )
                 })}
             </div>
-            <div className='flex justify-end'>
+            <div className='flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center'>
+                <button
+                    type='button'
+                    onClick={() => navigate(ROUTES.REDEEM_CODE)}
+                    className='text-muted-foreground hover:text-foreground text-left text-sm underline-offset-4 hover:underline'
+                >
+                    Got an activation code? Redeem here →
+                </button>
                 <Button
                     onClick={() => handleSelect(selected)}
                     disabled={!CLAW_TYPES.find((c) => c.id === selected && !c.comingSoon)}

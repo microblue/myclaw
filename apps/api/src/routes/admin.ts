@@ -18,7 +18,11 @@ import {
     updateAdminUser,
     getAdminSettings,
     updateAdminSetting,
-    reassignAdminClaw
+    reassignAdminClaw,
+    createActivationCodeBatch,
+    getAdminActivationCodes,
+    exportActivationCodeBatch,
+    voidActivationCode
 } from '@/controllers/admin'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -42,5 +46,12 @@ app.get('/exports', getAdminExports)
 app.get('/emails', getAdminEmails)
 app.get('/settings', getAdminSettings)
 app.put('/settings/:key', updateAdminSetting)
+app.get('/activation-codes', getAdminActivationCodes)
+app.post('/activation-codes/batches', createActivationCodeBatch)
+app.get(
+    '/activation-codes/batches/:batchId/export',
+    exportActivationCodeBatch
+)
+app.put('/activation-codes/:id/void', voidActivationCode)
 
 export default app
