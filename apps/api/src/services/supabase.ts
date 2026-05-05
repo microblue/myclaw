@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import ws from 'ws'
 
 // Service-role client. Bypasses RLS; used for server-side admin ops and
 // for verifying user-supplied JWTs via auth.getUser(). Lives at module
@@ -20,7 +21,12 @@ export const supabase = createClient(supabaseUrl, supabaseSecretKey, {
         persistSession: false,
         autoRefreshToken: false,
         detectSessionInUrl: false
-    }
+    },
+    // Node < 22 has no native WebSocket; @supabase/realtime-js refuses
+    // to construct the client without one. We don't actually use the
+    // realtime channel — auth.getUser() is HTTP — but the constructor
+    // initializes it eagerly. Pass `ws` so the import doesn't crash.
+    realtime: { transport: ws as unknown as never }
 })
 
 // Returns the auth.users row if the JWT is valid and not expired,
