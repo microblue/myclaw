@@ -118,4 +118,3 @@ export type TranscriberFunction = (
 ) => Promise<TranscriptionResult>
 
 export type AdminAnalyticsRange = 'day' | 'week' | 'month' | 'year' | 'all'
-
