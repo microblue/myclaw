@@ -12,7 +12,7 @@ import startSyncScheduler from '@/services/syncScheduler'
 import validateEnv from '@/services/envCheck'
 
 // Fail fast on broken / placeholder secrets rather than running for
-// weeks with silently-failing CF / Firebase / DB calls.
+// weeks with silently-failing CF / Supabase / DB calls.
 validateEnv()
 
 const port = Number(process.env.PORT)

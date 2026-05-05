@@ -2062,7 +2062,7 @@ clawName: 'Naam',
             'MyClaw.One ("wij", "ons" of "onze") zet zich in voor de bescherming van je privacy. Dit Privacybeleid legt uit hoe wij je informatie verzamelen, gebruiken, openbaar maken en beschermen wanneer je onze Service gebruikt.',
         authTitle: '2. Authenticatie',
         authText:
-            'MyClaw.One gebruikt Google Firebase Authentication om gebruikersaccounts te beheren. Je kunt inloggen met e-mail, Google of GitHub. Door deze inlogmethoden te gebruiken, ga je akkoord met hun respectieve voorwaarden en privacybeleid. Deze providers kunnen basisgegevens verzamelen zoals je e-mailadres, naam en apparaatinformatie. Wij slaan alleen je e-mailadres en weergavenaam op.',
+            'MyClaw.One gebruikt Supabase Authentication om gebruikersaccounts te beheren. Je kunt inloggen met e-mail, Google of GitHub. Door deze inlogmethoden te gebruiken, ga je akkoord met hun respectieve voorwaarden en privacybeleid. Deze providers kunnen basisgegevens verzamelen zoals je e-mailadres, naam en apparaatinformatie. Wij slaan alleen je e-mailadres en weergavenaam op.',
         collectTitle: '3. Informatie die wij verzamelen',
         collectText: 'Wij verzamelen informatie op de volgende manieren:',
         personalInfoTitle: 'Persoonlijke informatie',
@@ -2109,7 +2109,7 @@ clawName: 'Naam',
         rightsWithdraw: 'Toestemming op elk moment in te trekken',
         cookiesTitle: '9. Cookies en tracking',
         cookiesText:
-            'Wij gebruiken geen cookies. Authenticatie wordt afgehandeld via Firebase en is niet afhankelijk van cookies die in je browser zijn opgeslagen.',
+            'Wij gebruiken geen cookies. Authenticatie wordt afgehandeld via Supabase en is niet afhankelijk van cookies die in je browser zijn opgeslagen.',
         transfersTitle: '10. Internationale gegevensoverdracht',
         transfersText:
             'Je informatie kan worden overgedragen naar en verwerkt in landen anders dan je eigen land. Wij zorgen ervoor dat passende waarborgen aanwezig zijn om je gegevens te beschermen in overeenstemming met dit Privacybeleid.',
@@ -2136,7 +2136,7 @@ clawName: 'Naam',
             'MyClaw.One biedt OpenClaw-deployment met \u00e9\u00e9n klik op dedicated servers. Wij stellen gebruikers in staat om vooraf geconfigureerde OpenClaw-instanties te deployen, beheren en openen met volledige root-toegang en dedicated resources.',
         authTitle: '3. Authenticatie',
         authText:
-            'MyClaw.One gebruikt Google Firebase Authentication om inloggen te beheren. Je kunt authenticeren met e-mail, Google of GitHub. Door deze methoden te gebruiken, ga je akkoord met de respectieve voorwaarden en het privacybeleid van Google en GitHub. Deze providers kunnen basisinformatie verzamelen zoals je e-mailadres, naam en apparaatgegevens.',
+            'MyClaw.One gebruikt Supabase Authentication om inloggen te beheren. Je kunt authenticeren met e-mail, Google of GitHub. Door deze methoden te gebruiken, ga je akkoord met de respectieve voorwaarden en het privacybeleid van Google en GitHub. Deze providers kunnen basisinformatie verzamelen zoals je e-mailadres, naam en apparaatgegevens.',
         responsibilitiesTitle: '4. Verantwoordelijkheden van de gebruiker',
         responsibilitiesText: 'Je gaat akkoord om:',
         responsibilitiesAccurate:

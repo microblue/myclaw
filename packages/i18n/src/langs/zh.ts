@@ -1885,7 +1885,7 @@ const zh: Translations = {
             'MyClaw.One（"我们"）致力于保护您的隐私。本隐私政策说明了当您使用我们的服务时，我们如何收集、使用、披露和保护您的信息。',
         authTitle: '2. 身份验证',
         authText:
-            'MyClaw.One 使用 Google Firebase Authentication 管理用户账户。您可以使用电子邮箱、Google 或 GitHub 登录。使用这些登录方式即表示您同意其各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备信息等基本数据。我们仅存储您的电子邮箱地址和显示名称。',
+            'MyClaw.One 使用 Supabase Authentication 管理用户账户。您可以使用电子邮箱、Google 或 GitHub 登录。使用这些登录方式即表示您同意其各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备信息等基本数据。我们仅存储您的电子邮箱地址和显示名称。',
         collectTitle: '3. 我们收集的信息',
         collectText: '我们通过以下方式收集信息：',
         personalInfoTitle: '个人信息',
@@ -1926,7 +1926,7 @@ const zh: Translations = {
         rightsWithdraw: '随时撤回同意',
         cookiesTitle: '9. Cookie 和跟踪',
         cookiesText:
-            '我们不使用 Cookie。身份验证通过 Firebase 处理，不依赖存储在浏览器中的 Cookie。',
+            '我们不使用 Cookie。身份验证通过 Supabase 处理，不依赖存储在浏览器中的 Cookie。',
         transfersTitle: '10. 国际数据传输',
         transfersText:
             '您的信息可能会被传输到您所在国家以外的国家并在那里处理。我们确保采取适当的保障措施，按照本隐私政策保护您的数据。',
@@ -1951,7 +1951,7 @@ const zh: Translations = {
             'MyClaw.One 提供在专用服务器上一键部署 OpenClaw 的服务。我们使用户能够部署、管理和访问预配置的 OpenClaw 实例，拥有完整的 root 访问权限和专用资源。',
         authTitle: '3. 身份验证',
         authText:
-            'MyClaw.One 使用 Google Firebase Authentication 管理登录。您可以使用电子邮箱、Google 或 GitHub 进行身份验证。使用这些方法即表示您同意 Google 和 GitHub 各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备数据等基本信息。',
+            'MyClaw.One 使用 Supabase Authentication 管理登录。您可以使用电子邮箱、Google 或 GitHub 进行身份验证。使用这些方法即表示您同意 Google 和 GitHub 各自的条款和隐私政策。这些提供商可能会收集您的电子邮箱地址、姓名和设备数据等基本信息。',
         responsibilitiesTitle: '4. 用户责任',
         responsibilitiesText: '您同意：',
         responsibilitiesAccurate: '提供准确和完整的注册信息',

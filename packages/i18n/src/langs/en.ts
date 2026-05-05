@@ -2007,7 +2007,7 @@ const en = {
             'MyClaw.One ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Service.',
         authTitle: '2. Authentication',
         authText:
-            'MyClaw.One uses Google Firebase Authentication to manage user accounts. You may sign in with email, Google, or GitHub. By using these sign-in methods, you agree to their respective terms and privacy policies. These providers may collect basic data such as your email address, name, and device information. We only store your email address and display name.',
+            'MyClaw.One uses Supabase Authentication to manage user accounts. You sign in with an email address and password. We only store your email address and display name; passwords are stored as salted hashes by Supabase on our behalf.',
         collectTitle: '3. Information We Collect',
         collectText: 'We collect information in the following ways:',
         personalInfoTitle: 'Personal Information',
@@ -2053,7 +2053,7 @@ const en = {
         rightsWithdraw: 'Withdraw consent at any time',
         cookiesTitle: '9. Cookies and Tracking',
         cookiesText:
-            'We do not use cookies. Authentication is handled through Firebase and does not rely on cookies stored in your browser.',
+            'We do not use cookies. Authentication is handled through Supabase, which keeps your session in browser local storage rather than third-party cookies.',
         transfersTitle: '10. International Data Transfers',
         transfersText:
             'Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your data in accordance with this Privacy Policy.',
@@ -2080,7 +2080,7 @@ const en = {
             'MyClaw.One provides one-click OpenClaw deployment on dedicated servers. We enable users to deploy, manage, and access pre-configured OpenClaw instances with full root access and dedicated resources.',
         authTitle: '3. Authentication',
         authText:
-            'MyClaw.One uses Google Firebase Authentication to manage sign-in. You may authenticate with email, Google, or GitHub. By using these methods, you agree to the respective terms and privacy policies of Google and GitHub. These providers may collect basic information such as your email address, name, and device data.',
+            'MyClaw.One uses Supabase Authentication to manage sign-in. You authenticate with an email address and password. By creating an account, you agree to allow Supabase to store your hashed credentials on our behalf in accordance with their terms of service.',
         responsibilitiesTitle: '4. User Responsibilities',
         responsibilitiesText: 'You agree to:',
         responsibilitiesAccurate:

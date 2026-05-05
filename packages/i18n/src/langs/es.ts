@@ -2077,7 +2077,7 @@ clawName: 'Nombre',
             'MyClaw.One ("nosotros", "nuestro" o "nos") está comprometido a proteger tu privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos tu información cuando usas nuestro Servicio.',
         authTitle: '2. Autenticación',
         authText:
-            'MyClaw.One usa Google Firebase Authentication para administrar cuentas de usuario. Puedes iniciar sesión con correo electrónico, Google o GitHub. Al usar estos métodos de inicio de sesión, aceptas sus respectivos términos y políticas de privacidad. Estos proveedores pueden recopilar datos básicos como tu dirección de correo electrónico, nombre e información del dispositivo. Solo almacenamos tu dirección de correo electrónico y nombre para mostrar.',
+            'MyClaw.One usa Supabase Authentication para administrar cuentas de usuario. Puedes iniciar sesión con correo electrónico, Google o GitHub. Al usar estos métodos de inicio de sesión, aceptas sus respectivos términos y políticas de privacidad. Estos proveedores pueden recopilar datos básicos como tu dirección de correo electrónico, nombre e información del dispositivo. Solo almacenamos tu dirección de correo electrónico y nombre para mostrar.',
         collectTitle: '3. Información que recopilamos',
         collectText: 'Recopilamos información de las siguientes maneras:',
         personalInfoTitle: 'Información personal',
@@ -2126,7 +2126,7 @@ clawName: 'Nombre',
         rightsWithdraw: 'Retirar el consentimiento en cualquier momento',
         cookiesTitle: '9. Cookies y seguimiento',
         cookiesText:
-            'No usamos cookies. La autenticación se maneja a través de Firebase y no depende de cookies almacenadas en tu navegador.',
+            'No usamos cookies. La autenticación se maneja a través de Supabase y no depende de cookies almacenadas en tu navegador.',
         transfersTitle: '10. Transferencias internacionales de datos',
         transfersText:
             'Tu información puede ser transferida y procesada en países distintos al tuyo. Nos aseguramos de que existan las medidas de protección adecuadas para proteger tus datos de acuerdo con esta Política de Privacidad.',
@@ -2153,7 +2153,7 @@ clawName: 'Nombre',
             'MyClaw.One proporciona despliegue de OpenClaw en un clic en servidores dedicados. Permitimos a los usuarios desplegar, administrar y acceder a instancias de OpenClaw preconfiguradas con acceso root completo y recursos dedicados.',
         authTitle: '3. Autenticación',
         authText:
-            'MyClaw.One usa Google Firebase Authentication para administrar el inicio de sesión. Puedes autenticarte con correo electrónico, Google o GitHub. Al usar estos métodos, aceptas los respectivos términos y políticas de privacidad de Google y GitHub. Estos proveedores pueden recopilar información básica como tu dirección de correo electrónico, nombre y datos del dispositivo.',
+            'MyClaw.One usa Supabase Authentication para administrar el inicio de sesión. Puedes autenticarte con correo electrónico, Google o GitHub. Al usar estos métodos, aceptas los respectivos términos y políticas de privacidad de Google y GitHub. Estos proveedores pueden recopilar información básica como tu dirección de correo electrónico, nombre y datos del dispositivo.',
         responsibilitiesTitle: '4. Responsabilidades del usuario',
         responsibilitiesText: 'Aceptas:',
         responsibilitiesAccurate:

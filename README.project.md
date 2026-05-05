@@ -76,8 +76,8 @@ myclaw/
 | Layer                   | Technology                                                                                                      |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
 | **API Framework**       | [Hono](https://hono.dev) on Node.js                                                                             |
-| **Database**            | PostgreSQL ([Neon](https://neon.tech)) with [Drizzle ORM](https://orm.drizzle.team)                             |
-| **Authentication**      | [Firebase](https://firebase.google.com) (OTP email, Google, GitHub)                                             |
+| **Database**            | PostgreSQL ([Supabase](https://supabase.com)) with [Drizzle ORM](https://orm.drizzle.team)                      |
+| **Authentication**      | [Supabase Auth](https://supabase.com/docs/guides/auth) (email + password)                                       |
 | **Server Provisioning** | [Hetzner Cloud](https://docs.hetzner.cloud)                                                                     |
 | **Remote Management**   | SSH2 for remote command execution, file management, and diagnostics                                             |
 | **Browser Terminal**    | [xterm.js](https://xtermjs.org) with WebSocket proxy over SSH2                                                  |
@@ -102,12 +102,11 @@ myclaw/
 
 | Table          | Purpose                                                               |
 | -------------- | --------------------------------------------------------------------- |
-| `users`        | Firebase-authenticated users with Polar customer IDs and auth methods |
+| `users`        | Application profile rows mirrored from `auth.users` (the Supabase Auth identity table) — UUID PK, FK to auth.users; carries Polar customer IDs and per-user app state |
 | `claws`        | Cloud server instances (status, IP, subdomain, etc)                   |
 | `pendingClaws` | Temporary storage for in-progress checkout sessions                   |
 | `sshKeys`      | SSH public keys with Hetzner key IDs                                  |
 | `volumes`      | Persistent storage volumes attached to claws                          |
-| `otpCodes`     | OTP authentication codes with expiration and attempt tracking         |
 | `rateLimits`   | Rate limiting for authentication endpoints                            |
 | `clawExports`  | Export/backup records with file metadata                              |
 
@@ -117,14 +116,14 @@ myclaw/
 
 - **Node.js** 20+
 - **pnpm** 9.14+
-- **PostgreSQL** database (Neon, Supabase, or self-hosted)
+- **Supabase** project (Postgres + Auth, both come with the project)
 
 ### External Services
 
 | Service                                         | Purpose                 | What You Need                         |
 | ----------------------------------------------- | ----------------------- | ------------------------------------- |
 | [Hetzner Cloud](https://console.hetzner.cloud)  | Server provisioning     | API Token (Read & Write)              |
-| [Firebase](https://console.firebase.google.com) | Authentication          | Project credentials + Service account |
+| [Supabase](https://supabase.com/dashboard)      | Auth + Postgres         | Project URL + anon + service-role keys + DB connection string |
 | [Cloudflare](https://dash.cloudflare.com)       | DNS management          | API Token + Zone ID                   |
 | [Polar.sh](https://polar.sh)                    | Billing & subscriptions | API credentials + Webhook secret      |
 | [Resend](https://resend.com)                    | Transactional email     | API Key                               |
@@ -144,13 +143,13 @@ pnpm install
 **API** — create `apps/api/.env`:
 
 ```bash
-# Database
-DATABASE_URL=postgresql://user:password@host:5432/database?sslmode=require
+# Database — Supabase transaction-mode pooler (port 6543)
+DATABASE_URL=postgresql://postgres.<project-ref>:<db-password>@aws-1-<region>.pooler.supabase.com:6543/postgres
 
-# Firebase Admin SDK
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+# Supabase Auth (server)
+SUPABASE_URL=https://<project-ref>.supabase.co
+SUPABASE_PUB_KEY=eyJhbGciOi...        # anon JWT (Project Settings → API)
+SUPABASE_SECRET_KEY=eyJhbGciOi...     # service_role JWT — server only, never ship to web
 
 # Hetzner Cloud
 HETZNER_API_TOKEN=your-hetzner-api-token
@@ -187,13 +186,9 @@ VITE_API_PORT=2222
 VITE_WS_PORT=2223
 VITE_PORT=1111
 
-# Firebase Client SDK
-VITE_FIREBASE_API_KEY=AIza...
-VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your-project-id
-VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-VITE_FIREBASE_APP_ID=1:123456789:web:abc123
+# Supabase (web)
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOi...   # anon JWT — safe to ship to the browser
 ```
 
 ### 3. Set Up External Services
@@ -210,27 +205,19 @@ VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 </details>
 
 <details>
-<summary><strong>Firebase</strong></summary>
+<summary><strong>Supabase</strong></summary>
 
-1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create a new project
-3. Enable **Authentication** > **Sign-in method** > **Email/Password** (required for OTP login)
-4. Add your domain to **Authorized domains**
-5. For the web app: **Project Settings** > **General** > **Your apps** > Add a web app and copy config
-6. For the API: **Project Settings** > **Service accounts** > Generate a new private key
+1. Create a project at [Supabase Dashboard](https://supabase.com/dashboard) and pick a region.
+2. **Project Settings → API** — copy:
+   - Project URL → `SUPABASE_URL` / `VITE_SUPABASE_URL`
+   - `anon` key → `SUPABASE_PUB_KEY` / `VITE_SUPABASE_ANON_KEY` (safe in the browser)
+   - `service_role` key → `SUPABASE_SECRET_KEY` (server only, bypasses RLS — never ship to the web)
+3. **Project Settings → Database → Connection string** — copy the *Transaction* pooler URL (port 6543) into `DATABASE_URL`.
+4. **Authentication → Providers → Email** — enable Email; for the simplest flow disable "Confirm email" so users can sign in immediately.
+5. **Authentication → URL Configuration** — set the site URL to your prod origin (e.g. `https://yourdomain.com`) and add `http://localhost:1111` to *Additional Redirect URLs* for dev.
+6. Apply the schema with the bundled CLI: `supabase link --project-ref <ref>` then `supabase db push`. The migration in `supabase/migrations/` includes a trigger that mirrors new `auth.users` rows into `public.users` on signup, so the app never has to dual-write.
 
-**Google Sign-In:**
-
-1. In **Authentication** > **Sign-in method**, enable **Google**
-2. Set a project support email
-
-**GitHub Sign-In:**
-
-1. Create an OAuth App on [GitHub Developer Settings](https://github.com/settings/developers)
-2. Set the **Authorization callback URL** to your Firebase callback URL (found in Firebase Console under the GitHub provider setup)
-3. In **Authentication** > **Sign-in method**, enable **GitHub** and paste the Client ID and Client Secret from your GitHub OAuth App
-
-All three sign-in methods (OTP, Google, GitHub) are always displayed in the UI, so all three must be configured in Firebase for a working setup. Users can also link/unlink Google and GitHub accounts from their Account settings page.
+That's all — no service-account JSON, no OAuth provider setup. The API verifies user JWTs through `supabase.auth.getUser()`; the web SPA holds the session via `@supabase/supabase-js` (local storage, not cookies).
 
 </details>
 
@@ -331,8 +318,6 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 | Method | Endpoint                    | Description                       |
 | ------ | --------------------------- | --------------------------------- |
-| `POST` | `/api/auth/send-otp`        | Send OTP code via email           |
-| `POST` | `/api/auth/verify-otp`      | Verify OTP and get Firebase token |
 | `GET`  | `/api/plans`                | List available server plans       |
 | `GET`  | `/api/plans/locations`      | List available regions            |
 | `GET`  | `/api/plans/volume-pricing` | Get volume pricing                |
@@ -555,12 +540,12 @@ New subdomains may take 1-5 minutes to propagate through Cloudflare. Check that 
 </details>
 
 <details>
-<summary><strong>Firebase auth not working</strong></summary>
+<summary><strong>Supabase auth not working</strong></summary>
 
-1. Verify your domain is listed in Firebase **Authorized domains**
-2. Confirm Email/Password sign-in is enabled under **Authentication** > **Sign-in method**
-3. If using Google/GitHub auth, ensure those providers are configured
-4. Double-check that all `VITE_FIREBASE_*` values match your Firebase project
+1. Confirm `VITE_SUPABASE_URL` (web) and `SUPABASE_URL` (api) point at the same project, and that the keys come from that project's **Project Settings → API** page.
+2. In **Authentication → URL Configuration**, make sure your site URL and any dev origin (e.g. `http://localhost:1111`) are listed under *Additional Redirect URLs*.
+3. In **Authentication → Providers → Email**, confirm Email is enabled. If "Confirm email" is on, sign-up will block on the verification step until the user clicks the email link.
+4. If the API returns 401 for valid-looking tokens, decode the JWT (`jwt.io`) and confirm the `iss` claim matches your project URL — a token from a different project will silently fail `supabase.auth.getUser()`.
 
 </details>
 
