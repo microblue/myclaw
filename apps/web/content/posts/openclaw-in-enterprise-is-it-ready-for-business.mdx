@@ -99,9 +99,9 @@ Again, ClawHost addresses some of this by providing managed instances, but for s
 
 Enterprise environments typically use centralized identity providers -- Okta, Azure AD, Ping Identity -- with SAML or OIDC federation.
 
-OpenClaw's authentication is built around Firebase, which supports Google and GitHub OAuth plus email-based OTP. Integrating with an enterprise IdP requires additional configuration and potentially custom work.
+OpenClaw's authentication is built around Supabase Auth, which today is configured for email + password. Integrating with an enterprise IdP requires additional configuration and potentially custom work.
 
-This is solvable -- Firebase supports custom auth providers, and the OpenClaw architecture allows for authentication customization -- but it is not a plug-and-play experience with most enterprise SSO systems. Budget time for this integration if it is a requirement.
+This is solvable -- Supabase supports SAML 2.0 and OIDC federation as well as third-party providers, and the OpenClaw architecture allows for authentication customization -- but it is not a plug-and-play experience with most enterprise SSO systems. Budget time for this integration if it is a requirement.
 
 ### Audit Logging and Governance
 
