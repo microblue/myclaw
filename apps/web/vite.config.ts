@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => {
                             '@codemirror/lang-json'
                         ],
                         phosphor: ['@phosphor-icons/react'],
-                        firebase: ['firebase/app', 'firebase/auth'],
+                        supabase: ['@supabase/supabase-js'],
                         tanstack: [
                             '@tanstack/react-query',
                             '@tanstack/react-query-persist-client',
@@ -118,37 +118,7 @@ export default defineConfig(({ mode }) => {
                     target: `http://localhost:${env.VITE_API_PORT}`,
                     changeOrigin: true,
                     rewrite: (path) => path.replace(/^\/api/, '')
-                },
-                '/__/auth': {
-                    target: 'https://clawhost-prod.firebaseapp.com',
-                    changeOrigin: true,
-                    secure: true
-                },
-                '/__/firebase': {
-                    target: 'https://clawhost-prod.firebaseapp.com',
-                    changeOrigin: true,
-                    secure: true
                 }
-            },
-            setupMiddlewares(middlewares) {
-                const port = Number(env.VITE_PORT) || 1111
-                middlewares.unshift({
-                    name: 'firebase-init-override',
-                    path: '/__/firebase/init.json',
-                    handler(_req, res) {
-                        res.setHeader('Content-Type', 'application/json')
-                        res.end(JSON.stringify({
-                            apiKey: env.VITE_FIREBASE_API_KEY,
-                            appId: env.VITE_FIREBASE_APP_ID,
-                            authDomain: `localhost:${port}`,
-                            databaseURL: '',
-                            messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-                            projectId: env.VITE_FIREBASE_PROJECT_ID,
-                            storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET
-                        }))
-                    }
-                })
-                return middlewares
             }
         }
     }
