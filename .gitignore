@@ -27,3 +27,8 @@ apps/api/.env.bak
 # tracking it just makes `git describe --dirty` pin a permanent
 # "-dirty" suffix on the footer and pollutes diffs for no benefit.
 apps/web/tsconfig.tsbuildinfo
+
+# Playwright artifacts
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/playwright/.cache/

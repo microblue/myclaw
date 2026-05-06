@@ -53,3 +53,35 @@ jobs:
             set -euo pipefail
             cd ~/myclaw
             bash scripts/deploy.sh
+
+  # Post-deploy smoke. Non-blocking for now (continue-on-error: true) so
+  # flaky network or Cloudflare hiccups don't block deploys; once the suite
+  # has accumulated enough scenarios and stabilised we'll flip to blocking.
+  smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm --filter web exec playwright install --with-deps chromium
+      - name: E2E smoke against production
+        env:
+          PLAYWRIGHT_BASE_URL: https://myclaw.one
+        run: pnpm --filter web test:e2e
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
