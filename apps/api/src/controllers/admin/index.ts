@@ -23,6 +23,10 @@ import voidActivationCode from '@/controllers/admin/voidActivationCode'
 import voidActivationCodeBatch from '@/controllers/admin/voidActivationCodeBatch'
 import getAdminInstallReports from '@/controllers/admin/getAdminInstallReports'
 import getAdminInstallReportDetail from '@/controllers/admin/getAdminInstallReportDetail'
+import listPartners from '@/controllers/admin/listPartners'
+import createPartner from '@/controllers/admin/createPartner'
+import suspendPartner from '@/controllers/admin/suspendPartner'
+import grantPartnerQuota from '@/controllers/admin/grantPartnerQuota'
 
 export {
     getAdminAnalytics,
@@ -49,5 +53,9 @@ export {
     voidActivationCode,
     voidActivationCodeBatch,
     getAdminInstallReports,
-    getAdminInstallReportDetail
+    getAdminInstallReportDetail,
+    listPartners,
+    createPartner,
+    suspendPartner,
+    grantPartnerQuota
 }

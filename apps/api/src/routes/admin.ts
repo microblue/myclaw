@@ -26,7 +26,11 @@ import {
     voidActivationCode,
     voidActivationCodeBatch,
     getAdminInstallReports,
-    getAdminInstallReportDetail
+    getAdminInstallReportDetail,
+    listPartners,
+    createPartner,
+    suspendPartner,
+    grantPartnerQuota
 } from '@/controllers/admin'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -64,5 +68,13 @@ app.put(
 app.put('/activation-codes/:id/void', voidActivationCode)
 app.get('/install-reports', getAdminInstallReports)
 app.get('/install-reports/:id', getAdminInstallReportDetail)
+
+// Channel partner administration (super-admin only — adminOnly is
+// already applied to /* above). The /partner-self-serve surface is a
+// separate route file mounted at /partner with partnerOrSuperAdmin.
+app.get('/partners', listPartners)
+app.post('/partners', createPartner)
+app.put('/partners/:id/status', suspendPartner)
+app.post('/partners/:id/quotas', grantPartnerQuota)
 
 export default app
