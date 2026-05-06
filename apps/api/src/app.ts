@@ -29,7 +29,8 @@ import {
     waitlistRoutes,
     webhooksRoutes,
     installReportsRoutes,
-    cloudScriptsRoutes
+    cloudScriptsRoutes,
+    partnerRoutes
 } from '@/routes'
 
 const app = new Hono<HonoEnv>()
@@ -163,6 +164,7 @@ app.use('/*', async (c, next) => {
 })
 
 app.route('/admin', adminRoutes)
+app.route('/partner', partnerRoutes)
 app.route('/affiliate', affiliateRoutes)
 app.route('/ai', aiRoutes)
 app.route('/claws', clawsRoutes)

@@ -11,6 +11,7 @@ import waitlistRoutes from '@/routes/waitlist'
 import webhooksRoutes from '@/routes/webhooks'
 import installReportsRoutes from '@/routes/install-reports'
 import cloudScriptsRoutes from '@/routes/cloud-scripts'
+import partnerRoutes from '@/routes/partner'
 
 export {
     adminRoutes,
@@ -25,5 +26,6 @@ export {
     waitlistRoutes,
     webhooksRoutes,
     installReportsRoutes,
-    cloudScriptsRoutes
+    cloudScriptsRoutes,
+    partnerRoutes
 }
