@@ -1,8 +1,14 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import crypto from 'crypto'
+import { and, eq, sql, isNull } from 'drizzle-orm'
+import { userRole } from '@openclaw/shared'
 import { db } from '@/db'
-import { activationCodes } from '@/db/schema'
+import {
+    activationCodes,
+    channelPartners,
+    partnerQuotas
+} from '@/db/schema'
 import { providerRegistry } from '@/services/providers'
 import { ok, fail } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
@@ -17,14 +23,11 @@ interface CreateBatchBody {
     notes?: string | null
     validityDays?: number | null
     seats?: number
+    creditUsd?: number | null
     expiresAt?: string | null
     count?: number
 }
 
-// Crockford base32 minus 0/O/I/1 — phone-typable. Code format follows
-// the white-paper appendix A spec: xxxxxxxxx-ddd-uuu where ddd is
-// validity days zero-padded to 3 digits and uuu is max seats zero-padded
-// to 3. So a 5-device 90-day code looks like ABCDEFGHJ-090-005.
 const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
 const RANDOM_LEN = 9
 
@@ -45,6 +48,19 @@ const mintCode = (validityDays: number, seats: number) =>
 const MAX_BATCH_SIZE = 1000
 const ALLOWED_SEATS = new Set([1, 5, 25, 50])
 
+// Maps the activation_code.sku_kind ('new'|'renewal') + lifetime shape
+// (day-based vs credit-based) to the granular partner_quotas.sku_kind.
+// Container-credit support is sketched here to match the schema, but
+// the controller doesn't yet expose creditUsd in CreateBatchBody — that
+// ships with P2c (Fly variant).
+const resolveQuotaSku = (
+    skuKind: 'new' | 'renewal',
+    creditUsd: number | null
+): string => {
+    if (creditUsd != null) return 'new_container_credit'
+    return skuKind === 'renewal' ? 'renewal_vm_day' : 'new_vm_day'
+}
+
 const createActivationCodeBatch = withErrorHandler(
     'createActivationCodeBatch'
 )(async (c: AuthenticatedContext) => {
@@ -58,8 +74,7 @@ const createActivationCodeBatch = withErrorHandler(
     const notes = body.notes?.trim() || null
     const validityDays =
         body.validityDays == null ? null : Number(body.validityDays)
-    // `?? 1` not `|| 1`: `seats: 0` from a malformed client should hit the
-    // ALLOWED_SEATS guard below, not silently become 1.
+    const creditUsd = body.creditUsd == null ? null : Number(body.creditUsd)
     const seats = Number(body.seats ?? 1)
     const count = Math.max(
         1,
@@ -71,10 +86,39 @@ const createActivationCodeBatch = withErrorHandler(
     if (!ALLOWED_SEATS.has(seats))
         return fail(c, 'seats must be one of 1, 5, 25, 50.', 400)
 
-    // Renewal codes are plan-agnostic: the redemption flow asks the
-    // user which existing claw to extend, and we validate that the
-    // claw's plan/provider matches the code's at redeem time. So
-    // renewal codes can be minted with no planId/provider/region.
+    // Role-based partner quota gate runs BEFORE provider validation
+    // because: (a) failing fast on unauthorised callers avoids leaking
+    // provider/plan validity to them, (b) the middleware that gates
+    // this route should already be partnerOrSuperAdmin, but this is
+    // defense in depth.
+    const callerRole = c.get('userRole')
+    const callerId = c.get('userId')
+    let partnerId: string | null = null
+
+    if (
+        callerRole !== userRole.admin &&
+        callerRole !== userRole.partner
+    ) {
+        return fail(c, 'Only super-admins or registered partners can mint.', 403)
+    }
+
+    if (callerRole === userRole.partner) {
+        const partnerRow = await db
+            .select({ userId: channelPartners.userId })
+            .from(channelPartners)
+            .where(eq(channelPartners.userId, callerId))
+            .limit(1)
+            .then((rows) => rows[0])
+        if (!partnerRow) {
+            return fail(
+                c,
+                'No partner account is registered for your user — contact support.',
+                403
+            )
+        }
+        partnerId = partnerRow.userId
+    }
+
     const planId = body.planId?.trim() || null
     const providerId = body.provider?.trim() || null
     const region = body.region?.trim() || null
@@ -115,8 +159,80 @@ const createActivationCodeBatch = withErrorHandler(
             return fail(c, 'expiresAt is not a valid date.', 400)
     }
 
+    if (callerRole === userRole.partner && partnerId) {
+        const quotaSku = resolveQuotaSku(skuKind, creditUsd)
+        const quotaRow = await db
+            .select({
+                total: partnerQuotas.total,
+                used: partnerQuotas.used
+            })
+            .from(partnerQuotas)
+            .where(
+                and(
+                    eq(partnerQuotas.partnerId, partnerId),
+                    eq(partnerQuotas.skuKind, quotaSku),
+                    validityDays != null
+                        ? eq(partnerQuotas.validityDays, validityDays)
+                        : isNull(partnerQuotas.validityDays),
+                    creditUsd != null
+                        ? eq(partnerQuotas.creditUsd, creditUsd)
+                        : isNull(partnerQuotas.creditUsd)
+                )
+            )
+            .limit(1)
+            .then((rows) => rows[0])
+
+        if (!quotaRow) {
+            return fail(
+                c,
+                `No quota allocation for ${quotaSku} @ ${validityDays}d / ${creditUsd ?? '—'}USD. Ask super-admin to grant one.`,
+                400
+            )
+        }
+        const requested = count * seats
+        if (quotaRow.used + requested > quotaRow.total) {
+            return fail(
+                c,
+                `Quota exceeded — ${quotaRow.total - quotaRow.used} of ${quotaRow.total} seats remaining; you requested ${requested}.`,
+                400
+            )
+        }
+
+        // CAS-style consume: increments used by `requested` only if it
+        // still fits. Race with another concurrent mint is detected via
+        // returning() yielding 0 rows.
+        const claimed = await db
+            .update(partnerQuotas)
+            .set({
+                used: sql`${partnerQuotas.used} + ${requested}`,
+                updatedAt: new Date()
+            })
+            .where(
+                and(
+                    eq(partnerQuotas.partnerId, partnerId),
+                    eq(partnerQuotas.skuKind, quotaSku),
+                    validityDays != null
+                        ? eq(partnerQuotas.validityDays, validityDays)
+                        : isNull(partnerQuotas.validityDays),
+                    creditUsd != null
+                        ? eq(partnerQuotas.creditUsd, creditUsd)
+                        : isNull(partnerQuotas.creditUsd),
+                    sql`${partnerQuotas.used} + ${requested} <= ${partnerQuotas.total}`
+                )
+            )
+            .returning({ partnerId: partnerQuotas.partnerId })
+
+        if (claimed.length === 0) {
+            return fail(
+                c,
+                'Quota race lost — another mint consumed the remaining allocation. Try again.',
+                400
+            )
+        }
+    }
+
     const batchId = `batch-${crypto.randomUUID()}`
-    const createdByUserId = c.get('userId')
+    const createdByUserId = callerId
     const createdAt = new Date()
 
     const rows = Array.from({ length: count }).map(() => ({
@@ -128,9 +244,11 @@ const createActivationCodeBatch = withErrorHandler(
         region,
         tierLabel,
         partnerName,
+        partnerId,
         batchId,
         notes,
         validityDays,
+        creditUsd,
         seats,
         seatsUsed: 0,
         status: 'unused',

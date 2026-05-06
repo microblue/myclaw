@@ -1,14 +1,28 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { count, desc, eq, sql } from 'drizzle-orm'
+import { userRole } from '@openclaw/shared'
 import { db } from '@/db'
 import { activationCodes, authUsers, claws } from '@/db/schema'
-import { ok } from '@/lib/response'
+import { ok, fail } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
 
 const getAdminActivationCodes = withErrorHandler(
     'getAdminActivationCodes'
 )(async (c: AuthenticatedContext) => {
+    const callerRole = c.get('userRole')
+    const callerId = c.get('userId')
+
+    // Defense-in-depth gate. The route is registered behind
+    // partnerOrSuperAdmin middleware, but if it ever changes we still
+    // refuse to leak data here.
+    if (
+        callerRole !== userRole.admin &&
+        callerRole !== userRole.partner
+    ) {
+        return fail(c, 'Only super-admins or partners can list codes.', 403)
+    }
+
     const page = Math.max(1, parseInt(c.req.query('page') || '1', 10))
     const limit = Math.min(
         100,
@@ -23,6 +37,11 @@ const getAdminActivationCodes = withErrorHandler(
     if (status) conditions.push(eq(activationCodes.status, status))
     if (partner) conditions.push(eq(activationCodes.partnerName, partner))
     if (batch) conditions.push(eq(activationCodes.batchId, batch))
+    // Cross-tenant scoping — partners only see rows they minted. Super-
+    // admin gets everything (no extra condition).
+    if (callerRole === userRole.partner) {
+        conditions.push(eq(activationCodes.partnerId, callerId))
+    }
 
     const whereClause =
         conditions.length > 0

@@ -1,17 +1,46 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const h = vi.hoisted(() => ({
-    insertCalls: [] as unknown[][],
-    mockGetProvider: vi.fn()
-}))
+const h = vi.hoisted(() => {
+    const makeChain = (result: unknown) => {
+        const target = {}
+        const proxy: unknown = new Proxy(target, {
+            get(_t, prop) {
+                if (prop === 'then') {
+                    return (
+                        onFulfilled: (v: unknown) => unknown,
+                        onRejected?: (e: unknown) => unknown
+                    ) =>
+                        Promise.resolve(result).then(onFulfilled, onRejected)
+                }
+                return () => proxy
+            }
+        })
+        return proxy
+    }
+    const queues = {
+        select: [] as unknown[],
+        update: [] as unknown[]
+    }
+    return {
+        makeChain,
+        queues,
+        insertCalls: [] as unknown[][],
+        updateCalls: [] as unknown[][],
+        mockGetProvider: vi.fn(),
+        mockDbSelect: vi.fn(() =>
+            makeChain(queues.select.length ? queues.select.shift() : [])
+        ),
+        mockDbUpdate: vi.fn(() =>
+            makeChain(queues.update.length ? queues.update.shift() : [])
+        )
+    }
+})
 
 vi.mock('@/db', () => {
-    let lastValues: unknown = null
     return {
         db: {
             insert: () => ({
                 values: (rows: unknown) => {
-                    lastValues = rows
                     h.insertCalls.push([rows])
                     return {
                         returning: async () =>
@@ -21,13 +50,30 @@ vi.mock('@/db', () => {
                     }
                 }
             }),
-            _peekLastValues: () => lastValues
+            select: (...args: unknown[]) => h.mockDbSelect(...args),
+            update: (...args: unknown[]) => {
+                h.updateCalls.push([...args])
+                return h.mockDbUpdate(...args)
+            }
         }
     }
 })
 
 vi.mock('@/db/schema', () => ({
-    activationCodes: { id: 'activationCodes.id', code: 'activationCodes.code' }
+    activationCodes: {
+        id: 'activationCodes.id',
+        code: 'activationCodes.code'
+    },
+    channelPartners: { userId: 'channelPartners.userId' },
+    partnerQuotas: {
+        partnerId: 'partnerQuotas.partnerId',
+        skuKind: 'partnerQuotas.skuKind',
+        validityDays: 'partnerQuotas.validityDays',
+        creditUsd: 'partnerQuotas.creditUsd',
+        used: 'partnerQuotas.used',
+        total: 'partnerQuotas.total'
+    },
+    auditLog: { id: 'auditLog.id' }
 }))
 
 vi.mock('@/services/providers', () => ({
@@ -78,13 +124,23 @@ interface BodyShape {
     count?: number
 }
 
-const callMint = async (body: BodyShape | undefined, userId = 'admin-1') => {
+const callMint = async (
+    body: BodyShape | undefined,
+    {
+        userId = 'admin-1',
+        role = 'admin' as 'admin' | 'partner' | 'user'
+    } = {}
+) => {
     const calls: Array<{ body: unknown; status: number }> = []
     const c = {
         req: {
             json: vi.fn(async () => body ?? {})
         },
-        get: vi.fn(() => userId),
+        get: vi.fn((key: string) => {
+            if (key === 'userId') return userId
+            if (key === 'userRole') return role
+            return undefined
+        }),
         json: vi.fn((b: unknown, status: number = 200) => {
             calls.push({ body: b, status })
             return { body: b, status } as unknown as Response
@@ -114,6 +170,9 @@ const validProvider = (
 beforeEach(() => {
     vi.clearAllMocks()
     h.insertCalls.length = 0
+    h.updateCalls.length = 0
+    h.queues.select.length = 0
+    h.queues.update.length = 0
     h.mockGetProvider.mockReset()
 })
 
@@ -480,11 +539,133 @@ describe('createActivationCodeBatch — code format & batch shape', () => {
                 validityDays: 90,
                 seats: 1
             },
-            'super-admin-7'
+            { userId: 'super-admin-7' }
         )
         const row = (
             h.insertCalls[0]?.[0] as Array<{ createdByUserId: string }>
         )[0]
         expect(row.createdByUserId).toBe('super-admin-7')
+    })
+})
+
+describe('createActivationCodeBatch — partner quota enforcement', () => {
+    const baseBody = {
+        skuKind: 'new' as const,
+        planId: 'cpx21',
+        provider: 'hetzner',
+        region: 'fsn1',
+        validityDays: 90,
+        seats: 5
+    }
+
+    // Quota row for new_vm_day @ 90 days, total 100 / used 0.
+    const stubQuota = (over: { total?: number; used?: number } = {}) => ({
+        partnerId: 'partner-1',
+        skuKind: 'new_vm_day',
+        validityDays: 90,
+        creditUsd: null,
+        total: over.total ?? 100,
+        used: over.used ?? 0
+    })
+
+    it('rejects partner mint when channel_partners row is missing', async () => {
+        // partner role but no registration → 403 (or 400 with message).
+        h.queues.select.push([]) // channel_partners lookup empty
+        const { status, body } = await callMint(
+            { ...baseBody, count: 1 },
+            { userId: 'partner-1', role: 'partner' }
+        )
+        expect(status).toBeGreaterThanOrEqual(400)
+        expect((body as { message: string }).message).toMatch(
+            /not registered|no partner|account/i
+        )
+    })
+
+    it('rejects partner mint when no quota bucket matches the SKU/lifetime', async () => {
+        h.queues.select.push([{ userId: 'partner-1' }]) // partner exists
+        h.queues.select.push([]) // partner_quotas lookup empty
+        h.mockGetProvider.mockReturnValue(validProvider())
+        const { status, body } = await callMint(
+            { ...baseBody, count: 1 },
+            { userId: 'partner-1', role: 'partner' }
+        )
+        expect(status).toBe(400)
+        expect((body as { message: string }).message).toMatch(
+            /quota|allowance|allocation/i
+        )
+    })
+
+    it('rejects partner mint when count*seats exceeds remaining quota', async () => {
+        h.queues.select.push([{ userId: 'partner-1' }])
+        h.queues.select.push([stubQuota({ total: 10, used: 0 })])
+        h.mockGetProvider.mockReturnValue(validProvider())
+        // count=3, seats=5 → 15 seats requested, total=10 → reject.
+        const { status, body } = await callMint(
+            { ...baseBody, count: 3 },
+            { userId: 'partner-1', role: 'partner' }
+        )
+        expect(status).toBe(400)
+        expect((body as { message: string }).message).toMatch(/quota/i)
+        // Critical: nothing minted.
+        expect(h.insertCalls.length).toBe(0)
+    })
+
+    it('partner happy path: quota CAS succeeds, codes minted with partner_id set', async () => {
+        h.queues.select.push([{ userId: 'partner-1' }])
+        h.queues.select.push([stubQuota({ total: 100, used: 20 })])
+        h.mockGetProvider.mockReturnValue(validProvider())
+        // CAS update returns 1 row → partner won the race.
+        h.queues.update.push([{ partnerId: 'partner-1' }])
+        const { status } = await callMint(
+            { ...baseBody, count: 2 },
+            { userId: 'partner-1', role: 'partner' }
+        )
+        expect(status).toBe(200)
+        // Codes inserted with partner_id pointing at the caller.
+        const rows = h.insertCalls[0]?.[0] as Array<{ partnerId: string | null }>
+        expect(rows.every((r) => r.partnerId === 'partner-1')).toBe(true)
+    })
+
+    it('partner CAS race: zero-row update return → reject (someone else used the quota)', async () => {
+        h.queues.select.push([{ userId: 'partner-1' }])
+        h.queues.select.push([stubQuota({ total: 100, used: 95 })])
+        h.mockGetProvider.mockReturnValue(validProvider())
+        // CAS update returns no rows — concurrent partner request consumed
+        // the remaining quota first.
+        h.queues.update.push([])
+        const { status, body } = await callMint(
+            { ...baseBody, count: 2 },
+            { userId: 'partner-1', role: 'partner' }
+        )
+        expect(status).toBe(400)
+        expect((body as { message: string }).message).toMatch(/quota|race/i)
+        expect(h.insertCalls.length).toBe(0)
+    })
+
+    it('super_admin bypasses quota entirely (no select/update on partner tables)', async () => {
+        h.mockGetProvider.mockReturnValue(validProvider())
+        const { status } = await callMint(
+            { ...baseBody, count: 1 },
+            { userId: 'admin-1', role: 'admin' }
+        )
+        expect(status).toBe(200)
+        // Critical: zero queries to channel_partners / partner_quotas.
+        expect(h.mockDbSelect).not.toHaveBeenCalled()
+        // No quota update either.
+        expect(h.mockDbUpdate).not.toHaveBeenCalled()
+        // partner_id stays null on super-admin-minted codes.
+        const rows = h.insertCalls[0]?.[0] as Array<{ partnerId: string | null }>
+        expect(rows.every((r) => r.partnerId === null)).toBe(true)
+    })
+
+    it('end_user role cannot mint at all (defense in depth — middleware should also block)', async () => {
+        const { status } = await callMint(
+            { ...baseBody, count: 1 },
+            { userId: 'user-1', role: 'user' }
+        )
+        // Either 401/403 from controller-level role check, or 400 from
+        // missing partner registration — anything but a successful 200.
+        expect(status).toBeGreaterThanOrEqual(400)
+        expect(h.insertCalls.length).toBe(0)
     })
 })
