@@ -86,6 +86,32 @@ vi.mock('@/services/providers', () => ({
     providerRegistry: { getProvider: h.mockGetProvider }
 }))
 
+// vitest's path-alias resolver doesn't always resolve directory imports
+// (`@/lib/constants` → ./src/lib/constants/index.ts) when tests run in
+// isolation. Stubbing these is fine; the tests don't assert on
+// subscriptionStatus values directly, and ok/fail are exercised through
+// the captured c.json calls.
+vi.mock('@/lib/constants', () => ({
+    subscriptionStatus: { active: 'active' }
+}))
+
+vi.mock('@/lib/response', () => ({
+    ok: <T,>(c: { json: (b: unknown, code?: number) => unknown }, data: T, message = '') =>
+        c.json(
+            { success: true, data, message, code: 200, version: 'test' },
+            200
+        ),
+    fail: (
+        c: { json: (b: unknown, code?: number) => unknown },
+        message: string,
+        code = 400
+    ) =>
+        c.json(
+            { success: false, data: null, message, code, version: 'test' },
+            code
+        )
+}))
+
 vi.mock('@/controllers/claws/helpers', () => ({
     generatePassword: vi.fn(() => 'generated-password'),
     generateClawName: vi.fn(() => 'generated-claw-name'),

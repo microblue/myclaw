@@ -38,6 +38,30 @@ vi.mock('@openclaw/i18n', () => ({
     t: (key: string) => key
 }))
 
+vi.mock('@/lib/withErrorHandler', () => ({
+    default:
+        () =>
+        <C, T>(handler: (c: C) => Promise<T>) =>
+            handler
+}))
+
+vi.mock('@/lib/response', () => ({
+    ok: <T,>(c: { json: (b: unknown, code?: number) => unknown }, data: T, message = '') =>
+        c.json(
+            { success: true, data, message, code: 200, version: 'test' },
+            200
+        ),
+    fail: (
+        c: { json: (b: unknown, code?: number) => unknown },
+        message: string,
+        code = 400
+    ) =>
+        c.json(
+            { success: false, data: null, message, code, version: 'test' },
+            code
+        )
+}))
+
 import createActivationCodeBatch from './createActivationCodeBatch'
 
 interface BodyShape {
