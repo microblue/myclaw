@@ -13,12 +13,25 @@ const activationCodes = pgTable(
         provider: text('provider').default('hetzner'),
         region: text('region'),
         tierLabel: text('tier_label'),
+        // Free-text legacy label; preserved for pre-RBAC batches.
+        // For new batches minted by a registered channel partner,
+        // `partnerId` (FK below) is the source of truth and partnerName
+        // mirrors channel_partners.display_name at mint time.
         partnerName: text('partner_name'),
+        partnerId: uuid('partner_id').references(() => users.id, {
+            onDelete: 'set null'
+        }),
         batchId: text('batch_id'),
         notes: text('notes'),
         // Days, not months. Matches the white paper's xxxxxxxxx-ddd-uuu
-        // format (007 / 090 / 180 / 365). Null = perpetual.
+        // format (007 / 090 / 180 / 365). Null = perpetual / credit-coded.
         validityDays: integer('validity_days'),
+        // Container-tier SKUs are credit-based (Fly bills by seconds, so
+        // a flat day-validity mismatches actual cost). Mutually exclusive
+        // with validity_days at the row level — enforced in code, not by
+        // a CHECK constraint, since both being null is also a legal state
+        // for legacy rows minted before §4.5 landed.
+        creditUsd: integer('credit_usd'),
         // 'new' creates a fresh claw. 'renewal' extends an existing one.
         skuKind: text('sku_kind').notNull().default('new'),
         // Multi-device packs: 5/25/50 seats per code. Each redemption
@@ -46,6 +59,7 @@ const activationCodes = pgTable(
     (table) => [
         index('activation_codes_status_idx').on(table.status),
         index('activation_codes_partner_idx').on(table.partnerName),
+        index('activation_codes_partner_id_idx').on(table.partnerId),
         index('activation_codes_batch_idx').on(table.batchId),
         index('activation_codes_sku_kind_idx').on(table.skuKind)
     ]

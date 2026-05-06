@@ -14,6 +14,10 @@ import systemSettings from '@/db/schema/systemSettings'
 import activationCodes from '@/db/schema/activationCodes'
 import activationSeats from '@/db/schema/activationSeats'
 import installReports from '@/db/schema/installReports'
+import channelPartners from '@/db/schema/channelPartners'
+import partnerQuotas from '@/db/schema/partnerQuotas'
+import auditLog from '@/db/schema/auditLog'
+import idempotencyKeys from '@/db/schema/idempotencyKeys'
 
 export {
     users,
@@ -31,5 +35,9 @@ export {
     systemSettings,
     activationCodes,
     activationSeats,
-    installReports
+    installReports,
+    channelPartners,
+    partnerQuotas,
+    auditLog,
+    idempotencyKeys
 }
