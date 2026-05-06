@@ -172,22 +172,11 @@ const generateCloudInit = (
     const rootPwEscaped = rootPassword.replace(/'/g, "'\\''")
 
     const script = `#!/bin/bash
-# Lightsail prepends its own "#!/bin/sh" preamble to the user-data,
-# so the whole thing actually runs under dash (posix sh) by default.
-# dash doesn't support process substitution (>(...)) or other bash
-# bits we rely on below, so if we're not already in bash, re-exec
-# the entire combined script under bash. Lightsail's own preamble
-# is idempotent (cat > ..., echo >> ...), so re-running it is fine.
 [ -z "\${BASH_VERSION:-}" ] && exec /bin/bash "$0" "$@"
 set -eu
 exec > >(tee -a /var/log/openclaw-bootstrap.log) 2>&1
 echo "=== openclaw bootstrap starting at $(date -u) ==="
 
-# Status sentinel — the dashboard / syncClawServers can't see this
-# directly (we don't SSH during sync) but it survives reboots and is
-# visible via the Logs tab or SSH when a user asks "why is it stuck?".
-# We touch it at each major stage and final status so failures point
-# at a specific step instead of just "cloud-init never finished".
 mkdir -p /var/lib/openclaw-bootstrap
 BOOTSTRAP_STATE=/var/lib/openclaw-bootstrap/state
 stage() {
@@ -196,10 +185,6 @@ stage() {
 }
 trap 'rc=$?; [ $rc -ne 0 ] && { S=$(awk -F= "/^stage=/{print \\$2}" "$BOOTSTRAP_STATE" 2>/dev/null); echo "status=failed stage=$S rc=$rc" > "$BOOTSTRAP_STATE"; echo "[oc] FAILED stage=$S rc=$rc"; }' EXIT
 
-# Retry any command up to 5 times with exponential backoff. Every
-# external resource fetch (apt, npm, curl, dpkg) goes through this —
-# transient network blips on a fresh VM, registry 5xx, apt-lock
-# contention, etc. are the rule, not the exception.
 with_retry() {
     local attempts=5 delay=3 i=1
     while true; do
@@ -216,11 +201,6 @@ with_retry() {
 }
 
 stage sshd-config
-# Enable SSH password + root login. sshd uses first-match for these
-# directives, so AWS Lightsail's /etc/ssh/sshd_config.d/50-cloud-init.conf
-# (PasswordAuthentication no) wins over anything we put in the main
-# config. Drop an override file that sorts first alphabetically AND
-# flip the main config, so on any provider the result is the same.
 sed -i 's/^#\\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 sed -i 's/^#\\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
 mkdir -p /etc/ssh/sshd_config.d
@@ -243,12 +223,6 @@ fi
 
 stage apt-base
 export DEBIAN_FRONTEND=noninteractive
-# Add NodeSource (for node 22) and Caddy (cloudsmith stable) before
-# the single apt-get update so we pay one round-trip, not three.
-# Caddy replaces nginx + certbot here — its on-by-default automatic
-# HTTPS via ACME means no certbot retry loop, and its Caddyfile is
-# ~10 lines vs nginx's 40+. Net: smaller cloud-init, fewer moving
-# parts to fail during bootstrap.
 mkdir -p /etc/apt/keyrings
 with_retry curl -fsSL -o /etc/apt/keyrings/nodesource.gpg.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
 gpg --dearmor --batch --yes -o /etc/apt/keyrings/nodesource.gpg /etc/apt/keyrings/nodesource.gpg.key
@@ -260,28 +234,10 @@ with_retry apt-get update
 with_retry apt-get install -y curl caddy ufw ca-certificates gnupg git dnsutils nodejs
 
 stage openclaw-user
-# Create the unprivileged user *before* installing openclaw. The
-# gateway runs as this user (see systemd unit below) and self-update
-# from the WebUI needs the user to own its own install prefix end-to-end —
-# pre-2026-04-29 claws had openclaw at /usr/lib/node_modules (root-owned)
-# but the gateway running as openclaw, so the WebUI Update button died
-# with EACCES at the staging step.
 id openclaw >/dev/null 2>&1 || useradd -r -m -d /home/openclaw -s /bin/bash openclaw
 echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
 stage openclaw-install
-# Pinned version, not @latest, so a registry-side push doesn't silently
-# change what new claws boot with. Bump after smoke-testing the new
-# version's WebUI Update flow on a staging claw.
-#
-# Installed under /opt/openclaw owned by the openclaw user (see above)
-# so npm self-update via the WebUI can mkdtemp + rename + symlink-swap
-# inside its own prefix without root.
-#
-# --prefer-offline: if npm already has tarballs cached, skip the HEAD
-#   check round-trips (typically saves 10–30s on cold boots).
-# --no-audit / --no-fund: cosmetic output; skip the registry round-trip
-#   for vulnerability scan we'd ignore anyway on a single-package install.
 mkdir -p /opt/openclaw
 chown -R openclaw:openclaw /opt/openclaw
 sudo -u openclaw -H npm config set prefix /opt/openclaw
@@ -290,16 +246,12 @@ echo 'export PATH=/opt/openclaw/bin:$PATH' > /etc/profile.d/openclaw.sh
 chmod 644 /etc/profile.d/openclaw.sh
 
 stage chrome
-# Architecture-aware Chrome install — we used to hard-code amd64 which
-# breaks the moment someone boots an ARM64 Lightsail / Hetzner ARM.
 CHROME_ARCH=$(dpkg --print-architecture)
 case "$CHROME_ARCH" in
     amd64)
         CHROME_URL='https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
         ;;
     arm64)
-        # Google doesn't publish an arm64 .deb — fall through to
-        # Chromium from apt, which is close enough for headless.
         CHROME_URL=''
         ;;
     *)
@@ -316,19 +268,6 @@ else
 fi
 
 stage node-exporter
-# Prometheus node_exporter feeds the Overview tab's CPU/Memory/Disk tiles.
-# Listens loopback-only on :9100; nginx exposes /metrics gated by the
-# gateway token (same secret the Control UI uses), so the api can fetch
-# https://<sub>.${domain}/metrics with the token in the Authorization
-# header. Disabled-collectors keeps the surface to just what we render.
-#
-# Whole stage is wrapped in a subshell + soft-fail || , so if any step
-# (github download, tarball extract, systemd start) fails, bootstrap
-# keeps marching to nginx + certbot. The user can still chat with the
-# claw — Overview just shows "metrics unavailable". An aborted bootstrap
-# here would leave the claw with no SSL and the api would mark it
-# unreachable after the 20 min provision timeout (incident:
-# silent-moth, 2026-04-30).
 (
     NE_VERSION=1.8.2
     NE_ARCH=$(dpkg --print-architecture)
@@ -341,17 +280,10 @@ stage node-exporter
     esac
     id node_exporter >/dev/null 2>&1 || useradd -r -s /usr/sbin/nologin node_exporter
     mkdir -p /opt/node_exporter
-    # -4 forces IPv4 — Lightsail's IPv6 route to github.com sometimes
-    # blackholes on first boot, and the curl default of "happy eyeballs"
-    # then takes ~20s+ to fall back to v4. -fsSL still follows redirects.
     with_retry curl -4 -fsSL -o /tmp/node_exporter.tgz "https://github.com/prometheus/node_exporter/releases/download/v$NE_VERSION/$NE_PKG.tar.gz"
     tar -xzf /tmp/node_exporter.tgz -C /tmp/
     install -o node_exporter -g node_exporter -m 0755 "/tmp/$NE_PKG/node_exporter" /opt/node_exporter/node_exporter
     rm -rf /tmp/node_exporter.tgz "/tmp/$NE_PKG"
-    # systemd treats $X in Exec lines as env-var refs and passes
-    # unrecognized ones through verbatim per the docs — but real-world
-    # versions sometimes warn or strip, so escape with $$ to emit a
-    # literal $ regardless. Same goes for any future $ in this unit.
     cat > /etc/systemd/system/node_exporter.service << 'NESVC'
 [Unit]
 Description=Prometheus node_exporter
@@ -379,16 +311,6 @@ cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
 ${configJson}
 OCCONFIG
 
-# Pre-mark the workspace as setup-complete so OpenClaw skips the
-# "bootstrap onboarding" flow (BOOTSTRAP.md + name/creature/vibe/emoji
-# Q&A) on first chat. Weaker models — including
-# openrouter/google/gemini-2.5-flash-lite, our current default — can't
-# reliably follow BOOTSTRAP.md's "then delete me when done" step and
-# loop writing the file back every turn (openclaw#67575-style).
-# Users who want a custom persona can still edit IDENTITY.md / USER.md
-# after the fact. Without this, the setupCompletedAt transition needs
-# BOOTSTRAP.md to not exist during an ensureAgentWorkspace pass, which
-# is racy against the confused-agent writes.
 mkdir -p /home/openclaw/.openclaw/workspace/.openclaw
 cat > /home/openclaw/.openclaw/workspace/.openclaw/workspace-state.json << 'WSTATE'
 {
@@ -398,17 +320,8 @@ cat > /home/openclaw/.openclaw/workspace/.openclaw/workspace-state.json << 'WSTA
 }
 WSTATE
 
-# Silence the stock "Read HEARTBEAT.md / HEARTBEAT_OK" chatter:
-# OpenClaw's heartbeat preflight skips the LLM call when this file is
-# effectively empty, so an empty file keeps the Control UI's first
-# chat turn clean. Leave AGENTS.md + USER.md to OpenClaw's defaults —
-# Lightsail caps user-data at 16 KB and our pre-seeded versions blew
-# past it (calm-birch incident 2026-04-21).
 : > /home/openclaw/.openclaw/workspace/HEARTBEAT.md
 
-# Branded identity for the Control UI (no native greeting/suggestions
-# config in openclaw — schema 2026.4.19-beta.2). Kept short for the
-# 16KB userData cap; richer welcome content lives in the SPA, not here.
 cat > /home/openclaw/.openclaw/workspace/IDENTITY.md << 'IDEOF'
 # IDENTITY.md
 - **Name:** Claw 🦞
@@ -420,7 +333,6 @@ IDEOF
 
 chown -R openclaw:openclaw /home/openclaw
 
-# systemd unit
 cat > /etc/systemd/system/openclaw-gateway.service << 'SYSTEMD'
 [Unit]
 Description=OpenClaw Gateway
@@ -445,27 +357,15 @@ WantedBy=multi-user.target
 SYSTEMD
 
 stage version-watcher
-# WebUI Update writes a new openclaw under /opt/openclaw/lib/node_modules
-# but can't restart the gateway itself — gateway.reload.mode=off above
-# breaks the 12-min self-restart loop AND its update.run -> restart
-# path. A systemd path-unit watching package.json bridges the gap. The
-# install script lives on the platform web app so we can iterate on the
-# unit definitions without re-rendering this cloud-init (which is at
-# ~99% of Lightsail's 16KB userData base64 cap).
 (curl -fsSL https://myclaw.one/oc-watcher.sh|bash) || echo "[oc] watcher install failed"
 
 stage greatlove-install
-# GreatLove channel plugin — served as a tarball from the SPA so we can
-# rev it without re-rendering cloud-init. Soft-fail like wechat.
 (
     with_retry curl -fsSL -o /tmp/gl.tgz https://myclaw.one/downloads/greatlove-openclaw-plugin-1.0.0.tgz
     with_retry sudo -u openclaw -H /opt/openclaw/bin/openclaw plugins install /tmp/gl.tgz
 ) || echo "[oc] greatlove plugin install failed"
 
 stage firewall
-# Firewall before gateway/nginx so there's no window where a service
-# is listening with the firewall still transitioning. ufw reload
-# doesn't drop existing connections — safe to call anytime.
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
@@ -476,10 +376,6 @@ systemctl daemon-reload
 systemctl enable openclaw-gateway
 systemctl start openclaw-gateway
 
-# Wait for gateway to answer locally. Purely passive — the old loop
-# forced a restart on every failed poll, which worked around the
-# now-fixed first-boot config-rewrite cycle but actively interfered
-# with a healthy-but-slow gateway startup.
 for i in $(seq 1 30); do
     if curl -sf -o /dev/null http://127.0.0.1:18789; then
         echo "[oc] gateway up after \${i}x 5s"
@@ -489,12 +385,6 @@ for i in $(seq 1 30); do
 done
 
 stage dns-wait
-# DNS is written by the control-plane's provisionClawServer as soon as
-# the provider hands us a real IP. We give it ~1 minute to show up at
-# 1.1.1.1 before handing off to caddy — caddy's ACME flow has its own
-# exponential backoff (up to ~3 days), so a slow propagation still
-# resolves; the DNS wait is just to avoid burning the first attempt
-# while the record is still being written.
 echo "[oc] waiting for DNS record for ${fullDomain}"
 for i in $(seq 1 30); do
     if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
@@ -505,12 +395,6 @@ for i in $(seq 1 30); do
 done
 
 stage wizard
-# Setup wizard — a simpler-than-Control-UI page at /myclaw/ that walks
-# new users through model + telegram + wechat in 3 clicks. Static HTML
-# + a tiny Node shim (server.mjs) running on loopback:18790, both
-# fetched from the platform web app at provision time so we can iterate
-# on the wizard without re-rendering every claw's cloud-init. Soft-fail
-# like node_exporter — wizard is optional, claw works without it.
 mkdir -p /etc/systemd/system/openclaw-gateway.service.d
 (
     mkdir -p /var/www/myclaw /opt/myclaw-wizard
@@ -541,23 +425,10 @@ WSVC
     systemctl daemon-reload
     systemctl enable myclaw-wizard
     systemctl start myclaw-wizard
-    # Wait for shim to actually bind 18790 before letting Caddy take
-    # traffic — Type=simple returns as soon as ExecStart fires, which
-    # is ~500ms before node binds the socket. Without this, a request
-    # arriving in that window 502s and the SPA shows "Reading your
-    # config…" stuck forever.
     for i in $(seq 1 20); do ss -tln | grep -q :18790 && break; sleep 1; done
 ) || echo "[oc] wizard setup failed; /myclaw/ will 404 on this claw — Control UI at / still works"
 
 stage caddy
-# Caddy auto-issues + auto-renews Let's Encrypt certs and reverse_proxy
-# is WebSocket-aware by default, so the gateway terminal + live logs
-# work end-to-end without explicit Upgrade/Connection headers. /metrics
-# is gated by an exact Bearer-token match — first @metricsAuthed
-# matcher wins and proxies to node_exporter on :9100, otherwise the
-# fall-through @metrics matcher returns 401. /myclaw/api/* goes to the
-# wizard shim, /myclaw/* serves the wizard SPA from disk, everything
-# else falls through to the gateway / Control UI.
 cat > /etc/caddy/Caddyfile << 'CADDYEOF'
 {
     email ssl@${domain}
@@ -586,19 +457,25 @@ ${fullDomain} {
         root * /var/www
         file_server
     }
-    @rootRedirect {
-        path /
-        not header Upgrade *websocket*
-    }
-    redir @rootRedirect /myclaw/ 302
-    reverse_proxy 127.0.0.1:18789
+    reverse_proxy 127.0.0.1:3000
 }
 CADDYEOF
 systemctl enable caddy
 systemctl restart caddy
 
-# Success marker. Everything reaching this point succeeded; the trap
-# handler on failure rewrites this file with status=failed + stage.
+cat > /etc/systemd/system/oc-stu-i.service << EOF
+[Unit]
+After=openclaw-gateway.service network-online.target
+ConditionPathExists=!/opt/openclaw-studio/.installed
+[Service]
+Type=oneshot
+Environment=GATEWAY_TOKEN=${gatewayToken}
+ExecStart=/bin/bash -c "curl -fsSL https://${domain}/api/cloud-scripts/install-studio|bash"
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl enable oc-stu-i.service
+
 echo "status=ok at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
 echo "=== openclaw bootstrap finished at $(date -u) ==="
 `

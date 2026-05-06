@@ -20,7 +20,9 @@ import {
     ListIcon,
     XIcon,
     HouseIcon,
-    SparkleIcon
+    SparkleIcon,
+    CaretLeftIcon,
+    CaretRightIcon
 } from '@phosphor-icons/react'
 
 type NavItem = {
@@ -50,7 +52,8 @@ type Props = {
 const AppShell: FC<Props> = ({ children, pageActions }) => {
     const { signOut, isLocal } = useAuth()
     const { data: profile } = useProfile()
-    const { openLinksWindowed } = usePreferencesStore()
+    const { openLinksWindowed, sidebarCollapsed, setSidebarCollapsed } =
+        usePreferencesStore()
     const isAdmin = profile?.role === userRole.admin
     const appVersion = useAppVersion(!!isLocal)
     const dropdownFooterLinks = useLocalFooterLinks(!!isLocal)
@@ -85,9 +88,20 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
                 peeks through in the main content column. */}
             <div className='landing-gradient pointer-events-none fixed inset-0 z-0' />
 
-            {/* Desktop sidebar — hidden on mobile */}
-            <aside className='border-border bg-card fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r md:flex'>
-                <SidebarContent items={items} />
+            {/* Desktop sidebar — hidden on mobile. Collapses to a 14
+                icon-only rail when the user toggles. */}
+            <aside
+                className={`border-border bg-card fixed inset-y-0 left-0 z-30 hidden flex-col border-r transition-[width] md:flex ${
+                    sidebarCollapsed ? 'w-14' : 'w-60'
+                }`}
+            >
+                <SidebarContent
+                    items={items}
+                    collapsed={sidebarCollapsed}
+                    onToggleCollapsed={() =>
+                        setSidebarCollapsed(!sidebarCollapsed)
+                    }
+                />
             </aside>
 
             {/* Mobile drawer */}
@@ -108,7 +122,11 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
             )}
 
             {/* Content column */}
-            <div className='relative z-10 flex min-h-screen flex-col md:pl-60'>
+            <div
+                className={`relative z-10 flex min-h-screen flex-col transition-[padding] ${
+                    sidebarCollapsed ? 'md:pl-14' : 'md:pl-60'
+                }`}
+            >
                 <TopBar
                     onMenu={() => setMobileOpen(true)}
                     pageActions={pageActions}
@@ -131,19 +149,27 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
 const SidebarContent: FC<{
     items: NavItem[]
     onClose?: () => void
-}> = ({ items, onClose }) => {
+    collapsed?: boolean
+    onToggleCollapsed?: () => void
+}> = ({ items, onClose, collapsed = false, onToggleCollapsed }) => {
     const navigate = useNavigate()
 
     return (
         <>
-            <div className='border-border flex h-14 items-center justify-between border-b px-4'>
-                <button
-                    type='button'
-                    onClick={() => navigate(ROUTES.CLAWS)}
-                    className='flex items-center gap-2'
-                >
-                    <Logo />
-                </button>
+            <div
+                className={`border-border flex h-14 items-center border-b ${
+                    collapsed ? 'justify-center px-2' : 'justify-between px-4'
+                }`}
+            >
+                {!collapsed && (
+                    <button
+                        type='button'
+                        onClick={() => navigate(ROUTES.CLAWS)}
+                        className='flex items-center gap-2'
+                    >
+                        <Logo />
+                    </button>
+                )}
                 {onClose && (
                     <button
                         type='button'
@@ -154,15 +180,39 @@ const SidebarContent: FC<{
                         <XIcon className='h-5 w-5' />
                     </button>
                 )}
+                {onToggleCollapsed && (
+                    <button
+                        type='button'
+                        onClick={onToggleCollapsed}
+                        className='text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-md p-1.5'
+                        aria-label={
+                            collapsed ? 'Expand sidebar' : 'Collapse sidebar'
+                        }
+                        title={
+                            collapsed ? 'Expand sidebar' : 'Collapse sidebar'
+                        }
+                    >
+                        {collapsed ? (
+                            <CaretRightIcon className='h-4 w-4' />
+                        ) : (
+                            <CaretLeftIcon className='h-4 w-4' />
+                        )}
+                    </button>
+                )}
             </div>
-            <nav className='flex-1 space-y-0.5 p-3'>
+            <nav className='flex-1 space-y-0.5 p-2'>
                 {items.map((item) => (
                     <NavLink
                         key={item.to}
                         to={item.to}
                         end={item.to === ROUTES.CLAWS}
+                        title={collapsed ? item.label : undefined}
                         className={({ isActive }) =>
-                            `flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+                            `flex items-center rounded-md text-sm transition-colors ${
+                                collapsed
+                                    ? 'justify-center px-0 py-2.5'
+                                    : 'gap-3 px-3 py-2'
+                            } ${
                                 isActive
                                     ? 'bg-foreground/10 text-foreground font-medium'
                                     : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
@@ -172,10 +222,10 @@ const SidebarContent: FC<{
                         {({ isActive }) => (
                             <>
                                 <item.icon
-                                    className='h-4 w-4'
+                                    className='h-4 w-4 shrink-0'
                                     weight={isActive ? 'fill' : 'regular'}
                                 />
-                                {item.label}
+                                {!collapsed && item.label}
                             </>
                         )}
                     </NavLink>

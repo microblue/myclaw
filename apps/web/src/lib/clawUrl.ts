@@ -24,12 +24,14 @@ export const buildClawChatUrl = (claw: Claw): string | null => {
     const base = `https://${claw.subdomain}.myclaw.one`
     const clawType = claw.clawType || 'openclaw'
     if (clawType === 'openclaw' && claw.gatewayToken) {
-        // /index.html bypasses Caddy's `/` → `/myclaw/` 302 (the
-        // wizard now lives at the root) and lands directly on the
-        // Control UI HTML the gateway serves. Token in the URL hash
-        // (not query) so it stays out of HTTP logs and referer
-        // headers.
-        return `${base}/index.html#token=${encodeURIComponent(claw.gatewayToken)}`
+        // OpenClaw boxes now run openclaw-studio (Next.js on :3000)
+        // as the front-door UI; Caddy proxies `/` to it. Studio sets
+        // a cookie from `?access_token=…` on first hit and uses it
+        // for subsequent requests. The Easy Setup wizard still lives
+        // at `/myclaw/` (separate Caddy handle), and the gateway
+        // Control UI is no longer publicly exposed — Studio talks to
+        // the gateway internally over `ws://localhost:18789`.
+        return `${base}/?access_token=${encodeURIComponent(claw.gatewayToken)}`
     }
     if (clawType === 'picoclaw' && claw.gatewayToken) {
         // /sso is a tiny HTML page Caddy serves on the picoclaw box —

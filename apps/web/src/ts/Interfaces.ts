@@ -343,6 +343,8 @@ export interface PreferencesState {
     setChatSidebarView: (view: ChatSidebarViewMode) => void
     affiliatePeriod: AffiliatePeriod
     setAffiliatePeriod: (period: AffiliatePeriod) => void
+    sidebarCollapsed: boolean
+    setSidebarCollapsed: (value: boolean) => void
 }
 
 export interface ChannelsState {

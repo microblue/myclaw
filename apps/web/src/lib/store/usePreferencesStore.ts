@@ -35,7 +35,9 @@ const usePreferencesStore = create<PreferencesState>()(
             chatSidebarView: CHAT_SIDEBAR_VIEW_MODE.TREE,
             setChatSidebarView: (view) => set({ chatSidebarView: view }),
             affiliatePeriod: AFFILIATE_PERIOD.ALL,
-            setAffiliatePeriod: (period) => set({ affiliatePeriod: period })
+            setAffiliatePeriod: (period) => set({ affiliatePeriod: period }),
+            sidebarCollapsed: false,
+            setSidebarCollapsed: (value) => set({ sidebarCollapsed: value })
         }),
         {
             name: STORAGE_KEYS.PREFERENCES,
@@ -61,9 +63,12 @@ const usePreferencesStore = create<PreferencesState>()(
                     state.affiliatePeriod =
                         state.affiliatePeriod || AFFILIATE_PERIOD.ALL
                 }
+                if (version < 8) {
+                    state.sidebarCollapsed = state.sidebarCollapsed ?? false
+                }
                 return state
             },
-            version: 7
+            version: 8
         }
     )
 )

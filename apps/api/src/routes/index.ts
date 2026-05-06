@@ -10,6 +10,7 @@ import usersRoutes from '@/routes/users'
 import waitlistRoutes from '@/routes/waitlist'
 import webhooksRoutes from '@/routes/webhooks'
 import installReportsRoutes from '@/routes/install-reports'
+import cloudScriptsRoutes from '@/routes/cloud-scripts'
 
 export {
     adminRoutes,
@@ -23,5 +24,6 @@ export {
     usersRoutes,
     waitlistRoutes,
     webhooksRoutes,
-    installReportsRoutes
+    installReportsRoutes,
+    cloudScriptsRoutes
 }

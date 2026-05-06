@@ -28,7 +28,8 @@ import {
     usersRoutes,
     waitlistRoutes,
     webhooksRoutes,
-    installReportsRoutes
+    installReportsRoutes,
+    cloudScriptsRoutes
 } from '@/routes'
 
 const app = new Hono<HonoEnv>()
@@ -73,6 +74,7 @@ app.route('/providers', providersRoutes)
 app.route('/waitlist', waitlistRoutes)
 app.route('/webhooks', webhooksRoutes)
 app.route('/install-reports', installReportsRoutes)
+app.route('/cloud-scripts', cloudScriptsRoutes)
 app.get('/clawhub/skills', async (c) => {
     try {
         const result = await browseSkills({
