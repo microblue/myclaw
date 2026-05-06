@@ -96,7 +96,8 @@ const initiateClawPurchase = withErrorHandler(
         priceMonthly,
         billingInterval: rawBillingInterval,
         provider: requestedProvider,
-        activationCode
+        activationCode,
+        extendsClawId
     } = await c.req.json<InitiateClawPurchaseBody>()
 
     const clawType = rawClawType || 'openclaw'
@@ -117,7 +118,8 @@ const initiateClawPurchase = withErrorHandler(
             clawType,
             password,
             sshKeyId,
-            volumeSize
+            volumeSize,
+            extendsClawId
         })
     }
 

@@ -6,15 +6,29 @@ const activationCodes = pgTable(
     {
         id: text('id').primaryKey(),
         code: text('code').notNull().unique(),
-        planId: text('plan_id').notNull(),
-        provider: text('provider').notNull().default('hetzner'),
-        region: text('region').notNull(),
+        // Carried only for `sku_kind = 'new'`. Renewal codes are
+        // plan/provider/region-agnostic — they extend whichever claw
+        // the user picks at redeem time.
+        planId: text('plan_id'),
+        provider: text('provider').default('hetzner'),
+        region: text('region'),
         tierLabel: text('tier_label'),
         partnerName: text('partner_name'),
         batchId: text('batch_id'),
         notes: text('notes'),
-        validityMonths: integer('validity_months'),
+        // Days, not months. Matches the white paper's xxxxxxxxx-ddd-uuu
+        // format (007 / 090 / 180 / 365). Null = perpetual.
+        validityDays: integer('validity_days'),
+        // 'new' creates a fresh claw. 'renewal' extends an existing one.
+        skuKind: text('sku_kind').notNull().default('new'),
+        // Multi-device packs: 5/25/50 seats per code. Each redemption
+        // consumes one seat (see activationSeats); the code itself flips
+        // to status='redeemed' only when seatsUsed == seats.
+        seats: integer('seats').notNull().default(1),
+        seatsUsed: integer('seats_used').notNull().default(0),
         status: text('status').notNull().default('unused'),
+        // Last-seat redemption details kept for backward compat / quick
+        // lookups; per-seat history lives in activation_seats.
         redeemedByUserId: uuid('redeemed_by_user_id').references(
             () => users.id,
             { onDelete: 'set null' }
@@ -32,7 +46,8 @@ const activationCodes = pgTable(
     (table) => [
         index('activation_codes_status_idx').on(table.status),
         index('activation_codes_partner_idx').on(table.partnerName),
-        index('activation_codes_batch_idx').on(table.batchId)
+        index('activation_codes_batch_idx').on(table.batchId),
+        index('activation_codes_sku_kind_idx').on(table.skuKind)
     ]
 )
 

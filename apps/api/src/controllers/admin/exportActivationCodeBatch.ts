@@ -33,7 +33,10 @@ const exportActivationCodeBatch = withErrorHandler(
         'region',
         'tier_label',
         'partner_name',
-        'validity_months',
+        'validity_days',
+        'sku_kind',
+        'seats',
+        'seats_used',
         'status',
         'expires_at',
         'created_at'
@@ -47,7 +50,10 @@ const exportActivationCodeBatch = withErrorHandler(
             r.region,
             r.tierLabel,
             r.partnerName,
-            r.validityMonths,
+            r.validityDays,
+            r.skuKind,
+            r.seats,
+            r.seatsUsed,
             r.status,
             r.expiresAt ? r.expiresAt.toISOString() : '',
             r.createdAt.toISOString()

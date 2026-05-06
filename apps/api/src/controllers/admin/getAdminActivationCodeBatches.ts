@@ -6,11 +6,10 @@ import { activationCodes } from '@/db/schema'
 import { ok } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
 
-// One row per batchId. We aggregate counts by status in a single pass
-// instead of N queries. Per-batch metadata (planId, provider, region,
-// validityMonths, partnerName, expiresAt, tierLabel) is shared across
-// every code in the batch, so MIN() / MAX() picks one deterministically
-// without a separate join.
+// One row per batchId. Aggregates code counts by status in a single
+// pass. Per-batch metadata (planId, provider, region, validityDays,
+// skuKind, seats, partnerName, expiresAt, tierLabel) is shared across
+// every code in the batch, so MIN/MAX picks one deterministically.
 const getAdminActivationCodeBatches = withErrorHandler(
     'getAdminActivationCodeBatches'
 )(async (c: AuthenticatedContext) => {
@@ -22,7 +21,9 @@ const getAdminActivationCodeBatches = withErrorHandler(
             provider: sql<string>`MAX(${activationCodes.provider})`,
             region: sql<string>`MAX(${activationCodes.region})`,
             tierLabel: sql<string | null>`MAX(${activationCodes.tierLabel})`,
-            validityMonths: sql<number | null>`MAX(${activationCodes.validityMonths})`,
+            validityDays: sql<number | null>`MAX(${activationCodes.validityDays})`,
+            skuKind: sql<string>`MAX(${activationCodes.skuKind})`,
+            seats: sql<number>`MAX(${activationCodes.seats})`,
             expiresAt: sql<Date | null>`MAX(${activationCodes.expiresAt})`,
             createdAt: sql<Date>`MIN(${activationCodes.createdAt})`,
             total: sql<number>`COUNT(*)::int`,

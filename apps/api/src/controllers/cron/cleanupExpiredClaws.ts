@@ -7,16 +7,13 @@ import { cleanupClaw } from '@/controllers/claws/helpers'
 import { ok } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
 
-// Sweeps every claw whose `deletionScheduledAt` has passed and runs the
-// existing cleanupClaw routine on it. Used by both:
-//   - canceled-Polar subscriptions (scheduled by onSubscriptionRevoked.ts)
-//   - activation-code claws past their validityMonths
-//
-// cleanupClaw deletes the row when it succeeds, so re-running the sweep
-// is idempotent — successfully-cleaned claws drop out on the next pass.
-const cleanupExpiredClaws = withErrorHandler('cleanupExpiredClaws')(async (
-    c: Context
-) => {
+export type CleanupResult = {
+    swept: number
+    succeeded: number
+    failed: number
+}
+
+export async function runCleanupExpiredClaws(): Promise<CleanupResult> {
     const expired = await db
         .select({
             id: claws.id,
@@ -46,8 +43,14 @@ const cleanupExpiredClaws = withErrorHandler('cleanupExpiredClaws')(async (
 
     const succeeded = results.filter((r) => r.status === 'fulfilled').length
     const failed = results.length - succeeded
+    return { swept: results.length, succeeded, failed }
+}
 
-    return ok(c, { swept: results.length, succeeded, failed })
+const cleanupExpiredClaws = withErrorHandler('cleanupExpiredClaws')(async (
+    c: Context
+) => {
+    const result = await runCleanupExpiredClaws()
+    return ok(c, result)
 })
 
 export default cleanupExpiredClaws

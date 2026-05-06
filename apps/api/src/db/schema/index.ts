@@ -12,6 +12,7 @@ import waitlist from '@/db/schema/waitlist'
 import volumes from '@/db/schema/volumes'
 import systemSettings from '@/db/schema/systemSettings'
 import activationCodes from '@/db/schema/activationCodes'
+import activationSeats from '@/db/schema/activationSeats'
 import installReports from '@/db/schema/installReports'
 
 export {
@@ -29,5 +30,6 @@ export {
     volumes,
     systemSettings,
     activationCodes,
+    activationSeats,
     installReports
 }

@@ -502,6 +502,9 @@ export interface InitiateClawPurchaseBody {
     // When set, payment is skipped; planId/provider/billingInterval are read
     // from the activation code row instead of the request body.
     activationCode?: string
+    // Only meaningful when the code is sku_kind = 'renewal'. Identifies
+    // which existing claw the redemption should extend.
+    extendsClawId?: string
 }
 
 export interface CloudflareDNSRecord {

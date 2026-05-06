@@ -9,6 +9,7 @@ import app from '@/app'
 import setupTerminalSocket from '@/services/terminalSocket'
 import startDnsReconciler from '@/services/dnsReconciler'
 import startSyncScheduler from '@/services/syncScheduler'
+import startExpirySweeper from '@/services/expirySweeper'
 import validateEnv from '@/services/envCheck'
 
 // Fail fast on broken / placeholder secrets rather than running for
@@ -50,3 +51,4 @@ const server = serve(
 setupTerminalSocket(server as Server)
 startDnsReconciler()
 startSyncScheduler()
+startExpirySweeper()

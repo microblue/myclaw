@@ -29,10 +29,10 @@ const previewActivationCode = withErrorHandler('previewActivationCode')(
 
         if (!row)
             return ok(c, { valid: false, reason: 'not_found' as const }, '')
-        if (row.status === 'redeemed')
-            return ok(c, { valid: false, reason: 'redeemed' as const }, '')
         if (row.status === 'voided')
             return ok(c, { valid: false, reason: 'voided' as const }, '')
+        if (row.status === 'redeemed' || row.seatsUsed >= row.seats)
+            return ok(c, { valid: false, reason: 'redeemed' as const }, '')
         if (row.expiresAt && row.expiresAt < new Date())
             return ok(c, { valid: false, reason: 'expired' as const }, '')
 
@@ -40,11 +40,15 @@ const previewActivationCode = withErrorHandler('previewActivationCode')(
             c,
             {
                 valid: true,
+                skuKind: row.skuKind,
                 planId: row.planId,
                 provider: row.provider,
                 region: row.region,
                 tierLabel: row.tierLabel,
-                validityMonths: row.validityMonths
+                validityDays: row.validityDays,
+                seats: row.seats,
+                seatsUsed: row.seatsUsed,
+                seatsRemaining: row.seats - row.seatsUsed
             },
             ''
         )
