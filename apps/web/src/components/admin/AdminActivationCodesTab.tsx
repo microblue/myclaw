@@ -48,10 +48,15 @@ const formatDateTime = (iso: string | null | undefined): string => {
     })
 }
 
-const validityLabel = (months: number | null): string =>
-    months == null
-        ? 'Perpetual'
-        : `${months} month${months === 1 ? '' : 's'}`
+const validityLabel = (days: number | null): string => {
+    if (days == null) return 'Perpetual'
+    if (days === 365) return '1 year'
+    if (days % 365 === 0) return `${days / 365} years`
+    return `${days} day${days === 1 ? '' : 's'}`
+}
+
+const seatsLabel = (seats: number): string =>
+    seats <= 1 ? 'single' : `${seats} seats`
 
 const AdminActivationCodesTab: FC = () => {
     const [status, setStatus] = useState('all')
@@ -218,11 +223,13 @@ const AdminActivationCodesTab: FC = () => {
 interface BatchRow {
     batchId: string
     partnerName: string | null
-    planId: string
-    provider: string
-    region: string
+    planId: string | null
+    provider: string | null
+    region: string | null
     tierLabel: string | null
-    validityMonths: number | null
+    validityDays: number | null
+    skuKind: 'new' | 'renewal'
+    seats: number
     expiresAt: string | null
     createdAt: string
     total: number
@@ -305,13 +312,26 @@ const BatchesSection: FC<{
                                     </button>
                                 </Td>
                                 <Td>
-                                    <div>{b.tierLabel || b.planId}</div>
+                                    <div>
+                                        {b.tierLabel ||
+                                            b.planId ||
+                                            (b.skuKind === 'renewal'
+                                                ? 'Renewal'
+                                                : '—')}
+                                    </div>
                                     <div className='text-muted-foreground text-xs'>
-                                        {b.provider} · {b.planId}
+                                        {b.skuKind === 'renewal'
+                                            ? 'Renewal SKU'
+                                            : `${b.provider} · ${b.planId}`}
                                     </div>
                                 </Td>
-                                <Td>{b.region}</Td>
-                                <Td>{validityLabel(b.validityMonths)}</Td>
+                                <Td>{b.region || '—'}</Td>
+                                <Td>
+                                    <div>{validityLabel(b.validityDays)}</div>
+                                    <div className='text-muted-foreground text-xs'>
+                                        {seatsLabel(b.seats)}
+                                    </div>
+                                </Td>
                                 <Td>
                                     <div className='flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs'>
                                         <span>
@@ -387,13 +407,16 @@ interface CodeRow {
     id: string
     code: string
     status: string
-    planId: string
-    provider: string
-    region: string
+    planId: string | null
+    provider: string | null
+    region: string | null
     tierLabel: string | null
     partnerName: string | null
     batchId: string | null
-    validityMonths: number | null
+    validityDays: number | null
+    skuKind: 'new' | 'renewal'
+    seats: number
+    seatsUsed: number
     expiresAt: string | null
     createdAt: string
     redeemedAt: string | null
@@ -436,12 +459,27 @@ const CodesTable: FC<{
                             <AdminStatusBadge status={c.status} />
                         </Td>
                         <Td>
-                            <div>{c.tierLabel || c.planId}</div>
+                            <div>
+                                {c.tierLabel ||
+                                    c.planId ||
+                                    (c.skuKind === 'renewal'
+                                        ? 'Renewal'
+                                        : '—')}
+                            </div>
                             <div className='text-muted-foreground text-xs'>
-                                {c.provider} · {c.region}
+                                {c.skuKind === 'renewal'
+                                    ? 'Renewal SKU'
+                                    : `${c.provider} · ${c.region}`}
                             </div>
                         </Td>
-                        <Td>{validityLabel(c.validityMonths)}</Td>
+                        <Td>
+                            <div>{validityLabel(c.validityDays)}</div>
+                            <div className='text-muted-foreground text-xs'>
+                                {c.seats > 1
+                                    ? `${c.seatsUsed}/${c.seats} seats`
+                                    : 'single use'}
+                            </div>
+                        </Td>
                         <Td className='whitespace-nowrap'>
                             {formatDate(c.createdAt)}
                         </Td>

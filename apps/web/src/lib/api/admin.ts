@@ -135,14 +135,17 @@ const admin = {
             items: Array<{
                 id: string
                 code: string
-                planId: string
-                provider: string
-                region: string
+                planId: string | null
+                provider: string | null
+                region: string | null
                 tierLabel: string | null
                 partnerName: string | null
                 batchId: string | null
                 notes: string | null
-                validityMonths: number | null
+                validityDays: number | null
+                skuKind: 'new' | 'renewal'
+                seats: number
+                seatsUsed: number
                 status: string
                 redeemedByUserId: string | null
                 redeemedClawId: string | null
@@ -185,11 +188,13 @@ const admin = {
             items: Array<{
                 batchId: string
                 partnerName: string | null
-                planId: string
-                provider: string
-                region: string
+                planId: string | null
+                provider: string | null
+                region: string | null
                 tierLabel: string | null
-                validityMonths: number | null
+                validityDays: number | null
+                skuKind: 'new' | 'renewal'
+                seats: number
                 expiresAt: string | null
                 createdAt: string
                 total: number
