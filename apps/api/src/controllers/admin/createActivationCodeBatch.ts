@@ -58,10 +58,12 @@ const createActivationCodeBatch = withErrorHandler(
     const notes = body.notes?.trim() || null
     const validityDays =
         body.validityDays == null ? null : Number(body.validityDays)
-    const seats = Number(body.seats || 1)
+    // `?? 1` not `|| 1`: `seats: 0` from a malformed client should hit the
+    // ALLOWED_SEATS guard below, not silently become 1.
+    const seats = Number(body.seats ?? 1)
     const count = Math.max(
         1,
-        Math.min(MAX_BATCH_SIZE, Number(body.count || 1))
+        Math.min(MAX_BATCH_SIZE, Number(body.count ?? 1))
     )
 
     if (validityDays == null || validityDays < 1 || validityDays > 999)
