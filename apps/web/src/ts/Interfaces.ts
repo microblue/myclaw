@@ -725,6 +725,9 @@ export interface PurchaseClawData {
     // When set, the API ignores planId/provider/region/priceMonthly and reads
     // them from the activation code row instead. Used by the redeem-code flow.
     activationCode?: string
+    // Only meaningful when the code is sku_kind = 'renewal'. The claw
+    // whose deletionScheduledAt should be extended.
+    extendsClawId?: string
 }
 
 export type ActivationCodePreviewReason =
@@ -735,11 +738,15 @@ export type ActivationCodePreviewReason =
 
 export interface ActivationCodePreview {
     valid: boolean
-    planId?: string
-    provider?: string
-    region?: string
+    skuKind?: 'new' | 'renewal'
+    planId?: string | null
+    provider?: string | null
+    region?: string | null
     tierLabel?: string | null
-    validityMonths?: number | null
+    validityDays?: number | null
+    seats?: number
+    seatsUsed?: number
+    seatsRemaining?: number
     reason?: ActivationCodePreviewReason
 }
 

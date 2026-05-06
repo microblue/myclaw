@@ -158,13 +158,15 @@ const admin = {
         }>(`${API_PATHS.ADMIN.ACTIVATION_CODES}?${qs.toString()}`)
     },
     createActivationCodeBatch: (data: {
-        planId: string
-        provider: string
-        region: string
+        skuKind: 'new' | 'renewal'
+        planId: string | null
+        provider: string | null
+        region: string | null
         tierLabel?: string | null
         partnerName?: string | null
         notes?: string | null
-        validityMonths?: number | null
+        validityDays: number
+        seats: number
         expiresAt?: string | null
         count: number
     }) =>

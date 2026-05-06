@@ -1,10 +1,16 @@
 import type { FC } from 'react'
 import type { Claw } from '@/ts/Interfaces'
 
+import { useNavigate } from 'react-router-dom'
 import { clawStatus } from '@openclaw/shared'
 import { Button } from '@/components/ui'
 import { getClawType } from '@/lib/clawTypes'
-import { CircleNotchIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
+import { ROUTES } from '@/lib'
+import {
+    CircleNotchIcon,
+    ArrowSquareOutIcon,
+    ArrowClockwiseIcon
+} from '@phosphor-icons/react'
 
 const TRANSIENT_STATUSES = new Set<string>([
     clawStatus.creating,
@@ -67,11 +73,42 @@ const statusTone = (status: string): string => {
     return 'bg-muted'
 }
 
+const formatExpiry = (iso: string | null): string => {
+    if (!iso) return ''
+    const date = new Date(iso)
+    const now = new Date()
+    const days = Math.ceil(
+        (date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    )
+    const datePart = date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    })
+    if (days <= 0) return `Expired ${datePart}`
+    if (days === 1) return `Expires tomorrow (${datePart})`
+    if (days <= 30) return `Expires in ${days}d (${datePart})`
+    return datePart
+}
+
+const expiryTone = (iso: string | null): string => {
+    if (!iso) return ''
+    const days = Math.ceil(
+        (new Date(iso).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    )
+    if (days <= 0) return 'text-destructive'
+    if (days <= 7) return 'text-destructive'
+    if (days <= 30) return 'text-amber-600'
+    return 'text-foreground'
+}
+
 const ClawInstanceCard: FC<Props> = ({ claw, onOpenChat, onViewDetails }) => {
+    const navigate = useNavigate()
     const clawType = getClawType(claw.clawType || 'openclaw')
     const isRunning = claw.status === clawStatus.running
     const isTransient = TRANSIENT_STATUSES.has(claw.status)
     const transientLabel = TRANSIENT_LABELS[claw.status]
+    const expiry = claw.deletionScheduledAt
 
     // Click anywhere on the card body (outside the primary Open Chat
     // button) navigates to the detail page — the card is essentially a
@@ -164,11 +201,21 @@ const ClawInstanceCard: FC<Props> = ({ claw, onOpenChat, onViewDetails }) => {
                 <dd className='text-foreground text-right font-mono text-xs'>
                     {claw.ip || '—'}
                 </dd>
+                {expiry && (
+                    <>
+                        <dt>Expires</dt>
+                        <dd
+                            className={`text-right text-xs ${expiryTone(expiry)}`}
+                        >
+                            {formatExpiry(expiry)}
+                        </dd>
+                    </>
+                )}
             </dl>
 
-            <div className='mt-auto pt-2'>
+            <div className='mt-auto flex gap-2 pt-2'>
                 <Button
-                    className='w-full'
+                    className='flex-1'
                     onClick={(e) => {
                         e.stopPropagation()
                         onOpenChat(claw)
@@ -181,6 +228,22 @@ const ClawInstanceCard: FC<Props> = ({ claw, onOpenChat, onViewDetails }) => {
                     />
                     Open chat
                 </Button>
+                {expiry && (
+                    <Button
+                        variant='outline'
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(`${ROUTES.REDEEM_CODE}?extends=${claw.id}`)
+                        }}
+                        title='Renew with an activation code'
+                    >
+                        <ArrowClockwiseIcon
+                            className='h-4 w-4'
+                            weight='bold'
+                        />
+                        <span className='ml-1.5 hidden md:inline'>Renew</span>
+                    </Button>
+                )}
             </div>
         </div>
     )

@@ -132,10 +132,7 @@ const SummaryPanel: FC = () => {
     })
     const plan = plansQuery.data?.find((p) => p.id === s.planId)
 
-    const validity =
-        s.validityMonths == null
-            ? 'Perpetual'
-            : `${s.validityMonths} month${s.validityMonths === 1 ? '' : 's'}`
+    const validity = `${s.validityDays} day${s.validityDays === 1 ? '' : 's'}`
 
     return (
         <div className='bg-card sticky top-20 rounded-lg border p-5'>

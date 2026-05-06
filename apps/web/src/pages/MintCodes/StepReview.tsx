@@ -42,12 +42,14 @@ const StepReview: FC = () => {
         setSubmitting(true)
         try {
             const result = await api.createActivationCodeBatch({
-                provider: s.provider,
-                planId: s.planId,
-                region: s.region,
+                skuKind: s.skuKind,
+                provider: s.skuKind === 'new' ? s.provider : null,
+                planId: s.skuKind === 'new' ? s.planId : null,
+                region: s.skuKind === 'new' ? s.region : null,
                 tierLabel: s.tierLabel.trim() || null,
                 partnerName: s.partnerName.trim() || null,
-                validityMonths: s.validityMonths,
+                validityDays: s.validityDays,
+                seats: s.seats,
                 expiresAt: s.expiresAt
                     ? new Date(s.expiresAt).toISOString()
                     : null,
@@ -63,10 +65,9 @@ const StepReview: FC = () => {
         }
     }
 
-    const validity =
-        s.validityMonths == null
-            ? 'Perpetual'
-            : `${s.validityMonths} month${s.validityMonths === 1 ? '' : 's'}`
+    const validity = `${s.validityDays} day${s.validityDays === 1 ? '' : 's'}`
+    const seatsLabel = `${s.seats} ${s.seats === 1 ? 'seat' : 'seats'}`
+    const skuLabel = s.skuKind === 'renewal' ? 'Renewal' : 'New claw'
 
     return (
         <div className='space-y-6'>
@@ -90,8 +91,10 @@ const StepReview: FC = () => {
                     }
                 />
                 <Row label='Region' value={`${regionLabel} (${s.region})`} />
+                <Row label='SKU kind' value={skuLabel} />
                 <Row label='Codes in batch' value={String(s.count)} />
-                <Row label='Claw lifetime' value={validity} />
+                <Row label='Seats per code' value={seatsLabel} />
+                <Row label='Subscription window' value={validity} />
                 <Row
                     label='Code expiry'
                     value={s.expiresAt || 'No expiry'}

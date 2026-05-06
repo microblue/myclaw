@@ -9,13 +9,19 @@ import { writeState, readState } from '@/pages/MintCodes/state'
 import Calendar from '@/pages/MintCodes/Calendar'
 
 const COUNT_PRESETS = [1, 5, 10, 25, 50, 100]
-const VALIDITY_PRESETS: { label: string; value: number | null }[] = [
-    { label: '1 month', value: 1 },
-    { label: '3 months', value: 3 },
-    { label: '6 months', value: 6 },
-    { label: '1 year', value: 12 },
-    { label: '2 years', value: 24 },
-    { label: 'Perpetual', value: null }
+// Per the white-paper appendix A code spec (xxxxxxxxx-ddd-uuu) these
+// match the four standard subscription windows. Free tier is 7 days.
+const VALIDITY_PRESETS: { label: string; value: number }[] = [
+    { label: '7 days (trial)', value: 7 },
+    { label: '90 days', value: 90 },
+    { label: '180 days', value: 180 },
+    { label: '365 days', value: 365 }
+]
+const SEATS_PRESETS: { label: string; value: number }[] = [
+    { label: '1 device', value: 1 },
+    { label: '5 devices', value: 5 },
+    { label: '25 devices', value: 25 },
+    { label: '50 devices', value: 50 }
 ]
 
 const StepDetails: FC = () => {
@@ -115,14 +121,27 @@ const StepDetails: FC = () => {
             </Section>
 
             <Section
-                title='Claw lifetime'
-                description="How long the deployed claw lives before auto-cleanup. Doesn't have to match how long the code can be redeemed."
+                title='Subscription window'
+                description="How many days the redeemed claw stays alive before auto-cleanup. Each seat's window starts on its own first activation."
             >
                 <TileRow
                     options={VALIDITY_PRESETS.map((opt) => ({
                         label: opt.label,
-                        active: s.validityMonths === opt.value,
-                        onClick: () => update({ validityMonths: opt.value })
+                        active: s.validityDays === opt.value,
+                        onClick: () => update({ validityDays: opt.value })
+                    }))}
+                />
+            </Section>
+
+            <Section
+                title='Seats per code'
+                description='How many separate redemptions each minted code can carry — 5 / 25 / 50 unlock the channel batch packs.'
+            >
+                <TileRow
+                    options={SEATS_PRESETS.map((opt) => ({
+                        label: opt.label,
+                        active: s.seats === opt.value,
+                        onClick: () => update({ seats: opt.value })
                     }))}
                 />
             </Section>
