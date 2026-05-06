@@ -1,9 +1,11 @@
 import type { FC, ReactNode } from 'react'
 import type { Claw } from '@/ts/Interfaces'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
+import { ROUTES } from '@/lib'
 import { usePreferencesStore } from '@/lib/store'
 import {
     useClaws,
@@ -16,6 +18,17 @@ import ClawsListView from '@/components/dashboard/ClawsListView'
 import { useAuth } from '@/lib/auth'
 
 const Dashboard: FC = (): ReactNode => {
+    const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
+    // Landing-page "Deploy" CTA hands logged-out users `/login?deploy=true`
+    // and logged-in users `/claws?deploy=true`. The intent is to drop them
+    // straight into the redeem flow, so honor that here.
+    useEffect(() => {
+        if (searchParams.get('deploy') === 'true') {
+            navigate(ROUTES.REDEEM_CODE, { replace: true })
+        }
+    }, [searchParams, navigate])
+
     const { user, cachedProfile, isLocal } = useAuth()
     const { data: profile } = useProfile({
         enabled: !!user,

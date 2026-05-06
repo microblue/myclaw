@@ -47,45 +47,6 @@
 
         <script>
             ;(function () {
-                var loaded = false
-                function loadAnalytics() {
-                    if (loaded) return
-                    loaded = true
-                    window.removeEventListener('scroll', loadAnalytics)
-                    window.removeEventListener('click', loadAnalytics)
-                    window.removeEventListener('touchstart', loadAnalytics)
-
-                    var ds = document.createElement('script')
-                    ds.defer = true
-                    ds.setAttribute(
-                        'data-website-id',
-                        'dfid_MHJ6T1k2YVJ6aVD2sTys2'
-                    )
-                    ds.setAttribute('data-domain', 'myclaw.one')
-                    ds.src = 'https://datafa.st/js/script.js'
-                    document.head.appendChild(ds)
-                }
-                if ('requestIdleCallback' in window) {
-                    requestIdleCallback(function () {
-                        setTimeout(loadAnalytics, 3000)
-                    })
-                } else {
-                    setTimeout(loadAnalytics, 4000)
-                }
-                window.addEventListener('scroll', loadAnalytics, {
-                    once: true,
-                    passive: true
-                })
-                window.addEventListener('click', loadAnalytics, { once: true })
-                window.addEventListener('touchstart', loadAnalytics, {
-                    once: true,
-                    passive: true
-                })
-            })()
-        </script>
-
-        <script>
-            ;(function () {
                 try {
                     var p = JSON.parse(localStorage.getItem('ch-preferences'))
                     var t = p && p.state && p.state.theme

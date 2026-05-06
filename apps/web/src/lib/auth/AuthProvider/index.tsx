@@ -115,7 +115,14 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     }, [queryClient])
 
     const signOut = useCallback(async () => {
-        await supabase.auth.signOut()
+        // `scope: 'local'` clears the session on this device only and skips
+        // the network round-trip to revoke the refresh token. The default
+        // `'global'` scope can hang the click for several seconds (or
+        // forever, if Supabase is slow / unreachable) because supabase-js
+        // awaits the revoke before resolving — leaving the user stuck
+        // staring at a dropdown that never closes. Local sign-out is what
+        // the user actually wants from this button.
+        await supabase.auth.signOut({ scope: 'local' })
     }, [])
 
     const isLocal =
