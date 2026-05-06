@@ -15,7 +15,18 @@ import type {
 } from '@/lib/constants'
 import type { claws } from '@/db/schema'
 
-export type HonoEnv = { Variables: { userId: string; isAdmin: boolean } }
+export type HonoEnv = {
+    Variables: {
+        userId: string
+        // Boolean kept for back-compat with existing `adminOnly` middleware
+        // and any callers that already read it. Will be retired alongside
+        // legacy admin paths in P5.
+        isAdmin: boolean
+        // Set by auth middleware after JWT verification. Read by the new
+        // `superAdminOnly` / `partnerOrSuperAdmin` middleware family.
+        userRole: (typeof userRole)[keyof typeof userRole]
+    }
+}
 
 export type AuthenticatedContext = Context<HonoEnv>
 

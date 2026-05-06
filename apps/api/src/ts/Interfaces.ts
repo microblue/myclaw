@@ -878,6 +878,10 @@ export interface CacheEntry<T> {
 export interface AuthCacheData {
     userId: string
     isAdmin: boolean
+    // Full role string read by the new role-aware middleware
+    // (superAdminOnly / partnerOrSuperAdmin). `isAdmin` stays for
+    // back-compat with the legacy adminOnly path.
+    role: 'user' | 'admin' | 'partner'
 }
 
 export interface SkillsCacheEntry {

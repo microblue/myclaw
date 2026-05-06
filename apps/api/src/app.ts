@@ -124,6 +124,7 @@ app.use('/*', async (c, next) => {
         if (cached && Date.now() < cached.expiry) {
             c.set('userId', cached.data.userId)
             c.set('isAdmin', cached.data.isAdmin)
+            c.set('userRole', cached.data.role)
             return next()
         }
 
@@ -136,15 +137,24 @@ app.use('/*', async (c, next) => {
             .where(eq(users.id, user.id))
             .then((rows) => rows[0])
 
-        const isAdmin = profile?.role === userRole.admin
+        // Default unknown / missing role to 'user' so we never silently
+        // grant elevated access on a malformed profile row.
+        const role: 'user' | 'admin' | 'partner' =
+            profile?.role === userRole.admin
+                ? 'admin'
+                : profile?.role === userRole.partner
+                  ? 'partner'
+                  : 'user'
+        const isAdmin = role === 'admin'
 
         authCache.set(token, {
-            data: { userId: user.id, isAdmin },
+            data: { userId: user.id, isAdmin, role },
             expiry: Date.now() + AUTH_CACHE_TTL
         })
 
         c.set('userId', user.id)
         c.set('isAdmin', isAdmin)
+        c.set('userRole', role)
         return next()
     } catch (error) {
         console.error('authMiddleware', error)
