@@ -190,8 +190,35 @@ const syncClawServers = async (clawList: ClawRow[]): Promise<ClawRow[]> => {
                 return { ...claw, ip: live.ip }
             }
 
-            if (claw.status === clawStatus.unreachable)
+            // Recovery probe for `unreachable`. If the claw was flipped
+            // unreachable earlier (sync timeout when Studio hadn't bound
+            // :3000 yet, or postInstallPhase saw a `failed` emit, etc.)
+            // but the subdomain is now serving 200, flip it back to
+            // `running`. Without this, manual fixes on the box don't
+            // restore the dashboard tile and the user sees a stuck
+            // "unreachable" badge forever.
+            if (claw.status === clawStatus.unreachable) {
+                if (claw.subdomain) {
+                    const ready = CLOUDFLARE_DISABLED
+                        ? true
+                        : await checkSubdomainReady(claw.subdomain)
+                    if (ready) {
+                        await db
+                            .update(claws)
+                            .set({
+                                status: clawStatus.running,
+                                ip: live.ip
+                            })
+                            .where(eq(claws.id, claw.id))
+                        return {
+                            ...claw,
+                            status: clawStatus.running,
+                            ip: live.ip
+                        }
+                    }
+                }
                 return { ...claw, ip: live.ip }
+            }
 
             const completionStates = transitionCompletedBy[claw.status]
             if (completionStates && !completionStates.includes(live.status)) {

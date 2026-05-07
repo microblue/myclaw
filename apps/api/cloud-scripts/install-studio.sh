@@ -59,11 +59,19 @@ fi
 
 # Settings.json wires Studio to the local gateway. Studio reads it from
 # $HOME/.openclaw/openclaw-studio/settings.json on startup.
+#
+# Schema MUST match what server/studio-settings.js expects: a nested
+# `{ gateway: { url, token } }` object. We previously wrote the flat
+# `{ gatewayUrl, gatewayToken }` shape and Studio fell through to its
+# "Configure gateway" modal even though the file was in the right
+# place — the keys it looks for are gateway.url and gateway.token.
 mkdir -p /root/.openclaw/openclaw-studio
 cat > /root/.openclaw/openclaw-studio/settings.json << SETTINGS
 {
-  "gatewayUrl": "ws://127.0.0.1:18789",
-  "gatewayToken": "${GATEWAY_TOKEN}"
+  "gateway": {
+    "url": "ws://127.0.0.1:18789",
+    "token": "${GATEWAY_TOKEN}"
+  }
 }
 SETTINGS
 

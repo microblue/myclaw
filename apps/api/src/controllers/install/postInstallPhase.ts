@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 
 import crypto from 'crypto'
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, clawInstallPhases } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
@@ -84,10 +85,21 @@ const postInstallPhase = withErrorHandler('postInstallPhase')(
         // Mirror the active run onto the claws row. Cheap UPDATE that
         // makes "what's the current run for this claw?" answerable
         // without scanning claw_install_phases.
-        await db
-            .update(claws)
-            .set({ installRunId: runId })
-            .where(eq(claws.id, clawId))
+        //
+        // Terminal phases also flip claws.status so the dashboard
+        // doesn't lean on syncClawServers' 20-min unreachable
+        // timeout to discover a finished install. Without this, a
+        // claw that successfully finishes bootstrap stays in
+        // `configuring` past the deadline and gets misclassified as
+        // `unreachable` even though it's healthy (nimble-panda
+        // 2026-05-07 incident).
+        const update: { installRunId: string; status?: string } = {
+            installRunId: runId
+        }
+        if (phase === 'ready') update.status = clawStatus.running
+        if (phase === 'failed') update.status = clawStatus.unreachable
+
+        await db.update(claws).set(update).where(eq(claws.id, clawId))
 
         return ok(c, { ok: true, phase, runId }, '')
     }

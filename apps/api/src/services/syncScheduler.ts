@@ -29,6 +29,12 @@ import syncClawServers from '@/controllers/claws/helpers/syncClawServers'
 
 const SYNC_INTERVAL_MS = 60_000
 
+// Statuses worth re-evaluating each tick. `unreachable` is included
+// for the recovery probe in syncClawServers — a claw that previously
+// timed out on bootstrap can come back online (Studio rebuild, manual
+// SSH fix, etc.) and we want it to flip back to `running` once the
+// subdomain answers 200 instead of staying terminal until someone
+// hand-edits the DB.
 const TRANSIENT_STATUSES = [
     clawStatus.creating,
     clawStatus.configuring,
@@ -37,7 +43,8 @@ const TRANSIENT_STATUSES = [
     clawStatus.stopping,
     clawStatus.restarting,
     clawStatus.rebuilding,
-    clawStatus.migrating
+    clawStatus.migrating,
+    clawStatus.unreachable
 ] as const
 
 const runSyncPass = async (): Promise<void> => {
