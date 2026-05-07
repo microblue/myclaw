@@ -17,9 +17,7 @@ import { PageTitle, PageHeader } from '@/components'
 import AppShell from '@/components/layout/AppShell'
 import {
     AdminAnalyticsTab,
-    AdminBillingTab,
     AdminClawsTab,
-    AdminReferralsTab,
     AdminDetailModal,
     AdminSettingsTab,
     AdminActivationCodesTab,
@@ -29,9 +27,7 @@ import { Skeleton } from '@/components/ui'
 import {
     UsersIcon,
     HardDrivesIcon,
-    HandshakeIcon,
     ChartLineUpIcon,
-    CreditCardIcon,
     GearIcon,
     KeyIcon,
     BugIcon
@@ -53,8 +49,6 @@ const ADMIN_TABS = {
     ANALYTICS: 'analytics',
     USERS: 'users',
     CLAWS: 'fleet',
-    REFERRALS: 'referrals',
-    BILLING: 'billing',
     CODES: 'codes',
     INSTALL_REPORTS: 'install-reports',
     SETTINGS: 'settings'
@@ -62,13 +56,15 @@ const ADMIN_TABS = {
 
 // Legacy `?tab=X` values mapped to the canonical sub-route segment.
 // `claws` → `fleet` is the user-visible rename per design §3.
+// `referrals` / `billing` were removed and quietly redirect to
+// analytics so old bookmarks / inbound links don't 404.
 const LEGACY_TAB_REDIRECT: Record<string, string> = {
     claws: 'fleet',
     analytics: 'analytics',
     users: 'users',
     fleet: 'fleet',
-    referrals: 'referrals',
-    billing: 'billing',
+    referrals: 'analytics',
+    billing: 'analytics',
     codes: 'codes',
     'install-reports': 'install-reports',
     settings: 'settings'
@@ -141,18 +137,6 @@ const Admin: FC = (): ReactNode => {
             count: stats?.claws
         },
         {
-            key: ADMIN_TABS.REFERRALS,
-            icon: HandshakeIcon,
-            label: t('admin.referralsTab'),
-            count: stats?.referrals
-        },
-        {
-            key: ADMIN_TABS.BILLING,
-            icon: CreditCardIcon,
-            label: t('admin.billingTab'),
-            count: stats?.billing
-        },
-        {
             key: ADMIN_TABS.CODES,
             icon: KeyIcon,
             label: 'Activation codes'
@@ -206,16 +190,6 @@ const Admin: FC = (): ReactNode => {
                         <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-6'>
                             {activeTab === ADMIN_TABS.CLAWS && (
                                 <AdminClawsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.REFERRALS && (
-                                <AdminReferralsTab
-                                    onSelectEntity={setSelectedEntity}
-                                />
-                            )}
-                            {activeTab === ADMIN_TABS.BILLING && (
-                                <AdminBillingTab
                                     onSelectEntity={setSelectedEntity}
                                 />
                             )}

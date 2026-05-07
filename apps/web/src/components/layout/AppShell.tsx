@@ -27,7 +27,6 @@ import {
     ChartLineUpIcon,
     UsersIcon,
     HardDrivesIcon,
-    CreditCardIcon,
     KeyIcon,
     BugIcon,
     GearIcon
@@ -117,18 +116,6 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
         roles: ['admin']
     },
     {
-        to: ROUTES.ADMIN_REFERRALS,
-        label: 'Referrals',
-        icon: HandshakeIcon,
-        roles: ['admin']
-    },
-    {
-        to: ROUTES.ADMIN_BILLING,
-        label: 'Billing',
-        icon: CreditCardIcon,
-        roles: ['admin']
-    },
-    {
         to: ROUTES.ADMIN_CODES,
         label: 'Activation codes',
         icon: KeyIcon,
@@ -152,9 +139,13 @@ type Props = {
     children: ReactNode
     // Optional slot for page actions in the top bar (e.g. "Deploy new")
     pageActions?: ReactNode
+    // When true, render only the top bar + content with no sidebar /
+    // mobile drawer / left padding. Used by the consumer-facing /aios
+    // home so it reads as a focused launcher rather than a dashboard.
+    hideSidebar?: boolean
 }
 
-const AppShell: FC<Props> = ({ children, pageActions }) => {
+const AppShell: FC<Props> = ({ children, pageActions, hideSidebar }) => {
     const { signOut, isLocal } = useAuth()
     const { data: profile } = useProfile()
     const { openLinksWindowed, sidebarCollapsed, setSidebarCollapsed } =
@@ -209,24 +200,27 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
                 peeks through in the main content column. */}
             <div className='landing-gradient pointer-events-none fixed inset-0 z-0' />
 
-            {/* Desktop sidebar — hidden on mobile. Collapses to a 14
-                icon-only rail when the user toggles. */}
-            <aside
-                className={`border-border bg-card fixed inset-y-0 left-0 z-30 hidden flex-col border-r transition-[width] md:flex ${
-                    sidebarCollapsed ? 'w-14' : 'w-60'
-                }`}
-            >
-                <SidebarContent
-                    items={items}
-                    collapsed={sidebarCollapsed}
-                    onToggleCollapsed={() =>
-                        setSidebarCollapsed(!sidebarCollapsed)
-                    }
-                />
-            </aside>
+            {/* Desktop sidebar — hidden on mobile, omitted entirely
+                when hideSidebar is set (consumer launcher view).
+                Collapses to a 14 icon-only rail when the user toggles. */}
+            {!hideSidebar && (
+                <aside
+                    className={`border-border bg-card fixed inset-y-0 left-0 z-30 hidden flex-col border-r transition-[width] md:flex ${
+                        sidebarCollapsed ? 'w-14' : 'w-60'
+                    }`}
+                >
+                    <SidebarContent
+                        items={items}
+                        collapsed={sidebarCollapsed}
+                        onToggleCollapsed={() =>
+                            setSidebarCollapsed(!sidebarCollapsed)
+                        }
+                    />
+                </aside>
+            )}
 
             {/* Mobile drawer */}
-            {mobileOpen && (
+            {!hideSidebar && mobileOpen && (
                 <>
                     <div
                         className='fixed inset-0 z-40 bg-black/40 md:hidden'
@@ -245,11 +239,15 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
             {/* Content column */}
             <div
                 className={`relative z-10 flex min-h-screen flex-col transition-[padding] ${
-                    sidebarCollapsed ? 'md:pl-14' : 'md:pl-60'
+                    hideSidebar
+                        ? ''
+                        : sidebarCollapsed
+                          ? 'md:pl-14'
+                          : 'md:pl-60'
                 }`}
             >
                 <TopBar
-                    onMenu={() => setMobileOpen(true)}
+                    onMenu={hideSidebar ? undefined : () => setMobileOpen(true)}
                     pageActions={pageActions}
                     displayName={displayName}
                     appVersion={appVersion}
@@ -357,7 +355,7 @@ const SidebarContent: FC<{
 }
 
 const TopBar: FC<{
-    onMenu: () => void
+    onMenu?: () => void
     pageActions?: ReactNode
     displayName: string
     appVersion: string | null
@@ -379,16 +377,18 @@ const TopBar: FC<{
     return (
         <header className='border-border bg-background/80 sticky top-0 z-20 flex h-14 items-center justify-between border-b px-4 backdrop-blur md:px-6'>
             <div className='flex items-center gap-3'>
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    className='md:hidden'
-                    onClick={onMenu}
-                    aria-label='Open menu'
-                >
-                    <ListIcon className='h-5 w-5' />
-                </Button>
-                <div className='md:hidden'>
+                {onMenu && (
+                    <Button
+                        variant='ghost'
+                        size='icon'
+                        className='md:hidden'
+                        onClick={onMenu}
+                        aria-label='Open menu'
+                    >
+                        <ListIcon className='h-5 w-5' />
+                    </Button>
+                )}
+                <div className={onMenu ? 'md:hidden' : ''}>
                     <Logo />
                 </div>
             </div>

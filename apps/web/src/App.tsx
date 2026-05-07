@@ -281,22 +281,6 @@ const App: FC = (): ReactNode => {
                             }
                         />
                         <Route
-                            path={ROUTES.ADMIN_REFERRALS}
-                            element={
-                                <ProtectedRoute>
-                                    <Admin />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path={ROUTES.ADMIN_BILLING}
-                            element={
-                                <ProtectedRoute>
-                                    <Admin />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
                             path={ROUTES.ADMIN_CODES}
                             element={
                                 <ProtectedRoute>

@@ -29,7 +29,6 @@ describe('ROUTES', () => {
         expect(ROUTES.ADMIN_ANALYTICS).toBe('/admin/analytics')
         expect(ROUTES.ADMIN_USERS).toBe('/admin/users')
         expect(ROUTES.ADMIN_FLEET).toBe('/admin/fleet')
-        expect(ROUTES.ADMIN_BILLING).toBe('/admin/billing')
         expect(ROUTES.ADMIN_CODES).toBe('/admin/codes')
         expect(ROUTES.ADMIN_INSTALL_REPORTS).toBe('/admin/install-reports')
         expect(ROUTES.ADMIN_SETTINGS).toBe('/admin/settings')

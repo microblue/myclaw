@@ -70,7 +70,7 @@ const Home: FC = () => {
 
     if (isError) {
         return (
-            <AppShell>
+            <AppShell hideSidebar>
                 <PageTitle title='AI OS' noIndex />
                 <div className='flex h-[calc(100vh-3.5rem)] items-center justify-center'>
                     <ErrorState
@@ -85,7 +85,7 @@ const Home: FC = () => {
 
     if (isLoading) {
         return (
-            <AppShell>
+            <AppShell hideSidebar>
                 <PageTitle title='AI OS' noIndex />
                 <div className='flex h-[calc(100vh-3.5rem)] items-center justify-center'>
                     <CircleNotchIcon className='h-6 w-6 animate-spin opacity-50' />
@@ -96,7 +96,7 @@ const Home: FC = () => {
 
     if (!hasInstances) {
         return (
-            <AppShell>
+            <AppShell hideSidebar>
                 <PageTitle title='AI OS' noIndex />
                 <main className='relative flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4'>
                     {/* Soft brand wash. Stays under the content but
@@ -140,7 +140,7 @@ const Home: FC = () => {
     }
 
     return (
-        <AppShell>
+        <AppShell hideSidebar>
             <PageTitle title='AI OS' noIndex />
             <main className='mx-auto w-full max-w-5xl px-4 py-8 md:px-6'>
                 <header className='mb-8 flex items-end justify-between gap-4'>

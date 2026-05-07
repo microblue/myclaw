@@ -17,8 +17,6 @@ const PATHS = {
     ADMIN_ANALYTICS: 'admin/analytics',
     ADMIN_USERS: 'admin/users',
     ADMIN_FLEET: 'admin/fleet',
-    ADMIN_REFERRALS: 'admin/referrals',
-    ADMIN_BILLING: 'admin/billing',
     ADMIN_CODES: 'admin/codes',
     ADMIN_INSTALL_REPORTS: 'admin/install-reports',
     ADMIN_SETTINGS: 'admin/settings',
