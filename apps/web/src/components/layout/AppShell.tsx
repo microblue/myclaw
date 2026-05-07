@@ -17,6 +17,7 @@ import {
     ReceiptIcon,
     HandshakeIcon,
     ShieldCheckIcon,
+    StorefrontIcon,
     ListIcon,
     XIcon,
     HouseIcon,
@@ -25,22 +26,39 @@ import {
     CaretRightIcon
 } from '@phosphor-icons/react'
 
+type Role = 'user' | 'admin' | 'partner'
+
 type NavItem = {
     to: string
     label: string
     icon: Icon
-    adminOnly?: boolean
+    // If set, the item is only shown for the listed roles. Omit to show
+    // for everyone (including end-users).
+    roles?: Role[]
 }
 
 // Sidebar is the primary nav for logged-in users. Account is
-// intentionally NOT here — it lives in the header avatar dropdown
-// (standard SaaS pattern, frees a slot in a list of otherwise
-// high-frequency destinations).
+// intentionally NOT here — it lives in the header avatar dropdown.
+//
+// Per docs/aios-design.md §2: super-admin sees Admin (currently the
+// /admin route). Channel partners see a parallel Partner entry that
+// hits /partner. End-users see the standard list.
 const NAV_ITEMS: NavItem[] = [
     { to: ROUTES.CLAWS, label: 'Claws', icon: SquaresFourIcon },
     { to: ROUTES.BILLING, label: 'Billing', icon: ReceiptIcon },
     { to: ROUTES.AFFILIATE, label: 'Referrals', icon: HandshakeIcon },
-    { to: ROUTES.ADMIN, label: 'Admin', icon: ShieldCheckIcon, adminOnly: true }
+    {
+        to: ROUTES.ADMIN,
+        label: 'Admin',
+        icon: ShieldCheckIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.PARTNER,
+        label: 'Partner',
+        icon: StorefrontIcon,
+        roles: ['partner']
+    }
 ]
 
 type Props = {
@@ -54,14 +72,19 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
     const { data: profile } = useProfile()
     const { openLinksWindowed, sidebarCollapsed, setSidebarCollapsed } =
         usePreferencesStore()
-    const isAdmin = profile?.role === userRole.admin
+    const role: Role =
+        profile?.role === userRole.admin
+            ? 'admin'
+            : profile?.role === userRole.partner
+              ? 'partner'
+              : 'user'
     const appVersion = useAppVersion(!!isLocal)
     const dropdownFooterLinks = useLocalFooterLinks(!!isLocal)
 
     const displayName =
         profile?.name || profile?.email || ''
 
-    const items = NAV_ITEMS.filter((n) => !n.adminOnly || isAdmin)
+    const items = NAV_ITEMS.filter((n) => !n.roles || n.roles.includes(role))
 
     const [mobileOpen, setMobileOpen] = useState(false)
     const location = useLocation()

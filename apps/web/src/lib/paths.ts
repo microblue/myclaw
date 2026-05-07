@@ -11,6 +11,7 @@ const PATHS = {
     ACCOUNT: 'account',
     BILLING: 'billing',
     ADMIN: 'admin',
+    PARTNER: 'partner',
     MINT_CODES: 'admin/codes/mint',
     MINT_CODES_PLAN: 'admin/codes/mint/plan',
     MINT_CODES_DETAILS: 'admin/codes/mint/details',

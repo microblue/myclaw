@@ -22,6 +22,7 @@ const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
 const Affiliate = lazy(() => import('@/pages/Affiliate'))
 const Admin = lazy(() => import('@/pages/Admin'))
+const Partner = lazy(() => import('@/pages/Partner'))
 const MintCodesShell = lazy(() => import('@/pages/MintCodes/WizardShell'))
 const MintCodesStepProvider = lazy(
     () => import('@/pages/MintCodes/StepProvider')
@@ -155,6 +156,14 @@ const App: FC = (): ReactNode => {
                             element={
                                 <ProtectedRoute>
                                     <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.PARTNER}
+                            element={
+                                <ProtectedRoute>
+                                    <Partner />
                                 </ProtectedRoute>
                             }
                         />

@@ -129,7 +129,23 @@ const API_PATHS = {
         VOID_ACTIVATION_CODE: (id: string) =>
             `/admin/activation-codes/${id}/void`,
         INSTALL_REPORTS: '/admin/install-reports',
-        INSTALL_REPORT: (id: string) => `/admin/install-reports/${id}`
+        INSTALL_REPORT: (id: string) => `/admin/install-reports/${id}`,
+        PARTNERS: '/admin/partners',
+        UPDATE_PARTNER_STATUS: (id: string) => `/admin/partners/${id}/status`,
+        GRANT_PARTNER_QUOTA: (id: string) => `/admin/partners/${id}/quotas`
+    },
+    // Channel-partner self-serve surface. Backed by the same controllers
+    // as ADMIN.* but mounted under /partner with partnerOrSuperAdmin gate
+    // and per-partner row scoping.
+    PARTNER: {
+        ACTIVATION_CODES: '/partner/activation-codes',
+        ACTIVATION_CODE_BATCHES: '/partner/activation-codes/batches',
+        ACTIVATION_CODE_BATCH_EXPORT: (batchId: string) =>
+            `/partner/activation-codes/batches/${batchId}/export`,
+        VOID_ACTIVATION_CODE_BATCH: (batchId: string) =>
+            `/partner/activation-codes/batches/${batchId}/void-unused`,
+        VOID_ACTIVATION_CODE: (id: string) =>
+            `/partner/activation-codes/${id}/void`
     },
     WEBHOOKS: {
         POLAR: '/webhooks/polar'

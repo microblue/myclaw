@@ -1,4 +1,4 @@
-import { api } from '@/lib/api'
+import { api, partner } from '@/lib/api'
 import cn from '@/lib/utils'
 import PATHS from '@/lib/paths'
 import {
@@ -27,6 +27,7 @@ import {
 
 export {
     api,
+    partner,
     cn,
     PATHS,
     ROUTES,
