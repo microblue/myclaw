@@ -150,7 +150,7 @@ const RedeemCode: FC = () => {
     }
 
     return (
-        <AppShell>
+        <AppShell hideSidebar>
             <PageTitle
                 title='Setup MyClaw.One AI OS'
                 description='Use a partner-issued code to set up or extend your AI OS.'

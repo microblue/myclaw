@@ -24,8 +24,6 @@ import {
 import {
     UserIcon,
     SignOutIcon,
-    ReceiptIcon,
-    HandshakeIcon,
     ShieldCheckIcon
 } from '@phosphor-icons/react'
 
@@ -36,14 +34,16 @@ import {
 // from there too. Same items everywhere keeps muscle memory intact.
 //
 // Items shown for any logged-in user:
-//   Account · Billing · Referrals · (Admin if admin) · Sign out
+//   Account · (Admin if admin) · Sign out
+// Billing + Referrals were here too earlier; user pulled them out of
+// the menu — most users don't need them often, and the visual weight
+// of a long menu was hurting the focused launcher feel of /aios.
 // "My AI OS" intentionally absent: landing has a dedicated nav button
 // next to the dropdown, and inside /aios the user is already there.
 const UserDropdown: FC<UserDropdownProps> = ({
     displayName,
     onSignOut,
     onOpen,
-    hideBilling,
     hideSignOut,
     footerLinks,
     openLinksWindowed,
@@ -113,22 +113,6 @@ const UserDropdown: FC<UserDropdownProps> = ({
                 >
                     <UserIcon className='h-4 w-4' />
                     {t('nav.account')}
-                </DropdownMenuItem>
-                {!hideBilling && (
-                    <DropdownMenuItem
-                        onClick={() => navigate(ROUTES.BILLING)}
-                        className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.BILLING ? 'bg-foreground/10' : ''}`}
-                    >
-                        <ReceiptIcon className='h-4 w-4' />
-                        {t('nav.billing')}
-                    </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                    onClick={() => navigate(ROUTES.AFFILIATE)}
-                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.AFFILIATE ? 'bg-foreground/10' : ''}`}
-                >
-                    <HandshakeIcon className='h-4 w-4' />
-                    {t('nav.affiliate')}
                 </DropdownMenuItem>
                 {isAdmin && (
                     <Fragment>
