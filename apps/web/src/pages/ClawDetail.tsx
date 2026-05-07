@@ -98,9 +98,9 @@ const ClawDetail: FC = () => {
                     <Button
                         className='mt-4'
                         variant='outline'
-                        onClick={() => navigate(ROUTES.CLAWS)}
+                        onClick={() => navigate(ROUTES.AIOS)}
                     >
-                        Back to instances
+                        My Home
                     </Button>
                 </div>
             </AppShell>
@@ -122,7 +122,7 @@ const ClawDetail: FC = () => {
         try {
             await del.mutateAsync(claw.id)
             toast.success('Deletion scheduled')
-            navigate(ROUTES.CLAWS)
+            navigate(ROUTES.AIOS)
         } catch (e) {
             toast.error(e instanceof Error ? e.message : 'Delete failed')
         }

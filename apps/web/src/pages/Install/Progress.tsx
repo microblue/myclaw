@@ -391,7 +391,7 @@ const FailedStage: FC<{ onBack: () => void; onRetry: () => void }> = ({
         </p>
         <div className='mt-8 flex items-center gap-3'>
             <Button variant='outline' onClick={onBack}>
-                Back to AI OS
+                My Home
             </Button>
             <Button onClick={onRetry}>Refresh status</Button>
         </div>

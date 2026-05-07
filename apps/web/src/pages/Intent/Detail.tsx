@@ -148,9 +148,9 @@ const Detail: FC = () => {
                     <Button
                         variant='outline'
                         size='sm'
-                        onClick={() => navigate(`/aios/${clawId}`)}
+                        onClick={() => navigate('/aios')}
                     >
-                        Back to AI-OS
+                        My Home
                     </Button>
                 </header>
 
