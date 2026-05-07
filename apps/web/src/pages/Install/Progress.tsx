@@ -8,20 +8,22 @@ import {
     CircleNotchIcon,
     CircleIcon,
     WarningCircleIcon,
-    HardDrivesIcon,
     CpuIcon,
     LightningIcon,
     ShieldCheckIcon,
     GlobeIcon,
     BrainIcon,
     DownloadSimpleIcon,
-    DatabaseIcon
+    PackageIcon,
+    MonitorIcon
 } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 import { PageTitle } from '@/components'
 import { Button } from '@/components/ui'
 import useClaw from '@/hooks/useClaws/useClaw'
 import useInstallPhaseSubscription from '@/hooks/useInstallPhaseSubscription'
+import { buildClawChatUrl } from '@/lib/clawUrl'
+import type { Claw } from '@/ts/Interfaces'
 
 // Full-screen "Setup MyClaw.One AI OS" page. Mimics the cadence of a
 // classic OS installer (Windows OOBE / Ubuntu Ubiquity): fixed left
@@ -38,58 +40,64 @@ interface PhaseDef {
     detail: string
 }
 
+// Order here mirrors the actual emit order in
+// apps/api/cloud-scripts/install-claw.sh + the API-side
+// renting_compute seed in helpers/redeemActivationCode.ts.
+// Each step maps to a real install action so the user can see what's
+// actually happening (Node deps / OpenClaw / LLM config / gateway /
+// studio) instead of generic OS-themed labels.
 const PHASE_STEPS: PhaseDef[] = [
     {
         key: 'renting_compute',
-        label: 'Allocating compute',
+        label: 'Allocating your machine',
         icon: CpuIcon,
-        detail: 'Reserving your private machine'
+        detail: 'Reserving a private server in the cloud'
     },
     {
         key: 'mounting_storage',
-        label: 'Mounting storage',
-        icon: HardDrivesIcon,
-        detail: 'Setting up persistent disk'
+        label: 'Preparing the system',
+        icon: ShieldCheckIcon,
+        detail: 'Hardening SSH, configuring swap, base apt'
     },
     {
         key: 'installing_kernel',
-        label: 'Installing AI OS kernel',
+        label: 'Installing Node.js & runtime',
         icon: DownloadSimpleIcon,
-        detail: 'Pulling base packages'
-    },
-    {
-        key: 'pulling_image',
-        label: 'Pulling container image',
-        icon: DatabaseIcon,
-        detail: 'Downloading your runtime'
-    },
-    {
-        key: 'wiring_network',
-        label: 'Wiring network',
-        icon: GlobeIcon,
-        detail: 'Routing your subdomain'
-    },
-    {
-        key: 'issuing_certificate',
-        label: 'Issuing TLS certificate',
-        icon: ShieldCheckIcon,
-        detail: 'Securing your endpoint'
+        detail: 'Pulling Node 22 + Caddy + system tooling'
     },
     {
         key: 'loading_skills',
-        label: 'Loading skills',
-        icon: LightningIcon,
-        detail: 'Installing tools your agents will use'
+        label: 'Installing OpenClaw',
+        icon: PackageIcon,
+        detail: 'Pinned release from npm — your AI brain'
     },
     {
         key: 'calibrating_agents',
-        label: 'Calibrating agents',
+        label: 'Configuring default LLM',
         icon: BrainIcon,
-        detail: 'Tuning the orchestrator'
+        detail: 'Wiring OpenRouter and seeding the main agent'
+    },
+    {
+        key: 'wiring_network',
+        label: 'Starting OpenClaw gateway',
+        icon: LightningIcon,
+        detail: 'Bringing up the systemd unit on :18789'
+    },
+    {
+        key: 'issuing_certificate',
+        label: 'Securing your endpoint',
+        icon: GlobeIcon,
+        detail: 'Caddy + Let’s Encrypt for your subdomain'
+    },
+    {
+        key: 'installing_studio',
+        label: 'Installing OpenClaw Studio',
+        icon: MonitorIcon,
+        detail: 'The desktop UI that connects to your AI OS'
     },
     {
         key: 'ready',
-        label: 'Ready',
+        label: 'Opening your AI OS',
         icon: SparkleIcon,
         detail: "You're set."
     }
@@ -97,11 +105,17 @@ const PHASE_STEPS: PhaseDef[] = [
 
 const PHASE_INDEX = new Map(PHASE_STEPS.map((s, i) => [s.key, i]))
 
+// Page only reads these fields directly; subdomain + gatewayToken
+// are accessed via the typed Claw shape at redirect time so the call
+// to buildClawChatUrl gets the strict types it expects.
 interface ClawResponse {
     id: string
     name: string
     status: string
     installRunId: string | null
+    subdomain?: string | null
+    gatewayToken?: string | null
+    clawType?: string | null
 }
 
 const Progress: FC = () => {
@@ -128,18 +142,29 @@ const Progress: FC = () => {
             enabled: !!clawId && !!installRunId
         })
 
-    // On `ready`, give the success animation 1.5s to land then
-    // hand off to the AI OS detail page. `replace: true` so the
-    // back button doesn't bounce them back here.
+    // On `ready`, give the success animation 1.8s then redirect.
+    // Primary target is the live studio URL on the new subdomain
+    // (`https://<sub>.myclaw.one/?access_token=...`) so the user
+    // lands directly in their AI OS desktop. If the claw response
+    // is missing subdomain/gatewayToken for any reason, fall back
+    // to the in-app /aios detail page so the user is never left
+    // on a stalled "Ready" screen.
     useEffect(() => {
         if (latestPhase === 'ready') {
             const timer = setTimeout(() => {
-                navigate(`/aios/${clawId}`, { replace: true })
+                const studioUrl = claw
+                    ? buildClawChatUrl(claw as unknown as Claw)
+                    : null
+                if (studioUrl) {
+                    window.location.replace(studioUrl)
+                } else {
+                    navigate(`/aios/${clawId}`, { replace: true })
+                }
             }, 1800)
             return () => clearTimeout(timer)
         }
         return undefined
-    }, [latestPhase, clawId, navigate])
+    }, [latestPhase, clawId, navigate, claw])
 
     const failed = latestPhase === 'failed'
     const isReady = latestPhase === 'ready'

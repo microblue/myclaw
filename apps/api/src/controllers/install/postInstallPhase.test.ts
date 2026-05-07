@@ -71,7 +71,7 @@ const ALLOWED_PHASES = [
     'calibrating_agents',
     'wiring_network',
     'issuing_certificate',
-    'pulling_image',
+    'installing_studio',
     'ready',
     'failed'
 ]

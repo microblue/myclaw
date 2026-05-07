@@ -16,6 +16,9 @@ interface PhaseBody {
 // White-listed phase enumeration. The installer can only emit values
 // from this set; anything else is a programming error or a forged
 // request and gets rejected.
+// Order here matches the order the installer actually emits them.
+// `pulling_image` was a leftover from the container-mode design and
+// never fired on the VM path, so it's gone.
 const ALLOWED_PHASES = new Set([
     'renting_compute',
     'mounting_storage',
@@ -24,7 +27,7 @@ const ALLOWED_PHASES = new Set([
     'calibrating_agents',
     'wiring_network',
     'issuing_certificate',
-    'pulling_image',
+    'installing_studio',
     'ready',
     'failed'
 ])

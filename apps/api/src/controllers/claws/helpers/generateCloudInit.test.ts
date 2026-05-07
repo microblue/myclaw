@@ -217,6 +217,7 @@ describe('install-claw.sh', () => {
             'calibrating_agents',
             'wiring_network',
             'issuing_certificate',
+            'installing_studio',
             'ready'
         ]) {
             expect(installer).toContain(`phase ${p}`)
@@ -237,9 +238,29 @@ describe('install-claw.sh', () => {
         expect(installer).toContain('[ -z "${IE:-}" ] && return 0')
     })
 
-    it('schedules openclaw-studio install via systemd oneshot', () => {
-        expect(installer).toContain('oc-stu-i.service')
+    it('runs openclaw-studio install inline (not deferred via systemd) and waits for its port', () => {
+        // The old design scheduled install-studio via a oneshot
+        // systemd unit (oc-stu-i.service) with `enable` (not
+        // `enable --now`), which meant the unit only ran on next
+        // reboot — so studio was effectively never installed and
+        // /aios redirects landed on a 502. The fix is to inline
+        // the installer so `phase ready` only fires after studio
+        // is actually serving on :3000.
+        expect(installer).not.toMatch(
+            /\/etc\/systemd\/system\/oc-stu-i\.service/
+        )
+        expect(installer).not.toMatch(/systemctl enable oc-stu-i\.service/)
+        expect(installer).toContain('phase installing_studio')
         expect(installer).toContain('install-studio')
+        // Wait loop on :3000 — gateway-style port poll
+        expect(installer).toMatch(
+            /curl -sf -o \/dev\/null http:\/\/127\.0\.0\.1:3000/
+        )
+        // installing_studio fires before ready in the file
+        const studioAt = installer.indexOf('phase installing_studio')
+        const readyAt = installer.indexOf('phase ready')
+        expect(studioAt).toBeGreaterThan(0)
+        expect(readyAt).toBeGreaterThan(studioAt)
     })
 
     it('seeds the main agent personality on disk so studio renders content on first load', () => {

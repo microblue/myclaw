@@ -29,14 +29,21 @@ cat > /root/.openclaw/openclaw-studio/settings.json << SETTINGS
 }
 SETTINGS
 
+# Pin the studio version so all freshly-provisioned claws install the
+# same build — same logic as openclaw@2026.4.11 in install-claw.sh.
+# `@latest` would silently follow upstream releases, which is fine for
+# a casual `curl|bash` install but unsafe for unattended fleet provisioning.
+# Bump this string when we're ready to ship a new studio across all new claws.
+STUDIO_VERSION='0.0.12'
+
 # Pre-warm npx cache so the systemd ExecStart doesn't try to download
 # on a slow link and Type=simple times out before Studio binds :3000.
-npm install -g openclaw-studio@latest
+npm install -g "openclaw-studio@${STUDIO_VERSION}"
 
 # Resolve the installed entrypoint. `npm i -g` puts it on PATH; in case
 # the package ships under a different bin name, fall back to npx.
 STUDIO_BIN="$(command -v openclaw-studio || true)"
-[ -z "${STUDIO_BIN}" ] && STUDIO_BIN="/usr/bin/npx -y openclaw-studio@latest"
+[ -z "${STUDIO_BIN}" ] && STUDIO_BIN="/usr/bin/npx -y openclaw-studio@${STUDIO_VERSION}"
 
 cat > /etc/systemd/system/openclaw-studio.service << UNIT
 [Unit]

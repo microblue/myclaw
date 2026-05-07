@@ -372,18 +372,32 @@ CADDYEOF
 systemctl enable caddy
 systemctl restart caddy
 
-cat > /etc/systemd/system/oc-stu-i.service << EOF
-[Unit]
-After=openclaw-gateway.service network-online.target
-ConditionPathExists=!/opt/openclaw-studio/.installed
-[Service]
-Type=oneshot
-Environment=GATEWAY_TOKEN=${GATEWAY_TOKEN}
-ExecStart=/bin/bash -c "curl -fsSL https://${DOMAIN}/api/cloud-scripts/install-studio|bash"
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl enable oc-stu-i.service
+phase installing_studio
+stage studio-install
+# Inline the studio installer. Older builds deferred this to a
+# oneshot systemd unit and `enable`-d it without `--now`, so the unit
+# only would have run on next reboot — which never happened — and
+# studio was effectively never installed. Running it inline here
+# blocks `phase ready` until studio is actually serving, so the
+# /aios redirect lands on a live page instead of a 502.
+export GATEWAY_TOKEN
+with_retry curl -fsSL "https://${DOMAIN}/api/cloud-scripts/install-studio" -o /tmp/install-studio.sh
+bash /tmp/install-studio.sh
+rm -f /tmp/install-studio.sh
+
+stage studio-wait
+# install-studio.sh runs `systemctl enable --now openclaw-studio.service`
+# but Type=simple means the unit is "started" the moment the process
+# forks — Studio's HTTP listener may still be coming up. Block until
+# port 3000 binds (or 60s elapsed) so the user's redirect lands on a
+# served page instead of a 502.
+for i in $(seq 1 30); do
+    if curl -sf -o /dev/null http://127.0.0.1:3000; then
+        echo "[oc] studio up after ${i}x 2s"
+        break
+    fi
+    sleep 2
+done
 
 echo "status=ok at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
 echo "=== openclaw bootstrap finished at $(date -u) ==="
