@@ -20,19 +20,22 @@ test.describe('public surface smoke', () => {
         page
     }) => {
         await page.goto('/login')
-        await expect(
-            page.getByRole('textbox', { name: /email/i })
-        ).toBeVisible({ timeout: 15_000 })
-        await expect(
-            page.getByRole('textbox', { name: /password/i })
-        ).toBeVisible()
+        // Inputs are unlabeled native <input> with placeholders only;
+        // type="password" doesn't get role="textbox" so we match on
+        // placeholder text instead of role.
+        await expect(page.getByPlaceholder(/you@/i)).toBeVisible({
+            timeout: 15_000
+        })
+        await expect(page.getByPlaceholder(/password/i)).toBeVisible()
     })
 
     test('login submit button stays disabled with empty inputs', async ({
         page
     }) => {
         await page.goto('/login')
-        const submit = page.getByRole('button', { name: /sign in|log in/i })
+        // Button label is "Continue" since the unified sign-in/sign-up
+        // redesign — one form handles both paths.
+        const submit = page.getByRole('button', { name: /continue/i })
         await expect(submit).toBeVisible({ timeout: 15_000 })
         // Form-level guard: empty inputs keep submit unclickable. Stronger
         // signal than browser-native required validation since it survives
