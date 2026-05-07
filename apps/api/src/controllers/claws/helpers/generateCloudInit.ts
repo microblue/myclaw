@@ -114,8 +114,24 @@ const generateCloudInit = (
     }
 
     applyToolsDefaults(config)
+    // Pre-declare a `main` agent in the config. Without this, openclaw
+    // returns an empty `agents.list[]` and the studio UI shows "No
+    // agents available" — the user has to click "New Agent" before
+    // they can chat. Per the user's "open and use" requirement, we
+    // ship one out-of-the-box agent so the chat is usable on first
+    // load. The on-disk agent files (IDENTITY.md / AGENTS.md / SOUL.md)
+    // are seeded by install-claw.sh under
+    // /home/openclaw/.openclaw/agents/main/agent/, which is what
+    // `agents.files.get` reads.
     const agentsConfig: Record<string, unknown> = {
-        defaults: { sandbox: { mode: 'off' } as Record<string, unknown> }
+        defaults: { sandbox: { mode: 'off' } as Record<string, unknown> },
+        list: [
+            {
+                id: 'main',
+                name: 'Claw',
+                default: true
+            }
+        ]
     }
 
     // Wire the platform-default LLM so the Control UI lands with a

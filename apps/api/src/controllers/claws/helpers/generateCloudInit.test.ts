@@ -95,6 +95,25 @@ describe('generateCloudInit (wrapper)', () => {
         expect(parsed.plugins?.entries?.openrouter?.enabled).toBe(true)
     })
 
+    it('declares a default `main` agent so the studio chat is usable on first load', () => {
+        // Without this, `agents.list` is empty and studio renders
+        // "No agents available. Use New Agent to add your first
+        // agent." — the user has to click around before they can
+        // chat. Pre-declaring `main` + seeding its personality on
+        // disk gives the user a working chat the moment the page
+        // loads.
+        const match = output.match(/CONFIG_JSON_B64='([A-Za-z0-9+/=]+)'/)
+        const decoded = Buffer.from(match![1], 'base64').toString('utf-8')
+        const parsed = JSON.parse(decoded)
+        expect(Array.isArray(parsed.agents?.list)).toBe(true)
+        expect(parsed.agents.list.length).toBeGreaterThanOrEqual(1)
+        const main = parsed.agents.list.find(
+            (a: { id?: string }) => a.id === 'main'
+        )
+        expect(main).toBeTruthy()
+        expect(main.default).toBe(true)
+    })
+
     it('rendered wrapper stays well under the AWS Lightsail userData cap', () => {
         const realToken = 'a'.repeat(64)
         const realOrKey = 'sk-or-v1-' + 'x'.repeat(64)
@@ -221,5 +240,27 @@ describe('install-claw.sh', () => {
     it('schedules openclaw-studio install via systemd oneshot', () => {
         expect(installer).toContain('oc-stu-i.service')
         expect(installer).toContain('install-studio')
+    })
+
+    it('seeds the main agent personality on disk so studio renders content on first load', () => {
+        // Per the user's "open and use" requirement, the studio must
+        // load with a working agent already present. We verify the
+        // installer writes IDENTITY/AGENTS/SOUL/HEARTBEAT/MEMORY
+        // under both agents/main/agent (where studio reads via
+        // agents.files.get) and workspace (legacy callers).
+        expect(installer).toContain('write_agent_files()')
+        expect(installer).toContain(
+            'write_agent_files /home/openclaw/.openclaw/agents/main/agent'
+        )
+        expect(installer).toContain(
+            'write_agent_files /home/openclaw/.openclaw/workspace'
+        )
+        // Spot-check the personality content is present in the
+        // installer's heredoc — at least IDENTITY + AGENTS so the
+        // "main" agent has both the system prompt and the
+        // orchestrator role description on first chat.
+        expect(installer).toMatch(/IDENTITY\.md.*<<\s*'IDEOF'/s)
+        expect(installer).toMatch(/AGENTS\.md.*<<\s*'AGEOF'/s)
+        expect(installer).toMatch(/SOUL\.md.*<<\s*'SOULEOF'/s)
     })
 })
