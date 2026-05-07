@@ -36,4 +36,23 @@ test.describe('P1 RBAC route smoke', () => {
         await page.goto('/claws/redeem')
         await expect(page).toHaveURL(/\/login/, { timeout: 15_000 })
     })
+
+    test('/aios redirects unauth users to /login', async ({ page }) => {
+        await page.goto('/aios')
+        await expect(page).toHaveURL(/\/login/, { timeout: 15_000 })
+    })
+
+    test('/aios/install redirects unauth users to /login', async ({
+        page
+    }) => {
+        await page.goto('/aios/install')
+        await expect(page).toHaveURL(/\/login/, { timeout: 15_000 })
+    })
+
+    test('/admin/fleet redirects unauth users to /login (canonical sub-route)', async ({
+        page
+    }) => {
+        await page.goto('/admin/fleet')
+        await expect(page).toHaveURL(/\/login/, { timeout: 15_000 })
+    })
 })

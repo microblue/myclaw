@@ -44,11 +44,18 @@ type NavItem = {
 // /admin route). Channel partners see a parallel Partner entry that
 // hits /partner. End-users see the standard list.
 const NAV_ITEMS: NavItem[] = [
-    { to: ROUTES.CLAWS, label: 'Claws', icon: SquaresFourIcon },
+    // End users see the AI-OS landing. The Dashboard component
+    // currently renders this URL identically to the legacy /claws;
+    // P4 will swap it for the Intent home view.
+    { to: ROUTES.AIOS, label: 'AI-OS', icon: SquaresFourIcon, roles: ['user'] },
     { to: ROUTES.BILLING, label: 'Billing', icon: ReceiptIcon },
     { to: ROUTES.AFFILIATE, label: 'Referrals', icon: HandshakeIcon },
     {
-        to: ROUTES.ADMIN,
+        // Admin landing canonical URL is /admin/analytics. Bare /admin
+        // works too (the Admin component falls back to analytics) but
+        // we link the canonical form so the active-link highlight is
+        // unambiguous.
+        to: ROUTES.ADMIN_ANALYTICS,
         label: 'Admin',
         icon: ShieldCheckIcon,
         roles: ['admin']
@@ -228,7 +235,7 @@ const SidebarContent: FC<{
                     <NavLink
                         key={item.to}
                         to={item.to}
-                        end={item.to === ROUTES.CLAWS}
+                        end={item.to === ROUTES.AIOS}
                         title={collapsed ? item.label : undefined}
                         className={({ isActive }) =>
                             `flex items-center rounded-md text-sm transition-colors ${

@@ -2,7 +2,12 @@ import type { FC, ReactNode } from 'react'
 import type { AdminEntitySelection } from '@/ts/Interfaces'
 
 import { Fragment, useEffect, useState } from 'react'
-import { Navigate, useSearchParams } from 'react-router-dom'
+import {
+    Navigate,
+    useLocation,
+    useNavigate,
+    useSearchParams
+} from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
@@ -42,10 +47,14 @@ import { UsersTab } from '@/pages/Admin/tabs'
 // volumes, waitlist, exports, emails) was removed because either the
 // feature itself is gone (SSH keys) or the admin view was surfacing
 // low-signal operational data that belongs in logs/DB, not the UI.
+//
+// Per docs/aios-design.md §3, each tab gets its own URL segment
+// (`/admin/<section>`) instead of the legacy `?tab=` query pattern.
+// The legacy URL is redirected in-app on load for back-compat.
 const ADMIN_TABS = {
     ANALYTICS: 'analytics',
     USERS: 'users',
-    CLAWS: 'claws',
+    CLAWS: 'fleet',
     REFERRALS: 'referrals',
     BILLING: 'billing',
     CODES: 'codes',
@@ -53,15 +62,53 @@ const ADMIN_TABS = {
     SETTINGS: 'settings'
 } as const
 
+// Legacy `?tab=X` values mapped to the canonical sub-route segment.
+// `claws` → `fleet` is the user-visible rename per design §3.
+const LEGACY_TAB_REDIRECT: Record<string, string> = {
+    claws: 'fleet',
+    analytics: 'analytics',
+    users: 'users',
+    fleet: 'fleet',
+    referrals: 'referrals',
+    billing: 'billing',
+    codes: 'codes',
+    'install-reports': 'install-reports',
+    settings: 'settings'
+}
+
 const Admin: FC = (): ReactNode => {
     const { loading: authLoading } = useAuth()
     const { data: profile, isLoading: isProfileLoading } = useProfile()
-    const [searchParams, setSearchParams] = useSearchParams()
-    const tabParam = searchParams.get('tab') || ADMIN_TABS.ANALYTICS
+    const [searchParams] = useSearchParams()
+    const location = useLocation()
+    const navigate = useNavigate()
+    // The active tab is the second URL segment: /admin/<tab>. Falls
+    // back to analytics for the bare /admin landing.
+    const segments = location.pathname.split('/').filter(Boolean)
+    const fromPath =
+        segments[0] === 'admin' && segments[1] ? segments[1] : ''
+    const tabParam = searchParams.get('tab') || ''
     const validTabs = Object.values(ADMIN_TABS) as string[]
-    const activeTab = validTabs.includes(tabParam)
-        ? tabParam
-        : ADMIN_TABS.ANALYTICS
+    const initialTab =
+        fromPath && validTabs.includes(fromPath)
+            ? fromPath
+            : ADMIN_TABS.ANALYTICS
+    const activeTab = initialTab
+
+    // Legacy back-compat: if the URL is `/admin?tab=X` (or `/admin`
+    // with no segment), rewrite to the canonical `/admin/<section>`
+    // form so bookmarks / inbound links still land in the right
+    // place. `replace: true` so the old URL doesn't pile up in
+    // history.
+    useEffect(() => {
+        if (segments[0] !== 'admin') return
+        if (!segments[1] && tabParam) {
+            const target = LEGACY_TAB_REDIRECT[tabParam]
+            if (target) {
+                navigate(`/admin/${target}`, { replace: true })
+            }
+        }
+    }, [segments, tabParam, navigate])
     const [selectedEntity, setSelectedEntity] =
         useState<AdminEntitySelection | null>(null)
     const isAdmin = profile?.role === userRole.admin
@@ -78,7 +125,7 @@ const Admin: FC = (): ReactNode => {
     }, [collapsed])
 
     const setActiveTab = (tab: string) => {
-        setSearchParams({ tab })
+        navigate(`/admin/${tab}`)
     }
 
     if (!authLoading && !isProfileLoading && !isAdmin)

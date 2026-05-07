@@ -1,16 +1,44 @@
 import type { FC, ReactNode } from 'react'
 
 import { lazy, Suspense } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, useParams } from 'react-router-dom'
+import { userRole } from '@openclaw/shared'
 import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop, Toast, ProtectedRoute } from '@/components'
 import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
-import { useThemeEffect, useLanguageEffect, useRefer } from '@/hooks'
+import { useThemeEffect, useLanguageEffect, useRefer, useProfile } from '@/hooks'
+
+// /install/:id (legacy) → /aios/install/:id (canonical). The id has
+// to be carried through so we pull it from the URL.
+const InstallProgressRedirect: FC = () => {
+    const { id } = useParams<{ id: string }>()
+    return <Navigate to={`/aios/install/${id ?? ''}`} replace />
+}
+
+// Per docs/aios-design.md §3, /claws is no longer the canonical URL
+// for any role:
+//   super_admin → /admin (fleet view)
+//   partner     → /partner (own codes dashboard)
+//   end_user    → /aios   (AI-OS list)
+// Profile is fetched from cache when available; while loading we keep
+// rendering the dashboard so a momentary refresh doesn't bounce the
+// user. Once the role is known, we Navigate replace: true so the
+// legacy /claws URL doesn't pile up in browser history.
+const ClawsRoleRedirect: FC = () => {
+    const { data: profile, isLoading } = useProfile()
+    if (isLoading || !profile) return <DashboardLazy />
+    if (profile.role === userRole.admin)
+        return <Navigate to={ROUTES.ADMIN_FLEET} replace />
+    if (profile.role === userRole.partner)
+        return <Navigate to={ROUTES.PARTNER} replace />
+    return <Navigate to={ROUTES.AIOS} replace />
+}
 
 import Landing from '@/pages/Landing'
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const DashboardLazy = Dashboard
 const NewClawShell = lazy(() => import('@/pages/NewClaw/WizardShell'))
 const NewClawStepType = lazy(() => import('@/pages/NewClaw/StepType'))
 const NewClawStepProvider = lazy(() => import('@/pages/NewClaw/StepProvider'))
@@ -86,7 +114,7 @@ const App: FC = (): ReactNode => {
                             path={ROUTES.CLAWS}
                             element={
                                 <ProtectedRoute>
-                                    <Dashboard />
+                                    <ClawsRoleRedirect />
                                 </ProtectedRoute>
                             }
                         />
@@ -95,6 +123,45 @@ const App: FC = (): ReactNode => {
                             element={
                                 <ProtectedRoute>
                                     <ClawDetail />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/*
+                          Canonical AI-OS URLs per design §3. /aios is
+                          the end-user landing (today: same Dashboard
+                          rendering as /claws; in P4 this becomes the
+                          Intent home). /aios/:id mirrors /claws/:id
+                          for the same reason.
+                        */}
+                        <Route
+                            path={ROUTES.AIOS}
+                            element={
+                                <ProtectedRoute>
+                                    <Dashboard />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.AIOS_DETAIL}
+                            element={
+                                <ProtectedRoute>
+                                    <ClawDetail />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.AIOS_INSTALL}
+                            element={
+                                <ProtectedRoute>
+                                    <RedeemCode />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.AIOS_INSTALL_PROGRESS}
+                            element={
+                                <ProtectedRoute>
+                                    <InstallProgress />
                                 </ProtectedRoute>
                             }
                         />
@@ -120,21 +187,24 @@ const App: FC = (): ReactNode => {
                                 element={<NewClawStepReview />}
                             />
                         </Route>
+                        {/*
+                          Legacy redirects per design §3. The redeem
+                          and install-progress flows live under /aios/*
+                          now; the old paths 301-equivalent through
+                          react-router's Navigate replace.
+                        */}
                         <Route
                             path={ROUTES.REDEEM_CODE}
                             element={
-                                <ProtectedRoute>
-                                    <RedeemCode />
-                                </ProtectedRoute>
+                                <Navigate
+                                    to={ROUTES.AIOS_INSTALL}
+                                    replace
+                                />
                             }
                         />
                         <Route
                             path={ROUTES.INSTALL_PROGRESS}
-                            element={
-                                <ProtectedRoute>
-                                    <InstallProgress />
-                                </ProtectedRoute>
-                            }
+                            element={<InstallProgressRedirect />}
                         />
                         <Route
                             path={ROUTES.ACCOUNT}
@@ -162,6 +232,78 @@ const App: FC = (): ReactNode => {
                         />
                         <Route
                             path={ROUTES.ADMIN}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/*
+                          Per docs/aios-design.md §3, each admin section
+                          gets a canonical `/admin/<section>` URL. The
+                          Admin component reads the URL segment to pick
+                          the active tab, so all 8 routes mount the
+                          same component — react-router doesn't
+                          actually route inside; the component does.
+                        */}
+                        <Route
+                            path={ROUTES.ADMIN_ANALYTICS}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_USERS}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_FLEET}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_REFERRALS}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_BILLING}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_CODES}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_INSTALL_REPORTS}
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.ADMIN_SETTINGS}
                             element={
                                 <ProtectedRoute>
                                     <Admin />
