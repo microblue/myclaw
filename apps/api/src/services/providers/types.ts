@@ -114,15 +114,34 @@ export interface VolumePricing {
 }
 
 /**
+ * Provider kind discriminator. Per docs/aios-design.md §10, AI-OS
+ * runs on either a long-lived VM (Hetzner / Lightsail / DigitalOcean
+ * — full systemd, durable disk, hours-to-minutes provisioning) or a
+ * container managed by a platform like Fly.io (sub-90-second cold
+ * start, ephemeral root, persistent volume mount). Both are valid
+ * deployment surfaces for the same install-claw.sh; the provisioning
+ * flow chooses based on the SKU's configured provider.
+ *
+ * Code that only cares "did the provider boot a server?" can keep
+ * using the unified CloudProvider type. Code that needs to do
+ * provider-kind-specific things (e.g. credit-based metering, image
+ * pre-warm) narrows on `kind`.
+ */
+export type ProviderKind = 'vm' | 'container'
+
+/**
  * CloudProvider Interface
- * 
+ *
  * All cloud providers must implement this interface to be usable
- * in the MyClaw platform.
+ * in the MyClaw platform. Implementations declare `kind` so call
+ * sites can distinguish VM-style providers (Hetzner/Lightsail/DO)
+ * from container-style providers (Fly).
  */
 export interface CloudProvider {
     // Provider metadata
     readonly providerId: string
     readonly providerName: string
+    readonly kind: ProviderKind
     getProviderInfo(): ProviderInfo
 
     // Server operations. locationId is optional for providers with a
@@ -154,6 +173,37 @@ export interface CloudProvider {
     deleteVolume?(volumeId: string): Promise<void>
     getVolume?(volumeId: string): Promise<VolumeInfo>
 }
+
+/**
+ * Narrowed types for callers that need provider-kind-specific logic.
+ * Both still satisfy CloudProvider; the discriminator is `kind`. Use
+ * these in places where the call site genuinely cares — most of the
+ * provisioning pipeline operates on the union and works unchanged.
+ */
+export interface VMProvider extends CloudProvider {
+    readonly kind: 'vm'
+}
+
+export interface ContainerProvider extends CloudProvider {
+    readonly kind: 'container'
+    // Image-based provisioning. The container provider boots the
+    // pre-built openclaw-aios image rather than running cloud-init,
+    // so the installer call (curl|bash) happens at image-build time
+    // not boot time. Per-instance config still flows in as env vars
+    // (the same set install-claw.sh expects: ROOT_PASSWORD, SUBDOMAIN,
+    // DOMAIN, GATEWAY_TOKEN, CONFIG_JSON_B64, optional IE/IT/IR).
+    readonly image: string
+    // Optional: container providers may want to surface a credit
+    // meter so credit-based SKUs can be priced by the second.
+    getUsageCredits?(serverId: string): Promise<{ creditsRemaining: number }>
+}
+
+export const isContainerProvider = (
+    p: CloudProvider
+): p is ContainerProvider => p.kind === 'container'
+
+export const isVMProvider = (p: CloudProvider): p is VMProvider =>
+    p.kind === 'vm'
 
 /**
  * Provider Registry Entry

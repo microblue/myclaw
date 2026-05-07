@@ -15,6 +15,7 @@ export * from './types'
 import './hetzner'
 import './lightsail'
 import './digitalocean'
+import './fly'
 
 // Re-export registry methods for convenience
 import { providerRegistry } from './registry'

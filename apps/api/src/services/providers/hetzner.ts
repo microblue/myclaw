@@ -22,6 +22,7 @@ import { providerRegistry } from '@/services/providers/registry'
 class HetznerProvider implements CloudProvider {
     readonly providerId = 'hetzner'
     readonly providerName = 'Hetzner Cloud'
+    readonly kind = 'vm' as const
 
     getProviderInfo(): ProviderInfo {
         return {

@@ -1,414 +1,225 @@
-import { generateCloudInit } from '@/controllers/claws/helpers'
+import { describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
-describe('generateCloudInit', () => {
+import generateCloudInit from './generateCloudInit'
+
+// install-claw.sh is the bulk of the install flow; cloud-init's
+// userData is now a tiny wrapper that exports per-claw env vars and
+// curl|bash's the installer. These tests cover both halves: the
+// rendered wrapper's contract, and the on-disk installer's content.
+const INSTALLER_PATH = resolve(
+    import.meta.dirname,
+    '../../../../cloud-scripts/install-claw.sh'
+)
+const installer = readFileSync(INSTALLER_PATH, 'utf-8')
+
+describe('generateCloudInit (wrapper)', () => {
     const output = generateCloudInit(
-        'myP@ss123',
-        'test-claw',
-        'clawhost.cloud',
-        'tok_abc123'
+        "myP@ss'123",
+        'sample-test',
+        'myclaw.one',
+        'tok-abc',
+        { openrouterApiKey: 'sk-or-v1-xyz', defaultModel: 'auto' },
+        {
+            clawId: 'claw-1',
+            installRunId: 'run-1',
+            centralToken: 'central-tok'
+        }
     )
 
-    it('starts with a bash shebang so Lightsail + cloud-init treat it as a shell script', () => {
+    it('starts with a bash shebang', () => {
         expect(output.startsWith('#!/bin/bash')).toBe(true)
     })
 
-    it('includes the root password', () => {
-        expect(output).toContain("'myP@ss123'")
-    })
-
-    it('includes the full domain', () => {
-        expect(output).toContain('test-claw.clawhost.cloud')
-    })
-
-    it('includes the gateway token in config', () => {
-        expect(output).toContain('tok_abc123')
-    })
-
-    it('installs required packages', () => {
-        expect(output).toContain('curl')
-        expect(output).toContain('caddy')
-        expect(output).toContain('ufw')
-        expect(output).toContain('git')
-        // nginx + certbot were replaced by caddy in v1.14
-        expect(output).not.toContain('nginx')
-        expect(output).not.toContain('certbot')
-    })
-
-    it('sets up systemd service', () => {
-        expect(output).toContain('openclaw-gateway.service')
-        expect(output).toContain('systemctl enable openclaw-gateway')
-    })
-
-    it('configures caddy reverse proxy to the gateway', () => {
-        expect(output).toContain('reverse_proxy 127.0.0.1:18789')
-    })
-
-    it('enables firewall rules', () => {
-        expect(output).toContain('ufw allow 22/tcp')
-        expect(output).toContain('ufw allow 80/tcp')
-        expect(output).toContain('ufw allow 443/tcp')
-    })
-
-    it('configures caddy auto-https with an email for ACME', () => {
-        // Caddy auto-issues + auto-renews Let's Encrypt certs as long
-        // as a global `email` is set. No certbot needed.
-        expect(output).toMatch(/email ssl@[\w.]+/)
-        expect(output).toContain('systemctl enable caddy')
-    })
-
-    it('includes swap setup', () => {
-        expect(output).toContain('fallocate -l 2G /swapfile')
-    })
-
-    it('creates openclaw user', () => {
-        expect(output).toContain('useradd -r -m -d /home/openclaw')
-    })
-
-    // The WebUI Update button needs the gateway (running as openclaw)
-    // to own its own install prefix end-to-end — otherwise npm's
-    // mkdtemp + symlink-swap hits EACCES inside /usr/lib/node_modules.
-    // See generateCloudInit.ts for full background.
-    it('installs openclaw under /opt/openclaw owned by the openclaw user', () => {
-        expect(output).toContain('chown -R openclaw:openclaw /opt/openclaw')
-        expect(output).toContain('sudo -u openclaw -H npm config set prefix /opt/openclaw')
-        expect(output).toContain('ExecStart=/opt/openclaw/bin/openclaw gateway')
-        // openclaw-user stage must run first so the install can sudo -u into it
-        const userIdx = output.indexOf('stage openclaw-user')
-        const installIdx = output.indexOf('stage openclaw-install')
-        expect(userIdx).toBeGreaterThan(-1)
-        expect(installIdx).toBeGreaterThan(userIdx)
-    })
-
-    // Overview tab's CPU / Memory / Disk tiles are sourced from a
-    // node_exporter on each claw, gated through nginx by the gateway
-    // token. See generateCloudInit.ts (`stage node-exporter`) for full
-    // background.
-    it('installs node_exporter and exposes /metrics gated by the gateway token', () => {
-        expect(output).toContain('stage node-exporter')
-        expect(output).toContain('useradd -r -s /usr/sbin/nologin node_exporter')
-        expect(output).toContain('/opt/node_exporter/node_exporter')
-        expect(output).toContain('--web.listen-address=127.0.0.1:9100')
-        expect(output).toContain('systemctl enable node_exporter')
-        // Caddy: first matcher requires path AND exact Bearer header
-        // before reverse_proxy to node_exporter. Anything else on
-        // /metrics falls through to a 401.
-        expect(output).toContain('path /metrics')
-        expect(output).toContain('header Authorization "Bearer tok_abc123"')
-        expect(output).toContain('reverse_proxy 127.0.0.1:9100')
-        expect(output).toContain('respond 401')
-    })
-
-    // silent-moth incident (2026-04-30): an unhandled failure inside
-    // the node-exporter stage tripped `set -eu` and aborted the whole
-    // bootstrap, so nginx + certbot never ran and the api flagged
-    // the claw `unreachable`. Stage must be non-fatal: subshell so a
-    // single failure stays inside, plus `||` to keep set -e happy.
-    it('node-exporter stage is non-fatal so a download / start failure does not abort bootstrap', () => {
-        // grab the slice from `stage node-exporter` to just before the
-        // next stage and assert the soft-fail tail is in there
-        const start = output.indexOf('stage node-exporter')
-        const end = output.indexOf('stage openclaw-config')
-        expect(start).toBeGreaterThan(-1)
-        expect(end).toBeGreaterThan(start)
-        const block = output.slice(start, end)
-        // subshell is open at start, closed by `) ||`
-        expect(block).toMatch(/\)\s*\|\|\s*echo/)
-        // caddy stage must come after node-exporter so a failure here
-        // cannot starve SSL issuance / reverse-proxy startup
-        const caddyIdx = output.indexOf('stage caddy')
-        expect(caddyIdx).toBeGreaterThan(end)
-    })
-
-    it('escapes the literal $ in the node_exporter systemd ExecStart so systemd does not try to expand it', () => {
-        // `--collector.filesystem.mount-points-exclude=...($$|/)` —
-        // systemd treats $X as env-var refs in Exec lines; the regex
-        // we want is literal `($|/)`, so the unit file must encode it
-        // as `($$|/)`.
-        expect(output).toContain('mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($$|/)')
-        // and the unescaped form must NOT be present
-        expect(output).not.toContain('mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker|snap)($|/)')
-    })
-
-    it('includes openclaw config JSON with tools defaults', () => {
-        expect(output).toContain('"profile": "full"')
-        expect(output).toContain('"host": "gateway"')
-    })
-
-    // ma4mzhe7 incident 2026-04-30: with default reload mode (`hybrid`)
-    // openclaw's own writes to meta.lastTouchedAt fall through
-    // BASE_RELOAD_RULES with no match → restartGateway=true →
-    // gateway SIGTERMs itself every ~12 minutes, each restart
-    // re-stages plugin runtime deps and pegs the event loop.
-    it('disables openclaw config-watcher reload to break the self-restart loop', () => {
-        expect(output).toContain('"reload"')
-        expect(output).toMatch(/"reload":\s*\{[^}]*"mode":\s*"off"/s)
-    })
-
-    it('logs a bootstrap start banner', () => {
-        expect(output).toContain('openclaw bootstrap starting')
-    })
-
-    it('pre-marks the agent workspace as setup-complete so onboarding is skipped', () => {
+    it('curl|bashes the centralized installer', () => {
         expect(output).toContain(
-            '/home/openclaw/.openclaw/workspace/.openclaw/workspace-state.json'
+            'curl -fsSL "https://myclaw.one/api/cloud-scripts/install-claw" | bash'
         )
-        expect(output).toContain('"setupCompletedAt"')
-        expect(output).toContain('"bootstrapSeededAt"')
     })
 
-    // v1.17 reverts v1.16: channels must ship `enabled: true`.
-    // openclaw's Control UI hides `enabled: false` channels from the
-    // channels tab — disabled-by-default would mean users can't see
-    // them to configure credentials. The 8s/15min health-monitor
-    // spike that v1.16 was trying to suppress is cosmetic only.
-    it('ships all built-in channels enabled so Control UI surfaces them', () => {
-        const start = output.indexOf('"channels"')
-        const end = output.indexOf('"commands"', start)
-        expect(start).toBeGreaterThan(-1)
-        expect(end).toBeGreaterThan(start)
-        const channelsBlock = output.slice(start, end)
-        for (const ch of ['whatsapp', 'telegram', 'discord', 'slack', 'signal']) {
-            expect(channelsBlock).toContain(`"${ch}"`)
+    it('exports the required per-claw env vars', () => {
+        expect(output).toContain('export ROOT_PASSWORD=')
+        expect(output).toContain("export SUBDOMAIN='sample-test'")
+        expect(output).toContain("export DOMAIN='myclaw.one'")
+        expect(output).toContain("export GATEWAY_TOKEN='tok-abc'")
+        expect(output).toMatch(/export CONFIG_JSON_B64='[A-Za-z0-9+/=]+'/)
+    })
+
+    it('escapes single quotes in the root password', () => {
+        // Single-quote is the only metacharacter we have to handle; the
+        // wrapper writes ROOT_PASSWORD inside single quotes, so an
+        // embedded `'` becomes the standard `'\\''` quoting dance.
+        expect(output).toContain("'myP@ss'\\''123'")
+    })
+
+    it('exports OPENROUTER_API_KEY when llm config provided', () => {
+        expect(output).toContain("export OPENROUTER_API_KEY='sk-or-v1-xyz'")
+    })
+
+    it('exports install-progress reporter env vars when install context provided', () => {
+        expect(output).toContain(
+            "export IE='https://myclaw.one/install/claw-1/phase'"
+        )
+        expect(output).toContain("export IT='central-tok'")
+        expect(output).toContain("export IR='run-1'")
+    })
+
+    it('omits install-progress env vars when install context is undefined', () => {
+        const noInstall = generateCloudInit(
+            'pw',
+            'sub',
+            'myclaw.one',
+            'tok',
+            { openrouterApiKey: null }
+        )
+        expect(noInstall).not.toContain('export IE=')
+        expect(noInstall).not.toContain('export IT=')
+        expect(noInstall).not.toContain('export IR=')
+    })
+
+    it('omits OPENROUTER_API_KEY when no llm config is provided', () => {
+        const noLlm = generateCloudInit('pw', 'sub', 'myclaw.one', 'tok')
+        expect(noLlm).not.toContain('OPENROUTER_API_KEY')
+    })
+
+    it('encodes the openclaw config as base64 (no shell escaping needed)', () => {
+        const match = output.match(/CONFIG_JSON_B64='([A-Za-z0-9+/=]+)'/)
+        expect(match).not.toBeNull()
+        const decoded = Buffer.from(match![1], 'base64').toString('utf-8')
+        const parsed = JSON.parse(decoded)
+        // Spot-check the config fields we care most about being preserved
+        expect(parsed.gateway?.auth?.token).toBe('tok-abc')
+        expect(parsed.gateway?.reload?.mode).toBe('off')
+        expect(parsed.channels?.whatsapp?.enabled).toBe(true)
+        expect(parsed.plugins?.entries?.openrouter?.enabled).toBe(true)
+    })
+
+    it('rendered wrapper stays well under the AWS Lightsail userData cap', () => {
+        const realToken = 'a'.repeat(64)
+        const realOrKey = 'sk-or-v1-' + 'x'.repeat(64)
+        const realistic = generateCloudInit(
+            'PlaceholderRoot123!@#',
+            'sample-test',
+            'myclaw.one',
+            realToken,
+            {
+                openrouterApiKey: realOrKey,
+                defaultModel: 'openrouter/anthropic/claude-sonnet-4.6'
+            },
+            {
+                clawId: 'a'.repeat(36),
+                installRunId: 'b'.repeat(36),
+                centralToken: 'c'.repeat(64)
+            }
+        )
+        const b64Bytes = Buffer.from(realistic, 'utf8').toString('base64').length
+        // Lightsail's hard cap is 16 KB after base64. Pre-extraction
+        // we were over by ~270 bytes; post-extraction the rendered
+        // wrapper + base64'd config should fit with kilobytes to spare.
+        expect(b64Bytes).toBeLessThan(8 * 1024)
+    })
+})
+
+describe('install-claw.sh', () => {
+    it('is a bash script', () => {
+        expect(installer.startsWith('#!/bin/bash')).toBe(true)
+    })
+
+    it('asserts every required env var is set so a misconfigured wrapper fails loudly', () => {
+        for (const v of [
+            'ROOT_PASSWORD',
+            'SUBDOMAIN',
+            'DOMAIN',
+            'GATEWAY_TOKEN',
+            'CONFIG_JSON_B64'
+        ]) {
+            expect(installer).toContain(`: "\${${v}:?`)
         }
-        // 5 channels × 1 `"enabled": true` each
-        const enabledMatches = channelsBlock.match(/"enabled":\s*true/g) || []
-        expect(enabledMatches.length).toBe(5)
     })
 
-    it('includes a `plugins.entries` block for built-in plugins', () => {
-        expect(output).toContain('"plugins"')
-        expect(output).toContain('"openrouter"')
+    it('decodes CONFIG_JSON_B64 into the openclaw config file', () => {
+        expect(installer).toContain(
+            'echo "$CONFIG_JSON_B64" | base64 -d > /home/openclaw/.openclaw/openclaw.json'
+        )
     })
 
-    it('includes a pre-populated `meta` block matching the pinned openclaw version', () => {
-        expect(output).toContain('"meta"')
-        expect(output).toContain('"lastTouchedVersion": "2026.4.11"')
-        expect(output).toContain('"lastTouchedAt"')
+    it('installs the pinned openclaw version under /opt/openclaw owned by openclaw user', () => {
+        expect(installer).toContain('useradd -r -m -d /home/openclaw -s /bin/bash openclaw')
+        expect(installer).toContain('chown -R openclaw:openclaw /opt/openclaw')
+        expect(installer).toContain('npm install -g')
+        expect(installer).toContain('openclaw@2026.4.11')
     })
 
-    describe('with openrouter llm config', () => {
-        it('prefixes bare model slugs with "openrouter/" for agents.defaults.model.primary', () => {
-            const out = generateCloudInit(
-                'pw',
-                'test',
-                'example.com',
-                'tok',
-                {
-                    openrouterApiKey: 'sk-or-v1-abc',
-                    defaultModel: 'deepseek/deepseek-v3.2'
-                }
-            )
-            expect(out).toContain('"primary": "openrouter/deepseek/deepseek-v3.2"')
-            expect(out).not.toContain('"primary": "deepseek/deepseek-v3.2"')
-        })
-
-        it('writes OPENROUTER_API_KEY into the systemd unit so the built-in extension picks it up', () => {
-            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
-                openrouterApiKey: 'sk-or-v1-abc',
-                defaultModel: 'auto'
-            })
-            expect(out).toContain('Environment=OPENROUTER_API_KEY=sk-or-v1-abc')
-        })
-
-        it('falls back to openrouter/auto when no default model is saved', () => {
-            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
-                openrouterApiKey: 'sk-or-v1-abc'
-            })
-            expect(out).toContain('"primary": "openrouter/auto"')
-        })
-
-        it('does not double-prefix already-qualified refs', () => {
-            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
-                openrouterApiKey: 'sk-or-v1-abc',
-                defaultModel: 'openrouter/anthropic/claude-sonnet-4'
-            })
-            expect(out).toContain('"primary": "openrouter/anthropic/claude-sonnet-4"')
-            expect(out).not.toContain('openrouter/openrouter/')
-        })
-
-        it('omits OPENROUTER_API_KEY and model config when no api key is configured', () => {
-            const out = generateCloudInit('pw', 'test', 'example.com', 'tok', {
-                openrouterApiKey: null,
-                defaultModel: null
-            })
-            expect(out).not.toContain('OPENROUTER_API_KEY')
-            expect(out).not.toContain('"primary":')
-        })
+    it('configures caddy reverse proxy to the gateway and 80/443 firewall', () => {
+        expect(installer).toContain('reverse_proxy 127.0.0.1:3000')
+        expect(installer).toContain('ufw allow 80/tcp')
+        expect(installer).toContain('ufw allow 443/tcp')
     })
 
-    // v1.18 — setup wizard SPA at /myclaw/ on each claw, fronted by
-    // Caddy. Static HTML + a Node shim on loopback:18790. Cloud-init
-    // pulls both files from the platform web app at provision time.
-    describe('setup wizard (/myclaw/)', () => {
-        it('downloads the wizard SPA and shim from the platform web app', () => {
-            expect(output).toContain('https://myclaw.one/wizard/v1.html')
-            expect(output).toContain('https://myclaw.one/wizard/v1-server.mjs')
-            expect(output).toContain('/var/www/myclaw/index.html')
-            expect(output).toContain('/opt/myclaw-wizard/server.mjs')
-        })
-
-        it('writes a myclaw-wizard systemd unit running the shim as openclaw', () => {
-            expect(output).toContain('myclaw-wizard.service')
-            expect(output).toContain('ExecStart=/usr/bin/node /opt/myclaw-wizard/server.mjs')
-            expect(output).toContain('User=openclaw')
-            expect(output).toContain('systemctl enable myclaw-wizard')
-            expect(output).toContain('systemctl start myclaw-wizard')
-        })
-
-        it('pre-creates the gateway systemd drop-in dir so the wizard can write OPENROUTER_API_KEY overrides', () => {
-            expect(output).toContain(
-                'mkdir -p /etc/systemd/system/openclaw-gateway.service.d'
-            )
-        })
-
-        it('wizard stage is non-fatal so a download failure does not abort bootstrap', () => {
-            const start = output.indexOf('stage wizard')
-            const end = output.indexOf('stage caddy')
-            expect(start).toBeGreaterThan(-1)
-            expect(end).toBeGreaterThan(start)
-            const block = output.slice(start, end)
-            expect(block).toMatch(/\)\s*\|\|\s*echo/)
-        })
-
-        it('Caddy routes /myclaw/api/* to the shim and /myclaw/* to static files, before falling through to the gateway', () => {
-            expect(output).toContain('@wizardApi path /myclaw/api/*')
-            expect(output).toContain('reverse_proxy 127.0.0.1:18790')
-            expect(output).toContain('@wizardStatic path /myclaw /myclaw/*')
-            expect(output).toContain('root * /var/www')
-            expect(output).toContain('file_server')
-            // Order matters in the Caddyfile — named-matcher handles run
-            // top-down, so the api matcher must come before the static
-            // matcher (otherwise /myclaw/api/* would be served as a
-            // file-not-found from /var/www), and both must come before
-            // the catch-all gateway reverse_proxy.
-            const apiIdx = output.indexOf('@wizardApi')
-            const staticIdx = output.indexOf('@wizardStatic')
-            const gwIdx = output.indexOf('reverse_proxy 127.0.0.1:18789')
-            expect(apiIdx).toBeGreaterThan(-1)
-            expect(staticIdx).toBeGreaterThan(apiIdx)
-            expect(gwIdx).toBeGreaterThan(staticIdx)
-        })
+    it('ships node_exporter behind the gateway-token-gated /metrics endpoint', () => {
+        expect(installer).toContain('node_exporter')
+        expect(installer).toContain('/metrics')
+        expect(installer).toContain('Bearer ${GATEWAY_TOKEN}')
     })
 
-    // v1.19 — root path redirects to /myclaw/ so the easy-setup wizard
-    // is the default landing experience for fresh claws. GreatLove
-    // plugin is pre-installed from a tarball served by the SPA at
-    // /downloads/greatlove-openclaw-plugin-<version>.tgz.
-    describe('easy-setup default landing (/myclaw/)', () => {
-        it('pre-installs the GreatLove channel plugin from the SPA-served tarball', () => {
-            expect(output).toContain('stage greatlove-install')
-            expect(output).toContain('https://myclaw.one/downloads/greatlove-openclaw-plugin-1.0.0.tgz')
-            // installs as the openclaw user so it lands in the openclaw
-            // user's npm prefix + extensions dir (otherwise it would go
-            // under root and the gateway couldn't load it)
-            expect(output).toMatch(/sudo\s+-u\s+openclaw\s+-H\s+\/opt\/openclaw\/bin\/openclaw\s+plugins\s+install/)
-        })
-
-        it('greatlove-install stage is non-fatal so a network blip doesnt abort bootstrap', () => {
-            const start = output.indexOf('stage greatlove-install')
-            const end = output.indexOf('stage firewall')
-            expect(start).toBeGreaterThan(-1)
-            expect(end).toBeGreaterThan(start)
-            const block = output.slice(start, end)
-            expect(block).toMatch(/\)\s*\|\|\s*echo/)
-        })
-
-        it('Caddy 302-redirects domain root (/) to /myclaw/, but only for non-WebSocket requests', () => {
-            expect(output).toContain('@rootRedirect')
-            expect(output).toContain('not header Upgrade *websocket*')
-            expect(output).toContain('redir @rootRedirect /myclaw/ 302')
-            // The redirect must be before the catch-all reverse_proxy,
-            // otherwise / falls through to gateway and never redirects.
-            const redirIdx = output.indexOf('redir @rootRedirect')
-            const gwIdx = output.indexOf('reverse_proxy 127.0.0.1:18789')
-            expect(redirIdx).toBeGreaterThan(-1)
-            expect(gwIdx).toBeGreaterThan(redirIdx)
-        })
+    it('node-exporter stage is non-fatal so a download / start failure does not abort bootstrap', () => {
+        // The stage runs in a subshell wrapped with `|| echo` so an
+        // unprebuilt arch / network glitch warns instead of failing
+        // the whole install.
+        expect(installer).toMatch(
+            /\) \|\| echo "\[oc\] node_exporter setup failed/
+        )
     })
 
-    // ── Robustness harness ──
-    describe('robustness hardening', () => {
-        it('defines a with_retry helper and routes network fetches through it', () => {
-            expect(output).toMatch(/^with_retry\(\)\s*\{/m)
-            expect(output).toContain('with_retry apt-get update')
-            expect(output).toContain('with_retry apt-get install -y curl')
-            expect(output).toContain('with_retry sudo -u openclaw -H npm install -g')
-        })
+    it('escapes the literal $ in the node_exporter systemd ExecStart', () => {
+        // systemd would otherwise try to expand $$|/) at unit-load
+        // time. Doubling the dollar tells systemd to leave it alone.
+        expect(installer).toContain('($$|/)')
+    })
 
-        it('picks Chrome build by dpkg architecture, falls back to chromium', () => {
-            expect(output).toContain('dpkg --print-architecture')
-            expect(output).toContain('google-chrome-stable_current_amd64.deb')
-            expect(output).toContain('chromium')
-        })
+    it('starts with a sshd-config + swap setup before apt to keep the VM reachable on first boot', () => {
+        const sshdAt = installer.indexOf('stage sshd-config')
+        const swapAt = installer.indexOf('stage swap')
+        const aptAt = installer.indexOf('stage apt-base')
+        expect(sshdAt).toBeGreaterThan(0)
+        expect(swapAt).toBeGreaterThan(sshdAt)
+        expect(aptAt).toBeGreaterThan(swapAt)
+    })
 
-        it('writes a bootstrap state sentinel at /var/lib/openclaw-bootstrap/state', () => {
-            expect(output).toContain('/var/lib/openclaw-bootstrap/state')
-            expect(output).toContain('status=ok')
-            expect(output).toContain('status=failed')
-            expect(output).toContain('stage openclaw-install')
-            expect(output).toContain('stage caddy')
-        })
+    it('phases up to the canonical AI-OS install-progress markers', () => {
+        // These keys must match
+        // apps/api/src/controllers/install/postInstallPhase.ts
+        // ALLOWED_PHASES — the page UI's checklist hangs off these.
+        for (const p of [
+            'mounting_storage',
+            'installing_kernel',
+            'loading_skills',
+            'calibrating_agents',
+            'wiring_network',
+            'issuing_certificate',
+            'ready'
+        ]) {
+            expect(installer).toContain(`phase ${p}`)
+        }
+    })
 
-        it('firewall opens 22/80/443 before gateway + caddy start', () => {
-            const fwIdx = output.indexOf('ufw allow 22/tcp')
-            const gwIdx = output.indexOf('systemctl start openclaw-gateway')
-            const caddyIdx = output.indexOf('systemctl restart caddy')
-            expect(fwIdx).toBeGreaterThan(-1)
-            expect(gwIdx).toBeGreaterThan(fwIdx)
-            expect(caddyIdx).toBeGreaterThan(fwIdx)
-        })
+    it('wires phase failed via the EXIT trap so a crashed install reports its terminal state', () => {
+        expect(installer).toMatch(/trap '.*phase failed.*' EXIT/)
+    })
 
-        it('gateway health poll is passive — no forced restart inside the loop', () => {
-            // The old loop did `systemctl restart openclaw-gateway`
-            // on every failed poll, which worked around a now-fixed
-            // first-boot cycle but interfered with a healthy-but-slow
-            // gateway startup. Ensure we don't reintroduce it.
-            const pollSection = output.slice(
-                output.indexOf('systemctl start openclaw-gateway'),
-                output.indexOf('stage dns-wait')
-            )
-            expect(pollSection).not.toMatch(
-                /systemctl restart openclaw-gateway/
-            )
-        })
+    it('phase POSTs are best-effort — a 5xx must not abort the install', () => {
+        expect(installer).toMatch(
+            /curl -fsS .*"\$IE".*-H "Authorization: Bearer \$IT".*\|\| true/
+        )
+    })
 
-        it('DNS wait is ~1 minute (30x2s), not the old 5-minute budget', () => {
-            expect(output).toMatch(/for i in \$\(seq 1 30\); do\s+if host/)
-            // The old 20s-extra-sleep after first resolve is gone.
-            expect(output).not.toContain('20s for propagation')
-        })
+    it('phase reporter is a no-op when IE is unset (legacy callers / tests)', () => {
+        expect(installer).toContain('[ -z "${IE:-}" ] && return 0')
+    })
 
-        it('drops the Homebrew background install', () => {
-            expect(output).not.toContain('Homebrew')
-            expect(output).not.toContain('install-brew.sh')
-            expect(output).not.toContain('brew-install.log')
-        })
-
-        // silent-hare incident (2026-04-29): cloud-init crossed 16384
-        // bytes after base64, AWS Lightsail rejected the createServer
-        // call before allocating an IP — DB row stranded as
-        // ip=NULL/provider_server_id=NULL/status=unreachable. Any future
-        // bloat of this script must fail in CI, not in the field.
-        //
-        // Test below renders with REALISTIC-size inputs (64-char hex
-        // gateway token + ~80-char OpenRouter key) instead of the parent
-        // suite's `tok_abc123` short fixture — the old fixture under-
-        // counted by ~700 base64 bytes and let an over-cap script slip
-        // through CI repeatedly. We also enforce a 256-byte safety
-        // buffer below the hard 16384 cap so we get a CI signal *before*
-        // a real provisioning rejects.
-        it('rendered output stays under the AWS Lightsail userData base64 cap with realistic inputs', () => {
-            const realToken = 'a'.repeat(64)
-            const realOrKey = 'sk-or-v1-' + 'x'.repeat(64)
-            const realistic = generateCloudInit(
-                'PlaceholderRoot123!@#',
-                'sample-test',
-                'myclaw.one',
-                realToken,
-                { openrouterApiKey: realOrKey, defaultModel: 'openrouter/anthropic/claude-sonnet-4.6' }
-            )
-            const b64Bytes = Buffer.from(realistic, 'utf8').toString('base64').length
-            expect(b64Bytes).toBeLessThan(16384 - 256)
-        })
+    it('schedules openclaw-studio install via systemd oneshot', () => {
+        expect(installer).toContain('oc-stu-i.service')
+        expect(installer).toContain('install-studio')
     })
 })

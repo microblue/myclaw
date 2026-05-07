@@ -58,6 +58,7 @@ const BUNDLE_PRICING: Record<string, number> = {
 class LightsailProvider implements CloudProvider {
     readonly providerId = 'lightsail'
     readonly providerName = 'AWS Lightsail'
+    readonly kind = 'vm' as const
     private client: LightsailClient
 
     constructor() {

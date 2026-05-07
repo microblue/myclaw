@@ -71,6 +71,7 @@ interface DOVolume {
 class DigitalOceanProvider implements CloudProvider {
     readonly providerId = 'digitalocean'
     readonly providerName = 'DigitalOcean'
+    readonly kind = 'vm' as const
     private client: RequestClient
 
     constructor() {
