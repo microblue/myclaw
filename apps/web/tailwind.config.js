@@ -60,6 +60,17 @@ export default {
                     4: 'hsl(var(--chart-4))',
                     5: 'hsl(var(--chart-5))'
                 }
+            },
+            // Used by the AI OS install screen's background ambient.
+            // Stock Tailwind has linear gradients but not radial; we
+            // add the bg-image utility here so the syntax stays
+            // declarative.
+            backgroundImage: {
+                'gradient-radial':
+                    'radial-gradient(circle at center, var(--tw-gradient-stops))'
+            },
+            animation: {
+                'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite'
             }
         }
     },

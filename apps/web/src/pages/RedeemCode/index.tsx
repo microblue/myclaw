@@ -113,7 +113,7 @@ const RedeemCode: FC = () => {
         try {
             if (isRenewal) {
                 if (!targetClaw) {
-                    toast.error('Pick a Claw to extend.')
+                    toast.error('Pick an AI OS to extend.')
                     return
                 }
                 await purchase.mutateAsync({
@@ -135,7 +135,7 @@ const RedeemCode: FC = () => {
                 activationCode: validated.code,
                 name: suggested.name || 'my-claw'
             })
-            toast.success('Deploying your Claw…')
+            toast.success('Setting up your AI OS…')
             const clawId = result.pendingClawId
             navigate(
                 clawId
@@ -143,7 +143,8 @@ const RedeemCode: FC = () => {
                     : ROUTES.CLAWS
             )
         } catch (err) {
-            const message = err instanceof Error ? err.message : 'Deploy failed'
+            const message =
+                err instanceof Error ? err.message : 'Setup failed'
             toast.error(message)
         }
     }
@@ -151,8 +152,8 @@ const RedeemCode: FC = () => {
     return (
         <AppShell>
             <PageTitle
-                title='Redeem activation code'
-                description='Use a partner-issued code to deploy or renew your Claw.'
+                title='Setup MyClaw.One AI OS'
+                description='Use a partner-issued code to set up or extend your AI OS.'
                 noIndex
             />
             <main className='mx-auto w-full max-w-xl px-4 py-8 md:px-6'>
@@ -160,12 +161,12 @@ const RedeemCode: FC = () => {
                     <form className='space-y-6' onSubmit={handleValidate}>
                         <div>
                             <h2 className='text-2xl font-semibold'>
-                                Redeem an activation code
+                                Setup MyClaw.One AI OS
                             </h2>
                             <p className='text-muted-foreground mt-1 text-sm'>
                                 Paste the activation code you received from
-                                your channel partner. Codes can deploy a new
-                                Claw or extend an existing one.
+                                your partner. Codes can set up a new AI OS
+                                or extend an existing one.
                             </p>
                         </div>
 
@@ -205,11 +206,11 @@ const RedeemCode: FC = () => {
                             <h2 className='text-2xl font-semibold'>
                                 {isRenewal
                                     ? 'Renewal code'
-                                    : 'Ready to deploy'}
+                                    : 'Ready to set up'}
                             </h2>
                             <p className='text-muted-foreground mt-1 text-sm'>
                                 {isRenewal
-                                    ? `This code adds ${validityLabel(validated.preview.validityDays)} to an existing Claw.`
+                                    ? `This code adds ${validityLabel(validated.preview.validityDays)} to an existing AI OS.`
                                     : "Tier, region, and validity are all locked by your activation code. One click and you're done."}
                             </p>
                         </div>
@@ -218,7 +219,9 @@ const RedeemCode: FC = () => {
                             <SummaryRow
                                 label='SKU'
                                 value={
-                                    isRenewal ? 'Renewal' : 'New Claw deploy'
+                                    isRenewal
+                                        ? 'Renewal'
+                                        : 'New AI OS setup'
                                 }
                             />
                             {!isRenewal && (
@@ -309,7 +312,7 @@ const RedeemCode: FC = () => {
                                     ? 'Working…'
                                     : isRenewal
                                       ? 'Apply renewal'
-                                      : 'Deploy'}
+                                      : 'Setup AI OS'}
                             </Button>
                         </div>
                     </div>
@@ -329,14 +332,16 @@ const RenewalTargetPicker: FC<{
 }> = ({ eligibleClaws, allClaws, isLoading, selectedId, onSelect, preview }) => {
     if (isLoading) {
         return (
-            <p className='text-muted-foreground text-sm'>Loading your Claws…</p>
+            <p className='text-muted-foreground text-sm'>
+                Loading your AI OS instances…
+            </p>
         )
     }
     if (allClaws.length === 0) {
         return (
             <p className='text-destructive text-sm'>
-                You don't have any Claws yet. Renewal codes can only extend an
-                existing Claw.
+                You don't have any AI OS yet. Renewal codes can only extend
+                an existing AI OS.
             </p>
         )
     }
@@ -344,7 +349,7 @@ const RenewalTargetPicker: FC<{
         return (
             <div className='space-y-1 text-sm'>
                 <p className='text-destructive'>
-                    None of your Claws match this code.
+                    None of your AI OS instances match this code.
                 </p>
                 <p className='text-muted-foreground text-xs'>
                     Renewal codes are tied to a specific plan
@@ -356,7 +361,7 @@ const RenewalTargetPicker: FC<{
     }
     return (
         <div className='space-y-2'>
-            <Label htmlFor='extends-claw'>Pick a Claw to extend</Label>
+            <Label htmlFor='extends-claw'>Pick an AI OS to extend</Label>
             <select
                 id='extends-claw'
                 className='border-input bg-background w-full rounded-md border px-3 py-2 text-sm'
