@@ -8,7 +8,8 @@ import {
     claws,
     sshKeys,
     activationCodes,
-    activationSeats
+    activationSeats,
+    clawInstallPhases
 } from '@/db/schema'
 import {
     generatePassword,
@@ -197,6 +198,14 @@ async function redeemNew({
     const clawId = crypto.randomUUID()
     const subdomain = generateSlug(clawId)
     const gatewayToken = generateToken()
+    // Outbound bearer the cloud-init script uses to call back into
+    // /install/:clawId/phase. Lives only on the row + baked into the
+    // userData; the SPA never sees it (sanitizeClaw strips it).
+    const centralToken = generateToken()
+    // ULID-shaped run identifier scoped to this single install attempt.
+    // Web Realtime subscription filters on this, so a re-install
+    // doesn't replay the prior attempt's logs.
+    const installRunId = crypto.randomUUID()
     const fakeSubId = `code-sub-${clawId}`
     const name = rawName || generateClawName()
     const finalPassword = password || generatePassword()
@@ -227,6 +236,8 @@ async function redeemNew({
                 sshKeyId: sshKeyId || null,
                 subdomain,
                 gatewayToken,
+                centralToken,
+                installRunId,
                 polarSubscriptionId: fakeSubId,
                 polarProductId: 'activation-code',
                 polarCustomerId: 'activation-code',
@@ -258,6 +269,19 @@ async function redeemNew({
         throw err
     }
 
+    // Seed the install-progress stream BEFORE provisioning kicks off
+    // so the user lands on /install/:clawId and immediately sees the
+    // "renting compute" step active rather than a blank checklist
+    // until the VM boots and cloud-init's first phase POST lands.
+    await db.insert(clawInstallPhases).values({
+        id: crypto.randomUUID(),
+        clawId,
+        installRunId,
+        phase: 'renting_compute',
+        logChunk: '',
+        createdAt: new Date()
+    })
+
     void provisionClawServer({
         clawId,
         volumeSize: volumeSize ?? null
@@ -268,7 +292,10 @@ async function redeemNew({
     return ok(
         c,
         {
-            checkoutUrl: `/claws?provisioning=${clawId}`,
+            // Land on the install-progress page so the user sees the
+            // phase animation + log tail. Old `/claws?provisioning=` is
+            // dead — kept only in commit history for reference.
+            checkoutUrl: `/install/${clawId}`,
             checkoutId: `code-checkout-${clawId}`,
             pendingClawId: clawId,
             expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),

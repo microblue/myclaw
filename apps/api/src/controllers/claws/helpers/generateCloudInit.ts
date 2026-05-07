@@ -13,7 +13,12 @@ const generateCloudInit = (
     subdomain: string,
     domain: string,
     gatewayToken: string,
-    llm?: { openrouterApiKey?: string | null; defaultModel?: string | null }
+    llm?: { openrouterApiKey?: string | null; defaultModel?: string | null },
+    install?: {
+        clawId: string
+        installRunId: string
+        centralToken: string
+    }
 ): string => {
     const fullDomain = `${subdomain}.${domain}`
     const config: Record<string, unknown> = {
@@ -171,6 +176,20 @@ const generateCloudInit = (
     // metacharacters in the generated password.
     const rootPwEscaped = rootPassword.replace(/'/g, "'\\''")
 
+    // The install-progress page subscribes to claw_install_phases for
+    // (claw_id, install_run_id) and animates whichever row is newest.
+    // The `phase` POST helper is conditionally injected — when no
+    // install context is supplied the script falls back to a no-op
+    // shim, keeping byte-for-byte parity with legacy callers under
+    // Lightsail's 16KB userData cap.
+    const installBlock = install
+        ? `IE=https://${domain}/install/${install.clawId}/phase
+IT=${install.centralToken}
+IR=${install.installRunId}
+phase() {
+    curl -fsS --max-time 10 -X POST "$IE" -H "Authorization: Bearer $IT" -H 'Content-Type: application/json' -d "{\\"phase\\":\\"$1\\",\\"runId\\":\\"$IR\\",\\"logTail\\":\\"\\"}" >/dev/null 2>&1 || true
+}`
+        : ''
     const script = `#!/bin/bash
 [ -z "\${BASH_VERSION:-}" ] && exec /bin/bash "$0" "$@"
 set -eu
@@ -179,11 +198,12 @@ echo "=== openclaw bootstrap starting at $(date -u) ==="
 
 mkdir -p /var/lib/openclaw-bootstrap
 BOOTSTRAP_STATE=/var/lib/openclaw-bootstrap/state
+${installBlock}
 stage() {
     echo "stage=$1 at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
     echo "[oc] >>> $1"
 }
-trap 'rc=$?; [ $rc -ne 0 ] && { S=$(awk -F= "/^stage=/{print \\$2}" "$BOOTSTRAP_STATE" 2>/dev/null); echo "status=failed stage=$S rc=$rc" > "$BOOTSTRAP_STATE"; echo "[oc] FAILED stage=$S rc=$rc"; }' EXIT
+trap 'rc=$?; [ $rc -ne 0 ] && { S=$(awk -F= "/^stage=/{print \\$2}" "$BOOTSTRAP_STATE" 2>/dev/null); echo "status=failed stage=$S rc=$rc" > "$BOOTSTRAP_STATE"; echo "[oc] FAILED stage=$S rc=$rc"; phase failed; }' EXIT
 
 with_retry() {
     local attempts=5 delay=3 i=1
@@ -200,6 +220,7 @@ with_retry() {
     done
 }
 
+phase mounting_storage
 stage sshd-config
 sed -i 's/^#\\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 sed -i 's/^#\\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -221,6 +242,7 @@ if [ ! -f /swapfile ]; then
     echo '/swapfile none swap sw 0 0' >> /etc/fstab
 fi
 
+phase installing_kernel
 stage apt-base
 export DEBIAN_FRONTEND=noninteractive
 mkdir -p /etc/apt/keyrings
@@ -237,6 +259,7 @@ stage openclaw-user
 id openclaw >/dev/null 2>&1 || useradd -r -m -d /home/openclaw -s /bin/bash openclaw
 echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
+phase loading_skills
 stage openclaw-install
 mkdir -p /opt/openclaw
 chown -R openclaw:openclaw /opt/openclaw
@@ -305,6 +328,7 @@ NESVC
     systemctl start node_exporter
 ) || echo "[oc] node_exporter setup failed; Overview metrics will read 'unavailable' on this claw"
 
+phase calibrating_agents
 stage openclaw-config
 mkdir -p /home/openclaw/.openclaw/agents/main/agent
 cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
@@ -365,6 +389,7 @@ stage greatlove-install
     with_retry sudo -u openclaw -H /opt/openclaw/bin/openclaw plugins install /tmp/gl.tgz
 ) || echo "[oc] greatlove plugin install failed"
 
+phase wiring_network
 stage firewall
 ufw allow 22/tcp
 ufw allow 80/tcp
@@ -428,6 +453,7 @@ WSVC
     for i in $(seq 1 20); do ss -tln | grep -q :18790 && break; sleep 1; done
 ) || echo "[oc] wizard setup failed; /myclaw/ will 404 on this claw — Control UI at / still works"
 
+phase issuing_certificate
 stage caddy
 cat > /etc/caddy/Caddyfile << 'CADDYEOF'
 {
@@ -478,8 +504,21 @@ systemctl enable oc-stu-i.service
 
 echo "status=ok at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
 echo "=== openclaw bootstrap finished at $(date -u) ==="
+phase ready
 `
-    return stripShellComments(script)
+    // When no install context is supplied (legacy callers + tests
+    // that exercise the stable shape), strip the install-progress
+    // plumbing entirely so the rendered output is byte-for-byte
+    // unchanged from before the P2b feature landed. This keeps the
+    // Lightsail 16KB userData budget untouched on the no-context path.
+    const withoutInstallReporting = install
+        ? script
+        : script
+              .split('\n')
+              .filter((l) => !/^phase\s/.test(l.trim()))
+              .join('\n')
+              .replace('; phase failed', '')
+    return stripShellComments(withoutInstallReporting)
 }
 
 // Lightsail caps userData at 16 KB AFTER base64 encoding (not raw), so

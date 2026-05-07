@@ -79,7 +79,8 @@ vi.mock('@/db/schema', () => ({
         seats: 'activationCodes.seats',
         status: 'activationCodes.status'
     },
-    activationSeats: { id: 'activationSeats.id' }
+    activationSeats: { id: 'activationSeats.id' },
+    clawInstallPhases: { id: 'clawInstallPhases.id' }
 }))
 
 vi.mock('@/services/providers', () => ({

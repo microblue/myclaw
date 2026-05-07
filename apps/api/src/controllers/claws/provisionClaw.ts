@@ -8,7 +8,13 @@ import { eq } from 'drizzle-orm'
 import { clawStatus, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { subscriptionStatus } from '@/lib/constants'
-import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
+import {
+    claws,
+    pendingClaws,
+    sshKeys,
+    volumes,
+    clawInstallPhases
+} from '@/db/schema'
 import { providerRegistry } from '@/services/providers'
 import { getClawRuntime, DEFAULT_CLAW_TYPE } from '@/services/clawRuntimes'
 import cloudflare from '@/services/cloudflare'
@@ -80,6 +86,11 @@ const provisionClaw = async (
         const id = crypto.randomUUID()
         const subdomain = generateSlug(id)
         const gatewayToken = generateToken()
+        // Outbound bearer (claw → central). Distinct from gatewayToken
+        // so they rotate independently. Cloud-init bakes this in;
+        // sanitizeClaw strips it on the way to the SPA.
+        const centralToken = generateToken()
+        const installRunId = crypto.randomUUID()
 
         let providerSshKeyIds: string[] | undefined
         if (sshKeyResult && sshKeyResult[0]) {
@@ -98,7 +109,8 @@ const provisionClaw = async (
             subdomain,
             DOMAIN,
             gatewayToken,
-            { openrouterApiKey, defaultModel }
+            { openrouterApiKey, defaultModel },
+            { clawId: id, installRunId, centralToken }
         )
 
         await db.insert(claws).values({
@@ -114,11 +126,24 @@ const provisionClaw = async (
             sshKeyId: pending.sshKeyId,
             subdomain,
             gatewayToken,
+            centralToken,
+            installRunId,
             polarSubscriptionId: params.subscriptionId,
             polarProductId: params.productId,
             polarCustomerId: params.customerId,
             subscriptionStatus: subscriptionStatus.active,
             billingInterval: pending.billingInterval
+        })
+
+        // Seed renting_compute so the install-progress page has a row
+        // immediately rather than waiting for cloud-init's first POST.
+        await db.insert(clawInstallPhases).values({
+            id: crypto.randomUUID(),
+            clawId: id,
+            installRunId,
+            phase: 'renting_compute',
+            logChunk: '',
+            createdAt: new Date()
         })
 
         let serverId: string

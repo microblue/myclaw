@@ -21,7 +21,8 @@ const openclawRuntime: ClawRuntime = {
             p.subdomain,
             p.domain,
             p.gatewayToken,
-            p.llm
+            p.llm,
+            p.install
         ),
     curatedPlanIdsByProvider: {
         hetzner: hetznerCuratedPlans,

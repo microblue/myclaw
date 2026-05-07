@@ -61,9 +61,11 @@ vi.mock('@/db', () => ({
 
 vi.mock('@/db/schema', () => ({
     users: { id: 'users.id' },
+    authUsers: { id: 'authUsers.id' },
     sshKeys: { id: 'sshKeys.id', userId: 'sshKeys.userId' },
     claws: { userId: 'claws.userId' },
-    pendingClaws: { expiresAt: 'pendingClaws.expiresAt' }
+    pendingClaws: { expiresAt: 'pendingClaws.expiresAt' },
+    clawInstallPhases: { id: 'clawInstallPhases.id' }
 }))
 
 vi.mock('@/lib/polar', () => ({
@@ -182,8 +184,11 @@ describe('initiateClawPurchase', () => {
         expect(status).toBe(200)
         expect(body.data).toMatchObject({ devMode: true })
         expect(typeof (body.data as { pendingClawId: string }).pendingClawId).toBe('string')
-        // Exactly one insert (claws row) — no pendingClaws insert anymore
-        expect(mockDbInsert).toHaveBeenCalledTimes(1)
+        // Two inserts: the claws row, plus the renting_compute seed
+        // row that drives the install-progress page's first frame
+        // before cloud-init's first phase POST lands. The pendingClaws
+        // insert is gone (dev mode no longer goes through Polar).
+        expect(mockDbInsert).toHaveBeenCalledTimes(2)
         // provisionClawServer called fire-and-forget with the new claw id
         expect(mockProvisionClaw).toHaveBeenCalledTimes(1)
         expect(mockCheckoutsCreate).not.toHaveBeenCalled()

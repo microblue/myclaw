@@ -103,7 +103,20 @@ const provisionClawServer = async ({
             subdomain: claw.subdomain || '',
             domain: DOMAIN,
             gatewayToken: claw.gatewayToken || '',
-            llm: { openrouterApiKey, defaultModel }
+            llm: { openrouterApiKey, defaultModel },
+            // Both fields are NOT NULL on the row by the time we get
+            // here (set by redeemActivationCode / provisionClaw before
+            // dispatching this background worker). Fall back to undef
+            // so generateCloudInit cleanly omits the install-reporter
+            // env block on legacy callers that haven't migrated yet.
+            install:
+                claw.installRunId && claw.centralToken
+                    ? {
+                          clawId: claw.id,
+                          installRunId: claw.installRunId,
+                          centralToken: claw.centralToken
+                      }
+                    : undefined
         })
 
         const serverName = generateServerName(claw.name, claw.id)

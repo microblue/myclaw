@@ -15,6 +15,17 @@ export interface GenerateCloudInitParams {
         openrouterApiKey?: string | null
         defaultModel?: string | null
     }
+    // Optional install-progress reporter context. When set, cloud-init
+    // POSTs phase markers to /install/:clawId/phase with this bearer
+    // so the install-progress page can animate the canonical phase
+    // checklist + tail bootstrap logs in real time. Older runtimes
+    // (PicoClaw, Hermes) ignore this field — they fall back to the
+    // existing stage markers in /var/log/openclaw-bootstrap.log.
+    install?: {
+        clawId: string
+        installRunId: string
+        centralToken: string
+    }
 }
 
 export interface ClawRuntime {

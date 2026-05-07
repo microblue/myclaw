@@ -5,7 +5,14 @@ import crypto from 'crypto'
 import { eq, and, count, lt } from 'drizzle-orm'
 import { inputValidation, billingInterval } from '@openclaw/shared'
 import { db } from '@/db'
-import { users, authUsers, sshKeys, claws, pendingClaws } from '@/db/schema'
+import {
+    users,
+    authUsers,
+    sshKeys,
+    claws,
+    pendingClaws,
+    clawInstallPhases
+} from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
 import {
     generatePassword,
@@ -153,6 +160,8 @@ const initiateClawPurchase = withErrorHandler(
         const clawId = crypto.randomUUID()
         const subdomain = generateSlug(clawId)
         const gatewayToken = generateToken()
+        const centralToken = generateToken()
+        const installRunId = crypto.randomUUID()
         const fakeSubId = `dev-sub-${clawId}`
 
         await db.insert(claws).values({
@@ -168,11 +177,25 @@ const initiateClawPurchase = withErrorHandler(
             sshKeyId: sshKeyId || null,
             subdomain,
             gatewayToken,
+            centralToken,
+            installRunId,
             polarSubscriptionId: fakeSubId,
             polarProductId: 'dev-product',
             polarCustomerId: 'dev-customer',
             subscriptionStatus: subscriptionStatus.active,
             billingInterval: billingCycle
+        })
+
+        // Seed renting_compute so the install-progress page has a row
+        // immediately on redirect, instead of a blank checklist while
+        // the VM boots.
+        await db.insert(clawInstallPhases).values({
+            id: crypto.randomUUID(),
+            clawId,
+            installRunId,
+            phase: 'renting_compute',
+            logChunk: '',
+            createdAt: new Date()
         })
 
         // Fire-and-forget. The helper updates the row with serverId + IP
@@ -188,7 +211,10 @@ const initiateClawPurchase = withErrorHandler(
         return ok(
             c,
             {
-                checkoutUrl: `/claws?provisioning=${clawId}`,
+                // Land on the install-progress page so the user sees
+                // the phase animation. Old `/claws?provisioning=` is
+                // dead — kept only in commit history.
+                checkoutUrl: `/install/${clawId}`,
                 checkoutId: `dev-checkout-${clawId}`,
                 pendingClawId: clawId,
                 expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),

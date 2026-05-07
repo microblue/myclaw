@@ -139,7 +139,7 @@ const RedeemCode: FC = () => {
             const clawId = result.pendingClawId
             navigate(
                 clawId
-                    ? `${ROUTES.CLAWS}?provisioning=${clawId}`
+                    ? `/install/${clawId}`
                     : ROUTES.CLAWS
             )
         } catch (err) {
