@@ -68,12 +68,12 @@ const en = {
         toggleTheme: 'Toggle theme'
     },
     nav: {
-        claws: 'Claws',
+        claws: 'My AI OS',
         dashboard: 'Dashboard',
         playground: 'Playground',
         account: 'Account',
         billing: 'Billing',
-        affiliate: 'Affiliate',
+        affiliate: 'Referrals',
         license: 'License',
         signOut: 'Sign out',
         admin: 'Admin',
@@ -768,16 +768,16 @@ const en = {
         }
     },
     auth: {
-        signIn: 'Sign In',
+        signIn: 'Sign in to MyClaw.One',
         signInDescription:
-            'Sign in to your MyClaw.One account to manage your OpenClaw instances.',
+            'Sign in to MyClaw.One to set up and manage your AI OS.',
         signingIn: 'Signing in...',
         verifyCode: 'Verify Code',
         checkYourEmail: 'Check Your Email',
         checkYourEmailHeading: 'Check your email',
         codeSentTo: 'We sent a 6-digit code to',
         signInToDeployOpenClaw:
-            'Sign-in to manage and deploy OpenClaw instances.',
+            'Sign in to set up and manage your AI OS.',
         emailAddress: 'Email Address',
         emailPlaceholder: 'example@myclaw.cloud',
         continueWithEmail: 'Continue with Email',

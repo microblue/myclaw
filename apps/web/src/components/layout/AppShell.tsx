@@ -52,10 +52,33 @@ type NavItem = {
 // Per docs/aios-design.md §2: super-admin sees Admin (currently the
 // /admin route). Channel partners see a parallel Partner entry that
 // hits /partner. End-users see the standard list.
+// End-user nav: "My AI OS" is the home (their list), Billing for
+// subscription, Referrals for the affiliate program. Order matches
+// the pyramid of how often a user actually clicks: home daily,
+// billing monthly, referrals occasionally.
+//
+// Admin/partner each get a single top-level entry that takes them
+// to their own dashboard root; once there, AppShell swaps the sidebar
+// to the role's sub-menu (see ADMIN_NAV_ITEMS below).
 const GLOBAL_NAV_ITEMS: NavItem[] = [
-    { to: ROUTES.AIOS, label: 'AI-OS', icon: SquaresFourIcon, roles: ['user'] },
-    { to: ROUTES.BILLING, label: 'Billing', icon: ReceiptIcon },
-    { to: ROUTES.AFFILIATE, label: 'Referrals', icon: HandshakeIcon },
+    {
+        to: ROUTES.AIOS,
+        label: 'My AI OS',
+        icon: SquaresFourIcon,
+        roles: ['user']
+    },
+    {
+        to: ROUTES.BILLING,
+        label: 'Billing',
+        icon: ReceiptIcon,
+        roles: ['user']
+    },
+    {
+        to: ROUTES.AFFILIATE,
+        label: 'Referrals',
+        icon: HandshakeIcon,
+        roles: ['user']
+    },
     {
         to: ROUTES.ADMIN_ANALYTICS,
         label: 'Admin',

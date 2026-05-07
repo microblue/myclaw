@@ -116,8 +116,12 @@ const Login: FC = (): ReactNode => {
                         <div className='mb-6'>
                             <Logo />
                         </div>
-                        <p className='text-muted-foreground text-center'>
-                            {t('auth.signInToDeployOpenClaw')}
+                        <h1 className='text-foreground text-center text-2xl font-semibold tracking-tight'>
+                            Sign in to MyClaw.One
+                        </h1>
+                        <p className='text-muted-foreground mt-2 text-center text-sm'>
+                            New here? Enter a fresh email + password — your
+                            account is created automatically.
                         </p>
                     </div>
 
@@ -128,7 +132,7 @@ const Login: FC = (): ReactNode => {
                         <input
                             type='email'
                             required
-                            placeholder='Email'
+                            placeholder='you@example.com'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             autoComplete='email'
@@ -138,7 +142,7 @@ const Login: FC = (): ReactNode => {
                             type='password'
                             required
                             minLength={6}
-                            placeholder='Password'
+                            placeholder='Password (6+ characters)'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             autoComplete='current-password'
@@ -155,14 +159,20 @@ const Login: FC = (): ReactNode => {
                             {submitting && (
                                 <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             )}
-                            Sign in / Sign up
+                            Continue
                         </button>
-                        <p className='text-xs text-muted-foreground'>
-                            New here? Just enter a fresh email + password — an
-                            account is created automatically. Existing users:
-                            sign in. Forgot your password? <Link to='/forgot' className='underline'>Reset it</Link>.
-                        </p>
                     </form>
+                    <p className='text-muted-foreground mt-4 text-center text-xs'>
+                        By continuing you agree to our{' '}
+                        <Link to={ROUTES.TERMS} className='underline'>
+                            Terms
+                        </Link>{' '}
+                        and{' '}
+                        <Link to={ROUTES.PRIVACY} className='underline'>
+                            Privacy Policy
+                        </Link>
+                        .
+                    </p>
                 </motion.div>
             </div>
         </div>
