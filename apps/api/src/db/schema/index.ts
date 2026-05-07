@@ -18,6 +18,7 @@ import channelPartners from '@/db/schema/channelPartners'
 import partnerQuotas from '@/db/schema/partnerQuotas'
 import auditLog from '@/db/schema/auditLog'
 import idempotencyKeys from '@/db/schema/idempotencyKeys'
+import clawInstallPhases from '@/db/schema/clawInstallPhases'
 
 export {
     users,
@@ -39,5 +40,6 @@ export {
     channelPartners,
     partnerQuotas,
     auditLog,
-    idempotencyKeys
+    idempotencyKeys,
+    clawInstallPhases
 }

@@ -12,6 +12,7 @@ import webhooksRoutes from '@/routes/webhooks'
 import installReportsRoutes from '@/routes/install-reports'
 import cloudScriptsRoutes from '@/routes/cloud-scripts'
 import partnerRoutes from '@/routes/partner'
+import installRoutes from '@/routes/install'
 
 export {
     adminRoutes,
@@ -27,5 +28,6 @@ export {
     webhooksRoutes,
     installReportsRoutes,
     cloudScriptsRoutes,
-    partnerRoutes
+    partnerRoutes,
+    installRoutes
 }

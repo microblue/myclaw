@@ -29,6 +29,17 @@ const claws = pgTable(
         subscriptionStatus: text('subscription_status').default('pending'),
         billingInterval: text('billing_interval'),
         activationCodeId: text('activation_code_id'),
+        // ULID per fresh install attempt. claw_install_phases rows
+        // carry the same value so the install page's Realtime
+        // subscription can scope to the current run and never tail
+        // an older install's logs.
+        installRunId: text('install_run_id'),
+        // Per-claw outbound auth token used by the installer + the
+        // claw runtime to call back into central API (phase emits,
+        // outline pushes, last-message previews). Independent of
+        // gatewayToken (inbound) so it can be rotated without
+        // disrupting end-user traffic.
+        centralToken: text('central_token'),
         deletionScheduledAt: timestamp('deletion_scheduled_at', {
             withTimezone: true
         }),
