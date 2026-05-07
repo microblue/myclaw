@@ -23,7 +23,12 @@ export default tseslint.config(
             '**/out/**',
             '**/.vite/**',
             'apps/clawhostgo/resources/**',
-            'apps/clawhostgo/scripts/*.js'
+            'apps/clawhostgo/scripts/*.js',
+            // Studio is a vendored fork (apps/studio/FORK.md). It has
+            // its own eslint config and gets linted from inside its
+            // own directory; running our top-level rules over its
+            // 30k LOC of upstream code would just spam the CI log.
+            'apps/studio/**'
         ]
     },
     js.configs.recommended,

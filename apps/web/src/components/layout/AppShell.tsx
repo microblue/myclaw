@@ -23,7 +23,14 @@ import {
     HouseIcon,
     SparkleIcon,
     CaretLeftIcon,
-    CaretRightIcon
+    CaretRightIcon,
+    ChartLineUpIcon,
+    UsersIcon,
+    HardDrivesIcon,
+    CreditCardIcon,
+    KeyIcon,
+    BugIcon,
+    GearIcon
 } from '@phosphor-icons/react'
 
 type Role = 'user' | 'admin' | 'partner'
@@ -37,24 +44,19 @@ type NavItem = {
     roles?: Role[]
 }
 
-// Sidebar is the primary nav for logged-in users. Account is
-// intentionally NOT here — it lives in the header avatar dropdown.
+// The sidebar is route-aware: when the user is on /admin/* the
+// sidebar shows the admin sub-menu directly (so admin lands with one
+// flat nav, not a sidebar-inside-a-sidebar). Same idea applies to
+// /partner/* once that grows beyond a single page.
 //
 // Per docs/aios-design.md §2: super-admin sees Admin (currently the
 // /admin route). Channel partners see a parallel Partner entry that
 // hits /partner. End-users see the standard list.
-const NAV_ITEMS: NavItem[] = [
-    // End users see the AI-OS landing. The Dashboard component
-    // currently renders this URL identically to the legacy /claws;
-    // P4 will swap it for the Intent home view.
+const GLOBAL_NAV_ITEMS: NavItem[] = [
     { to: ROUTES.AIOS, label: 'AI-OS', icon: SquaresFourIcon, roles: ['user'] },
     { to: ROUTES.BILLING, label: 'Billing', icon: ReceiptIcon },
     { to: ROUTES.AFFILIATE, label: 'Referrals', icon: HandshakeIcon },
     {
-        // Admin landing canonical URL is /admin/analytics. Bare /admin
-        // works too (the Admin component falls back to analytics) but
-        // we link the canonical form so the active-link highlight is
-        // unambiguous.
         to: ROUTES.ADMIN_ANALYTICS,
         label: 'Admin',
         icon: ShieldCheckIcon,
@@ -65,6 +67,61 @@ const NAV_ITEMS: NavItem[] = [
         label: 'Partner',
         icon: StorefrontIcon,
         roles: ['partner']
+    }
+]
+
+// Admin section sub-nav. Surfaced in the sidebar when the URL is
+// under /admin/*, replacing the global nav for that view. Was a
+// nested second-sidebar inside the Admin page — flattened per user
+// request so /admin = backend dashboard with one left rail.
+const ADMIN_NAV_ITEMS: NavItem[] = [
+    {
+        to: ROUTES.ADMIN_ANALYTICS,
+        label: 'Analytics',
+        icon: ChartLineUpIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_USERS,
+        label: 'Users',
+        icon: UsersIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_FLEET,
+        label: 'Fleet',
+        icon: HardDrivesIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_REFERRALS,
+        label: 'Referrals',
+        icon: HandshakeIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_BILLING,
+        label: 'Billing',
+        icon: CreditCardIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_CODES,
+        label: 'Activation codes',
+        icon: KeyIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_INSTALL_REPORTS,
+        label: 'Install reports',
+        icon: BugIcon,
+        roles: ['admin']
+    },
+    {
+        to: ROUTES.ADMIN_SETTINGS,
+        label: 'Settings',
+        icon: GearIcon,
+        roles: ['admin']
     }
 ]
 
@@ -91,10 +148,21 @@ const AppShell: FC<Props> = ({ children, pageActions }) => {
     const displayName =
         profile?.name || profile?.email || ''
 
-    const items = NAV_ITEMS.filter((n) => !n.roles || n.roles.includes(role))
+    // When the URL is under /admin/*, render the admin sub-menu in
+    // place of the global nav so the user gets a single flat sidebar
+    // (was two stacked sidebars before — the AppShell global one and
+    // the AdminPage internal one).
+    const location = useLocation()
+    const onAdminRoute =
+        location.pathname === '/admin' ||
+        location.pathname.startsWith('/admin/')
+    const sourceItems =
+        onAdminRoute && role === 'admin' ? ADMIN_NAV_ITEMS : GLOBAL_NAV_ITEMS
+    const items = sourceItems.filter(
+        (n) => !n.roles || n.roles.includes(role)
+    )
 
     const [mobileOpen, setMobileOpen] = useState(false)
-    const location = useLocation()
 
     // Close drawer on route change
     useEffect(() => {

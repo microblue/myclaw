@@ -46,6 +46,7 @@ const NewClawStepPlan = lazy(() => import('@/pages/NewClaw/StepPlan'))
 const NewClawStepReview = lazy(() => import('@/pages/NewClaw/StepReview'))
 const RedeemCode = lazy(() => import('@/pages/RedeemCode'))
 const InstallProgress = lazy(() => import('@/pages/Install/Progress'))
+const IntentDetail = lazy(() => import('@/pages/Intent/Detail'))
 const ClawDetail = lazy(() => import('@/pages/ClawDetail'))
 const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
@@ -162,6 +163,14 @@ const App: FC = (): ReactNode => {
                             element={
                                 <ProtectedRoute>
                                     <InstallProgress />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.AIOS_INTENT}
+                            element={
+                                <ProtectedRoute>
+                                    <IntentDetail />
                                 </ProtectedRoute>
                             }
                         />

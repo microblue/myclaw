@@ -1,3 +1,10 @@
 packages:
     - 'apps/*'
+    # The studio fork (apps/studio) is a vendored Next.js app that
+    # ships ON THE CLAW VPS, not as part of the central myclaw build.
+    # Excluding it from the workspace means `pnpm install` at the repo
+    # root won't drag in its hundreds of Next.js deps, and turbo's
+    # build/test pipeline ignores it. To work on studio:
+    #   cd apps/studio && pnpm install && pnpm dev
+    - '!apps/studio'
     - 'packages/*'

@@ -34,12 +34,10 @@ import {
     CreditCardIcon,
     GearIcon,
     KeyIcon,
-    BugIcon,
-    SidebarSimpleIcon
+    BugIcon
 } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 
-const SIDEBAR_PREF_KEY = 'admin-sidebar-collapsed'
 import AdminUserSkeleton from '@/pages/AdminUserSkeleton'
 import { UsersTab } from '@/pages/Admin/tabs'
 
@@ -113,20 +111,6 @@ const Admin: FC = (): ReactNode => {
         useState<AdminEntitySelection | null>(null)
     const isAdmin = profile?.role === userRole.admin
     const { data: stats } = useAdminStats()
-
-    // Persist sidebar collapsed state across reloads. Default = expanded.
-    // We read once on mount (synchronous localStorage is fine in the SPA).
-    const [collapsed, setCollapsed] = useState<boolean>(() => {
-        if (typeof window === 'undefined') return false
-        return window.localStorage.getItem(SIDEBAR_PREF_KEY) === '1'
-    })
-    useEffect(() => {
-        window.localStorage.setItem(SIDEBAR_PREF_KEY, collapsed ? '1' : '0')
-    }, [collapsed])
-
-    const setActiveTab = (tab: string) => {
-        navigate(`/admin/${tab}`)
-    }
 
     if (!authLoading && !isProfileLoading && !isAdmin)
         return <Navigate to={ROUTES.CLAWS} replace />
@@ -210,145 +194,50 @@ const Admin: FC = (): ReactNode => {
                         </div>
                     </Fragment>
                 ) : (
-                    <div
-                        className={`grid gap-6 ${
-                            collapsed
-                                ? 'md:grid-cols-[56px_1fr]'
-                                : 'md:grid-cols-[200px_1fr]'
-                        }`}
-                    >
-                        <aside>
-                            <div
-                                className={`mb-4 flex items-center ${
-                                    collapsed
-                                        ? 'justify-center'
-                                        : 'justify-between px-2'
-                                }`}
-                            >
-                                {!collapsed && (
-                                    <h1 className='text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
-                                        Admin
-                                    </h1>
-                                )}
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        setCollapsed((prev) => !prev)
-                                    }
-                                    className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground rounded-md p-1.5 transition-colors'
-                                    title={
-                                        collapsed
-                                            ? 'Expand sidebar'
-                                            : 'Collapse sidebar'
-                                    }
-                                    aria-label={
-                                        collapsed
-                                            ? 'Expand sidebar'
-                                            : 'Collapse sidebar'
-                                    }
-                                >
-                                    <SidebarSimpleIcon className='h-4 w-4' />
-                                </button>
+                    <section>
+                        {activeSection && (
+                            <div className='mb-4'>
+                                <PageHeader
+                                    title={activeSection.label}
+                                    description={t('admin.description')}
+                                />
                             </div>
-                            <nav className='flex flex-col gap-0.5'>
-                                {sections.map((section) => {
-                                    const isActive = activeTab === section.key
-                                    return (
-                                        <button
-                                            key={section.key}
-                                            onClick={() =>
-                                                !isActive &&
-                                                setActiveTab(section.key)
-                                            }
-                                            disabled={isActive}
-                                            title={
-                                                collapsed
-                                                    ? section.label
-                                                    : undefined
-                                            }
-                                            className={`flex items-center gap-2 rounded-md text-left text-sm transition-colors ${
-                                                collapsed
-                                                    ? 'justify-center p-2'
-                                                    : 'justify-between px-3 py-2'
-                                            } ${
-                                                isActive
-                                                    ? 'bg-foreground/10 text-foreground font-medium'
-                                                    : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
-                                            }`}
-                                        >
-                                            <span
-                                                className={
-                                                    collapsed
-                                                        ? ''
-                                                        : 'flex items-center gap-2'
-                                                }
-                                            >
-                                                <section.icon className='h-4 w-4 shrink-0' />
-                                                {!collapsed && section.label}
-                                            </span>
-                                            {!collapsed &&
-                                                section.count !== undefined && (
-                                                    <span
-                                                        className={`text-xs ${
-                                                            isActive
-                                                                ? 'text-foreground/70'
-                                                                : 'text-muted-foreground/70'
-                                                        }`}
-                                                    >
-                                                        {section.count}
-                                                    </span>
-                                                )}
-                                        </button>
-                                    )
-                                })}
-                            </nav>
-                        </aside>
-
-                        <section>
-                            {activeSection && (
-                                <div className='mb-4'>
-                                    <PageHeader
-                                        title={activeSection.label}
-                                        description={t('admin.description')}
-                                    />
-                                </div>
+                        )}
+                        <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-6'>
+                            {activeTab === ADMIN_TABS.CLAWS && (
+                                <AdminClawsTab
+                                    onSelectEntity={setSelectedEntity}
+                                />
                             )}
-                            <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-6'>
-                                {activeTab === ADMIN_TABS.CLAWS && (
-                                    <AdminClawsTab
-                                        onSelectEntity={setSelectedEntity}
-                                    />
-                                )}
-                                {activeTab === ADMIN_TABS.REFERRALS && (
-                                    <AdminReferralsTab
-                                        onSelectEntity={setSelectedEntity}
-                                    />
-                                )}
-                                {activeTab === ADMIN_TABS.BILLING && (
-                                    <AdminBillingTab
-                                        onSelectEntity={setSelectedEntity}
-                                    />
-                                )}
-                                {activeTab === ADMIN_TABS.ANALYTICS && (
-                                    <AdminAnalyticsTab />
-                                )}
-                                {activeTab === ADMIN_TABS.USERS && (
-                                    <UsersTab
-                                        onSelectEntity={setSelectedEntity}
-                                    />
-                                )}
-                                {activeTab === ADMIN_TABS.CODES && (
-                                    <AdminActivationCodesTab />
-                                )}
-                                {activeTab === ADMIN_TABS.INSTALL_REPORTS && (
-                                    <AdminInstallReportsTab />
-                                )}
-                                {activeTab === ADMIN_TABS.SETTINGS && (
-                                    <AdminSettingsTab />
-                                )}
-                            </div>
-                        </section>
-                    </div>
+                            {activeTab === ADMIN_TABS.REFERRALS && (
+                                <AdminReferralsTab
+                                    onSelectEntity={setSelectedEntity}
+                                />
+                            )}
+                            {activeTab === ADMIN_TABS.BILLING && (
+                                <AdminBillingTab
+                                    onSelectEntity={setSelectedEntity}
+                                />
+                            )}
+                            {activeTab === ADMIN_TABS.ANALYTICS && (
+                                <AdminAnalyticsTab />
+                            )}
+                            {activeTab === ADMIN_TABS.USERS && (
+                                <UsersTab
+                                    onSelectEntity={setSelectedEntity}
+                                />
+                            )}
+                            {activeTab === ADMIN_TABS.CODES && (
+                                <AdminActivationCodesTab />
+                            )}
+                            {activeTab === ADMIN_TABS.INSTALL_REPORTS && (
+                                <AdminInstallReportsTab />
+                            )}
+                            {activeTab === ADMIN_TABS.SETTINGS && (
+                                <AdminSettingsTab />
+                            )}
+                        </div>
+                    </section>
                 )}
             </div>
 

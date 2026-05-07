@@ -13,6 +13,7 @@ const PATHS = {
     AIOS_INSTALL: 'aios/install',
     AIOS_INSTALL_PROGRESS: 'aios/install',
     AIOS_DETAIL: 'aios',
+    AIOS_INTENT: 'aios',
     ADMIN_ANALYTICS: 'admin/analytics',
     ADMIN_USERS: 'admin/users',
     ADMIN_FLEET: 'admin/fleet',
