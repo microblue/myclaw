@@ -54,7 +54,10 @@ Wants=openclaw-gateway.service
 [Service]
 # Studio reads STUDIO_ACCESS_TOKEN as the cookie-setting bearer for
 # any non-loopback bind. We reuse the gateway token so the dashboard
-# can deep-link with `?access_token=…` and the user lands authed.
+# can deep-link with the access_token query param and the user lands
+# authed. (Comment intentionally avoids backticks + unicode ellipsis
+# because this heredoc is unquoted-delimiter so bash command-substitutes
+# anything in backticks — that bug previously broke the install.)
 Environment=STUDIO_ACCESS_TOKEN=${GATEWAY_TOKEN}
 Environment=HOST=127.0.0.1
 Environment=PORT=3000

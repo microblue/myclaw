@@ -386,18 +386,30 @@ bash /tmp/install-studio.sh
 rm -f /tmp/install-studio.sh
 
 stage studio-wait
-# install-studio.sh runs `systemctl enable --now openclaw-studio.service`
-# but Type=simple means the unit is "started" the moment the process
-# forks — Studio's HTTP listener may still be coming up. Block until
-# port 3000 binds (or 60s elapsed) so the user's redirect lands on a
-# served page instead of a 502.
-for i in $(seq 1 30); do
+# install-studio.sh starts openclaw-studio.service (Type=simple) but
+# Studio's first run goes through its own self-bootstrap: cloning the
+# studio source from GitHub into /openclaw-studio, npm-installing
+# (~150 deps), auto-installing typescript for next.config.ts, then
+# starting the Next.js dev server. That whole sequence takes 5-8 min
+# on a 1-vCPU Lightsail box — way past the 60s window the original
+# loop allowed. Without a long-enough wait `phase ready` fires while
+# Studio is still installing dependencies, the user redirect lands
+# on a Caddy 502, and the install looks broken even though it isn't.
+#
+# 360 iterations × 5s = 30 min ceiling. We break the moment :3000
+# answers, so the typical happy path still finishes within 5-8 min;
+# the ceiling is just there so a wedged Studio doesn't hang the
+# bootstrap forever.
+for i in $(seq 1 360); do
     if curl -sf -o /dev/null http://127.0.0.1:3000; then
-        echo "[oc] studio up after ${i}x 2s"
+        echo "[oc] studio up after ${i}x 5s"
         break
     fi
-    sleep 2
+    sleep 5
 done
+if ! curl -sf -o /dev/null http://127.0.0.1:3000; then
+    echo "[oc] WARNING: studio did not bind :3000 within 30 min — phase ready will fire anyway so the user is at least redirected; investigate via journalctl -u openclaw-studio"
+fi
 
 echo "status=ok at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BOOTSTRAP_STATE"
 echo "=== openclaw bootstrap finished at $(date -u) ==="
