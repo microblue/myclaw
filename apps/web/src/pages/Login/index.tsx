@@ -29,16 +29,26 @@ const Login: FC = (): ReactNode => {
     const planParam = searchParams.get('plan')
     const deployParam = searchParams.get('deploy')
     const providerParam = searchParams.get('provider')
+    const nextParam = searchParams.get('next')
+
+    // Whitelist of paths the `next` query is allowed to redirect to.
+    // Open-redirect protection: never honor an arbitrary external URL
+    // even if the SPA is the only thing rendering it (a tab opener or
+    // password manager could land on /login?next=https://evil... and
+    // bounce the user post-auth without us guarding here).
+    const isSafeNext = (raw: string | null): raw is string =>
+        !!raw && raw.startsWith('/') && !raw.startsWith('//')
 
     const getRedirectUrl = () => {
+        if (isSafeNext(nextParam)) return nextParam
         if (planParam) {
             const providerSuffix = providerParam
                 ? `&provider=${providerParam}`
                 : ''
-            return `${ROUTES.CLAWS}?plan=${planParam}${providerSuffix}`
+            return `${ROUTES.AIOS}?plan=${planParam}${providerSuffix}`
         }
-        if (deployParam) return `${ROUTES.CLAWS}?deploy=true`
-        return ROUTES.CLAWS
+        if (deployParam) return ROUTES.AIOS_INSTALL
+        return ROUTES.AIOS
     }
 
     useEffect(() => {

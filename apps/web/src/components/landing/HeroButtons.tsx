@@ -5,8 +5,17 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib'
-import { LightningIcon } from '@phosphor-icons/react'
+import { SparkleIcon } from '@phosphor-icons/react'
 
+// The Hero CTA goes straight to the AI OS setup flow. Logged-in
+// users land on /aios/install (the redeem screen — they can paste
+// an activation code or pick a fresh setup). Logged-out users hit
+// /login with `next=/aios/install` so the redirect after sign-in
+// drops them back into the same flow rather than the generic /aios
+// list. Previously the button pointed at `/claws?deploy=true`, but
+// the role-routed /claws redirect now drops the query string before
+// the Dashboard's `?deploy=true` handler runs, so the click was a
+// dead end on every role.
 const HeroButtons: FC<HeroButtonsProps> = ({
     deployLabel,
     large
@@ -22,11 +31,11 @@ const HeroButtons: FC<HeroButtonsProps> = ({
             <Link
                 to={
                     user
-                        ? `${ROUTES.CLAWS}?deploy=true`
-                        : `${ROUTES.LOGIN}?deploy=true`
+                        ? ROUTES.AIOS_INSTALL
+                        : `${ROUTES.LOGIN}?next=${encodeURIComponent(ROUTES.AIOS_INSTALL)}`
                 }
             >
-                <LightningIcon className='h-5 w-5' weight='fill' />
+                <SparkleIcon className='h-5 w-5' weight='fill' />
                 {deployLabel}
             </Link>
         </Button>
