@@ -201,8 +201,15 @@ const generateCloudInit = (
     // they're set. Omitted entirely when no install context is given,
     // so legacy callers / tests get an installer with phase reporting
     // silently skipped.
+    // IE points to the install-phase POST endpoint. The API is
+    // reverse-proxied at /api/* in production (nginx in front of the
+    // Hono server), so the URL must include the /api prefix —
+    // without it nginx serves the SPA route and returns 405 on POST,
+    // which the installer's `|| true` silently swallowed. Result was
+    // every claw stuck at `renting_compute` because no phase past
+    // that ever made it back to the DB.
     const installEnv = install
-        ? `export IE='https://${domain}/install/${install.clawId}/phase'
+        ? `export IE='https://${domain}/api/install/${install.clawId}/phase'
 export IT='${install.centralToken}'
 export IR='${install.installRunId}'`
         : ''

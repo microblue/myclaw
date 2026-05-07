@@ -58,8 +58,13 @@ describe('generateCloudInit (wrapper)', () => {
     })
 
     it('exports install-progress reporter env vars when install context provided', () => {
+        // Must include the /api prefix — production nginx serves
+        // the SPA on /install and would 405 the installer's POST,
+        // which the `|| true` in phase() silently swallows. Caused
+        // a fleet-wide "stuck at renting_compute" symptom until
+        // we found nginx eating the POSTs.
         expect(output).toContain(
-            "export IE='https://myclaw.one/install/claw-1/phase'"
+            "export IE='https://myclaw.one/api/install/claw-1/phase'"
         )
         expect(output).toContain("export IT='central-tok'")
         expect(output).toContain("export IR='run-1'")
