@@ -13,6 +13,7 @@ import installReportsRoutes from '@/routes/install-reports'
 import cloudScriptsRoutes from '@/routes/cloud-scripts'
 import partnerRoutes from '@/routes/partner'
 import installRoutes from '@/routes/install'
+import intentsRoutes from '@/routes/intents'
 
 export {
     adminRoutes,
@@ -29,5 +30,6 @@ export {
     installReportsRoutes,
     cloudScriptsRoutes,
     partnerRoutes,
-    installRoutes
+    installRoutes,
+    intentsRoutes
 }

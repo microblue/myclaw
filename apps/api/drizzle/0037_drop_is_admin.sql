@@ -1,0 +1,12 @@
+-- 0037: drop legacy users.is_admin column
+--
+-- Per docs/aios-design.md §8 / §9 P5: with users.role driving every
+-- gate (superAdminOnly / partnerOrSuperAdmin) and the Hono Variables
+-- `isAdmin` boolean computed from `role === 'admin'` in app.ts, the
+-- on-disk column is dead weight. Dropping it closes the staged
+-- migration so a future reviewer doesn't think there are two sources
+-- of truth.
+--
+-- Idempotent: IF EXISTS is a no-op when the column was already
+-- removed by a hand-applied migration during the role rollout.
+ALTER TABLE "users" DROP COLUMN IF EXISTS "is_admin";

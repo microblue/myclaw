@@ -8,6 +8,7 @@ const PATHS = {
     NEW_CLAW_PLAN: 'new/plan',
     NEW_CLAW_REVIEW: 'new/review',
     REDEEM_CODE: 'claws/redeem',
+    INSTALL_PROGRESS: 'install',
     ACCOUNT: 'account',
     BILLING: 'billing',
     ADMIN: 'admin',

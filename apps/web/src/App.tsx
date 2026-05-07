@@ -17,6 +17,7 @@ const NewClawStepProvider = lazy(() => import('@/pages/NewClaw/StepProvider'))
 const NewClawStepPlan = lazy(() => import('@/pages/NewClaw/StepPlan'))
 const NewClawStepReview = lazy(() => import('@/pages/NewClaw/StepReview'))
 const RedeemCode = lazy(() => import('@/pages/RedeemCode'))
+const InstallProgress = lazy(() => import('@/pages/Install/Progress'))
 const ClawDetail = lazy(() => import('@/pages/ClawDetail'))
 const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
@@ -124,6 +125,14 @@ const App: FC = (): ReactNode => {
                             element={
                                 <ProtectedRoute>
                                     <RedeemCode />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.INSTALL_PROGRESS}
+                            element={
+                                <ProtectedRoute>
+                                    <InstallProgress />
                                 </ProtectedRoute>
                             }
                         />

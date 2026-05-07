@@ -31,7 +31,8 @@ import {
     installReportsRoutes,
     cloudScriptsRoutes,
     partnerRoutes,
-    installRoutes
+    installRoutes,
+    intentsRoutes
 } from '@/routes'
 
 const app = new Hono<HonoEnv>()
@@ -172,6 +173,7 @@ app.route('/ai', aiRoutes)
 app.route('/claws', clawsRoutes)
 app.route('/ssh-keys', sshKeysRoutes)
 app.route('/users', usersRoutes)
+app.route('/', intentsRoutes)
 
 app.notFound((c) => fail(c, t('api.notFound'), 404))
 

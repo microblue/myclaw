@@ -38,4 +38,26 @@ describe('sanitizeClaw', () => {
         expect(result.status).toBe('running')
         expect(result.ip).toBe('1.2.3.4')
     })
+
+    it('strips centralToken even when no rootPassword is set', () => {
+        const claw = {
+            id: '1',
+            name: 'test',
+            centralToken: 'super-secret-bearer'
+        }
+        const result = sanitizeClaw(claw)
+        expect('centralToken' in result).toBe(false)
+        expect((result as Record<string, unknown>).centralToken).toBeUndefined()
+    })
+
+    it('exposes installRunId so the install-progress page can subscribe', () => {
+        const claw = {
+            id: '1',
+            installRunId: 'run-abc',
+            centralToken: 'secret'
+        }
+        const result = sanitizeClaw(claw) as Record<string, unknown>
+        expect(result.installRunId).toBe('run-abc')
+        expect(result.centralToken).toBeUndefined()
+    })
 })

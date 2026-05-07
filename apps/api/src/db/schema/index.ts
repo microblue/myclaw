@@ -19,6 +19,9 @@ import partnerQuotas from '@/db/schema/partnerQuotas'
 import auditLog from '@/db/schema/auditLog'
 import idempotencyKeys from '@/db/schema/idempotencyKeys'
 import clawInstallPhases from '@/db/schema/clawInstallPhases'
+import intents from '@/db/schema/intents'
+import intentAgents from '@/db/schema/intentAgents'
+import intentArtifacts from '@/db/schema/intentArtifacts'
 
 export {
     users,
@@ -41,5 +44,8 @@ export {
     partnerQuotas,
     auditLog,
     idempotencyKeys,
-    clawInstallPhases
+    clawInstallPhases,
+    intents,
+    intentAgents,
+    intentArtifacts
 }
