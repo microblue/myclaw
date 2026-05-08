@@ -28,7 +28,7 @@ export interface MintState {
     expiresAt: string // YYYY-MM-DD or ''
 }
 
-export const ALLOWED_VALIDITY_DAYS = [7, 90, 180, 365] as const
+export const ALLOWED_VALIDITY_DAYS = [3, 90, 180, 365] as const
 export const ALLOWED_SEATS = [1, 5, 25, 50] as const
 
 export const readState = (search: URLSearchParams): MintState => {

@@ -32,7 +32,7 @@ const validityLabel = (days?: number | null) => {
     if (days === 365) return '1 year'
     if (days % 365 === 0) return `${days / 365} years`
     if (days === 30) return '30 days'
-    if (days === 7) return '7 days'
+    if (days === 3) return '3 days'
     return `${days} day${days === 1 ? '' : 's'}`
 }
 

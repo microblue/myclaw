@@ -46,9 +46,10 @@ const pickRandomPartner = (): string =>
 
 const COUNT_PRESETS = [1, 5, 10, 25, 50, 100]
 // Per the white-paper appendix A code spec (xxxxxxxxx-ddd-uuu) these
-// match the four standard subscription windows. Free tier is 7 days.
+// match the four standard subscription windows. Free tier is 3 days
+// (was 7 — shortened to push partners toward paid tiers faster).
 const VALIDITY_PRESETS: { label: string; value: number }[] = [
-    { label: '7 days (trial)', value: 7 },
+    { label: '3 days (trial)', value: 3 },
     { label: '90 days', value: 90 },
     { label: '180 days', value: 180 },
     { label: '365 days', value: 365 }
