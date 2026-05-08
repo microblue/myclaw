@@ -175,6 +175,13 @@ const AdminUserDetailView: FC<AdminUserDetailViewProps> = ({
                                         v as 'user' | 'admin' | 'partner'
                                     )
                                 }
+                                displayValue={
+                                    editRole === userRole.admin
+                                        ? 'admin — full backend access'
+                                        : editRole === userRole.partner
+                                          ? 'partner — channel partner'
+                                          : 'user — standard end user'
+                                }
                             >
                                 <SelectTrigger className='bg-background h-7 text-xs' />
                                 <SelectContent>
