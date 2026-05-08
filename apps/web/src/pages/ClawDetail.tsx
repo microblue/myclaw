@@ -81,7 +81,7 @@ const ClawDetail: FC = () => {
 
     if (isLoading) {
         return (
-            <AppShell>
+            <AppShell hideSidebar>
                 <div className='flex h-[calc(100vh-3.5rem)] items-center justify-center'>
                     <div className='h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent opacity-50' />
                 </div>
@@ -90,7 +90,7 @@ const ClawDetail: FC = () => {
     }
     if (error || !claw) {
         return (
-            <AppShell>
+            <AppShell hideSidebar>
                 <div className='mx-auto max-w-lg p-10 text-center'>
                     <p className='text-destructive text-sm'>
                         Could not load this instance.
@@ -181,7 +181,7 @@ const ClawDetail: FC = () => {
     )
 
     return (
-        <AppShell>
+        <AppShell hideSidebar>
             <div className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
                 <DetailHeader claw={claw} />
 
