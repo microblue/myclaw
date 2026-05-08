@@ -1,10 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type {
     AdminUserDetailViewProps,
-    AdminUserDetailClaw,
-    AdminUserDetailSSHKey,
-    AdminUserDetailVolume,
-    BillingOrder
+    AdminUserDetailClaw
 } from '@/ts/Interfaces'
 
 import { Fragment, useState, useEffect } from 'react'
@@ -26,9 +23,6 @@ import {
     CircleNotchIcon,
     UserIcon,
     HardDrivesIcon,
-    KeyIcon,
-    DatabaseIcon,
-    ReceiptIcon,
     ShieldCheckIcon,
     FloppyDiskIcon
 } from '@phosphor-icons/react'
@@ -62,13 +56,6 @@ const AdminUserDetailView: FC<AdminUserDetailViewProps> = ({
             hour: '2-digit',
             minute: '2-digit'
         })
-    }
-
-    const formatCurrency = (amount: number, currency: string = 'usd') => {
-        return new Intl.NumberFormat(getLocale(), {
-            style: 'currency',
-            currency: currency.toUpperCase()
-        }).format(amount / 100)
     }
 
     const handleSave = async () => {
@@ -246,158 +233,6 @@ const AdminUserDetailView: FC<AdminUserDetailViewProps> = ({
                                             <AdminStatusBadge
                                                 status={claw.status}
                                             />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className='space-y-3'>
-                    <div className='flex items-center gap-2'>
-                        <KeyIcon className='h-4 w-4' />
-                        <h4 className='text-sm font-medium'>
-                            {t('admin.sshKeys')}
-                            {user.sshKeys.length > 0 &&
-                                ` (${user.sshKeys.length})`}
-                        </h4>
-                    </div>
-                    {user.sshKeys.length === 0 ? (
-                        <div className='border-border rounded-lg border p-4 text-center'>
-                            <p className='text-muted-foreground text-sm'>
-                                {t('admin.noSshKeys')}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className='space-y-2'>
-                            {user.sshKeys.map((key: AdminUserDetailSSHKey) => (
-                                <Card key={key.id}>
-                                    <CardContent className='py-3'>
-                                        <div className='flex items-center justify-between gap-2'>
-                                            <div className='flex min-w-0 items-center gap-3'>
-                                                <div className='bg-muted flex h-9 w-9 shrink-0 items-center justify-center rounded-full'>
-                                                    <KeyIcon className='text-muted-foreground h-4 w-4' />
-                                                </div>
-                                                <div className='min-w-0'>
-                                                    <span className='truncate font-medium'>
-                                                        {key.name}
-                                                    </span>
-                                                    <p className='text-muted-foreground truncate font-mono text-xs'>
-                                                        {key.fingerprint}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <span className='text-muted-foreground shrink-0 text-xs'>
-                                                {formatDate(key.createdAt)}
-                                            </span>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className='space-y-3'>
-                    <div className='flex items-center gap-2'>
-                        <DatabaseIcon className='h-4 w-4' />
-                        <h4 className='text-sm font-medium'>
-                            {t('admin.volumes')}
-                            {user.volumes.length > 0 &&
-                                ` (${user.volumes.length})`}
-                        </h4>
-                    </div>
-                    {user.volumes.length === 0 ? (
-                        <div className='border-border rounded-lg border p-4 text-center'>
-                            <p className='text-muted-foreground text-sm'>
-                                {t('admin.noVolumes')}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className='space-y-2'>
-                            {user.volumes.map((vol: AdminUserDetailVolume) => (
-                                <Card key={vol.id}>
-                                    <CardContent className='py-3'>
-                                        <div className='flex items-center justify-between gap-2'>
-                                            <div className='min-w-0'>
-                                                <span className='truncate font-medium'>
-                                                    {vol.name}
-                                                </span>
-                                                <p className='text-muted-foreground truncate text-xs'>
-                                                    {t('admin.unitGB', {
-                                                        size: vol.size
-                                                    })}{' '}
-                                                    · {vol.location}
-                                                </p>
-                                            </div>
-                                            <AdminStatusBadge
-                                                status={vol.status}
-                                            />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className='space-y-3'>
-                    <div className='flex items-center gap-2'>
-                        <ReceiptIcon className='h-4 w-4' />
-                        <h4 className='text-sm font-medium'>
-                            {t('admin.billing')}
-                            {user.billingOrders.length > 0 &&
-                                ` (${user.billingOrders.length})`}
-                        </h4>
-                    </div>
-                    {user.billingOrders.length === 0 ? (
-                        <div className='border-border rounded-lg border p-4 text-center'>
-                            <p className='text-muted-foreground text-sm'>
-                                {t('admin.noBilling')}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className='space-y-2'>
-                            {user.billingOrders.map((order: BillingOrder) => (
-                                <Card key={order.id}>
-                                    <CardContent className='py-3'>
-                                        <div className='flex items-center justify-between gap-2'>
-                                            <div className='min-w-0'>
-                                                <span className='truncate font-medium'>
-                                                    {order.productName ||
-                                                        order.billingReason}
-                                                </span>
-                                                <p className='text-muted-foreground truncate text-xs'>
-                                                    {formatDate(
-                                                        order.createdAt
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <div className='flex items-center gap-3'>
-                                                <div className='text-right text-sm'>
-                                                    <div className='flex items-center gap-2 font-medium'>
-                                                        {order.discountAmount >
-                                                            0 && (
-                                                            <span className='text-muted-foreground line-through'>
-                                                                {formatCurrency(
-                                                                    order.subtotalAmount,
-                                                                    order.currency
-                                                                )}
-                                                            </span>
-                                                        )}
-                                                        <span>
-                                                            {formatCurrency(
-                                                                order.totalAmount,
-                                                                order.currency
-                                                            )}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <AdminStatusBadge
-                                                    status={order.status}
-                                                />
-                                            </div>
                                         </div>
                                     </CardContent>
                                 </Card>
