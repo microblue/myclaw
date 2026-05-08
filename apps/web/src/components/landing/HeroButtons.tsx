@@ -6,22 +6,20 @@ import { Fragment } from 'react'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib'
-import { SparkleIcon, SignInIcon } from '@phosphor-icons/react'
+import { SparkleIcon, SignInIcon, SquaresFourIcon } from '@phosphor-icons/react'
 
 // The Hero CTA goes straight to the AI OS setup flow. Logged-in
 // users land on /aios/install (the redeem screen — they can paste
 // an activation code or pick a fresh setup). Logged-out users hit
 // /login with `next=/aios/install` so the redirect after sign-in
 // drops them back into the same flow rather than the generic /aios
-// list. Previously the button pointed at `/claws?deploy=true`, but
-// the role-routed /claws redirect now drops the query string before
-// the Dashboard's `?deploy=true` handler runs, so the click was a
-// dead end on every role.
+// list.
 //
-// The secondary Login button gives users a path into their existing
-// AI OS list without going through the setup flow. Logged-in users
-// jump directly to /aios; logged-out users hit /login with `next=/aios`
-// so they land on the list rather than the setup screen post-auth.
+// The secondary button is role-aware: a logged-out visitor sees
+// "Login" and is sent through /login → /aios after auth; a
+// logged-in user already has a session, so we surface "My AI OS"
+// straight to /aios — showing them a Login button when they're
+// already authed reads as broken.
 const HeroButtons: FC<HeroButtonsProps> = ({
     deployLabel,
     large
@@ -59,8 +57,23 @@ const HeroButtons: FC<HeroButtonsProps> = ({
                             : `${ROUTES.LOGIN}?next=${encodeURIComponent(ROUTES.AIOS)}`
                     }
                 >
-                    <SignInIcon className='h-5 w-5' weight='regular' />
-                    Login
+                    {user ? (
+                        <>
+                            <SquaresFourIcon
+                                className='h-5 w-5'
+                                weight='regular'
+                            />
+                            My AI OS
+                        </>
+                    ) : (
+                        <>
+                            <SignInIcon
+                                className='h-5 w-5'
+                                weight='regular'
+                            />
+                            Login
+                        </>
+                    )}
                 </Link>
             </Button>
         </Fragment>
