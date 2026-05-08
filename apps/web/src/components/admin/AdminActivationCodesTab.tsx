@@ -129,6 +129,15 @@ const AdminActivationCodesTab: FC = () => {
     const handleViewBatch = (batchId: string) => {
         setBatch(batchId)
         setStatus('all')
+        // Scroll the codes section into view so the user sees the
+        // filtered table without having to scroll past the batch list.
+        if (typeof window !== 'undefined') {
+            window.requestAnimationFrame(() => {
+                document
+                    .getElementById('admin-codes-table')
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            })
+        }
     }
 
     const codes = codesQuery.data?.items || []
@@ -147,14 +156,20 @@ const AdminActivationCodesTab: FC = () => {
                 batches={batches}
                 isLoading={batchesQuery.isLoading}
                 isError={batchesQuery.isError}
+                activeBatchId={batch}
                 onDownload={handleDownload}
                 onVoidBatch={handleVoidBatch}
                 onViewBatch={handleViewBatch}
             />
 
-            <div className='mb-3 mt-8 flex items-end justify-between gap-3'>
+            <div
+                id='admin-codes-table'
+                className='mb-3 mt-8 flex items-end justify-between gap-3 scroll-mt-24'
+            >
                 <div>
-                    <h4 className='text-base font-semibold'>All codes</h4>
+                    <h4 className='text-base font-semibold'>
+                        {batch ? 'Codes in this batch' : 'All codes'}
+                    </h4>
                     <p className='text-muted-foreground text-xs'>
                         {batch
                             ? `Filtered to batch ${batch.slice(0, 14)}…`
@@ -242,6 +257,7 @@ const BatchesSection: FC<{
     batches: BatchRow[]
     isLoading: boolean
     isError: boolean
+    activeBatchId: string
     onDownload: (batchId: string) => void
     onVoidBatch: (batchId: string, unused: number) => void
     onViewBatch: (batchId: string) => void
@@ -249,6 +265,7 @@ const BatchesSection: FC<{
     batches,
     isLoading,
     isError,
+    activeBatchId,
     onDownload,
     onVoidBatch,
     onViewBatch
@@ -294,22 +311,21 @@ const BatchesSection: FC<{
                         {batches.map((b) => (
                             <tr
                                 key={b.batchId}
-                                className='border-border border-t'
+                                onClick={() => onViewBatch(b.batchId)}
+                                className={`border-border hover:bg-foreground/5 border-t cursor-pointer transition-colors ${
+                                    activeBatchId === b.batchId
+                                        ? 'bg-primary/10 hover:bg-primary/15'
+                                        : ''
+                                }`}
+                                title='Click to show codes in this batch'
                             >
                                 <Td>
                                     <div className='font-medium'>
                                         {b.partnerName || '—'}
                                     </div>
-                                    <button
-                                        type='button'
-                                        onClick={() =>
-                                            onViewBatch(b.batchId)
-                                        }
-                                        className='text-muted-foreground hover:text-foreground font-mono text-xs underline-offset-2 hover:underline'
-                                        title='Filter the codes table to this batch'
-                                    >
+                                    <span className='text-muted-foreground font-mono text-xs'>
                                         {b.batchId.slice(0, 14)}…
-                                    </button>
+                                    </span>
                                 </Td>
                                 <Td>
                                     <div>
@@ -364,9 +380,10 @@ const BatchesSection: FC<{
                                     <div className='flex justify-end gap-1'>
                                         <button
                                             type='button'
-                                            onClick={() =>
+                                            onClick={(e) => {
+                                                e.stopPropagation()
                                                 onDownload(b.batchId)
-                                            }
+                                            }}
                                             className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground rounded-md p-1.5 transition-colors'
                                             title='Download CSV'
                                             aria-label='Download CSV'
@@ -375,12 +392,13 @@ const BatchesSection: FC<{
                                         </button>
                                         <button
                                             type='button'
-                                            onClick={() =>
+                                            onClick={(e) => {
+                                                e.stopPropagation()
                                                 onVoidBatch(
                                                     b.batchId,
                                                     b.unused
                                                 )
-                                            }
+                                            }}
                                             disabled={b.unused === 0}
                                             className='text-muted-foreground hover:bg-foreground/5 hover:text-destructive rounded-md p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40'
                                             title={
