@@ -174,17 +174,27 @@ const Home: FC = () => {
                             claw={claw}
                             onSettings={() => navigate(`/aios/${claw.id}`)}
                             onLaunch={() => {
-                                // Click on tile body = boot into the OS.
-                                // If running, that means open the studio
-                                // chat (the "desktop"). Otherwise drop to
-                                // the BIOS / settings detail page where
-                                // the user can see status + credentials.
+                                // Tile click semantics: a running OS
+                                // boots straight into the desktop
+                                // (studio in a new tab); an instance
+                                // that's still provisioning routes to
+                                // the full-screen install splash so
+                                // the user can watch progress instead
+                                // of landing on the BIOS detail tabs.
                                 if (claw.status === clawStatus.running) {
                                     const url = buildClawChatUrl(claw)
                                     if (url) {
-                                        window.open(url, '_blank', 'noopener')
+                                        window.open(
+                                            url,
+                                            '_blank',
+                                            'noopener'
+                                        )
                                         return
                                     }
+                                }
+                                if (TRANSIENT_STATUSES.has(claw.status)) {
+                                    navigate(`/aios/install/${claw.id}`)
+                                    return
                                 }
                                 navigate(`/aios/${claw.id}`)
                             }}
