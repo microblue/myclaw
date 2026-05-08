@@ -1,22 +1,13 @@
 import type { FC, ReactNode } from 'react'
 
 import { Fragment, useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { TOAST_TYPE } from '@/lib/constants'
-import { api } from '@/lib'
+import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
 import {
-    useProfile,
-    useUpdateProfile,
-    useUserStats,
-    PROFILE_QUERY_KEY
-} from '@/hooks'
-import {
-    LicenseCard,
     PageTitle,
     PageHeader,
     AccountProfileSection,
@@ -35,12 +26,9 @@ const Account: FC = (): ReactNode => {
     const { showToast } = useUIStore()
     const { adminMode, setAdminMode, openLinksWindowed, setOpenLinksWindowed } =
         usePreferencesStore()
-    const queryClient = useQueryClient()
 
-    const [searchParams, setSearchParams] = useSearchParams()
     const [name, setName] = useState('')
     const [hasChanges, setHasChanges] = useState(false)
-    const [isPurchasingLicense, setIsPurchasingLicense] = useState(false)
 
     const { data: profile } = useProfile({ enabled: !!user })
     const { data: userStats } = useUserStats()
@@ -50,24 +38,6 @@ const Account: FC = (): ReactNode => {
             setName(profile.name)
         }
     }, [profile?.name])
-
-    useEffect(() => {
-        if (searchParams.get('payment') !== 'success') return
-        showToast(t('license.paymentSuccess'), TOAST_TYPE.SUCCESS)
-        queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY })
-        setSearchParams({}, { replace: true })
-    }, [])
-
-    const handlePurchaseLicense = async () => {
-        setIsPurchasingLicense(true)
-        try {
-            const { checkoutUrl } = await api.purchaseLicense()
-            window.location.href = checkoutUrl
-        } catch {
-            showToast(t('license.failedToPurchase'), TOAST_TYPE.ERROR)
-            setIsPurchasingLicense(false)
-        }
-    }
 
     const updateMutation = useUpdateProfile()
 
@@ -104,7 +74,7 @@ const Account: FC = (): ReactNode => {
     const joinedDate = isLocal ? profile?.createdAt : user?.created_at
 
     return (
-        <AppShell>
+        <AppShell hideSidebar>
             <PageTitle
                 title={t('account.title')}
                 description={t('account.description')}
@@ -145,34 +115,6 @@ const Account: FC = (): ReactNode => {
                                 adminMode={adminMode}
                                 setAdminMode={setAdminMode}
                             />
-
-                            {profile?.role === userRole.admin && (
-                                <div
-                                    id='license'
-                                    className='border-border bg-foreground/5 mt-6 scroll-mt-24 rounded-xl border p-4 backdrop-blur-sm sm:p-8'
-                                >
-                                    <div className='mb-6'>
-                                        <h2 className='text-lg font-medium'>
-                                            {t('license.pageTitle')}
-                                        </h2>
-                                        <p className='text-muted-foreground mt-1 text-sm'>
-                                            {t('license.pageDescription')}
-                                        </p>
-                                    </div>
-
-                                    <LicenseCard
-                                        hasLicense={
-                                            profile?.hasLicense ?? false
-                                        }
-                                        isPurchasing={isPurchasingLicense}
-                                        onPurchase={handlePurchaseLicense}
-                                    />
-
-                                    <p className='text-muted-foreground mt-3 text-xs'>
-                                        {t('license.permanentNote')}
-                                    </p>
-                                </div>
-                            )}
 
                             <AccountSettingsSection
                                 showLocal={false}

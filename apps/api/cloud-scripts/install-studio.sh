@@ -48,6 +48,18 @@ else
     rm -rf "${STUDIO_DIR}"
     git clone --depth 1 --branch "${STUDIO_REF}" "${STUDIO_REPO}" "${STUDIO_DIR}"
     pushd "${STUDIO_DIR}" >/dev/null
+
+    # Rebrand pass — replace the upstream "OpenClaw Studio" wordmark with
+    # "MyClaw.One Studio" in source files BEFORE the production build, so
+    # the build output bakes our brand into the static HTML / page titles
+    # / header text. We deliberately only touch the Studio compound brand
+    # ("OpenClaw Studio"), not bare "OpenClaw" mentions in helper copy
+    # ("Studio reaches OpenClaw…") — those refer to the underlying
+    # gateway runtime which keeps its OSS name.
+    grep -rl --include='*.ts' --include='*.tsx' --include='*.js' \
+        'OpenClaw Studio' src 2>/dev/null \
+        | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Studio/g'
+
     npm install --no-audit --no-fund
     # `next build` produces `.next/required-server-files.json` which the
     # custom server reads on every request — without this file the server
@@ -86,7 +98,7 @@ chown -R openclaw:openclaw /home/openclaw/.openclaw/openclaw-studio
 
 cat > /etc/systemd/system/openclaw-studio.service << UNIT
 [Unit]
-Description=OpenClaw Studio (web UI, production mode)
+Description=MyClaw.One Studio (web UI, production mode)
 After=openclaw-gateway.service network-online.target
 Wants=openclaw-gateway.service
 
