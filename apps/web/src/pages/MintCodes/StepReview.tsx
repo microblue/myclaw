@@ -95,10 +95,6 @@ const StepReview: FC = () => {
                 <Row label='Codes in batch' value={String(s.count)} />
                 <Row label='Seats per code' value={seatsLabel} />
                 <Row label='Subscription window' value={validity} />
-                <Row
-                    label='Code expiry'
-                    value={s.expiresAt || 'No expiry'}
-                />
                 <Row label='Partner' value={s.partnerName || '—'} />
                 <Row
                     label='Display label'

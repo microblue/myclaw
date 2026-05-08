@@ -6,7 +6,43 @@ import { useQuery } from '@tanstack/react-query'
 import { ROUTES, api } from '@/lib'
 import { Button, Input, Label } from '@/components/ui'
 import { writeState, readState } from '@/pages/MintCodes/state'
-import Calendar from '@/pages/MintCodes/Calendar'
+
+// Friendly default partner names. We pick one at random the first
+// time the admin lands on the Batch step so the field is never blank
+// (and they can always rename). Adjective + concrete noun keeps the
+// tone playful without being childish.
+const PARTNER_DEFAULTS = [
+    'Acorn',
+    'Aurora',
+    'Basalt',
+    'Cobalt',
+    'Cinder',
+    'Driftwood',
+    'Ember',
+    'Fjord',
+    'Glacier',
+    'Hearth',
+    'Indigo',
+    'Juniper',
+    'Kestrel',
+    'Larkspur',
+    'Mariner',
+    'Nimbus',
+    'Onyx',
+    'Pinecone',
+    'Quartz',
+    'Riverstone',
+    'Saffron',
+    'Tidepool',
+    'Umbra',
+    'Vellum',
+    'Wildflower',
+    'Yarrow',
+    'Zephyr'
+] as const
+
+const pickRandomPartner = (): string =>
+    PARTNER_DEFAULTS[Math.floor(Math.random() * PARTNER_DEFAULTS.length)]
 
 const COUNT_PRESETS = [1, 5, 10, 25, 50, 100]
 // Per the white-paper appendix A code spec (xxxxxxxxx-ddd-uuu) these
@@ -58,6 +94,19 @@ const StepDetails: FC = () => {
         })
     }, [plan, s.tierLabel, navigate, searchParams])
 
+    // Pre-fill the partner name with a random word the first time the
+    // admin lands here, so the (now required) field starts populated
+    // and they can move forward without the form blocking on a blank.
+    useEffect(() => {
+        if (s.partnerName) return
+        const next = writeState(searchParams, {
+            partnerName: pickRandomPartner()
+        })
+        navigate(`${ROUTES.MINT_CODES_DETAILS}?${next.toString()}`, {
+            replace: true
+        })
+    }, [s.partnerName, navigate, searchParams])
+
     const update = (patch: Parameters<typeof writeState>[1]) => {
         const next = writeState(searchParams, patch)
         navigate(`${ROUTES.MINT_CODES_DETAILS}?${next.toString()}`, {
@@ -70,7 +119,8 @@ const StepDetails: FC = () => {
     const goNext = () =>
         navigate(`${ROUTES.MINT_CODES_REVIEW}?${searchParams.toString()}`)
 
-    const canContinue = s.count >= 1 && s.count <= 1000
+    const canContinue =
+        s.count >= 1 && s.count <= 1000 && s.partnerName.trim().length > 0
 
     return (
         <div className='space-y-8'>
@@ -147,24 +197,15 @@ const StepDetails: FC = () => {
             </Section>
 
             <Section
-                title='Code expiry'
-                description='Optional — the date the unredeemed code itself stops working. Leave blank for no expiry.'
-            >
-                <div className='max-w-sm'>
-                    <Calendar
-                        value={s.expiresAt}
-                        onChange={(value) => update({ expiresAt: value })}
-                    />
-                </div>
-            </Section>
-
-            <Section
                 title='Partner & display label'
                 description='These are visible to the user (label) or just to you (partner name).'
             >
                 <div className='grid gap-3 md:grid-cols-2'>
                     <div className='space-y-1.5'>
-                        <Label htmlFor='partner'>Partner name</Label>
+                        <Label htmlFor='partner'>
+                            Partner name{' '}
+                            <span className='text-destructive'>*</span>
+                        </Label>
                         <Input
                             id='partner'
                             placeholder='GreatLove'
@@ -172,9 +213,10 @@ const StepDetails: FC = () => {
                             onChange={(e) =>
                                 update({ partnerName: e.target.value })
                             }
+                            aria-required
                         />
                         <p className='text-muted-foreground text-xs'>
-                            Internal label to find this batch later.
+                            Internal label to find this batch later. Required.
                         </p>
                     </div>
                     <div className='space-y-1.5'>
