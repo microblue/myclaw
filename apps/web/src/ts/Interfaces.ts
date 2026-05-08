@@ -2211,6 +2211,7 @@ export interface AdminVolumesResponse {
 export interface UpdateAdminUserData {
     name?: string | null
     referralCode?: string | null
+    role?: 'user' | 'admin' | 'partner'
 }
 
 export interface UpdateAdminUserMutationParams {

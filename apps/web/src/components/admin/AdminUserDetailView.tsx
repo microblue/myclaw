@@ -17,7 +17,11 @@ import {
     Button,
     Card,
     CardContent,
-    Input
+    Input,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger
 } from '@/components/ui'
 import {
     CircleNotchIcon,
@@ -39,11 +43,19 @@ const AdminUserDetailView: FC<AdminUserDetailViewProps> = ({
     const { showToast } = useUIStore()
     const [editName, setEditName] = useState('')
     const [editReferralCode, setEditReferralCode] = useState('')
+    const [editRole, setEditRole] = useState<'user' | 'admin' | 'partner'>(
+        userRole.user
+    )
 
     useEffect(() => {
         if (user) {
             setEditName(user.name || '')
             setEditReferralCode(user.referralCode || '')
+            const roleValue =
+                user.role === userRole.admin || user.role === userRole.partner
+                    ? user.role
+                    : userRole.user
+            setEditRole(roleValue as 'user' | 'admin' | 'partner')
         }
     }, [user])
 
@@ -64,12 +76,21 @@ const AdminUserDetailView: FC<AdminUserDetailViewProps> = ({
                 id: userId,
                 data: {
                     name: editName || null,
-                    referralCode: editReferralCode || null
+                    referralCode: editReferralCode || null,
+                    role: editRole
                 }
             })
             showToast(t('admin.userUpdated'), TOAST_TYPE.SUCCESS)
-        } catch {
-            showToast(t('admin.userUpdateFailed'), TOAST_TYPE.ERROR)
+        } catch (err) {
+            // Surface API-side validation messages (e.g. "You cannot
+            // demote yourself from admin") instead of swallowing them
+            // with a generic toast — role changes are a path where the
+            // user wants a real reason for failure.
+            const msg =
+                err instanceof Error
+                    ? err.message
+                    : t('admin.userUpdateFailed')
+            showToast(msg, TOAST_TYPE.ERROR)
         }
     }
 
@@ -143,10 +164,32 @@ const AdminUserDetailView: FC<AdminUserDetailViewProps> = ({
                                 </span>
                             }
                         />
-                        <AdminDetailField
-                            label={t('admin.role')}
-                            value={user.role}
-                        />
+                        <div className='space-y-1'>
+                            <p className='text-muted-foreground text-xs'>
+                                {t('admin.role')}
+                            </p>
+                            <Select
+                                value={editRole}
+                                onValueChange={(v) =>
+                                    setEditRole(
+                                        v as 'user' | 'admin' | 'partner'
+                                    )
+                                }
+                            >
+                                <SelectTrigger className='bg-background h-7 text-xs' />
+                                <SelectContent>
+                                    <SelectItem value={userRole.user}>
+                                        user — standard end user
+                                    </SelectItem>
+                                    <SelectItem value={userRole.admin}>
+                                        admin — full backend access
+                                    </SelectItem>
+                                    <SelectItem value={userRole.partner}>
+                                        partner — channel partner
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <AdminDetailField
                             label={t('admin.authMethods')}
                             value={
