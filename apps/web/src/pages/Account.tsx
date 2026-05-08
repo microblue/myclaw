@@ -2,16 +2,14 @@ import type { FC, ReactNode } from 'react'
 
 import { Fragment, useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
-import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
-import { useUIStore, usePreferencesStore } from '@/lib/store'
+import { useUIStore } from '@/lib/store'
 import { TOAST_TYPE } from '@/lib/constants'
 import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
 import {
     PageTitle,
     PageHeader,
-    AccountProfileSection,
-    AccountSettingsSection
+    AccountProfileSection
 } from '@/components'
 import AppShell from '@/components/layout/AppShell'
 import { CircleNotchIcon } from '@phosphor-icons/react'
@@ -24,8 +22,6 @@ const Account: FC = (): ReactNode => {
         isLocal
     } = useAuth()
     const { showToast } = useUIStore()
-    const { adminMode, setAdminMode, openLinksWindowed, setOpenLinksWindowed } =
-        usePreferencesStore()
 
     const [name, setName] = useState('')
     const [hasChanges, setHasChanges] = useState(false)
@@ -107,25 +103,6 @@ const Account: FC = (): ReactNode => {
                                 onSave={handleSave}
                             />
 
-                            <AccountSettingsSection
-                                showLocal={!!isLocal}
-                                showAdmin={false}
-                                openLinksWindowed={openLinksWindowed}
-                                setOpenLinksWindowed={setOpenLinksWindowed}
-                                adminMode={adminMode}
-                                setAdminMode={setAdminMode}
-                            />
-
-                            <AccountSettingsSection
-                                showLocal={false}
-                                showAdmin={
-                                    !isLocal && profile?.role === userRole.admin
-                                }
-                                openLinksWindowed={openLinksWindowed}
-                                setOpenLinksWindowed={setOpenLinksWindowed}
-                                adminMode={adminMode}
-                                setAdminMode={setAdminMode}
-                            />
                         </Fragment>
                     )}
             </main>
