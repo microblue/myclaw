@@ -175,6 +175,12 @@ const AppShell: FC<Props> = ({ children, pageActions, hideSidebar }) => {
     const items = sourceItems.filter(
         (n) => !n.roles || n.roles.includes(role)
     )
+    // When the admin is in the /admin shell, surface a way back to
+    // their personal AI-OS launcher in the sidebar footer. Without this
+    // the only escape is the avatar dropdown — which is fine but not
+    // discoverable; admins constantly switch between their own claws
+    // and the fleet view, so a stable left-rail anchor pays off.
+    const showSwitchToAios = onAdminRoute && role === 'admin'
 
     const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -212,6 +218,7 @@ const AppShell: FC<Props> = ({ children, pageActions, hideSidebar }) => {
                     <SidebarContent
                         items={items}
                         collapsed={sidebarCollapsed}
+                        showSwitchToAios={showSwitchToAios}
                         onToggleCollapsed={() =>
                             setSidebarCollapsed(!sidebarCollapsed)
                         }
@@ -230,6 +237,7 @@ const AppShell: FC<Props> = ({ children, pageActions, hideSidebar }) => {
                     <aside className='border-border bg-card fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r md:hidden'>
                         <SidebarContent
                             items={items}
+                            showSwitchToAios={showSwitchToAios}
                             onClose={() => setMobileOpen(false)}
                         />
                     </aside>
@@ -270,7 +278,14 @@ const SidebarContent: FC<{
     onClose?: () => void
     collapsed?: boolean
     onToggleCollapsed?: () => void
-}> = ({ items, onClose, collapsed = false, onToggleCollapsed }) => {
+    showSwitchToAios?: boolean
+}> = ({
+    items,
+    onClose,
+    collapsed = false,
+    onToggleCollapsed,
+    showSwitchToAios = false
+}) => {
     const navigate = useNavigate()
 
     return (
@@ -350,6 +365,35 @@ const SidebarContent: FC<{
                     </NavLink>
                 ))}
             </nav>
+
+            {/* Footer escape hatch — when in the admin shell, give a
+                stable left-rail anchor back to the personal launcher
+                so admins can switch contexts without hunting through
+                the avatar menu. */}
+            {showSwitchToAios && (
+                <div className='border-border border-t p-2'>
+                    <NavLink
+                        to={ROUTES.AIOS}
+                        title={collapsed ? 'My AI OS' : undefined}
+                        onClick={onClose}
+                        className={`text-muted-foreground hover:bg-foreground/5 hover:text-foreground flex items-center rounded-md text-sm transition-colors ${
+                            collapsed
+                                ? 'justify-center px-0 py-2.5'
+                                : 'gap-3 px-3 py-2'
+                        }`}
+                    >
+                        <HouseIcon className='h-4 w-4 shrink-0' />
+                        {!collapsed && (
+                            <span className='flex flex-col leading-tight'>
+                                <span>My AI OS</span>
+                                <span className='text-muted-foreground/70 text-[10px]'>
+                                    Switch to user view
+                                </span>
+                            </span>
+                        )}
+                    </NavLink>
+                </div>
+            )}
         </>
     )
 }
