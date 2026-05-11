@@ -8,9 +8,11 @@ import { ok, fail } from '@/lib/response'
 import withErrorHandler from '@/lib/withErrorHandler'
 
 // Free-trial issuance — hands the caller a pre-minted multi-seat code whose
-// partner_name='system'. Seats are consumed by the standard redeem flow at
-// claw-create time, so this endpoint only validates that a code is
-// available and gates per-user via users.used_free_trial.
+// partner_name='system'. Idempotent: calling repeatedly returns the same
+// available code without consuming anything. The per-user trial is only
+// considered "used" once the code is actually redeemed (a claw is
+// created) — that flag flip lives in redeemActivationCode so a user who
+// asks for the code and then bails out can still try again later.
 //
 // One code, many seats (e.g. GHJYFJ6AS-003-050 = 3-day window, 50 seats).
 // When the seat pool fills, an admin mints a fresh system code; this
@@ -22,18 +24,18 @@ const freeTrialCode = withErrorHandler('freeTrialCode')(
     async (c: AuthenticatedContext) => {
         const userId = c.get('userId')
 
-        // CAS-style flip: only one in-flight call wins. If the user has
-        // already used their trial, the WHERE clause matches zero rows
-        // and we bail before touching the activation pool.
-        const flipped = await db
-            .update(users)
-            .set({ usedFreeTrial: true })
-            .where(
-                and(eq(users.id, userId), eq(users.usedFreeTrial, false))
-            )
-            .returning({ id: users.id })
+        // Gate at read time — already-used users get 409. We do NOT
+        // flip the flag here; that happens in redeemActivationCode when
+        // a claw is successfully created. This way a user who hits the
+        // button and walks away isn't permanently locked out.
+        const userRow = await db
+            .select({ usedFreeTrial: users.usedFreeTrial })
+            .from(users)
+            .where(eq(users.id, userId))
+            .limit(1)
+            .then((rows) => rows[0])
 
-        if (flipped.length === 0) {
+        if (userRow?.usedFreeTrial) {
             return fail(c, 'You have already used your free trial.', 409)
         }
 
@@ -76,13 +78,6 @@ const freeTrialCode = withErrorHandler('freeTrialCode')(
             .then((rows) => rows[0])
 
         if (!candidate) {
-            // Roll back the user flag — the trial wasn't actually granted,
-            // so they should be able to retry once an admin mints a new
-            // system code.
-            await db
-                .update(users)
-                .set({ usedFreeTrial: false })
-                .where(eq(users.id, userId))
             return fail(
                 c,
                 'No free-trial seats are currently available. Please try again later.',

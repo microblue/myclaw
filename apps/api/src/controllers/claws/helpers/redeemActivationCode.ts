@@ -11,6 +11,7 @@ import {
     activationSeats,
     clawInstallPhases
 } from '@/db/schema'
+import users from '@/db/schema/users'
 import {
     generatePassword,
     generateClawName,
@@ -263,6 +264,18 @@ async function redeemNew({
                     redeemedAt: new Date()
                 })
                 .where(eq(activationCodes.id, codeRow.id))
+
+            // System-pool codes are the self-service free-trial path —
+            // burning a seat from one consumes the user's lifetime trial.
+            // Done in-transaction so a successful claw insert and the
+            // gate flip happen atomically; partial state would either
+            // let the user trial twice or lock them out without a claw.
+            if (codeRow.partnerName === 'system') {
+                await tx
+                    .update(users)
+                    .set({ usedFreeTrial: true })
+                    .where(eq(users.id, userId))
+            }
         })
     } catch (err) {
         await releaseSeat(codeRow.id)
