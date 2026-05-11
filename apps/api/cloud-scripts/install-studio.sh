@@ -50,15 +50,15 @@ else
     pushd "${STUDIO_DIR}" >/dev/null
 
     # Rebrand pass — replace the upstream "OpenClaw Studio" wordmark with
-    # "MyClaw.One Desktop" in source files BEFORE the production build,
-    # so the build output bakes our brand into the static HTML / page
-    # titles / header text. We deliberately only touch the Studio
+    # "MyClaw.One Control Panel" in source files BEFORE the production
+    # build, so the build output bakes our brand into the static HTML /
+    # page titles / header text. We deliberately only touch the Studio
     # compound brand ("OpenClaw Studio"), not bare "OpenClaw" mentions
     # in helper copy ("Studio reaches OpenClaw…") — those refer to the
     # underlying gateway runtime which keeps its OSS name.
     grep -rl --include='*.ts' --include='*.tsx' --include='*.js' \
         'OpenClaw Studio' src 2>/dev/null \
-        | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Desktop/g'
+        | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Control Panel/g'
 
     npm install --no-audit --no-fund
     # `next build` produces `.next/required-server-files.json` which the
@@ -98,7 +98,7 @@ chown -R openclaw:openclaw /home/openclaw/.openclaw/openclaw-studio
 
 cat > /etc/systemd/system/openclaw-studio.service << UNIT
 [Unit]
-Description=MyClaw.One Desktop (web UI, production mode)
+Description=MyClaw.One Control Panel (web UI, production mode)
 After=openclaw-gateway.service network-online.target
 Wants=openclaw-gateway.service
 

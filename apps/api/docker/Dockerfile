@@ -8,7 +8,7 @@
 #
 # What lives where:
 #   - /opt/openclaw                  npm-installed openclaw runtime (baked)
-#   - /openclaw-studio               git-cloned + built MyClaw.One Desktop (baked)
+#   - /openclaw-studio               git-cloned + built MyClaw.One Control Panel (baked)
 #   - /opt/node_exporter             metrics binary (baked)
 #   - /etc/caddy/Caddyfile.template  Caddy config template (baked)
 #   - /etc/supervisor/conf.d/        supervisord program defs (baked)
@@ -87,7 +87,7 @@ RUN git clone --depth 1 --branch ${STUDIO_REF} ${STUDIO_REPO} /openclaw-studio \
     && cd /openclaw-studio \
     && grep -rl --include='*.ts' --include='*.tsx' --include='*.js' \
         'OpenClaw Studio' src 2>/dev/null \
-        | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Desktop/g' \
+        | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Control Panel/g' \
     && npm install --no-audit --no-fund \
     && npm run build \
     && touch /openclaw-studio/.installed

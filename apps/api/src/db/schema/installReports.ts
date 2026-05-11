@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, jsonb, index } from 'drizzle-orm/pg-core'
 
-// Crash/error reports posted by the MyClaw.One Desktop installer when
+// Crash/error reports posted by the MyClaw.One Control Panel installer when
 // bootstrap (openclaw install + gateway start + studio launch) fails on a
 // user's machine. Submitted unauthenticated — the user typically hasn't
 // paired yet when the install fails. Rate-limited per IP to prevent abuse.

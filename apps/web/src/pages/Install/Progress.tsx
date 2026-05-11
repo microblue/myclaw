@@ -91,9 +91,9 @@ const PHASE_STEPS: PhaseDef[] = [
     },
     {
         key: 'installing_studio',
-        label: 'Installing MyClaw.One Desktop',
+        label: 'Installing MyClaw.One Control Panel',
         icon: MonitorIcon,
-        detail: 'The desktop UI that connects to your AI OS'
+        detail: 'The web control panel that connects to your AI OS'
     },
     {
         key: 'ready',

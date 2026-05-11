@@ -50,7 +50,7 @@ hit `http://localhost` to see the Studio shell.
 | Path                      | Description                                    |
 | ------------------------- | ---------------------------------------------- |
 | `/opt/openclaw`           | npm-installed openclaw runtime (baked)         |
-| `/openclaw-studio`        | git-cloned + built MyClaw.One Desktop (baked)  |
+| `/openclaw-studio`        | git-cloned + built MyClaw.One Control Panel (baked)  |
 | `/opt/node_exporter`      | metrics binary (baked)                         |
 | `/opt/openclaw-seed/`     | first-boot agent personality seed (baked)      |
 | `/etc/caddy/Caddyfile.template` | rendered to `/etc/caddy/Caddyfile` at start |
