@@ -64,6 +64,15 @@ const claws = {
             API_PATHS.CLAWS.ACTIVATION_CODE_PREVIEW,
             { code }
         ),
+    freeTrialCode: () =>
+        client.post<{
+            code: string
+            validityDays: number
+            planId: string
+            provider: string
+            region: string
+            tierLabel: string
+        }>(API_PATHS.CLAWS.FREE_TRIAL_CODE),
     suggestClawName: () =>
         client.get<{ name: string }>(API_PATHS.CLAWS.SUGGEST_NAME),
     startClaw: (id: string) => client.post<Claw>(API_PATHS.CLAWS.START(id)),

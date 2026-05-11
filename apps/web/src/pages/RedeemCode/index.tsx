@@ -9,6 +9,7 @@ import { ROUTES, api } from '@/lib'
 import { Button, Input, Label } from '@/components/ui'
 import {
     useClaws,
+    useFreeTrialCode,
     usePreviewActivationCode,
     usePurchaseClaw,
     useToast
@@ -54,6 +55,7 @@ const RedeemCode: FC = () => {
     const [searchParams] = useSearchParams()
     const preview = usePreviewActivationCode()
     const purchase = usePurchaseClaw()
+    const freeTrial = useFreeTrialCode()
     const toast = useToast()
     const clawsQuery = useClaws()
 
@@ -105,6 +107,24 @@ const RedeemCode: FC = () => {
             setValidated({ code: trimmed, preview: result })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Validation failed')
+        }
+    }
+
+    const handleApplyFreeTrial = async () => {
+        setError(null)
+        try {
+            const issued = await freeTrial.mutateAsync()
+            setCode(issued.code)
+            const result = await preview.mutateAsync(issued.code)
+            if (!result.valid) {
+                setError(reasonMessage(result.reason))
+                return
+            }
+            setValidated({ code: issued.code, preview: result })
+        } catch (err) {
+            const msg =
+                err instanceof Error ? err.message : 'Could not start free trial'
+            setError(msg)
         }
     }
 
@@ -198,6 +218,34 @@ const RedeemCode: FC = () => {
                                     ? 'Validating…'
                                     : 'Continue'}
                             </Button>
+                        </div>
+
+                        <div className='border-t pt-5'>
+                            <div className='flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between'>
+                                <div className='text-sm'>
+                                    <div className='font-medium'>
+                                        No code yet?
+                                    </div>
+                                    <p className='text-muted-foreground mt-0.5 text-xs'>
+                                        Try MyClaw.One free for 3 days — one
+                                        trial per account, auto-expires when
+                                        the window ends.
+                                    </p>
+                                </div>
+                                <Button
+                                    type='button'
+                                    variant='outline'
+                                    onClick={handleApplyFreeTrial}
+                                    disabled={
+                                        freeTrial.isPending ||
+                                        preview.isPending
+                                    }
+                                >
+                                    {freeTrial.isPending
+                                        ? 'Issuing…'
+                                        : 'Try free for 3 days'}
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 ) : (

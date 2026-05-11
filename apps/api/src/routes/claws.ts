@@ -53,7 +53,8 @@ import {
     cancelPendingClaw,
     suggestClawName,
     getClawBootstrapLog,
-    previewActivationCode
+    previewActivationCode,
+    freeTrialCode
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -63,6 +64,7 @@ app.get('/', getClaws)
 app.get('/admin', adminOnly, getAdminClaws)
 app.get('/suggest-name', suggestClawName)
 app.post('/activation-code/preview', previewActivationCode)
+app.post('/free-trial-code', freeTrialCode)
 app.get('/:id', getClaw)
 app.post('/purchase', initiateClawPurchase)
 app.delete('/pending/:id', cancelPendingClaw)

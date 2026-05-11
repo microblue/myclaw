@@ -51,6 +51,7 @@ import provisionClaw from '@/controllers/claws/provisionClaw'
 import suggestClawName from '@/controllers/claws/suggestClawName'
 import getClawBootstrapLog from '@/controllers/claws/getClawBootstrapLog'
 import previewActivationCode from '@/controllers/claws/previewActivationCode'
+import freeTrialCode from '@/controllers/claws/freeTrialCode'
 
 export {
     getClaws,
@@ -105,5 +106,6 @@ export {
     provisionClaw,
     suggestClawName,
     getClawBootstrapLog,
-    previewActivationCode
+    previewActivationCode,
+    freeTrialCode
 }

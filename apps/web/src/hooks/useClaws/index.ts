@@ -12,6 +12,7 @@ import useAdminClaws from '@/hooks/useClaws/useAdminClaws'
 import useClaw from '@/hooks/useClaws/useClaw'
 import usePurchaseClaw from '@/hooks/useClaws/usePurchaseClaw'
 import usePreviewActivationCode from '@/hooks/useClaws/usePreviewActivationCode'
+import useFreeTrialCode from '@/hooks/useClaws/useFreeTrialCode'
 import useStartClaw from '@/hooks/useClaws/useStartClaw'
 import useStopClaw from '@/hooks/useClaws/useStopClaw'
 import useRestartClaw from '@/hooks/useClaws/useRestartClaw'
@@ -48,6 +49,7 @@ export {
     useClaw,
     usePurchaseClaw,
     usePreviewActivationCode,
+    useFreeTrialCode,
     useStartClaw,
     useStopClaw,
     useRestartClaw,

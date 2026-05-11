@@ -25,6 +25,7 @@ const API_PATHS = {
         PURCHASE: '/claws/purchase',
         SUGGEST_NAME: '/claws/suggest-name',
         ACTIVATION_CODE_PREVIEW: '/claws/activation-code/preview',
+        FREE_TRIAL_CODE: '/claws/free-trial-code',
         byId: (id: string) => `/claws/${id}`,
         PENDING: (id: string) => `/claws/pending/${id}`,
         SYNC: (id: string) => `/claws/${id}/sync`,

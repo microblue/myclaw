@@ -18,6 +18,7 @@ const users = pgTable(
             .notNull()
             .default(false),
         referredBy: uuid('referred_by'),
+        usedFreeTrial: boolean('used_free_trial').notNull().default(false),
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()
             .notNull()

@@ -327,6 +327,8 @@ const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
             <StatCard label='IP' value={claw.ip || '—'} mono />
         </section>
 
+        <ExpirySection claw={claw} />
+
         <section className='bg-card space-y-4 rounded-lg border p-6'>
             <h2 className='font-semibold'>Connection</h2>
             <dl className='space-y-2 text-sm'>
@@ -347,6 +349,88 @@ const OverviewTab: FC<{ claw: Claw }> = ({ claw }) => (
         <AdvancedSection claw={claw} />
     </div>
 )
+
+const ExpirySection: FC<{ claw: Claw }> = ({ claw }) => {
+    const info = formatExpiry(claw.deletionScheduledAt)
+    return (
+        <section className='bg-card rounded-lg border p-6'>
+            <div className='flex items-start justify-between gap-4'>
+                <div>
+                    <h2 className='font-semibold'>Subscription</h2>
+                    <p className={`mt-1 text-sm ${info.tone}`}>
+                        {info.headline}
+                    </p>
+                    {info.detail && (
+                        <p className='text-muted-foreground mt-1 text-xs'>
+                            {info.detail}
+                        </p>
+                    )}
+                </div>
+                {info.daysLeft !== null && (
+                    <div className='text-right'>
+                        <div
+                            className={`text-3xl font-semibold leading-none ${info.tone}`}
+                        >
+                            {Math.max(0, info.daysLeft)}
+                        </div>
+                        <div className='text-muted-foreground mt-1 text-xs uppercase tracking-wide'>
+                            day{Math.abs(info.daysLeft) === 1 ? '' : 's'} left
+                        </div>
+                    </div>
+                )}
+            </div>
+        </section>
+    )
+}
+
+interface ExpiryInfo {
+    headline: string
+    detail: string | null
+    daysLeft: number | null
+    tone: string
+}
+
+const formatExpiry = (iso: string | null): ExpiryInfo => {
+    if (!iso) {
+        return {
+            headline: 'No expiration scheduled',
+            detail: 'This instance stays online until you delete it.',
+            daysLeft: null,
+            tone: 'text-foreground'
+        }
+    }
+    const expiry = new Date(iso)
+    const ms = expiry.getTime() - Date.now()
+    const daysLeft = Math.ceil(ms / 86_400_000)
+    const formattedDate = expiry.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    })
+    if (ms <= 0) {
+        return {
+            headline: 'Expired — pending cleanup',
+            detail: `Expired on ${formattedDate}. Auto-cleanup runs hourly.`,
+            daysLeft: 0,
+            tone: 'text-destructive'
+        }
+    }
+    const tone =
+        daysLeft <= 1
+            ? 'text-destructive'
+            : daysLeft <= 7
+              ? 'text-amber-500'
+              : 'text-foreground'
+    return {
+        headline: `Expires ${formattedDate}`,
+        detail:
+            daysLeft <= 7
+                ? 'Apply a renewal code on My Home to extend.'
+                : null,
+        daysLeft,
+        tone
+    }
+}
 
 const AdvancedSection: FC<{ claw: Claw }> = ({ claw }) => {
     const [open, setOpen] = useState(false)
