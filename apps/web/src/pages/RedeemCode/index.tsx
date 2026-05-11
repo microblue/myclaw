@@ -265,6 +265,11 @@ const RedeemCode: FC = () => {
 
                         <dl className='divide-y rounded-lg border'>
                             <SummaryRow
+                                label='Activation code'
+                                value={validated.code}
+                                mono
+                            />
+                            <SummaryRow
                                 label='SKU'
                                 value={
                                     isRenewal
@@ -430,13 +435,18 @@ const RenewalTargetPicker: FC<{
     )
 }
 
-const SummaryRow: FC<{ label: string; value: string }> = ({
+const SummaryRow: FC<{ label: string; value: string; mono?: boolean }> = ({
     label,
-    value
+    value,
+    mono
 }) => (
     <div className='flex justify-between px-4 py-3 text-sm'>
         <dt className='text-muted-foreground'>{label}</dt>
-        <dd className='text-foreground text-right'>{value}</dd>
+        <dd
+            className={`text-foreground text-right ${mono ? 'font-mono text-xs' : ''}`}
+        >
+            {value}
+        </dd>
     </div>
 )
 
