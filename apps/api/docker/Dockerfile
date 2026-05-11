@@ -88,6 +88,15 @@ RUN git clone --depth 1 --branch ${STUDIO_REF} ${STUDIO_REPO} /openclaw-studio \
     && grep -rl --include='*.ts' --include='*.tsx' --include='*.js' \
         'OpenClaw Studio' src 2>/dev/null \
         | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Control Panel/g' \
+    && sed -i \
+        -e 's|flex min-h-0 flex-1 flex-col gap-4 xl:flex-row|flex min-h-0 flex-1 flex-col gap-4 lg:flex-row|' \
+        -e 's|glass-panel ui-panel p-2 xl:hidden|glass-panel ui-panel p-2 lg:hidden|' \
+        -e 's|min-h-0 xl:block xl:min-h-0|min-h-0 lg:block lg:min-h-0|' \
+        -e 's|overflow-hidden xl:flex|overflow-hidden lg:flex|' \
+        src/app/page.tsx \
+    && sed -i \
+        -e 's|xl:max-w-\[320px\] xl:border-r xl:border-sidebar-border|lg:max-w-[320px] lg:border-r lg:border-sidebar-border|' \
+        src/features/agents/components/FleetSidebar.tsx \
     && npm install --no-audit --no-fund \
     && npm run build \
     && touch /openclaw-studio/.installed

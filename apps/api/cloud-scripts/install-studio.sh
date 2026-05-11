@@ -60,6 +60,22 @@ else
         'OpenClaw Studio' src 2>/dev/null \
         | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Control Panel/g'
 
+    # iPad-landscape patch — upstream uses xl: (1280px) as the breakpoint
+    # between the mobile pane-toggle (Fleet | Chat tabs) and the
+    # split-pane layout. iPad landscape is 1024×768 which is below xl,
+    # so users saw the cramped tab toggle even though they had plenty of
+    # horizontal room. Drop the threshold to lg: (1024px) so iPad
+    # landscape gets the two-column layout.
+    sed -i \
+        -e 's|flex min-h-0 flex-1 flex-col gap-4 xl:flex-row|flex min-h-0 flex-1 flex-col gap-4 lg:flex-row|' \
+        -e 's|glass-panel ui-panel p-2 xl:hidden|glass-panel ui-panel p-2 lg:hidden|' \
+        -e 's|min-h-0 xl:block xl:min-h-0|min-h-0 lg:block lg:min-h-0|' \
+        -e 's|overflow-hidden xl:flex|overflow-hidden lg:flex|' \
+        src/app/page.tsx
+    sed -i \
+        -e 's|xl:max-w-\[320px\] xl:border-r xl:border-sidebar-border|lg:max-w-[320px] lg:border-r lg:border-sidebar-border|' \
+        src/features/agents/components/FleetSidebar.tsx
+
     npm install --no-audit --no-fund
     # `next build` produces `.next/required-server-files.json` which the
     # custom server reads on every request — without this file the server
