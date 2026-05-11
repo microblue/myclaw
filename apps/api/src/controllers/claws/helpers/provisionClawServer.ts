@@ -4,11 +4,15 @@ import { clawStatus, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { providerRegistry } from '@/services/providers'
+import { isContainerProvider } from '@/services/providers/types'
 import cloudflare from '@/services/cloudflare'
 import {
     generateServerName,
     DOMAIN
 } from '@/controllers/claws/helpers'
+import buildClawConfig, {
+    renderClawConfigJsonB64
+} from '@/controllers/claws/helpers/buildClawConfig'
 import { getClawRuntime, DEFAULT_CLAW_TYPE } from '@/services/clawRuntimes'
 import {
     getSystemSetting,
@@ -91,44 +95,80 @@ const provisionClawServer = async ({
             getSystemSetting(SETTINGS_KEYS.defaultOpenrouterModel)
         ])
 
-        // Dispatch to the per-type cloud-init through the runtime
-        // registry. Fall back to the default (OpenClaw) on unknown
-        // values so an older claw row without claw_type still boots
-        // correctly.
-        const runtime =
-            getClawRuntime(claw.clawType || DEFAULT_CLAW_TYPE) ||
-            getClawRuntime(DEFAULT_CLAW_TYPE)!
-        const cloudInitScript = runtime.generateCloudInit({
-            rootPassword: claw.rootPassword || '',
-            subdomain: claw.subdomain || '',
-            domain: DOMAIN,
-            gatewayToken: claw.gatewayToken || '',
-            llm: { openrouterApiKey, defaultModel },
-            // Both fields are NOT NULL on the row by the time we get
-            // here (set by redeemActivationCode / provisionClaw before
-            // dispatching this background worker). Fall back to undef
-            // so generateCloudInit cleanly omits the install-reporter
-            // env block on legacy callers that haven't migrated yet.
-            install:
-                claw.installRunId && claw.centralToken
-                    ? {
-                          clawId: claw.id,
-                          installRunId: claw.installRunId,
-                          centralToken: claw.centralToken
-                      }
-                    : undefined
-        })
-
+        // Branch on provider kind. VM providers consume cloud-init via
+        // the per-type runtime registry; container providers (Fly) boot
+        // a pre-built image and consume the same per-claw values as env
+        // vars instead. Same install-progress reporter env (IE/IT/IR)
+        // works across both since it's just a POST URL.
         const serverName = generateServerName(claw.name, claw.id)
+        let createOpts: Parameters<typeof provider.createServer>[0]
 
-        const server = await provider.createServer({
-            name: serverName,
-            planId: claw.planId,
-            locationId: claw.location || '',
-            rootPassword: claw.rootPassword || undefined,
-            sshKeyIds: providerSshKeyIds,
-            userData: cloudInitScript
-        })
+        if (isContainerProvider(provider)) {
+            // Container path is OpenClaw-only for now — the openclaw-aios
+            // image bakes OpenClaw's gateway + studio. PicoClaw / Hermes
+            // claw types need their own images before they can run on a
+            // container provider.
+            if (
+                (claw.clawType || DEFAULT_CLAW_TYPE) !== DEFAULT_CLAW_TYPE
+            ) {
+                await markError(
+                    clawId,
+                    `claw type ${claw.clawType} is not supported on container providers yet`
+                )
+                return
+            }
+            const config = buildClawConfig(claw.gatewayToken || '', {
+                openrouterApiKey,
+                defaultModel
+            })
+            const env: Record<string, string> = {
+                SUBDOMAIN: claw.subdomain || '',
+                DOMAIN,
+                GATEWAY_TOKEN: claw.gatewayToken || '',
+                CONFIG_JSON_B64: renderClawConfigJsonB64(config)
+            }
+            if (openrouterApiKey) env.OPENROUTER_API_KEY = openrouterApiKey
+            if (claw.installRunId && claw.centralToken) {
+                env.IE = `https://${DOMAIN}/api/install/${claw.id}/phase`
+                env.IT = claw.centralToken
+                env.IR = claw.installRunId
+            }
+            createOpts = {
+                name: serverName,
+                planId: claw.planId,
+                locationId: claw.location || '',
+                env
+            }
+        } else {
+            const runtime =
+                getClawRuntime(claw.clawType || DEFAULT_CLAW_TYPE) ||
+                getClawRuntime(DEFAULT_CLAW_TYPE)!
+            const cloudInitScript = runtime.generateCloudInit({
+                rootPassword: claw.rootPassword || '',
+                subdomain: claw.subdomain || '',
+                domain: DOMAIN,
+                gatewayToken: claw.gatewayToken || '',
+                llm: { openrouterApiKey, defaultModel },
+                install:
+                    claw.installRunId && claw.centralToken
+                        ? {
+                              clawId: claw.id,
+                              installRunId: claw.installRunId,
+                              centralToken: claw.centralToken
+                          }
+                        : undefined
+            })
+            createOpts = {
+                name: serverName,
+                planId: claw.planId,
+                locationId: claw.location || '',
+                rootPassword: claw.rootPassword || undefined,
+                sshKeyIds: providerSshKeyIds,
+                userData: cloudInitScript
+            }
+        }
+
+        const server = await provider.createServer(createOpts)
 
         // Stage 1 of the lifecycle: provider accepted the request and
         // assigned a provisional IP (Lightsail returns 0.0.0.0 until

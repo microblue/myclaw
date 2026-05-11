@@ -1,0 +1,65 @@
+name: Build openclaw-aios image
+
+# Builds and pushes the openclaw-aios container image to Docker Hub. The
+# image is what fly.ts boots when a container-provider activation code is
+# redeemed — its drift from the VM-path install-claw.sh is the most likely
+# source of "claw works on Hetzner but not on Fly" bugs, so we keep the
+# build pipeline tight: only fires when the docker/ folder or install
+# scripts change.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/docker/**'
+      - 'apps/api/cloud-scripts/install-claw.sh'
+      - 'apps/api/cloud-scripts/install-studio.sh'
+      - '.github/workflows/docker-aios.yml'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Override tag (default: <git sha>)'
+        required: false
+
+concurrency:
+  group: docker-aios-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tags
+        id: tags
+        run: |
+          SHA=${{ github.sha }}
+          SHORT=${SHA:0:7}
+          TAG_INPUT="${{ github.event.inputs.tag }}"
+          IMAGE=microblue/openclaw-aios
+          if [ -n "$TAG_INPUT" ]; then
+              echo "tags=${IMAGE}:${TAG_INPUT},${IMAGE}:latest" >> $GITHUB_OUTPUT
+          else
+              echo "tags=${IMAGE}:${SHORT},${IMAGE}:latest" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: apps/api/docker
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          # amd64 only for now — Fly's machines run x86_64; arm64 build
+          # adds ~5min for no current consumer.
+          platforms: linux/amd64
+          cache-from: type=registry,ref=microblue/openclaw-aios:buildcache
+          cache-to: type=registry,ref=microblue/openclaw-aios:buildcache,mode=max

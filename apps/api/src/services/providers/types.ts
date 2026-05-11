@@ -68,7 +68,12 @@ export interface CreateServerOptions {
     locationId: string
     rootPassword?: string
     sshKeyIds?: string[]    // Provider-specific SSH key IDs
-    userData?: string       // Cloud-init script
+    userData?: string       // Cloud-init script (VM providers only)
+    // Container providers consume `env` instead of `userData` — the
+    // openclaw-aios image's entrypoint reads SUBDOMAIN / GATEWAY_TOKEN /
+    // CONFIG_JSON_B64 / OPENROUTER_API_KEY / IE+IT+IR straight from the
+    // process environment. VM providers ignore this field.
+    env?: Record<string, string>
     tags?: Record<string, string>
 }
 

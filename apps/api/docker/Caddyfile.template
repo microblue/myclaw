@@ -1,0 +1,23 @@
+# Rendered by openclaw-entrypoint.sh — placeholders are replaced before
+# Caddy starts. Caddy's own {$ENV} substitution would also work but doing
+# the substitution in the entrypoint keeps the Caddyfile readable and
+# matches install-claw.sh's pattern.
+
+{
+    email ssl@__DOMAIN__
+}
+
+__SUBDOMAIN__.__DOMAIN__ {
+    @metricsAuthed {
+        path /metrics
+        header Authorization "Bearer __GATEWAY_TOKEN__"
+    }
+    handle @metricsAuthed {
+        reverse_proxy 127.0.0.1:9100
+    }
+    @metrics path /metrics
+    handle @metrics {
+        respond 401
+    }
+    reverse_proxy 127.0.0.1:3000
+}
