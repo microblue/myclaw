@@ -27,14 +27,15 @@ if ! command -v node >/dev/null 2>&1 || [[ $(node -v | sed 's/v\([0-9]*\).*/\1/'
 fi
 
 # Pin the studio source revision so all freshly-provisioned claws build the
-# same tree — `main` would silently follow upstream and a regression there
-# would break every new claw. Bump this commit when we're ready to ship a
-# new studio across all new claws.
+# same tree — `main` would silently follow our own fork and a regression
+# there would break every new claw. Bump the comment when we ship a new
+# studio across all new claws.
 #
-# Source repo: https://github.com/grp06/openclaw-studio
-# Pinned ref:  main as of 2026-05-07 (the version known to build cleanly
-# at the time of the production setup-flow audit).
-STUDIO_REPO='https://github.com/grp06/openclaw-studio.git'
+# Source repo: https://github.com/microblue/myclaw-studio
+# (forked from grp06/openclaw-studio 2026-05-12; brand + iPad-landscape
+# patches now live as real commits in the fork, not install-time sed.
+# This is the canonical studio for both myclaw cloud and myclaw-desk.)
+STUDIO_REPO='https://github.com/microblue/myclaw-studio.git'
 STUDIO_REF='main'
 
 STUDIO_DIR='/openclaw-studio'
@@ -49,32 +50,9 @@ else
     git clone --depth 1 --branch "${STUDIO_REF}" "${STUDIO_REPO}" "${STUDIO_DIR}"
     pushd "${STUDIO_DIR}" >/dev/null
 
-    # Rebrand pass — replace the upstream "OpenClaw Studio" wordmark with
-    # "MyClaw.One Control Panel" in source files BEFORE the production
-    # build, so the build output bakes our brand into the static HTML /
-    # page titles / header text. We deliberately only touch the Studio
-    # compound brand ("OpenClaw Studio"), not bare "OpenClaw" mentions
-    # in helper copy ("Studio reaches OpenClaw…") — those refer to the
-    # underlying gateway runtime which keeps its OSS name.
-    grep -rl --include='*.ts' --include='*.tsx' --include='*.js' \
-        'OpenClaw Studio' src 2>/dev/null \
-        | xargs -r sed -i 's/OpenClaw Studio/MyClaw.One Control Panel/g'
-
-    # iPad-landscape patch — upstream uses xl: (1280px) as the breakpoint
-    # between the mobile pane-toggle (Fleet | Chat tabs) and the
-    # split-pane layout. iPad landscape is 1024×768 which is below xl,
-    # so users saw the cramped tab toggle even though they had plenty of
-    # horizontal room. Drop the threshold to lg: (1024px) so iPad
-    # landscape gets the two-column layout.
-    sed -i \
-        -e 's|flex min-h-0 flex-1 flex-col gap-4 xl:flex-row|flex min-h-0 flex-1 flex-col gap-4 lg:flex-row|' \
-        -e 's|glass-panel ui-panel p-2 xl:hidden|glass-panel ui-panel p-2 lg:hidden|' \
-        -e 's|min-h-0 xl:block xl:min-h-0|min-h-0 lg:block lg:min-h-0|' \
-        -e 's|overflow-hidden xl:flex|overflow-hidden lg:flex|' \
-        src/app/page.tsx
-    sed -i \
-        -e 's|xl:max-w-\[320px\] xl:border-r xl:border-sidebar-border|lg:max-w-[320px] lg:border-r lg:border-sidebar-border|' \
-        src/features/agents/components/FleetSidebar.tsx
+    # Brand + iPad-landscape patches used to live here as sed steps;
+    # they now live as real commits in microblue/myclaw-studio. Future
+    # customizations should go in the fork too.
 
     npm install --no-audit --no-fund
     # `next build` produces `.next/required-server-files.json` which the
