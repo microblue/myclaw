@@ -149,7 +149,19 @@ enabled = true
 # in emails.
 site_url = "https://myclaw.one"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://myclaw.one/**", "http://localhost:1111/**"]
+# myclaw-aios (Phase 1+): vercel.app preview/prod + local dev ports (5173–5176) + future tenant subdomains.
+additional_redirect_urls = [
+  "https://myclaw.one/**",
+  "https://app.myclaw.one/**",
+  "https://*.myclaw.one/**",
+  "https://myclaw-aios.vercel.app/**",
+  "https://*.vercel.app/**",
+  "http://localhost:1111/**",
+  "http://localhost:5173/**",
+  "http://localhost:5174/**",
+  "http://localhost:5175/**",
+  "http://localhost:5176/**",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to the local API URL (http://127.0.0.1:<port>/auth/v1).
