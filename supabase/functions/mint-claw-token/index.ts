@@ -25,10 +25,25 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4'
 
 type Json = Record<string, unknown>
 
+// aios calls this Edge Function from the browser (app.myclaw.one,
+// preview deploys, Tauri webview), so CORS preflights must succeed.
+// We allow any origin and the explicit headers our fetch in
+// src/gateway/mint.ts sends. `Vary: Origin` keeps caches honest.
+const CORS_HEADERS: HeadersInit = {
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'authorization, content-type, apikey, x-client-info',
+    'access-control-max-age': '3600',
+    vary: 'Origin'
+}
+
 const json = (body: Json, status: number) =>
     new Response(JSON.stringify(body), {
         status,
-        headers: { 'content-type': 'application/json; charset=utf-8' }
+        headers: {
+            'content-type': 'application/json; charset=utf-8',
+            ...CORS_HEADERS
+        }
     })
 
 const fail = (status: number, code: string, error?: string) =>
@@ -45,6 +60,11 @@ const isClawReady = (claw: { status: string | null; subdomain: string | null }) 
     (claw.status === 'running' || claw.status === 'active')
 
 Deno.serve(async (req) => {
+    if (req.method === 'OPTIONS') {
+        // Browser preflight — answer with the same CORS headers,
+        // empty body. No auth check here; the actual POST is guarded.
+        return new Response(null, { status: 204, headers: CORS_HEADERS })
+    }
     if (req.method !== 'POST') {
         return fail(405, 'method_not_allowed')
     }
