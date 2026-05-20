@@ -1,0 +1,15 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main [ref=e8]:
+    - link "← Back" [ref=e17] [cursor=pointer]:
+      - /url: "#/"
+    - heading "Connect WeChat" [level=2] [ref=e18]
+    - paragraph [ref=e19]: Fetching QR code from WeChat…
+    - button "Loading QR…" [disabled] [ref=e20]
+  - contentinfo [ref=e14]:
+    - link "Open OpenClaw Web Control →" [ref=e21] [cursor=pointer]:
+      - /url: /#token=24ef4f0eaa67d0fb0fc1370ad03093f292905c25032cba74c8555941ac046cbe

@@ -1,0 +1,79 @@
+- generic [ref=e19]:
+  - complementary [ref=e20]:
+    - button "MyClaw.One" [ref=e22] [cursor=pointer]:
+      - link "MyClaw.One" [ref=e23]:
+        - /url: /
+        - generic [ref=e24]: MyClaw.One
+    - navigation [ref=e25]:
+      - link "Claws" [ref=e26] [cursor=pointer]:
+        - /url: /claws
+        - img [ref=e27]
+        - text: Claws
+      - link "Billing" [ref=e29] [cursor=pointer]:
+        - /url: /billing
+        - img [ref=e30]
+        - text: Billing
+      - link "Referrals" [ref=e32] [cursor=pointer]:
+        - /url: /affiliate
+        - img [ref=e33]
+        - text: Referrals
+      - link "Admin" [ref=e35] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e36]
+        - text: Admin
+  - generic [ref=e38]:
+    - banner [ref=e39]:
+      - generic [ref=e40]:
+        - button "Home" [ref=e41] [cursor=pointer]:
+          - img
+          - generic [ref=e42]: Home
+        - button "What's new" [ref=e43] [cursor=pointer]:
+          - img
+          - generic [ref=e44]: What's new
+        - button "D DZ" [ref=e45] [cursor=pointer]:
+          - generic [ref=e47]: D
+          - generic [ref=e48]: DZ
+    - main [ref=e49]:
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - heading "Welcome back, DZ" [level=2] [ref=e54]
+            - paragraph [ref=e55]: You have 2 Claws.
+          - button "Deploy new" [ref=e56] [cursor=pointer]
+        - generic [ref=e57]:
+          - button "wild-birch running OpenClaw Provider lightsail Plan large_3_0 Region us-east-2 IP 3.133.152.7 Open chat" [ref=e58] [cursor=pointer]:
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - generic [ref=e63]: wild-birch
+                - paragraph [ref=e64]: running
+              - generic [ref=e65]: OpenClaw
+            - generic [ref=e66]:
+              - term [ref=e67]: Provider
+              - definition [ref=e68]: lightsail
+              - term [ref=e69]: Plan
+              - definition [ref=e70]: large_3_0
+              - term [ref=e71]: Region
+              - definition [ref=e72]: us-east-2
+              - term [ref=e73]: IP
+              - definition [ref=e74]: 3.133.152.7
+            - button "Open chat" [ref=e76]:
+              - img
+              - text: Open chat
+          - button "snowy-storm running OpenClaw Provider lightsail Plan medium_3_0 Region us-east-1 IP 35.173.216.98 Open chat" [ref=e77] [cursor=pointer]:
+            - generic [ref=e78]:
+              - generic [ref=e79]:
+                - generic [ref=e82]: snowy-storm
+                - paragraph [ref=e83]: running
+              - generic [ref=e84]: OpenClaw
+            - generic [ref=e85]:
+              - term [ref=e86]: Provider
+              - definition [ref=e87]: lightsail
+              - term [ref=e88]: Plan
+              - definition [ref=e89]: medium_3_0
+              - term [ref=e90]: Region
+              - definition [ref=e91]: us-east-1
+              - term [ref=e92]: IP
+              - definition [ref=e93]: 35.173.216.98
+            - button "Open chat" [ref=e95]:
+              - img
+              - text: Open chat

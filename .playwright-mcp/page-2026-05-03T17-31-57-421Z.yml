@@ -1,0 +1,21 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: 🔒
+        - heading "Sign in" [level=2] [ref=e12]
+      - paragraph [ref=e13]:
+        - text: Paste your
+        - strong [ref=e14]: gateway token
+        - text: below to unlock setup. The token is the same value the OpenClaw Control UI asks for.
+      - generic [ref=e15]:
+        - textbox "gateway token (64 hex chars)" [active] [ref=e16]
+        - button "Unlock" [ref=e17] [cursor=pointer]
+      - group [ref=e18]:
+        - generic "Where do I find the token?" [ref=e19] [cursor=pointer]
+  - contentinfo

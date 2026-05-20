@@ -1,0 +1,25 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main [ref=e8]:
+    - link "← Back" [ref=e52] [cursor=pointer]:
+      - /url: "#/"
+    - heading "Scan with WeChat" [level=2] [ref=e53]
+    - paragraph [ref=e54]:
+      - text: Open WeChat on your phone → tap
+      - strong [ref=e55]: +
+      - text: →
+      - strong [ref=e56]: Scan
+      - text: ", then point at the code below."
+    - generic "https://liteapp.weixin.qq.com/q/7GiQu1?qrcode=350e295d6289297540d2d61433096694&bot_type=3" [ref=e58]:
+      - img [ref=e59]
+    - paragraph [ref=e60]: Waiting for scan… (refreshes every 3s)
+  - contentinfo [ref=e36]:
+    - link "Open OpenClaw Web Control →" [ref=e61] [cursor=pointer]:
+      - /url: /index.html#token=24ef4f0eaa67d0fb0fc1370ad03093f292905c25032cba74c8555941ac046cbe
+    - text: "|"
+    - link "Sign out" [ref=e62] [cursor=pointer]:
+      - /url: "#"

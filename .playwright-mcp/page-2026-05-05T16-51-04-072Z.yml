@@ -1,0 +1,90 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - button "MyClaw.One" [ref=e6] [cursor=pointer]:
+      - link "MyClaw.One" [ref=e7]:
+        - /url: /
+        - generic [ref=e8]: MyClaw.One
+    - navigation [ref=e9]:
+      - link "Claws" [ref=e10] [cursor=pointer]:
+        - /url: /claws
+        - img [ref=e11]
+        - text: Claws
+      - link "Billing" [ref=e13] [cursor=pointer]:
+        - /url: /billing
+        - img [ref=e14]
+        - text: Billing
+      - link "Referrals" [ref=e16] [cursor=pointer]:
+        - /url: /affiliate
+        - img [ref=e17]
+        - text: Referrals
+      - link "Admin" [ref=e19] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e20]
+        - text: Admin
+  - generic [ref=e22]:
+    - banner [ref=e23]:
+      - generic [ref=e24]:
+        - button "Home" [ref=e25] [cursor=pointer]:
+          - img
+          - generic [ref=e26]: Home
+        - button "What's new" [ref=e27] [cursor=pointer]:
+          - img
+          - generic [ref=e28]: What's new
+        - button "D DZ" [ref=e29] [cursor=pointer]:
+          - generic [ref=e31]: D
+          - generic [ref=e32]: DZ
+    - main [ref=e33]:
+      - generic [ref=e36]:
+        - complementary [ref=e37]:
+          - generic [ref=e38]:
+            - heading "Admin" [level=1] [ref=e39]
+            - button "Collapse sidebar" [ref=e40] [cursor=pointer]:
+              - img [ref=e41]
+          - navigation [ref=e43]:
+            - button "Analytics" [ref=e44] [cursor=pointer]:
+              - generic [ref=e45]:
+                - img [ref=e46]
+                - text: Analytics
+            - button "Users" [disabled] [ref=e48]:
+              - generic [ref=e49]:
+                - img [ref=e50]
+                - text: Users
+            - button "Claws" [ref=e52] [cursor=pointer]:
+              - generic [ref=e53]:
+                - img [ref=e54]
+                - text: Claws
+            - button "Referrals" [ref=e56] [cursor=pointer]:
+              - generic [ref=e57]:
+                - img [ref=e58]
+                - text: Referrals
+            - button "Billing" [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]:
+                - img [ref=e62]
+                - text: Billing
+            - button "Activation codes" [ref=e64] [cursor=pointer]:
+              - generic [ref=e65]:
+                - img [ref=e66]
+                - text: Activation codes
+            - button "Install reports" [ref=e68] [cursor=pointer]:
+              - generic [ref=e69]:
+                - img [ref=e70]
+                - text: Install reports
+            - button "Settings" [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]:
+                - img [ref=e74]
+                - text: Settings
+        - generic [ref=e76]:
+          - generic [ref=e79]:
+            - heading "Users" [level=2] [ref=e80]
+            - paragraph [ref=e81]: Manage your platform users and data.
+          - generic [ref=e83]:
+            - heading "Users" [level=3] [ref=e84]
+            - generic [ref=e85]:
+              - img [ref=e86]
+              - textbox "Search by email or name..." [ref=e88]
+            - button "Newest first" [ref=e89] [cursor=pointer]:
+              - generic [ref=e90]: Newest first
+              - img [ref=e91]
+            - button "All users" [ref=e93] [cursor=pointer]:
+              - generic [ref=e94]: All users
+              - img [ref=e95]

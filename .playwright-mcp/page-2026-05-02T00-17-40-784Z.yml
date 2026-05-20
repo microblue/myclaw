@@ -1,0 +1,8 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main
+  - contentinfo

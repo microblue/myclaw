@@ -111,7 +111,7 @@ Deno.serve(async (req) => {
 
     const { data: claw, error: clawErr } = await admin
         .from('claws')
-        .select('id, user_id, subdomain, status, plan_id, gateway_token')
+        .select('id, user_id, subdomain, status, plan_id')
         .eq('id', clawId)
         .maybeSingle()
 
@@ -135,7 +135,19 @@ Deno.serve(async (req) => {
         return fail(409, 'claw_not_ready')
     }
 
-    if (!claw.gateway_token) {
+    // Fetch the gateway token via the decrypt_gateway_token RPC.
+    // The RPC handles both pre-encryption (legacy plaintext) and post-
+    // encryption (Vault key) rows transparently.
+    const { data: tokenData, error: tokenErr } = await admin.rpc(
+        'decrypt_gateway_token',
+        { claw_id: claw.id }
+    )
+    if (tokenErr) {
+        console.error('decrypt_gateway_token failed', tokenErr)
+        return fail(500, 'db_error')
+    }
+    const gatewayToken = tokenData as string | null
+    if (!gatewayToken) {
         // Real running claw with no token in DB — shouldn't happen, but
         // surface as not_ready rather than leaking nullness as 500.
         return fail(409, 'claw_not_ready')
@@ -151,7 +163,7 @@ Deno.serve(async (req) => {
     return json(
         {
             url: `wss://${claw.subdomain}.myclaw.one/ws`,
-            token: claw.gateway_token,
+            token: gatewayToken,
             expires_at: expiresAt,
             claw_id: claw.id
         },

@@ -1,0 +1,97 @@
+- generic [ref=e94]:
+  - complementary [ref=e95]:
+    - button "MyClaw.One" [ref=e97] [cursor=pointer]:
+      - link "MyClaw.One" [ref=e98]:
+        - /url: /
+        - generic [ref=e99]: MyClaw.One
+    - navigation [ref=e100]:
+      - link "Claws" [ref=e101] [cursor=pointer]:
+        - /url: /claws
+        - img [ref=e102]
+        - text: Claws
+      - link "Billing" [ref=e104] [cursor=pointer]:
+        - /url: /billing
+        - img [ref=e105]
+        - text: Billing
+      - link "Referrals" [ref=e107] [cursor=pointer]:
+        - /url: /affiliate
+        - img [ref=e108]
+        - text: Referrals
+      - link "Admin" [ref=e110] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e111]
+        - text: Admin
+  - generic [ref=e113]:
+    - banner [ref=e114]:
+      - generic [ref=e115]:
+        - button "Home" [ref=e116] [cursor=pointer]:
+          - img
+          - generic [ref=e117]: Home
+        - button "What's new" [ref=e118] [cursor=pointer]:
+          - img
+          - generic [ref=e119]: What's new
+        - button "D DZ" [ref=e120] [cursor=pointer]:
+          - generic [ref=e122]: D
+          - generic [ref=e123]: DZ
+    - main [ref=e124]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - heading "wild-birch" [level=1] [ref=e130]
+            - generic [ref=e131]: OpenClaw
+          - paragraph [ref=e132]: running · uptime 18h
+        - generic [ref=e134]:
+          - button "Easy Setup" [ref=e135] [cursor=pointer]:
+            - img
+            - text: Easy Setup
+          - button "Open chat" [ref=e136] [cursor=pointer]:
+            - img
+            - text: Open chat
+          - button "Pause" [ref=e137] [cursor=pointer]
+          - button "Restart" [ref=e138] [cursor=pointer]
+          - button "Delete" [ref=e139] [cursor=pointer]
+        - generic [ref=e141]:
+          - button "Overview" [ref=e142] [cursor=pointer]
+          - button "Logs" [ref=e143] [cursor=pointer]
+          - button "SSH" [ref=e144] [cursor=pointer]
+        - generic [ref=e146]:
+          - generic [ref=e147]:
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - paragraph [ref=e150]: CPU
+                - paragraph [ref=e151]: —
+              - paragraph [ref=e153]: Loading…
+            - generic [ref=e154]:
+              - generic [ref=e155]:
+                - paragraph [ref=e156]: Memory
+                - paragraph [ref=e157]: —
+              - paragraph [ref=e159]: Loading…
+            - generic [ref=e160]:
+              - generic [ref=e161]:
+                - paragraph [ref=e162]: Disk
+                - paragraph [ref=e163]: —
+              - paragraph [ref=e165]: Loading…
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - paragraph [ref=e168]: Provider
+              - paragraph [ref=e169]: lightsail
+            - generic [ref=e170]:
+              - paragraph [ref=e171]: Plan
+              - paragraph [ref=e172]: LARGE_3_0
+            - generic [ref=e173]:
+              - paragraph [ref=e174]: Region
+              - paragraph [ref=e175]: us-east-2
+            - generic [ref=e176]:
+              - paragraph [ref=e177]: IP
+              - paragraph [ref=e178]: 3.133.152.7
+          - generic [ref=e179]:
+            - heading "Connection" [level=2] [ref=e180]
+            - generic [ref=e182]:
+              - term [ref=e183]: Chat URL
+              - definition [ref=e184]: 87nyac3b.myclaw.one
+            - paragraph [ref=e185]: Click "Open chat" above to log in automatically.
+          - button "Advanced SSH access, gateway token, and other technical details. Show" [ref=e187] [cursor=pointer]:
+            - generic [ref=e188]:
+              - heading "Advanced" [level=2] [ref=e189]
+              - paragraph [ref=e190]: SSH access, gateway token, and other technical details.
+            - generic [ref=e191]: Show

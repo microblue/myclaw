@@ -1,0 +1,36 @@
+- generic [ref=e5]:
+  - complementary [ref=e26]:
+    - button "MyClaw.One" [ref=e28] [cursor=pointer]:
+      - link "MyClaw.One" [ref=e29]:
+        - /url: /
+        - generic [ref=e30]: MyClaw.One
+    - navigation [ref=e31]:
+      - link "Claws" [ref=e32] [cursor=pointer]:
+        - /url: /claws
+        - img [ref=e33]
+        - text: Claws
+      - link "Billing" [ref=e35] [cursor=pointer]:
+        - /url: /billing
+        - img [ref=e36]
+        - text: Billing
+      - link "Referrals" [ref=e38] [cursor=pointer]:
+        - /url: /affiliate
+        - img [ref=e39]
+        - text: Referrals
+      - link "Admin" [ref=e41] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e42]
+        - text: Admin
+  - generic [ref=e6]:
+    - banner [ref=e7]:
+      - generic [ref=e13]:
+        - button "Home" [ref=e14] [cursor=pointer]:
+          - img
+          - generic [ref=e15]: Home
+        - button "What's new" [ref=e16] [cursor=pointer]:
+          - img
+          - generic [ref=e17]: What's new
+        - button "D DZ" [active] [ref=e18] [cursor=pointer]:
+          - generic [ref=e20]: D
+          - generic [ref=e21]: DZ
+    - main [ref=e22]

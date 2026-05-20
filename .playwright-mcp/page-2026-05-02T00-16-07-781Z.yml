@@ -1,0 +1,17 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]: 🔒
+      - heading "This page needs the dashboard link" [level=2] [ref=e11]
+      - paragraph [ref=e12]:
+        - text: For security, the setup wizard only opens via the tokenized link from your myclaw.one dashboard. Open your claw's detail page and click
+        - strong [ref=e13]: Easy Setup
+        - text: .
+      - link "Go to dashboard" [ref=e14] [cursor=pointer]:
+        - /url: https://myclaw.one/dashboard
+  - contentinfo

@@ -1,0 +1,38 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main [ref=e8]:
+    - generic [ref=e11]: Reading your setup…
+    - button "… Step 1 Pick a model Checking… →" [disabled] [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: …
+        - generic [ref=e15]:
+          - generic [ref=e16]: Step 1
+          - generic [ref=e17]: Pick a model
+          - generic [ref=e18]: Checking…
+      - generic [ref=e19]: →
+    - heading "Channels" [level=3] [ref=e20]
+    - generic [ref=e21]:
+      - button "… → Connect Telegram Checking…" [disabled] [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]: …
+          - generic [ref=e25]: →
+        - generic [ref=e26]:
+          - generic [ref=e27]: Connect Telegram
+          - generic [ref=e28]: Checking…
+      - button "… → Connect WeChat Checking…" [disabled] [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]: …
+          - generic [ref=e32]: →
+        - generic [ref=e33]:
+          - generic [ref=e34]: Connect WeChat
+          - generic [ref=e35]: Checking…
+  - contentinfo [ref=e36]:
+    - link "Open OpenClaw Web Control →" [ref=e37] [cursor=pointer]:
+      - /url: /index.html#token=24ef4f0eaa67d0fb0fc1370ad03093f292905c25032cba74c8555941ac046cbe
+    - text: "|"
+    - link "Sign out" [ref=e38] [cursor=pointer]:
+      - /url: "#"

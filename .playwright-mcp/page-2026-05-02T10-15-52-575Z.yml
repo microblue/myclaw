@@ -1,0 +1,37 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 🦞
+    - generic [ref=e5]:
+      - heading "Claw Easy Setup" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Two-minute setup for your private AI
+  - main [ref=e8]:
+    - button "✓ Step 1 Pick a model openrouter/anthropic/claude-haiku-4.5 →" [ref=e24] [cursor=pointer]:
+      - generic [ref=e25]:
+        - generic [ref=e26]: ✓
+        - generic [ref=e27]:
+          - generic [ref=e28]: Step 1
+          - generic [ref=e29]: Pick a model
+          - generic [ref=e30]: openrouter/anthropic/claude-haiku-4.5
+      - generic [ref=e31]: →
+    - heading "Channels" [level=3] [ref=e32]
+    - generic [ref=e33]:
+      - button "· → Connect Telegram Not connected" [ref=e34] [cursor=pointer]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: ·
+          - generic [ref=e37]: →
+        - generic [ref=e38]:
+          - generic [ref=e39]: Connect Telegram
+          - generic [ref=e40]: Not connected
+      - button "· → Connect WeChat Plugin ready — scan QR to bind" [ref=e41] [cursor=pointer]:
+        - generic [ref=e42]:
+          - generic [ref=e43]: ·
+          - generic [ref=e44]: →
+        - generic [ref=e45]:
+          - generic [ref=e46]: Connect WeChat
+          - generic [ref=e47]: Plugin ready — scan QR to bind
+  - contentinfo [ref=e14]:
+    - link "Open OpenClaw Web Control →" [ref=e48] [cursor=pointer]:
+      - /url: /index.html#token=24ef4f0eaa67d0fb0fc1370ad03093f292905c25032cba74c8555941ac046cbe
+    - text: "|"
+    - link "Sign out" [ref=e49] [cursor=pointer]:
+      - /url: "#"
