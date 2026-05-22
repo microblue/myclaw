@@ -58,6 +58,9 @@ The clarifying interview (`/new` stages 1→2) and the reflection card (`/intent
 | `/help` | 帮助 / 概念地图(保留双语) | ✓ |
 | `/settings` | 设置 + 语言切换 + 激活码 + 开发者模式 | ✓ |
 | `/settings/engines` | 开发者模式底层引擎(保留双语) | ✓ |
+| `/auth/signin` | SignIn — email-link sign in + sign up | ✓ |
+| `/auth/reset-password` | ResetPassword — password reset confirm | ✓ |
+| `/archive` | Archive — 封存的项目 list + 取消封存 action | ✓ |
 
 ### 3.2 Persistent chrome
 
